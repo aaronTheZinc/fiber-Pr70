@@ -4,15 +4,20 @@ import (
 	"log"
 
 	"github.com/vreel/app/graph/model"
-	"gorm.io/driver/sqlite"
+	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
 var db, db_init_err = databaseInit()
 
 func databaseInit() (*gorm.DB, error) {
+	dsn := "gorm:gorm@tcp(localhost:9910)/gorm?charset=utf8&parseTime=True&loc=Local"
+	connection, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	if err != nil {
+		log.Panic(err)
+	}
+	return connection, err
 
-	return gorm.Open(sqlite.Open("test.db"), &gorm.Config{})
 }
 
 func Migrate() {

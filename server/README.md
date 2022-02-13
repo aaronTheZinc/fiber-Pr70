@@ -1,0 +1,1 @@
+Run go run github.com/99designs/gqlgen generate to regen schemas.

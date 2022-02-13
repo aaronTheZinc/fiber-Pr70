@@ -5,9 +5,9 @@ package graph
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/vreel/app/auth"
+	"github.com/vreel/app/database"
 	"github.com/vreel/app/graph/generated"
 	"github.com/vreel/app/graph/model"
 )
@@ -18,7 +18,8 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) 
 }
 
 func (r *queryResolver) User(ctx context.Context, id *string) (*model.User, error) {
-	panic(fmt.Errorf("not implemented"))
+	user, err := database.GetUser(*id)
+	return &user, err
 }
 
 // Mutation returns generated.MutationResolver implementation.
