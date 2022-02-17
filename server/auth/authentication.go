@@ -19,7 +19,6 @@ func CreateNewUser(newUser model.NewUser) (model.User, error) {
 	}
 	if !isRegisted {
 		hashedPw, hashErr := HashPassword(newUser.Password)
-		fmt.Println("hashed password: " + hashedPw)
 		if hashErr != nil {
 			return model.User{}, hashErr
 		}
@@ -27,6 +26,30 @@ func CreateNewUser(newUser model.NewUser) (model.User, error) {
 		return user, err
 	} else {
 		return user, errors.New("email in use")
+	}
+
+}
+
+func Login(email string, password string) (model.LocalSession, error) {
+	var localSession model.LocalSession
+	user, err := database.GetUserByEmail(email)
+
+	if err != nil {
+		return localSession, err
+	} else {
+		fmt.Println(user.Password)
+		doesMatch, hashErr := CompareHashPassword(password, user.Password)
+		if hashErr != nil {
+			return localSession, hashErr
+		} else {
+			if doesMatch {
+				tkn := GenerateToken()
+				localSession.Token = tkn
+				return localSession, nil
+			} else {
+				return localSession, errors.New("incorrect password")
+			}
+		}
 	}
 
 }
@@ -39,10 +62,10 @@ func HashPassword(password string) (string, error) {
 
 //Compare Hashed and Raw Password To Determine Succesfull login
 func CompareHashPassword(rawPassword string, hashedPassword string) (bool, error) {
-	err = bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(rawPassword))
+	err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(rawPassword))
 	if err != nil {
-		panic(err)
+		return false, err
 	} else {
-		fmt.Println("password are equal")
+		return true, nil
 	}
 }

@@ -2,16 +2,38 @@
 
 package model
 
+type Event struct {
+	Name        string `json:"name"`
+	Thumbnail   string `json:"thumbnail"`
+	StartTime   string `json:"start_time"`
+	EndTime     string `json:"end_time"`
+	Description string `json:"description"`
+	Location    string `json:"location"`
+	GroupID     string `json:"group_id"`
+}
+
+type LocalSession struct {
+	Token string `json:"token"`
+}
+
+type LoginInput struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
 type NewUser struct {
 	FirstName string `json:"first_name"`
 	LastName  string `json:"last_name"`
+	Username  string `json:"username"`
 	Email     string `json:"email"`
 	Password  string `json:"password"`
 }
 
 type User struct {
 	ID        string `json:"id"`
+	Username  string `json:"username"`
 	FirstName string `json:"first_name"`
 	LastName  string `json:"last_name"`
 	Email     string `json:"email"`
+	Password  string `json:"password"`
 }

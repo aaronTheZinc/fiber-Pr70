@@ -22,6 +22,17 @@ func (r *queryResolver) User(ctx context.Context, id *string) (*model.User, erro
 	return &user, err
 }
 
+func (r *queryResolver) Username(ctx context.Context, username *string) (*model.User, error) {
+	user, err := database.GetUserByUsername(*username)
+
+	return &user, err
+}
+
+func (r *queryResolver) Login(ctx context.Context, input *model.LoginInput) (*model.LocalSession, error) {
+	localSession, err := auth.Login(input.Email, input.Password)
+	return &localSession, err
+}
+
 // Mutation returns generated.MutationResolver implementation.
 func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResolver{r} }
 
