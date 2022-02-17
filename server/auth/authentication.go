@@ -3,6 +3,7 @@ package auth
 import (
 	"errors"
 	"fmt"
+	"strconv"
 
 	"github.com/vreel/app/database"
 	"github.com/vreel/app/graph/model"
@@ -38,20 +39,19 @@ func Login(email string, password string) (model.LocalSession, error) {
 		return localSession, err
 	} else {
 		fmt.Println(user.Password)
-		doesMatch, hashErr := CompareHashPassword(password, user.Password)
+		_, hashErr := CompareHashPassword(password, user.Password)
 		if hashErr != nil {
-			return localSession, hashErr
+			err := IncrementLoginAttempts(email)
+			l, _ := LoginAttemptsLeft(email)
+			fmt.Println("Remaining Attempts:  " + strconv.Itoa(l))
+			fmt.Println(err.Error())
+			return localSession, errors.New("incorrect password")
 		} else {
-			if doesMatch {
-				tkn := GenerateToken()
-				localSession.Token = tkn
-				return localSession, nil
-			} else {
-				return localSession, errors.New("incorrect password")
-			}
+			tkn := GenerateToken()
+			localSession.Token = tkn
+			return localSession, nil
 		}
 	}
-
 }
 
 //Hash Passowrd To Be Stored In Database

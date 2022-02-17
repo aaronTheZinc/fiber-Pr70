@@ -24,6 +24,9 @@ type Event {
 type LocalSession {
   token: String!
 }
+type ResetPasswordResponse {
+  message: String!
+}
 
 type Query {
   user(id: String): User!
@@ -39,6 +42,10 @@ input NewUser {
   password: String!
 }
 
+input ResetPasswordInput {
+  email: String!
+}
+
 input LoginInput {
   email: String!
   password: String!
@@ -46,4 +53,5 @@ input LoginInput {
 
 type Mutation {
   createUser(input: NewUser!): User!
+  resetPassword(email: String!): ResetPasswordResponse!
 }
