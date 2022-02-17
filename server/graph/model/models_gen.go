@@ -29,6 +29,14 @@ type NewUser struct {
 	Password  string `json:"password"`
 }
 
+type ResetPasswordInput struct {
+	Email string `json:"email"`
+}
+
+type ResetPasswordResponse struct {
+	Message string `json:"message"`
+}
+
 type User struct {
 	ID        string `json:"id"`
 	Username  string `json:"username"`
