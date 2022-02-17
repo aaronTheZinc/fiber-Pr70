@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -9,12 +10,19 @@ import (
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/vreel/app/cache"
 	"github.com/vreel/app/database"
 	"github.com/vreel/app/graph"
 	"github.com/vreel/app/graph/generated"
 )
 
 const defaultPort = "8080"
+
+func InitializeCache() {
+	defer fmt.Println("Cache setup...")
+
+	cache.CreateRedis()
+}
 
 func GQLHandler() {
 	port := os.Getenv("PORT")
@@ -34,6 +42,7 @@ func main() {
 	var wg sync.WaitGroup
 
 	database.Migrate()
+	InitializeCache()
 
 	wg.Add(1)
 	go func() {
