@@ -17,6 +17,16 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) 
 	return &user, err
 }
 
+func (r *mutationResolver) CreateResetPasswordRequest(ctx context.Context, email string) (*model.ResetPasswordResponse, error) {
+	auth, err := auth.CreateResetPasswordRequest(email)
+	return &auth, err
+}
+
+func (r *mutationResolver) ResolveResetPasswordRequest(ctx context.Context, token string, password string) (*model.ResolvedPasswordReset, error) {
+	resp, err := auth.UpdatePassword(token, password)
+	return &resp, err
+}
+
 func (r *queryResolver) User(ctx context.Context, id *string) (*model.User, error) {
 	user, err := database.GetUser(*id)
 	return &user, err
