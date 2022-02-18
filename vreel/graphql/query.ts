@@ -2,36 +2,36 @@ import { gql, ApolloError } from "@apollo/client";
 import { client } from "./index";
 import { User } from "../types";
 
-//Fetch Profile
 
-// const UsernameQuery = gql`
-//     query($id: String!) [
-//         username(id: $id) {
-//             first_name
-//             last_name
-//             email
-//         }
-//     ]
+
+// export const LoginQuery = gql`
+//   query Login($email: String!, $password: String!) {
+//     login(input: { email: $email, password: $password }) {
+//       token
+//     }
+//   }
 // `;
-
-export const LoginQuery = gql`
-  query Login($email: String!, $password: String!) {
-    login(input: { email: $email, password: $password }) {
-      token
+const UsernameQuery = gql`
+  query User($Username: String) {
+    username(username: $Username) {
+      id
+      first_name
+      last_name
+      email
     }
   }
 `;
 
-// export const GetUserProfile = async (
-//   id: string
-// ): Promise<User | ApolloError> => {
-//   const { data, error } = await client.query({
-//     query: UsernameQuery,
-//     variables: { id: id },
-//   });
-//   if (error) {
-//     return error;
-//   } else {
-//     return data;
-//   }
-// };
+
+export const GetUserByUsername = async (
+  username: string
+): Promise<User> => {
+  const { data } = await client.query({
+    query: UsernameQuery,
+    variables: { Username: username },
+  });
+
+  return data.username;
+
+};
+
