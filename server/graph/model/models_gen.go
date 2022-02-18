@@ -34,14 +34,26 @@ type ResetPasswordInput struct {
 }
 
 type ResetPasswordResponse struct {
-	Message string `json:"message"`
+	Message     string `json:"message"`
+	EmailExists bool   `json:"email_exists"`
+	ResetToken  string `json:"reset_token"`
+}
+
+type ResolvedPasswordReset struct {
+	Message   string `json:"message"`
+	Succeeded bool   `json:"succeeded"`
 }
 
 type User struct {
-	ID        string `json:"id"`
-	Username  string `json:"username"`
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
-	Email     string `json:"email"`
-	Password  string `json:"password"`
+	ID              string `json:"id"`
+	Username        string `json:"username"`
+	FirstName       string `json:"first_name"`
+	LastName        string `json:"last_name"`
+	Email           string `json:"email"`
+	PhoneNumber     string `json:"phone_number"`
+	Password        string `json:"password"`
+	BusinessAddress string `json:"business_address"`
+	BillingAddress  string `json:"billing_address"`
+	Website         string `json:"website"`
+	JobTitle        string `json:"job_title"`
 }

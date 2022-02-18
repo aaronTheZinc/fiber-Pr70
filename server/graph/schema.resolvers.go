@@ -5,7 +5,6 @@ package graph
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/vreel/app/auth"
 	"github.com/vreel/app/database"
@@ -18,8 +17,14 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) 
 	return &user, err
 }
 
-func (r *mutationResolver) ResetPassword(ctx context.Context, email string) (*model.ResetPasswordResponse, error) {
-	panic(fmt.Errorf("not implemented"))
+func (r *mutationResolver) CreateResetPasswordRequest(ctx context.Context, email string) (*model.ResetPasswordResponse, error) {
+	auth, err := auth.CreateResetPasswordRequest(email)
+	return &auth, err
+}
+
+func (r *mutationResolver) ResolveResetPasswordRequest(ctx context.Context, token string, password string) (*model.ResolvedPasswordReset, error) {
+	resp, err := auth.UpdatePassword(token, password)
+	return &resp, err
 }
 
 func (r *queryResolver) User(ctx context.Context, id *string) (*model.User, error) {

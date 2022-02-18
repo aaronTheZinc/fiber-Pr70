@@ -15,14 +15,14 @@ var Redis *redis.Client = CreateRedis()
 func CreateRedis() *redis.Client {
 	rdb := redis.NewClient(&redis.Options{
 		Addr:     "localhost:6379",
-		Password: "", // no password set
+		Password: "eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81", // no password set
 		DB:       0,
 	})
 	return rdb
 }
 
-func SetString(key string, value string, ttl time.Time) error {
-	err := Redis.Set(ctx, key, value, 0).Err()
+func SetString(key string, value string, ttl time.Duration) error {
+	err := Redis.Set(ctx, key, value, ttl).Err()
 
 	return err
 

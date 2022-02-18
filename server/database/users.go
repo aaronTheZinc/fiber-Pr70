@@ -59,11 +59,30 @@ func UsernameIsTaken(username string) (bool, error) {
 	return doesExist, nil
 }
 
+//Update Password
+func UpdatePassword(email string, password string) (model.User, error) {
+	var err error
+	user, get_err := GetUserByEmail(email)
+	if get_err != nil {
+		err = get_err
+		return user, err
+	}
+	update_err := db.Model(&user).Update("password", password)
+
+	if update_err != nil {
+		err = get_err
+		return user, err
+	}
+
+	return user, nil
+
+}
+
 //Check if User Email is In Database
 func UserIsRegistered(email string) (bool, error) {
 	var results []model.User
 
-	err := db.Where("email =?", email).Find(&results)
+	err := db.Where("email = ?", email).Find(&results)
 
 	return len(results) > 0, err.Error
 }
