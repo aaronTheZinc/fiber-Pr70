@@ -22,11 +22,16 @@ type LoginInput struct {
 }
 
 type NewUser struct {
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
-	Username  string `json:"username"`
-	Email     string `json:"email"`
-	Password  string `json:"password"`
+	Username        string `json:"username"`
+	FirstName       string `json:"first_name"`
+	LastName        string `json:"last_name"`
+	Email           string `json:"email"`
+	PhoneNumber     string `json:"phone_number"`
+	Password        string `json:"password"`
+	BusinessAddress string `json:"business_address"`
+	BillingAddress  string `json:"billing_address"`
+	Website         string `json:"website"`
+	JobTitle        string `json:"job_title"`
 }
 
 type ResetPasswordInput struct {

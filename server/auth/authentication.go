@@ -63,7 +63,7 @@ func Login(email string, password string) (model.LocalSession, error) {
 }
 
 //Reset Password
-func CreateResetPasswordRequest(email string) (model.ResetPasswordResponse, error) {
+func CreateResetPasswordRequestIntent(email string) (model.ResetPasswordResponse, error) {
 	var response model.ResetPasswordResponse
 	var err error
 	emailExists, _ := database.UserIsRegistered(email)
