@@ -1,9 +1,13 @@
-
-import '../styles/globals.css'
+import '../styles/main.scss'
 import type { AppProps /*, AppContext */ } from 'next/app'
+import MainLayout from '../components/MainLayout/MainLayout'
 
 function App({ Component, pageProps }: AppProps) {
-  return <Component {...pageProps} />
+  return (
+    <MainLayout>
+      <Component {...pageProps} />
+    </MainLayout>
+  )
 }
 
 // Only uncomment this method if you have blocking data requirements for

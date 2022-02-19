@@ -7,19 +7,19 @@ import { LoginQuery } from "../graphql/query";
 function LoginPage(): JSX.Element {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [login, { error, data }] = useLazyQuery(LoginQuery);
-  function handleLogin() {
-    login({
-      variables: { email, password },
-    });
-  }
-  useEffect(() => {
-    if (error) {
-      console.log(error.message);
-    } else if (data) {
-      console.log("data -> ", data);
-    }
-  }, [error, data]);
+  // const [login, { error, data }] = useLazyQuery(LoginQuery);
+  // function handleLogin() {
+  //   login({
+  //     variables: { email, password },
+  //   });
+  // }
+  // useEffect(() => {
+  //   if (error) {
+  //     console.log(error.message);
+  //   } else if (data) {
+  //     console.log("data -> ", data);
+  //   }
+  // }, [error, data]);
   return (
     <div>
       <div>
@@ -33,7 +33,7 @@ function LoginPage(): JSX.Element {
         />
       </div>
       <div>
-        <PrimaryButton action={handleLogin} title="Login" />
+        <PrimaryButton  title="Login" />
       </div>
     </div>
   );
