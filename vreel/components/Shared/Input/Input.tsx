@@ -7,9 +7,10 @@ interface InputProps {
 
 export const PrimaryInput = ({ value, setValue, placeHolder, type }: InputProps): JSX.Element => {
     return (
-        <div>
+        <div className="vreel-input vreel-input__wrapper">
             <input
-                onChange={(e) => setValue(e.target.value)}
+                type={type}
+                onChange={(e) => setValue(e.target.value.toLowerCase())}
                 value={value}
                 placeholder={placeHolder} />
         </div>
@@ -22,6 +23,7 @@ export const SecretInput = ({ value, setValue, placeHolder }: InputProps): JSX.E
     return (
         <div>
             <input
+                style={{ display: 'none' }}
                 type="password"
                 onChange={(e) => setValue(e.target.value)}
                 value={value}

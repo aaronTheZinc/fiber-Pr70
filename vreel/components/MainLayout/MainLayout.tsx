@@ -5,9 +5,8 @@ type Props = {
 };
 
 const MainLayout = ({ children }: Props): JSX.Element => {
-
   return (
-    <div>
+    <div style={{ background: '#000', color: '#fff'}} >
       <header>Header</header>
       <main>{children}</main>
      <footer>footer</footer>
