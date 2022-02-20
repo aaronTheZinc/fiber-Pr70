@@ -5,6 +5,7 @@ package graph
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/vreel/app/auth"
 	"github.com/vreel/app/database"
@@ -12,19 +13,27 @@ import (
 	"github.com/vreel/app/graph/model"
 )
 
-func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) (*model.User, error) {
+func (r *mutationResolver) Register(ctx context.Context, input model.NewUser) (*model.User, error) {
 	user, err := auth.CreateNewUser(input)
 	return &user, err
 }
 
-func (r *mutationResolver) CreateResetPasswordRequest(ctx context.Context, email string) (*model.ResetPasswordResponse, error) {
-	auth, err := auth.CreateResetPasswordRequest(email)
+func (r *mutationResolver) CreateResetPasswordRequestIntent(ctx context.Context, email string) (*model.ResetPasswordResponse, error) {
+	auth, err := auth.CreateResetPasswordRequestIntent(email)
 	return &auth, err
 }
 
-func (r *mutationResolver) ResolveResetPasswordRequest(ctx context.Context, token string, password string) (*model.ResolvedPasswordReset, error) {
+func (r *mutationResolver) ResolveResetPasswordRequestIntent(ctx context.Context, token string, password string) (*model.ResolvedPasswordReset, error) {
 	resp, err := auth.UpdatePassword(token, password)
 	return &resp, err
+}
+
+func (r *mutationResolver) CreateGroup(ctx context.Context, input *model.NewGroup) (*model.Group, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *mutationResolver) Group(ctx context.Context, id string) (*model.Group, error) {
+	panic(fmt.Errorf("not implemented"))
 }
 
 func (r *queryResolver) User(ctx context.Context, id *string) (*model.User, error) {

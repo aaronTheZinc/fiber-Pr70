@@ -14,9 +14,20 @@ type User {
   billing_address: String!
   website: String!
   job_title: String!
+  groups: [Group]
 
 }
-
+# Create Group - name, location, meet times?, public/private?
+type Group {
+  id: String!
+  author: String!
+  name: String!
+  location: String!
+  meet_times: [String!]
+  private: Boolean!
+  parent_group: String!
+  child_groups: [String!]
+}
 type Event {
   name: String!
   thumbnail: String!
@@ -47,11 +58,16 @@ type Query {
 }
 
 input NewUser {
+  username: String!
   first_name: String!
   last_name: String!
-  username: String!
   email: String!
+  phone_number: String!
   password: String!
+  business_address: String!
+  billing_address: String!
+  website: String!
+  job_title: String!
 }
 
 input ResetPasswordInput {
@@ -63,8 +79,19 @@ input LoginInput {
   password: String!
 }
 
+input NewGroup {
+  token: String!
+  name: String!
+  location: String!
+  meet_times: [String!]
+  private: Boolean!
+  parent_group: String!
+}
+
 type Mutation {
-  createUser(input: NewUser!): User!
-  createResetPasswordRequest(email: String!): ResetPasswordResponse!
-  resolveResetPasswordRequest(token: String!, password: String!): ResolvedPasswordReset!
+  register(input: NewUser!): User!
+  createResetPasswordRequestIntent(email: String!): ResetPasswordResponse!
+  resolveResetPasswordRequestIntent(token: String!, password: String!): ResolvedPasswordReset!
+  createGroup(input: NewGroup): Group!
+  group(id: String!): Group!
 }

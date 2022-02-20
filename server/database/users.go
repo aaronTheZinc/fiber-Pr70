@@ -7,12 +7,17 @@ import (
 //Create User
 func CreateUser(newUser model.NewUser, id string, hashedPassword string) (model.User, error) {
 	user := model.User{
-		ID:        id,
-		Username:  newUser.Username,
-		FirstName: newUser.FirstName,
-		LastName:  newUser.LastName,
-		Email:     newUser.Email,
-		Password:  hashedPassword,
+		ID:              id,
+		Username:        newUser.Username,
+		FirstName:       newUser.FirstName,
+		LastName:        newUser.LastName,
+		Email:           newUser.Email,
+		Password:        hashedPassword,
+		PhoneNumber:     newUser.PhoneNumber,
+		BusinessAddress: newUser.BusinessAddress,
+		BillingAddress:  newUser.BillingAddress,
+		Website:         newUser.Website,
+		JobTitle:        newUser.JobTitle,
 	}
 	err := db.Create(&user).Error
 	return user, err

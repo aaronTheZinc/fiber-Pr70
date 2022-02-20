@@ -16,7 +16,7 @@ import (
 
 type PasswordResetCacheModel struct {
 	Token     string `json:"token"`
-	Requester string `json:"requester`
+	Requester string `json:"requester"`
 }
 
 // Create User & Validate Existence Of Conflicting Accounts
@@ -55,15 +55,17 @@ func Login(email string, password string) (model.LocalSession, error) {
 			fmt.Println(err.Error())
 			return localSession, errors.New("incorrect password")
 		} else {
-			tkn := GenerateToken()
-			localSession.Token = tkn
+			tkn, _ := CreateToken(user.ID)
+			localSession = model.LocalSession{
+				Token: tkn,
+			}
 			return localSession, nil
 		}
 	}
 }
 
 //Reset Password
-func CreateResetPasswordRequest(email string) (model.ResetPasswordResponse, error) {
+func CreateResetPasswordRequestIntent(email string) (model.ResetPasswordResponse, error) {
 	var response model.ResetPasswordResponse
 	var err error
 	emailExists, _ := database.UserIsRegistered(email)

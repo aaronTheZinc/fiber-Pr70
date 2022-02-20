@@ -9,6 +9,7 @@ import (
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/joho/godotenv"
 	"github.com/vreel/app/cache"
 	"github.com/vreel/app/database"
 	"github.com/vreel/app/graph"
@@ -39,6 +40,9 @@ func GQLHandler() {
 	log.Fatal(http.ListenAndServe(":"+port, nil))
 }
 func main() {
+	godotenv.Load(".env")
+
+	// test.GenerateToken()
 	var wg sync.WaitGroup
 	test.TestCache()
 	database.Migrate()
