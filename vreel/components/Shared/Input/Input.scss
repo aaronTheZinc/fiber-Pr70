@@ -1,0 +1,55 @@
+.vreel-input {
+  &:not(:first-child) {
+    margin-top: 36px;
+  }
+  &__wrapper {
+    input {
+      position: relative;
+      width: 449px;
+      height: 61px;
+      background: #e5e5e5;
+      border: none;
+      border-radius: 5px;
+      padding-left: 25px;
+
+      &::placeholder {
+        /* Chrome, Firefox, Opera, Safari 10.1+ */
+        font-family: Poppins;
+        font-style: normal;
+        font-weight: 500;
+        font-size: 14px;
+        line-height: 21px;
+        font-size: 14px;
+        line-height: 21px;
+        margin-left: 25px;
+        &.username {
+          position: absolute;
+        }
+      }
+
+      &:-ms-input-placeholder {
+        /* Internet Explorer 10-11 */
+        font-family: Poppins;
+        font-style: normal;
+        font-weight: 500;
+        font-size: 14px;
+        line-height: 21px;
+        font-size: 14px;
+        line-height: 21px;
+        margin-left: 25px;
+      }
+
+      &::-ms-input-placeholder {
+        /* Microsoft Edge */
+        font-family: Poppins;
+        font-style: normal;
+        font-weight: 500;
+        font-size: 14px;
+        line-height: 21px;
+        font-size: 14px;
+        line-height: 21px;
+        margin-left: 25px;
+      }
+    }
+  }
+}
