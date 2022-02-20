@@ -14,9 +14,20 @@ type User {
   billing_address: String!
   website: String!
   job_title: String!
+  groups: [Group]
 
 }
-
+# Create Group - name, location, meet times?, public/private?
+type Group {
+  id: String!
+  author: String!
+  name: String!
+  location: String!
+  meet_times: [String!]
+  private: Boolean!
+  parent_group: String!
+  child_groups: [String!]
+}
 type Event {
   name: String!
   thumbnail: String!
@@ -68,8 +79,19 @@ input LoginInput {
   password: String!
 }
 
+input NewGroup {
+  token: String!
+  name: String!
+  location: String!
+  meet_times: [String!]
+  private: Boolean!
+  parent_group: String!
+}
+
 type Mutation {
   register(input: NewUser!): User!
   createResetPasswordRequestIntent(email: String!): ResetPasswordResponse!
   resolveResetPasswordRequestIntent(token: String!, password: String!): ResolvedPasswordReset!
+  createGroup(input: NewGroup): Group!
+  group(id: String!): Group!
 }

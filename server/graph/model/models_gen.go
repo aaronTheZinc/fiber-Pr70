@@ -12,6 +12,17 @@ type Event struct {
 	GroupID     string `json:"group_id"`
 }
 
+type Group struct {
+	ID          string   `json:"id"`
+	Author      string   `json:"author"`
+	Name        string   `json:"name"`
+	Location    string   `json:"location"`
+	MeetTimes   []string `json:"meet_times"`
+	Private     bool     `json:"private"`
+	ParentGroup string   `json:"parent_group"`
+	ChildGroups []string `json:"child_groups"`
+}
+
 type LocalSession struct {
 	Token string `json:"token"`
 }
@@ -19,6 +30,15 @@ type LocalSession struct {
 type LoginInput struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
+}
+
+type NewGroup struct {
+	Token       string   `json:"token"`
+	Name        string   `json:"name"`
+	Location    string   `json:"location"`
+	MeetTimes   []string `json:"meet_times"`
+	Private     bool     `json:"private"`
+	ParentGroup string   `json:"parent_group"`
 }
 
 type NewUser struct {
@@ -50,15 +70,16 @@ type ResolvedPasswordReset struct {
 }
 
 type User struct {
-	ID              string `json:"id"`
-	Username        string `json:"username"`
-	FirstName       string `json:"first_name"`
-	LastName        string `json:"last_name"`
-	Email           string `json:"email"`
-	PhoneNumber     string `json:"phone_number"`
-	Password        string `json:"password"`
-	BusinessAddress string `json:"business_address"`
-	BillingAddress  string `json:"billing_address"`
-	Website         string `json:"website"`
-	JobTitle        string `json:"job_title"`
+	ID              string   `json:"id"`
+	Username        string   `json:"username"`
+	FirstName       string   `json:"first_name"`
+	LastName        string   `json:"last_name"`
+	Email           string   `json:"email"`
+	PhoneNumber     string   `json:"phone_number"`
+	Password        string   `json:"password"`
+	BusinessAddress string   `json:"business_address"`
+	BillingAddress  string   `json:"billing_address"`
+	Website         string   `json:"website"`
+	JobTitle        string   `json:"job_title"`
+	Groups          []*Group `json:"groups"`
 }

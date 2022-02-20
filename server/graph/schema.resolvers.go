@@ -5,6 +5,7 @@ package graph
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/vreel/app/auth"
 	"github.com/vreel/app/database"
@@ -25,6 +26,14 @@ func (r *mutationResolver) CreateResetPasswordRequestIntent(ctx context.Context,
 func (r *mutationResolver) ResolveResetPasswordRequestIntent(ctx context.Context, token string, password string) (*model.ResolvedPasswordReset, error) {
 	resp, err := auth.UpdatePassword(token, password)
 	return &resp, err
+}
+
+func (r *mutationResolver) CreateGroup(ctx context.Context, input *model.NewGroup) (*model.Group, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *mutationResolver) Group(ctx context.Context, id string) (*model.Group, error) {
+	panic(fmt.Errorf("not implemented"))
 }
 
 func (r *queryResolver) User(ctx context.Context, id *string) (*model.User, error) {
