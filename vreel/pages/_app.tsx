@@ -7,6 +7,7 @@ function App({ Component, pageProps }: AppProps) {
   return (
     <MainLayout>
       <Head>
+        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin />
         <link
