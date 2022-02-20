@@ -23,7 +23,7 @@ func databaseInit() (*gorm.DB, error) {
 func Migrate() {
 	log.Println("Migrating...")
 	db.AutoMigrate(model.User{})
-	db.AutoMigrate(model.Group{})
+	// db.AutoMigrate(model.Group{})
 }
 
 // docker run --name vreel -e MYSQL_ROOT_PASSWORD=password -d mysql:tag
