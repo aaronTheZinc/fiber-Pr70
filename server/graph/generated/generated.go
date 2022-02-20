@@ -98,7 +98,6 @@ type ComplexityRoot struct {
 		BusinessAddress func(childComplexity int) int
 		Email           func(childComplexity int) int
 		FirstName       func(childComplexity int) int
-		Groups          func(childComplexity int) int
 		ID              func(childComplexity int) int
 		JobTitle        func(childComplexity int) int
 		LastName        func(childComplexity int) int
@@ -408,13 +407,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.User.FirstName(childComplexity), true
 
-	case "User.groups":
-		if e.complexity.User.Groups == nil {
-			break
-		}
-
-		return e.complexity.User.Groups(childComplexity), true
-
 	case "User.id":
 		if e.complexity.User.ID == nil {
 			break
@@ -544,7 +536,7 @@ type User {
   billing_address: String!
   website: String!
   job_title: String!
-  groups: [Group]
+  # groups: [Group]
 
 }
 # Create Group - name, location, meet times?, public/private?
@@ -2336,38 +2328,6 @@ func (ec *executionContext) _User_job_title(ctx context.Context, field graphql.C
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _User_groups(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "User",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Groups, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]*model.Group)
-	fc.Result = res
-	return ec.marshalOGroup2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐGroup(ctx, field.Selections, res)
-}
-
 func (ec *executionContext) ___Directive_name(ctx context.Context, field graphql.CollectedField, obj *introspection.Directive) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -4108,8 +4068,6 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "groups":
-			out.Values[i] = ec._User_groups(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -4755,54 +4713,6 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 		return graphql.Null
 	}
 	return graphql.MarshalBoolean(*v)
-}
-
-func (ec *executionContext) marshalOGroup2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐGroup(ctx context.Context, sel ast.SelectionSet, v []*model.Group) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalOGroup2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐGroup(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	return ret
-}
-
-func (ec *executionContext) marshalOGroup2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐGroup(ctx context.Context, sel ast.SelectionSet, v *model.Group) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._Group(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOLoginInput2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐLoginInput(ctx context.Context, v interface{}) (*model.LoginInput, error) {

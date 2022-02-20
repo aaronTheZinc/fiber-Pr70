@@ -5,6 +5,8 @@ export interface User {
   username: string;
   business_address: string;
   billing_address: string;
-  website: string
-  job_title: string
+  website: string;
+  job_title: string;
+  password: string;
+  password_confirm: string;
 }
