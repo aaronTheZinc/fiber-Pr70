@@ -1,1 +1,3 @@
-.vscode/
+VREEL-3-create-user-authenticated-routes-for-sign-in-sign-up-and-sign-out-as-well-as-change-password-backup-email-and-phone-verification
+.vscode
+*.env
