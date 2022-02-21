@@ -3,9 +3,9 @@ import { PrimaryButton, PrimaryInput, SecretInput } from "../components";
 import { ApolloProvider, useLazyQuery } from "@apollo/client";
 import { client } from "../graphql";
 import { LoginQuery } from "../graphql/query";
-import LoginForm from "../components/Login/LoginForm";
+import ChangePasswordForm from "../components/ChangePassword/ChangePasswordForm";
 
-function LoginPage(): JSX.Element {
+function ChangePasswordPage(): JSX.Element {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [login, { error, data }] = useLazyQuery(LoginQuery);
@@ -23,7 +23,7 @@ function LoginPage(): JSX.Element {
   }, [error, data]);
   return (
     <div>
-      <LoginForm />
+      <ChangePasswordForm />
     </div>
   );
 }
@@ -31,7 +31,7 @@ function LoginPage(): JSX.Element {
 export default function Login(): JSX.Element {
   return (
     <ApolloProvider client={client}>
-      <LoginPage />
+      <ChangePasswordPage />
     </ApolloProvider>
   );
 }

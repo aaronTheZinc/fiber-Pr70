@@ -2,28 +2,22 @@ import React, { useState } from "react";
 import { PrimaryButton, PrimaryInput, SecretInput } from "../index";
 import registerUser from "../../utils/registerUser";
 
-const RegisterForm = (): JSX.Element => {
+const LoginForm = (): JSX.Element => {
   const [userFormData, setUserFormData] = useState<object>({
     email: "",
-    username: "",
-    password: "",
-    passwordConfirm: "",
+    password: ""
   });
   const [email, setEmail] = useState<string>("");
-  const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [passwordConfirm, setPasswordConfirm] = useState<string>("");
 
   const submitForm = async (e) => {
     try {
       e.preventDefault();
-      const { email, username, password, passwordConfirm } = userFormData;
+      const { email, password } = userFormData;
 
       const body = {
         email,
-        username,
-        password,
-        passwordConfirm,
+        password
       };
 
       console.log("form data", body);
@@ -35,11 +29,11 @@ const RegisterForm = (): JSX.Element => {
   return (
     <div
       style={{ height: "100vh" }}
-      className="d-flex flex-column justify-content-start align-items-center vreel-register-form"
+      className="d-flex flex-column justify-content-start align-items-center vreel-login-form"
     >
       <img src="/vreel-logo.png" alt="Vreel Logo" width="181" height="202" />
-      <h1>Create Your FREE VReel Account</h1>
-      <form onSubmit={submitForm} className="vreel-register-form__wrapper">
+      <h1>Log In to Your VReel Account</h1>
+      <form onSubmit={submitForm} className="vreel-login-form__wrapper">
         <PrimaryInput
           setValue={setEmail}
           placeHolder="Email"
@@ -47,21 +41,9 @@ const RegisterForm = (): JSX.Element => {
           type="email"
         />
         <PrimaryInput
-          setValue={setUsername}
-          placeHolder="Username"
-          value={username}
-          type="text"
-        />
-        <PrimaryInput
           setValue={setPassword}
           placeHolder="Password"
           value={password}
-          type="password"
-        />
-        <PrimaryInput
-          setValue={setPasswordConfirm}
-          placeHolder="Confirm Password"
-          value={passwordConfirm}
           type="password"
         />
         <SecretInput
@@ -72,25 +54,22 @@ const RegisterForm = (): JSX.Element => {
         />
 
         <div>
-          <p>
-            By clicking register you agree to VReel’s{" "}
-            <a href="#">Privacy policy</a> and <a href="#">Terms of service</a>
-          </p>
           <PrimaryButton
             type="submit"
             action={() => {
-              if (password !== passwordConfirm) return alert('Passwords must match');
+              if (!password) return alert('Passwords must match');
               setUserFormData({
                 email,
-                username,
-                password,
-                passwordConfirm,
+                password
               });
             }}
-            title="Register"
+            title="Log In"
           />
           <p>
-            Already have an account? <a href="/login">Log in here!</a>
+            Dont have an account? <a href="/register">Register here!</a>
+          </p>
+          <p>
+          <a href="/forgot-password">Forgot Password?</a>
           </p>
         </div>
       </form>
@@ -98,4 +77,4 @@ const RegisterForm = (): JSX.Element => {
   );
 };
 
-export default RegisterForm;
+export default LoginForm;
