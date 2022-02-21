@@ -41,7 +41,8 @@ func GQLHandler() {
 }
 func main() {
 	godotenv.Load(".env")
-
+	database.Migrate()
+	// test.CreateUser()
 	// test.GenerateToken()
 	var wg sync.WaitGroup
 	test.TestCache()
