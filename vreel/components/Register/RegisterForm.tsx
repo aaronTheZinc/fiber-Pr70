@@ -2,8 +2,15 @@ import React, { useState } from "react";
 import { PrimaryButton, PrimaryInput, SecretInput } from "../index";
 import registerUser from "../../utils/registerUser";
 
+interface FormDataType {
+  email: string;
+  username: string;
+  password: string;
+  passwordConfirm: string
+}
+
 const RegisterForm = (): JSX.Element => {
-  const [userFormData, setUserFormData] = useState<object>({
+  const [userFormData, setUserFormData] = useState<FormDataType>({
     email: "",
     username: "",
     password: "",

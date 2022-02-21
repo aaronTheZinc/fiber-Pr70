@@ -4,25 +4,24 @@ import (
 	"log"
 
 	"github.com/vreel/app/graph/model"
-	"gorm.io/driver/mysql"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
 var db, db_init_err = databaseInit()
 
 func databaseInit() (*gorm.DB, error) {
-	dsn := "gorm:gorm@tcp(localhost:9910)/gorm?charset=utf8&parseTime=True&loc=Local"
-	connection, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
-	if err != nil {
-		log.Panic(err)
-	}
-	return connection, err
+	return gorm.Open(postgres.New(postgres.Config{
+		DSN:                  "host=localhost user=gorm password=gorm dbname=gorm port=5432 sslmode=disable TimeZone=Asia/Shanghai", // data source name, refer https://github.com/jackc/pgx
+		PreferSimpleProtocol: true,                                                                                                  // disables implicit prepared statement usage. By default pgx automatically uses the extended protocol
+	}), &gorm.Config{})
 
 }
 
 func Migrate() {
 	log.Println("Migrating...")
-	db.AutoMigrate(model.User{})
+	db.AutoMigrate(model.UserModel{})
+	db.AutoMigrate(model.GroupModel{})
 	// db.AutoMigrate(model.Group{})
 }
 
