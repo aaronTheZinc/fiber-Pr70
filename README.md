@@ -17,7 +17,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 ```bash
 *run the commands above before running the following commands
-cd back into root directory
+cd .. back into root directory
 cd server/
 docker compose up
 go run server.go
