@@ -6,26 +6,8 @@ import { LoginQuery } from "../graphql/query";
 import LoginForm from "../components/Login/LoginForm";
 
 function LoginPage(): JSX.Element {
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [login, { error, data }] = useLazyQuery(LoginQuery);
-  function handleLogin() {
-    login({
-      variables: { email, password },
-    });
-  }
-  useEffect(() => {
-    if (error) {
-      console.log(error.message);
-    } else if (data) {
-      console.log("data -> ", data);
-    }
-  }, [error, data]);
-  return (
-    <div>
-      <LoginForm />
-    </div>
-  );
+
+  return <LoginForm />
 }
 
 export default function Login(): JSX.Element {

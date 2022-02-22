@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { PrimaryButton, PrimaryInput, SecretInput } from "../index";
 import registerUser from "../../utils/registerUser";
+import { useLazyQuery } from "@apollo/client";
+import { LoginQuery } from "../../graphql/query"
 
 interface FormDataType {
   email: string;
@@ -8,12 +10,24 @@ interface FormDataType {
 }
 
 const LoginForm = (): JSX.Element => {
+  const [login, { error, data }] = useLazyQuery(LoginQuery);
   const [userFormData, setUserFormData] = useState<FormDataType>({
     email: "",
     password: ""
   });
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+
+  useEffect(() => {
+    if (error) {
+      //handle login error 
+      alert(error.message)
+    }
+    if (data) {
+      //successful login
+      console.log(data)
+    }
+  }, [error, data])
 
   const submitForm = async (e) => {
     try {
@@ -25,7 +39,9 @@ const LoginForm = (): JSX.Element => {
         password
       };
 
-      console.log("form data", body);
+      login({
+        variables: body
+      })
     } catch (err) {
       console.error(err);
     }
@@ -62,7 +78,7 @@ const LoginForm = (): JSX.Element => {
           <PrimaryButton
             type="submit"
             action={() => {
-              if (!password) return alert('Passwords must match');
+              if (!password) return alert('Password is Required');
               setUserFormData({
                 email,
                 password
@@ -74,7 +90,7 @@ const LoginForm = (): JSX.Element => {
             Dont have an account? <a href="/register">Register here!</a>
           </p>
           <p>
-          <a href="/forgot-password">Forgot Password?</a>
+            <a href="/forgot-password">Forgot Password?</a>
           </p>
         </div>
       </form>
