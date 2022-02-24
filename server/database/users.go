@@ -1,6 +1,10 @@
 package database
 
 import (
+	"errors"
+	"fmt"
+
+	"github.com/lib/pq"
 	"github.com/vreel/app/graph/model"
 )
 
@@ -23,6 +27,9 @@ func GetUser(id string) (model.User, error) {
 	}
 	db.First(&user, "id = ?", id)
 	groups, e := GetGroups(user.Groups)
+	for _, g := range user.Groups {
+		fmt.Println(g)
+	}
 	r = user.ToUser()
 	r.Groups = groups
 	err = e
@@ -60,7 +67,7 @@ func UsernameIsTaken(username string) (bool, error) {
 }
 
 //Update Password
-func UpdatePassword(email string, password string) (model.User, error) {
+func UpdatePassword(email, password string) (model.User, error) {
 	var err error
 	user, get_err := GetUserByEmail(email)
 	if get_err != nil {
@@ -85,6 +92,29 @@ func UserIsRegistered(email string) (bool, error) {
 	err := db.Where("email = ?", email).Find(&results)
 
 	return len(results) > 0, err.Error
+}
+
+func UserAddGroup(userId, groupId string) (model.UserModel, error) {
+	var err error
+	var user model.UserModel
+	var groupIds pq.StringArray = []string{}
+
+	userCheckErr := db.Where("id = ?", userId).First(&user).Error
+	if userCheckErr != nil {
+		err = errors.New("user not found")
+	} else {
+		groupIds = user.Groups
+		groupIds = append(groupIds, groupId)
+		updateErr := db.Model(&user).Where("id = ?", userId).Update("groups", groupIds).Error
+
+		if updateErr != nil {
+			fmt.Println(updateErr.Error())
+			err = errors.New("group update failed")
+		}
+
+	}
+
+	return user, err
 }
 
 func GetUserByEmail(email string) (model.UserModel, error) {

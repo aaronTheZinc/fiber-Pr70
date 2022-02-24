@@ -77,9 +77,33 @@ func (c *Group) ToDatabaseModel() GroupModel {
 		Author:      c.Author,
 		Name:        c.Name,
 		Location:    c.Location,
-		MeetTimes:   []string{},
+		MeetTimes:   c.MeetTimes,
 		Private:     c.Private,
 		ParentGroup: c.ParentGroup,
 		ChildGroups: []string{},
+	}
+}
+
+func (c *NewGroup) ToDatabaseModel() GroupModel {
+	return GroupModel{
+		Name:        c.Name,
+		Location:    c.Location,
+		Private:     c.Private,
+		ParentGroup: c.ParentGroup,
+		ChildGroups: []string{},
+		MeetTimes:   c.MeetTimes,
+	}
+}
+
+func (c *GroupModel) ToGroup() Group {
+	return Group{
+		ID:          c.ID,
+		Author:      c.Author,
+		Name:        c.Name,
+		Location:    c.Location,
+		Private:     c.Private,
+		ParentGroup: c.ParentGroup,
+		ChildGroups: c.ChildGroups,
+		MeetTimes:   c.MeetTimes,
 	}
 }

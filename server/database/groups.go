@@ -5,17 +5,11 @@ import (
 	"github.com/vreel/app/utils"
 )
 
-func CreateGroup(newGroup model.NewGroup) (model.Group, error) {
-	group := model.Group{
-		ID:          utils.GenerateUID(),
-		Name:        newGroup.Name,
-		Location:    newGroup.Location,
-		MeetTimes:   newGroup.MeetTimes,
-		Private:     newGroup.Private,
-		ParentGroup: newGroup.ParentGroup,
-	}
+func CreateGroup(author string, newGroup model.NewGroup) (model.Group, error) {
+	group := newGroup.ToDatabaseModel()
+	group.ID = utils.GenerateUID()
 	err := db.Create(&group)
-	return group, err.Error
+	return group.ToGroup(), err.Error
 }
 
 func GetGroup(id string) (model.Group, error) {
@@ -28,9 +22,18 @@ func GetGroups(ids []string) ([]*model.Group, error) {
 	var groups []*model.Group
 	var err error
 	for _, id := range ids {
-		var group model.Group
+		var group model.GroupModel
 		err = db.Where("id = ?", id).First(&group).Error
-		groups = append(groups, &group)
+		g := group.ToGroup()
+		groups = append(groups, &g)
 	}
 	return groups, err
+}
+
+func GroupExists(id string) (bool, error) {
+	var groups []model.GroupModel
+
+	err := db.Where("id = ?", id).Find(&groups).Error
+
+	return len(groups) > 0, err
 }

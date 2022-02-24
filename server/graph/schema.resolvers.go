@@ -29,7 +29,9 @@ func (r *mutationResolver) ResolveResetPasswordRequestIntent(ctx context.Context
 }
 
 func (r *mutationResolver) CreateGroup(ctx context.Context, input *model.NewGroup) (*model.Group, error) {
-	panic(fmt.Errorf("not implemented"))
+	g, err := auth.AuthorizeAddGroupToUser(*input)
+
+	return &g, err
 }
 
 func (r *mutationResolver) Group(ctx context.Context, id string) (*model.Group, error) {
