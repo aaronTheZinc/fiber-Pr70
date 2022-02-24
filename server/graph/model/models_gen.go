@@ -70,15 +70,16 @@ type ResolvedPasswordReset struct {
 }
 
 type User struct {
-	ID              string `json:"id"`
-	Username        string `json:"username"`
-	FirstName       string `json:"first_name"`
-	LastName        string `json:"last_name"`
-	Email           string `json:"email"`
-	PhoneNumber     string `json:"phone_number"`
-	Password        string `json:"password"`
-	BusinessAddress string `json:"business_address"`
-	BillingAddress  string `json:"billing_address"`
-	Website         string `json:"website"`
-	JobTitle        string `json:"job_title"`
+	ID              string   `json:"id"`
+	Username        string   `json:"username"`
+	FirstName       string   `json:"first_name"`
+	LastName        string   `json:"last_name"`
+	Email           string   `json:"email"`
+	PhoneNumber     string   `json:"phone_number"`
+	Password        string   `json:"password"`
+	BusinessAddress string   `json:"business_address"`
+	BillingAddress  string   `json:"billing_address"`
+	Website         string   `json:"website"`
+	JobTitle        string   `json:"job_title"`
+	Groups          []*Group `json:"groups"`
 }

@@ -3,40 +3,11 @@ import { PrimaryButton, PrimaryInput, SecretInput } from "../components";
 import { ApolloProvider, useLazyQuery } from "@apollo/client";
 import { client } from "../graphql";
 import { LoginQuery } from "../graphql/query";
+import LoginForm from "../components/Login/LoginForm";
 
 function LoginPage(): JSX.Element {
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [login, { error, data }] = useLazyQuery(LoginQuery);
-  function handleLogin() {
-    login({
-      variables: { email, password },
-    });
-  }
-  useEffect(() => {
-    if (error) {
-      console.log(error.message);
-    } else if (data) {
-      console.log("data -> ", data);
-    }
-  }, [error, data]);
-  return (
-    <div>
-      <div>
-        <PrimaryInput setValue={setEmail} placeHolder="Email" value={email} />
-      </div>
-      <div>
-        <SecretInput
-          setValue={setPassword}
-          placeHolder="Password"
-          value={password}
-        />
-      </div>
-      <div>
-        <PrimaryButton action={handleLogin} title="Login" />
-      </div>
-    </div>
-  );
+
+  return <LoginForm />
 }
 
 export default function Login(): JSX.Element {

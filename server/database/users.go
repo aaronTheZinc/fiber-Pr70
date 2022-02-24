@@ -1,54 +1,56 @@
 package database
 
 import (
+	"errors"
+	"fmt"
+
+	"github.com/lib/pq"
 	"github.com/vreel/app/graph/model"
 )
 
 //Create User
 func CreateUser(newUser model.NewUser, id string, hashedPassword string) (model.User, error) {
-	user := model.User{
-		ID:              id,
-		Username:        newUser.Username,
-		FirstName:       newUser.FirstName,
-		LastName:        newUser.LastName,
-		Email:           newUser.Email,
-		Password:        hashedPassword,
-		PhoneNumber:     newUser.PhoneNumber,
-		BusinessAddress: newUser.BusinessAddress,
-		BillingAddress:  newUser.BillingAddress,
-		Website:         newUser.Website,
-		JobTitle:        newUser.JobTitle,
-	}
-	err := db.Create(&user).Error
-	return user, err
+	userModel := newUser.ToDatabaseModel()
+	userModel.ID = id
+	userModel.Password = hashedPassword
+	err := db.Create(&userModel).Error
+	return userModel.ToUser(), err
 }
 
 //Retrieve User by ID
 func GetUser(id string) (model.User, error) {
-	var user model.User
+	var err error
+	var user model.UserModel
+	var r model.User
 	if db_init_err != nil {
-		return user, db_init_err
+		return r, db_init_err
 	}
-	err := db.First(&user, "id = ?", id)
-
-	return user, err.Error
+	db.First(&user, "id = ?", id)
+	groups, e := GetGroups(user.Groups)
+	for _, g := range user.Groups {
+		fmt.Println(g)
+	}
+	r = user.ToUser()
+	r.Groups = groups
+	err = e
+	return r, err
 }
 
 //Retrieve User by Username
 func GetUserByUsername(username string) (model.User, error) {
-	var user model.User
+	var user model.UserModel
 	if db_init_err != nil {
-		return user, db_init_err
+		return user.ToUser(), db_init_err
 	} else {
-		err := db.Where("username = ?", username).First(&user)
-		return user, err.Error
+		err := db.Where("username = ?", username).First(&model.UserModel{})
+		return user.ToUser(), err.Error
 	}
 }
 
 //Check If Username Has Been Taken
 func UsernameIsTaken(username string) (bool, error) {
 	var doesExist bool
-	var user model.User
+	var user model.UserModel
 
 	if db_init_err != nil {
 		return doesExist, db_init_err
@@ -65,35 +67,58 @@ func UsernameIsTaken(username string) (bool, error) {
 }
 
 //Update Password
-func UpdatePassword(email string, password string) (model.User, error) {
+func UpdatePassword(email, password string) (model.User, error) {
 	var err error
 	user, get_err := GetUserByEmail(email)
 	if get_err != nil {
 		err = get_err
-		return user, err
+		return user.ToUser(), err
 	}
 	update_err := db.Model(&user).Update("password", password)
 
 	if update_err != nil {
 		err = get_err
-		return user, err
+		return user.ToUser(), err
 	}
 
-	return user, nil
+	return user.ToUser(), nil
 
 }
 
 //Check if User Email is In Database
 func UserIsRegistered(email string) (bool, error) {
-	var results []model.User
+	var results []model.UserModel
 
 	err := db.Where("email = ?", email).Find(&results)
 
 	return len(results) > 0, err.Error
 }
 
-func GetUserByEmail(email string) (model.User, error) {
-	var user model.User
-	err := db.Where("email =?", email).First(&user)
+func UserAddGroup(userId, groupId string) (model.UserModel, error) {
+	var err error
+	var user model.UserModel
+	var groupIds pq.StringArray = []string{}
+
+	userCheckErr := db.Where("id = ?", userId).First(&user).Error
+	if userCheckErr != nil {
+		err = errors.New("user not found")
+	} else {
+		groupIds = user.Groups
+		groupIds = append(groupIds, groupId)
+		updateErr := db.Model(&user).Where("id = ?", userId).Update("groups", groupIds).Error
+
+		if updateErr != nil {
+			fmt.Println(updateErr.Error())
+			err = errors.New("group update failed")
+		}
+
+	}
+
+	return user, err
+}
+
+func GetUserByEmail(email string) (model.UserModel, error) {
+	var user model.UserModel
+	err := db.Where("email = ?", email).First(&user)
 	return user, err.Error
 }

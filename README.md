@@ -16,6 +16,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 ## Getting the server app up and running:
 
 ```bash
+*run the commands above before running the following commands
 cd .. back into root directory
 cd server/
 docker compose up

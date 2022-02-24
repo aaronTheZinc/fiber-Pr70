@@ -14,7 +14,7 @@ type User {
   billing_address: String!
   website: String!
   job_title: String!
-  # groups: [Group]
+  groups: [Group!]!
 
 }
 # Create Group - name, location, meet times?, public/private?

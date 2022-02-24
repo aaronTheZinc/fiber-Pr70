@@ -2,8 +2,15 @@ import React, { useState } from "react";
 import { PrimaryButton, PrimaryInput, SecretInput } from "../index";
 import registerUser from "../../utils/registerUser";
 
+interface FormDataType {
+  email: string;
+  username: string;
+  password: string;
+  passwordConfirm: string
+}
+
 const RegisterForm = (): JSX.Element => {
-  const [userFormData, setUserFormData] = useState<object>({
+  const [userFormData, setUserFormData] = useState<FormDataType>({
     email: "",
     username: "",
     password: "",
@@ -34,7 +41,7 @@ const RegisterForm = (): JSX.Element => {
 
   return (
     <div
-      style={{ height: "95vh" }}
+      style={{ height: "100vh" }}
       className="d-flex flex-column justify-content-start align-items-center vreel-register-form"
     >
       <img src="/vreel-logo.png" alt="Vreel Logo" width="181" height="202" />
@@ -90,7 +97,7 @@ const RegisterForm = (): JSX.Element => {
             title="Register"
           />
           <p>
-            Already have an account? <a href="#">Log in here!</a>
+            Already have an account? <a href="/login">Log in here!</a>
           </p>
         </div>
       </form>

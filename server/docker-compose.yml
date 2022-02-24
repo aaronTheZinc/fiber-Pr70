@@ -1,15 +1,14 @@
 version: '3'
 
 services:
-  mysql:
-    image: 'mysql/mysql-server:latest'
+  postgres:
+    image: 'postgres:latest'
     ports:
-      - 9910:3306
+      - 5432:5432
     environment:
-      - MYSQL_DATABASE=gorm
-      - MYSQL_USER=gorm
-      - MYSQL_PASSWORD=gorm
-      - MYSQL_RANDOM_ROOT_PASSWORD="yes"
+      - POSTGRES_DB=gorm
+      - POSTGRES_USER=gorm
+      - POSTGRES_PASSWORD=gorm
   cache:
     image: redis:6.2-alpine
     restart: always
