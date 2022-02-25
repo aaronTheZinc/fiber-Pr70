@@ -38,6 +38,11 @@ func (r *mutationResolver) Group(ctx context.Context, id string) (*model.Group, 
 	panic(fmt.Errorf("not implemented"))
 }
 
+func (r *mutationResolver) DeleteGroup(ctx context.Context, id string, token string) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeDeleteGroup(token, id)
+	return &resp, err
+}
+
 func (r *queryResolver) User(ctx context.Context, id *string) (*model.User, error) {
 	user, err := database.GetUser(*id)
 	return &user, err

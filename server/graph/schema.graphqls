@@ -37,7 +37,10 @@ type Event {
   location: String!
   group_id: String!
 }
-
+type MutationResponse {
+  succeeded: Boolean!
+  message: String!
+}
 type LocalSession {
   token: String!
 }
@@ -94,4 +97,5 @@ type Mutation {
   resolveResetPasswordRequestIntent(token: String!, password: String!): ResolvedPasswordReset!
   createGroup(input: NewGroup): Group!
   group(id: String!): Group!
+  deleteGroup(id: String!, token: String!): MutationResponse!
 }

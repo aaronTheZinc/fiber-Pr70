@@ -6,6 +6,7 @@ import (
 
 	"github.com/lib/pq"
 	"github.com/vreel/app/graph/model"
+	"github.com/vreel/app/utils"
 )
 
 //Create User
@@ -116,7 +117,22 @@ func UserAddGroup(userId, groupId string) (model.UserModel, error) {
 
 	return user, err
 }
+func UserDeleteGroup(userId, groupId string) error {
+	var err error
+	var user model.UserModel
+	findErr := db.Where("id = ?", userId).First(&user).Error
+	if findErr != nil {
+		err = errors.New("user not found")
+	} else {
+		var groupIds pq.StringArray = utils.RemoveStringFromSlice(user.Groups, groupId)
+		updateErr := db.Model(&user).Where("id = ?", userId).Update("groups", groupIds).Error
+		if updateErr != nil {
+			err = errors.New("failed to save deleted changes")
+		}
+	}
+	return err
 
+}
 func GetUserByEmail(email string) (model.UserModel, error) {
 	var user model.UserModel
 	err := db.Where("email = ?", email).First(&user)

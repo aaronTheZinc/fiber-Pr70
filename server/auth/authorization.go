@@ -34,3 +34,28 @@ func AuthorizeAddGroupToUser(newGroup model.NewGroup) (model.Group, error) {
 	return group, err
 
 }
+func AuthorizeDeleteGroup(token, groupId string) (model.MutationResponse, error) {
+	var err error
+	var status bool = false
+	_, isAuth, parseErr := ParseToken(token)
+	fmt.Println(isAuth, parseErr)
+	if isAuth {
+		if parseErr != nil {
+			err = errors.New("invalid token")
+		} else {
+			ok, deletionErr := database.DeleteGroup(groupId)
+			if deletionErr != nil {
+				fmt.Println("error does exist!")
+				fmt.Println(deletionErr.Error())
+			}
+			status = ok
+			err = deletionErr
+		}
+	} else {
+		err = errors.New("user not authorized")
+	}
+	return model.MutationResponse{
+		Message:   "successfully removed group ",
+		Succeeded: status,
+	}, err
+}

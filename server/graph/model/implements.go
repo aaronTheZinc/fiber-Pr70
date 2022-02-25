@@ -86,6 +86,7 @@ func (c *Group) ToDatabaseModel() GroupModel {
 
 func (c *NewGroup) ToDatabaseModel() GroupModel {
 	return GroupModel{
+		Author:      "",
 		Name:        c.Name,
 		Location:    c.Location,
 		Private:     c.Private,

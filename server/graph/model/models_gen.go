@@ -32,6 +32,11 @@ type LoginInput struct {
 	Password string `json:"password"`
 }
 
+type MutationResponse struct {
+	Succeeded bool   `json:"succeeded"`
+	Message   string `json:"message"`
+}
+
 type NewGroup struct {
 	Token       string   `json:"token"`
 	Name        string   `json:"name"`

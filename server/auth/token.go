@@ -4,7 +4,6 @@ import (
 	//...
 	// import the jwt-go library
 
-	"fmt"
 	"os"
 	"time"
 
@@ -43,9 +42,6 @@ func ParseToken(tokenStr string) (WebTokenClaims, bool, error) {
 	tkn, err := jwt.ParseWithClaims(tokenStr, &claims, func(token *jwt.Token) (interface{}, error) {
 		return jwtKey, nil
 	})
-
-	fmt.Println("token id from here:  " + claims.ID)
-
 	return claims, tkn.Valid, err
 
 }
