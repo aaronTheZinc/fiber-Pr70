@@ -22,6 +22,7 @@ func Migrate() {
 	log.Println("Migrating...")
 	db.AutoMigrate(model.UserModel{})
 	db.AutoMigrate(model.GroupModel{})
+	db.AutoMigrate(model.EventModel{})
 	// db.AutoMigrate(model.Group{})
 }
 

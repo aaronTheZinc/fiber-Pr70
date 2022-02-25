@@ -30,6 +30,21 @@ type GroupModel struct {
 	MeetTimes   pq.StringArray `gorm:"type:text[]"`
 }
 
+type EventModel struct {
+	ID          string         `json:"id"`
+	Name        string         `json:"name"`
+	Author      string         `json:"author"`
+	Thumbnail   string         `json:"thumbnail"`
+	StartTime   string         `json:"start_time"`
+	EndTime     string         `json:"end_time"`
+	Description string         `json:"description"`
+	Location    string         `json:"location"`
+	GroupID     string         `json:"group_id"`
+	Repeat      string         `json:"repeat"`
+	Link        string         `json:"link"`
+	Groups      pq.StringArray `gorm:"type:text[]"`
+}
+
 func (c *NewUser) ToDatabaseModel() UserModel {
 	// var groups pq.StringArray
 
@@ -109,5 +124,36 @@ func (c *GroupModel) ToGroup() Group {
 		ChildGroups: c.ChildGroups,
 		MeetTimes:   c.MeetTimes,
 		Members:     c.Members,
+	}
+}
+
+func (c *NewEvent) ToDatabaseModel() EventModel {
+	return EventModel{
+		Name:        c.Name,
+		Thumbnail:   c.Thumbnail,
+		StartTime:   c.StartTime,
+		EndTime:     c.EndTime,
+		Description: c.Description,
+		Location:    c.Location,
+		GroupID:     c.GroupID,
+		Repeat:      c.Repeat,
+		Link:        c.Link,
+		Groups:      c.Groups,
+	}
+}
+func (c *EventModel) ToEvent() Event {
+	return Event{
+		ID:          c.ID,
+		Name:        c.Name,
+		Author:      c.Author,
+		Thumbnail:   c.Thumbnail,
+		StartTime:   c.StartTime,
+		EndTime:     c.EndTime,
+		Description: c.Description,
+		Location:    c.Location,
+		GroupID:     c.GroupID,
+		Repeat:      c.Repeat,
+		Link:        c.Link,
+		Groups:      c.Groups,
 	}
 }

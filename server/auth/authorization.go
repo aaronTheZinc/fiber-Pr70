@@ -147,3 +147,23 @@ func AuthorizeGetGroup(token, groupId string) (model.Group, error) {
 	}
 	return group, err
 }
+
+func CreateEvent(token string, newEvent model.NewEvent) (model.Event, error) {
+	var err error
+	var event model.Event
+
+	claims, isAuth, parseErr := ParseToken(token)
+	userId := claims.ID
+
+	if isAuth && parseErr == nil {
+		ev, creationErr := database.CreateEvent(userId, newEvent)
+		if creationErr != nil {
+			err = e.FAILED_EVENT_CREATE
+		} else {
+			event = ev
+		}
+	} else {
+		err = e.UNAUTHORIZED_ERROR
+	}
+	return event, err
+}

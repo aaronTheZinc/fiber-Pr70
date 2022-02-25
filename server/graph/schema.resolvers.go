@@ -17,6 +17,12 @@ func (r *mutationResolver) Register(ctx context.Context, input model.NewUser) (*
 	return &user, err
 }
 
+func (r *mutationResolver) CreateEvent(ctx context.Context, token string, input model.NewEvent) (*model.Event, error) {
+	event, err := auth.CreateEvent(token, input)
+
+	return &event, err
+}
+
 func (r *mutationResolver) CreateResetPasswordRequestIntent(ctx context.Context, email string) (*model.ResetPasswordResponse, error) {
 	auth, err := auth.CreateResetPasswordRequestIntent(email)
 	return &auth, err
