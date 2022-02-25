@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/vreel/app/database"
+	e "github.com/vreel/app/err"
 	"github.com/vreel/app/graph/model"
 )
 
@@ -15,6 +16,7 @@ func AuthorizeAddGroupToUser(newGroup model.NewGroup) (model.Group, error) {
 
 	userId := claims.ID
 	if !isAuth && parseErr == nil {
+		err = e.UNAUTHORIZED_ERROR
 	} else {
 		// create group
 		g, groupCreationErr := database.CreateGroup(userId, newGroup)
@@ -41,21 +43,51 @@ func AuthorizeDeleteGroup(token, groupId string) (model.MutationResponse, error)
 	fmt.Println(isAuth, parseErr)
 	if isAuth {
 		if parseErr != nil {
-			err = errors.New("invalid token")
+			err = e.INVALID_TOKEN
 		} else {
 			ok, deletionErr := database.DeleteGroup(groupId)
-			if deletionErr != nil {
-				fmt.Println("error does exist!")
-				fmt.Println(deletionErr.Error())
-			}
 			status = ok
 			err = deletionErr
 		}
 	} else {
-		err = errors.New("user not authorized")
+		err = e.UNAUTHORIZED_ERROR
 	}
 	return model.MutationResponse{
 		Message:   "successfully removed group ",
 		Succeeded: status,
 	}, err
+}
+
+func AuthorizeAddUserToGroup(token, groupId, member string) (model.MutationResponse, error) {
+	var err error
+	var r model.MutationResponse
+	claims, isAuth, parseErr := ParseToken(token)
+
+	userId := claims.ID
+
+	if isAuth {
+		if parseErr != nil {
+			err = e.INVALID_TOKEN
+		} else {
+			author, gErr := database.GroupAuthor(groupId)
+			if gErr != nil {
+				err = gErr
+			}
+			if author == userId {
+				_, setErr := database.GroupAddMember(groupId, member)
+				if setErr != nil {
+					err = setErr
+				} else {
+					r = model.MutationResponse{
+						Succeeded: true,
+						Message:   "user: " + member + "was added to group: " + groupId,
+					}
+				}
+			}
+		}
+	} else {
+		err = e.UNAUTHORIZED_ERROR
+	}
+
+	return r, err
 }

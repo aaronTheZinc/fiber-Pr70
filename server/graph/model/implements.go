@@ -25,6 +25,7 @@ type GroupModel struct {
 	Location    string         `json:"location"`
 	Private     bool           `json:"private"`
 	ParentGroup string         `json:"parent_group"`
+	Members     pq.StringArray `gorm:"type:text[]"`
 	ChildGroups pq.StringArray `gorm:"type:text[]"`
 	MeetTimes   pq.StringArray `gorm:"type:text[]"`
 }
@@ -80,7 +81,8 @@ func (c *Group) ToDatabaseModel() GroupModel {
 		MeetTimes:   c.MeetTimes,
 		Private:     c.Private,
 		ParentGroup: c.ParentGroup,
-		ChildGroups: []string{},
+		ChildGroups: c.ChildGroups,
+		Members:     c.Members,
 	}
 }
 
@@ -106,5 +108,6 @@ func (c *GroupModel) ToGroup() Group {
 		ParentGroup: c.ParentGroup,
 		ChildGroups: c.ChildGroups,
 		MeetTimes:   c.MeetTimes,
+		Members:     c.Members,
 	}
 }

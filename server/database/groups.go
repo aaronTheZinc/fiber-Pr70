@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/lib/pq"
+	e "github.com/vreel/app/err"
 	"github.com/vreel/app/graph/model"
 	"github.com/vreel/app/utils"
 )
@@ -27,12 +28,15 @@ func GetGroup(id string) (model.Group, error) {
 
 func GetGroups(ids []string) ([]*model.Group, error) {
 	var groups []*model.Group
+	fmt.Printf("ids: %s ", ids)
 	var err error
 	for _, id := range ids {
 		var group model.GroupModel
 		err = db.Where("id = ?", id).First(&group).Error
-		g := group.ToGroup()
-		groups = append(groups, &g)
+		if err == nil {
+			g := group.ToGroup()
+			groups = append(groups, &g)
+		}
 	}
 	return groups, err
 }
@@ -65,6 +69,47 @@ func DeleteGroup(id string) (bool, error) {
 	}
 	return ok, err
 
+}
+
+func GroupAuthor(groupId string) (string, error) {
+	var g model.GroupModel
+	var err error
+	findErr := db.Where("id = ?", groupId).First(&g).Error
+	if findErr != nil {
+		err = e.GROUP_NOT_FOUND
+	}
+	return g.Author, err
+}
+
+func GroupAddMember(groupId, member string) (bool, error) {
+	var err error
+	var ok bool
+	var group model.GroupModel
+
+	get_err := db.Where("id = ?", groupId).First(&group).Error
+	if get_err != nil {
+		err = get_err
+		ok = false
+	} else {
+		var members pq.StringArray = group.Members
+		isRegistered, _ := UserIsRegisteredById(member)
+
+		if isRegistered {
+			members = append(members, member)
+			updateErr := db.Where("id = ?", groupId).Update("members", members).Error
+
+			if updateErr != nil {
+				err = updateErr
+				ok = false
+			} else {
+				ok = true
+			}
+		} else {
+			err = e.USER_NOT_FOUND
+		}
+	}
+
+	return ok, err
 }
 
 func GroupExists(id string) (bool, error) {

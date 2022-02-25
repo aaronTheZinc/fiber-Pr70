@@ -21,6 +21,7 @@ type Group struct {
 	Private     bool     `json:"private"`
 	ParentGroup string   `json:"parent_group"`
 	ChildGroups []string `json:"child_groups"`
+	Members     []string `json:"members"`
 }
 
 type LocalSession struct {

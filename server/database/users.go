@@ -2,9 +2,9 @@ package database
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/lib/pq"
+	e "github.com/vreel/app/err"
 	"github.com/vreel/app/graph/model"
 	"github.com/vreel/app/utils"
 )
@@ -27,13 +27,10 @@ func GetUser(id string) (model.User, error) {
 		return r, db_init_err
 	}
 	db.First(&user, "id = ?", id)
-	groups, e := GetGroups(user.Groups)
-	for _, g := range user.Groups {
-		fmt.Println(g)
-	}
+	groups, _ := GetGroups(user.Groups)
 	r = user.ToUser()
 	r.Groups = groups
-	err = e
+
 	return r, err
 }
 
@@ -94,6 +91,13 @@ func UserIsRegistered(email string) (bool, error) {
 
 	return len(results) > 0, err.Error
 }
+func UserIsRegisteredById(id string) (bool, error) {
+	var results []model.UserModel
+
+	err := db.Where("id = ?", id).Find(&results)
+
+	return len(results) > 0, err.Error
+}
 
 func UserAddGroup(userId, groupId string) (model.UserModel, error) {
 	var err error
@@ -109,8 +113,7 @@ func UserAddGroup(userId, groupId string) (model.UserModel, error) {
 		updateErr := db.Model(&user).Where("id = ?", userId).Update("groups", groupIds).Error
 
 		if updateErr != nil {
-			fmt.Println(updateErr.Error())
-			err = errors.New("group update failed")
+			err = e.GROUP_UPDATE_FAILED
 		}
 
 	}
@@ -127,7 +130,7 @@ func UserDeleteGroup(userId, groupId string) error {
 		var groupIds pq.StringArray = utils.RemoveStringFromSlice(user.Groups, groupId)
 		updateErr := db.Model(&user).Where("id = ?", userId).Update("groups", groupIds).Error
 		if updateErr != nil {
-			err = errors.New("failed to save deleted changes")
+			err = e.GROUP_DELETE_FAILED
 		}
 	}
 	return err

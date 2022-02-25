@@ -43,6 +43,12 @@ func (r *mutationResolver) DeleteGroup(ctx context.Context, id string, token str
 	return &resp, err
 }
 
+func (r *mutationResolver) AddUserToGroup(ctx context.Context, token string, groupID string, userID string) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeAddUserToGroup(token, groupID, userID)
+
+	return &resp, err
+}
+
 func (r *queryResolver) User(ctx context.Context, id *string) (*model.User, error) {
 	user, err := database.GetUser(*id)
 	return &user, err

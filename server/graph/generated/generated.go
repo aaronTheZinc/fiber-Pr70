@@ -59,6 +59,7 @@ type ComplexityRoot struct {
 		ID          func(childComplexity int) int
 		Location    func(childComplexity int) int
 		MeetTimes   func(childComplexity int) int
+		Members     func(childComplexity int) int
 		Name        func(childComplexity int) int
 		ParentGroup func(childComplexity int) int
 		Private     func(childComplexity int) int
@@ -69,6 +70,7 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
+		AddUserToGroup                    func(childComplexity int, token string, groupID string, userID string) int
 		CreateGroup                       func(childComplexity int, input *model.NewGroup) int
 		CreateResetPasswordRequestIntent  func(childComplexity int, email string) int
 		DeleteGroup                       func(childComplexity int, id string, token string) int
@@ -122,6 +124,7 @@ type MutationResolver interface {
 	CreateGroup(ctx context.Context, input *model.NewGroup) (*model.Group, error)
 	Group(ctx context.Context, id string) (*model.Group, error)
 	DeleteGroup(ctx context.Context, id string, token string) (*model.MutationResponse, error)
+	AddUserToGroup(ctx context.Context, token string, groupID string, userID string) (*model.MutationResponse, error)
 }
 type QueryResolver interface {
 	User(ctx context.Context, id *string) (*model.User, error)
@@ -228,6 +231,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Group.MeetTimes(childComplexity), true
 
+	case "Group.members":
+		if e.complexity.Group.Members == nil {
+			break
+		}
+
+		return e.complexity.Group.Members(childComplexity), true
+
 	case "Group.name":
 		if e.complexity.Group.Name == nil {
 			break
@@ -255,6 +265,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.LocalSession.Token(childComplexity), true
+
+	case "Mutation.addUserToGroup":
+		if e.complexity.Mutation.AddUserToGroup == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_addUserToGroup_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.AddUserToGroup(childComplexity, args["token"].(string), args["groupId"].(string), args["userId"].(string)), true
 
 	case "Mutation.createGroup":
 		if e.complexity.Mutation.CreateGroup == nil {
@@ -590,6 +612,7 @@ type Group {
   private: Boolean!
   parent_group: String!
   child_groups: [String!]
+  members: [String!]
 }
 type Event {
   name: String!
@@ -661,6 +684,7 @@ type Mutation {
   createGroup(input: NewGroup): Group!
   group(id: String!): Group!
   deleteGroup(id: String!, token: String!): MutationResponse!
+  addUserToGroup(token: String!, groupId: String!, userId: String!): MutationResponse!
 }
 `, BuiltIn: false},
 }
@@ -669,6 +693,39 @@ var parsedSchema = gqlparser.MustLoadSchema(sources...)
 // endregion ************************** generated!.gotpl **************************
 
 // region    ***************************** args.gotpl *****************************
+
+func (ec *executionContext) field_Mutation_addUserToGroup_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["token"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("token"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["token"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["groupId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("groupId"))
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["groupId"] = arg1
+	var arg2 string
+	if tmp, ok := rawArgs["userId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userId"))
+		arg2, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["userId"] = arg2
+	return args, nil
+}
 
 func (ec *executionContext) field_Mutation_createGroup_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
@@ -1395,6 +1452,38 @@ func (ec *executionContext) _Group_child_groups(ctx context.Context, field graph
 	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Group_members(ctx context.Context, field graphql.CollectedField, obj *model.Group) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Group",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Members, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]string)
+	fc.Result = res
+	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _LocalSession_token(ctx context.Context, field graphql.CollectedField, obj *model.LocalSession) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -1666,6 +1755,48 @@ func (ec *executionContext) _Mutation_deleteGroup(ctx context.Context, field gra
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return ec.resolvers.Mutation().DeleteGroup(rctx, args["id"].(string), args["token"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.MutationResponse)
+	fc.Result = res
+	return ec.marshalNMutationResponse2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐMutationResponse(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_addUserToGroup(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_addUserToGroup_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().AddUserToGroup(rctx, args["token"].(string), args["groupId"].(string), args["userId"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3988,6 +4119,8 @@ func (ec *executionContext) _Group(ctx context.Context, sel ast.SelectionSet, ob
 			}
 		case "child_groups":
 			out.Values[i] = ec._Group_child_groups(ctx, field, obj)
+		case "members":
+			out.Values[i] = ec._Group_members(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -4068,6 +4201,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			}
 		case "deleteGroup":
 			out.Values[i] = ec._Mutation_deleteGroup(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "addUserToGroup":
+			out.Values[i] = ec._Mutation_addUserToGroup(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}

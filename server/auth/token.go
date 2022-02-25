@@ -38,11 +38,16 @@ func CreateToken(id string) (string, error) {
 
 //returns claims, isValid and error
 func ParseToken(tokenStr string) (WebTokenClaims, bool, error) {
+	var isValid bool = false
 	var claims WebTokenClaims
-	tkn, err := jwt.ParseWithClaims(tokenStr, &claims, func(token *jwt.Token) (interface{}, error) {
+	tkn, err := jwt.ParseWithClaims(tokenStr, claims, func(token *jwt.Token) (interface{}, error) {
 		return jwtKey, nil
 	})
-	return claims, tkn.Valid, err
+
+	if err == nil {
+		isValid = tkn.Valid
+	}
+	return claims, isValid, err
 
 }
 

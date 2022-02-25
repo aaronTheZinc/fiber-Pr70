@@ -27,6 +27,7 @@ type Group {
   private: Boolean!
   parent_group: String!
   child_groups: [String!]
+  members: [String!]
 }
 type Event {
   name: String!
@@ -98,4 +99,5 @@ type Mutation {
   createGroup(input: NewGroup): Group!
   group(id: String!): Group!
   deleteGroup(id: String!, token: String!): MutationResponse!
+  addUserToGroup(token: String!, groupId: String!, userId: String!): MutationResponse!
 }
