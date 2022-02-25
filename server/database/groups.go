@@ -21,22 +21,19 @@ func CreateGroup(author string, newGroup model.NewGroup) (model.Group, error) {
 }
 
 func GetGroup(id string) (model.Group, error) {
-	var group model.Group
+	var group model.GroupModel
 	err := db.Where("id = ?", id).First(&group)
-	return group, err.Error
+	return group.ToGroup(), err.Error
 }
 
 func GetGroups(ids []string) ([]*model.Group, error) {
 	var groups []*model.Group
-	fmt.Printf("ids: %s ", ids)
 	var err error
 	for _, id := range ids {
 		var group model.GroupModel
 		err = db.Where("id = ?", id).First(&group).Error
-		if err == nil {
-			g := group.ToGroup()
-			groups = append(groups, &g)
-		}
+		g := group.ToGroup()
+		groups = append(groups, &g)
 	}
 	return groups, err
 }
@@ -49,7 +46,7 @@ func DeleteGroup(id string) (bool, error) {
 	findGroupErr := db.Where("id = ?", id).First(&group).Error
 
 	if findGroupErr != nil {
-		err = errors.New("group not found")
+		err = e.GROUP_NOT_FOUND
 	} else {
 		dError := db.Where("id = ?", id).Delete(&group).Error
 		if dError != nil {
@@ -95,8 +92,12 @@ func GroupAddMember(groupId, member string) (bool, error) {
 		isRegistered, _ := UserIsRegisteredById(member)
 
 		if isRegistered {
+			userExists := utils.ItemExistsInStringSlice(member, group.Members)
+			if userExists {
+				err = e.USER_IN_GROUP
+			}
 			members = append(members, member)
-			updateErr := db.Where("id = ?", groupId).Update("members", members).Error
+			updateErr := db.Model(&group).Where("id = ?", groupId).Update("members", members).Error
 
 			if updateErr != nil {
 				err = updateErr
@@ -107,6 +108,34 @@ func GroupAddMember(groupId, member string) (bool, error) {
 		} else {
 			err = e.USER_NOT_FOUND
 		}
+	}
+
+	return ok, err
+}
+
+func GroupRemoveMember(groupId, member string) (bool, error) {
+	var err error
+	var ok bool
+	var group model.GroupModel
+
+	findErr := db.Where("id = ?", groupId).First(&group).Error
+	if findErr != nil {
+		err = e.GROUP_NOT_FOUND
+	} else {
+		var members pq.StringArray
+		memberExists := utils.ItemExistsInStringSlice(member, group.Members)
+		if memberExists {
+			members = utils.RemoveDuplicateStringFromSlice(group.Members, member)
+			updateErr := db.Model(&group).Where("id = ?", groupId).Update("members", members).Error
+			if updateErr != nil {
+				err = e.GROUP_UPDATE_FAILED
+			} else {
+				ok = true
+			}
+		} else {
+			err = e.USER_NOT_IN_GROUP
+		}
+
 	}
 
 	return ok, err

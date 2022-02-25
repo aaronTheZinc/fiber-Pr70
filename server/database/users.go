@@ -127,7 +127,7 @@ func UserDeleteGroup(userId, groupId string) error {
 	if findErr != nil {
 		err = errors.New("user not found")
 	} else {
-		var groupIds pq.StringArray = utils.RemoveStringFromSlice(user.Groups, groupId)
+		var groupIds pq.StringArray = utils.RemoveDuplicateStringFromSlice(user.Groups, groupId)
 		updateErr := db.Model(&user).Where("id = ?", userId).Update("groups", groupIds).Error
 		if updateErr != nil {
 			err = e.GROUP_DELETE_FAILED

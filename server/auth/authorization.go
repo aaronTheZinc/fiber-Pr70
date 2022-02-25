@@ -7,6 +7,7 @@ import (
 	"github.com/vreel/app/database"
 	e "github.com/vreel/app/err"
 	"github.com/vreel/app/graph/model"
+	"github.com/vreel/app/utils"
 )
 
 func AuthorizeAddGroupToUser(newGroup model.NewGroup) (model.Group, error) {
@@ -90,4 +91,59 @@ func AuthorizeAddUserToGroup(token, groupId, member string) (model.MutationRespo
 	}
 
 	return r, err
+}
+
+func AuthorizeRemoveUserFromGroup(token, groupId, member string) (model.MutationResponse, error) {
+	var r model.MutationResponse
+	var err error
+	claims, isAuth, parseErr := ParseToken(token)
+
+	userId := claims.ID
+
+	if isAuth && parseErr == nil {
+		author, gErr := database.GroupAuthor(groupId)
+		if gErr != nil {
+			err = gErr
+		}
+		if author == userId {
+			_, setErr := database.GroupRemoveMember(groupId, member)
+			if setErr != nil {
+				err = setErr
+			} else {
+				r = model.MutationResponse{
+					Succeeded: true,
+					Message:   "user: " + member + "was removed to group: " + groupId,
+				}
+			}
+		}
+	} else {
+		err = e.UNAUTHORIZED_ERROR
+	}
+	return r, err
+}
+func AuthorizeGetGroup(token, groupId string) (model.Group, error) {
+	var group model.Group
+	var err error
+
+	claims, isAuth, parseErr := ParseToken(token)
+	userId := claims.ID
+
+	g, getErr := database.GetGroup(groupId)
+
+	if getErr != nil {
+		err = e.GROUP_NOT_FOUND
+	} else if g.Private {
+		if isAuth && parseErr == nil {
+			if g.Author == userId || utils.ItemExistsInStringSlice(userId, g.Members) {
+				group = g
+			} else {
+				err = e.UNAUTHORIZED_ERROR
+			}
+		} else {
+			err = e.UNAUTHORIZED_ERROR
+		}
+	} else {
+		group = g
+	}
+	return group, err
 }
