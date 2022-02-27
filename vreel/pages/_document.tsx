@@ -18,7 +18,7 @@ class MyDocument extends Document {
         <Head>
           <meta property="og:keywords" name="keywords" content="" />
           <meta property="og:author" name="author" content="" />
-          <link rel="icon" href="/favicon.png" />
+          <link rel="icon" href="/favicon.ico" />
           <link rel="icon" href="/favicon-32x32.png" sizes="32x32" />
           <link rel="icon" href="/android-chrome-192x192.png" sizes="192x192" />
           <link rel="icon" href="/android-chrome-512x512.png" sizes="512x512" />

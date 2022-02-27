@@ -1,0 +1,20 @@
+.vreel-header {
+  position: fixed;
+  top: 0;
+  z-index: 1000;
+  background: transparent;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  img {
+    top: 0;
+    position: fixed;
+    &:first-of-type {
+      left: 5px;
+    }
+    &:last-of-type {
+      right: 5px;
+      cursor: pointer;
+    }
+  }
+}
