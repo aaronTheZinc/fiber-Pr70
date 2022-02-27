@@ -42,7 +42,7 @@ const RegisterForm = (): JSX.Element => {
   return (
     <div
       style={{ height: "100vh" }}
-      className="d-flex flex-column justify-content-start align-items-center vreel-register-form"
+      className="d-flex flex-column justify-content-center align-items-center vreel-register-form"
     >
       <img src="/vreel-logo.png" alt="Vreel Logo" width="181" height="202" />
       <h1>Create Your FREE VReel Account</h1>

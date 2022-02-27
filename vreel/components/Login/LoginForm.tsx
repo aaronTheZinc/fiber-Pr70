@@ -34,7 +34,7 @@ const LoginForm = (): JSX.Element => {
   return (
     <div
       style={{ height: "100vh" }}
-      className="d-flex flex-column justify-content-start align-items-center vreel-login-form"
+      className="d-flex flex-column justify-content-center align-items-center vreel-login-form"
     >
       <img src="/vreel-logo.png" alt="Vreel Logo" width="181" height="202" />
       <h1>Log In to Your VReel Account</h1>

@@ -30,7 +30,7 @@ const RegisterForm = (): JSX.Element => {
   return (
     <div
       style={{ height: "100vh" }}
-      className="d-flex flex-column justify-content-start align-items-center vreel-forgot-password-form"
+      className="d-flex flex-column justify-content-center align-items-center vreel-forgot-password-form"
     >
       <img src="/vreel-logo.png" alt="Vreel Logo" width="181" height="202" />
       <h1>Forgot Password?</h1>
