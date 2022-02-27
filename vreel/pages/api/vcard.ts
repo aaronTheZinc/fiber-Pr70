@@ -1,5 +1,5 @@
 import { NextApiRequest as Request, NextApiResponse as Response } from "next"
-import { GetUserByUsername } from "../../graphql/query"
+import { getUserByUsername } from "../../graphql/query"
 import GenerateVcard from "../../utils/vcard";
 export default async function handler(req: Request, res: Response) {
     const { username } = req.query;
@@ -12,7 +12,7 @@ export default async function handler(req: Request, res: Response) {
         })
     } else {
         try {
-            const user = await GetUserByUsername(username.toString())
+            const user = await getUserByUsername(username.toString())
             const vcard = GenerateVcard(user)
             res.json({ data: { vcard_content: vcard } })
         } catch (e) {

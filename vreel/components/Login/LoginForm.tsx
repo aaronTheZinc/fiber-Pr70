@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { PrimaryButton, PrimaryInput, SecretInput } from "../index";
-import registerUser from "../../utils/registerUser";
+import { loginUser } from "../../graphql/query";
 
 interface FormDataType {
   email: string;
@@ -10,24 +10,24 @@ interface FormDataType {
 const LoginForm = (): JSX.Element => {
   const [userFormData, setUserFormData] = useState<FormDataType>({
     email: "",
-    password: ""
+    password: "",
   });
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  // const [login, { loading, error, data }] = useQuery(LoginQuery);
 
   const submitForm = async (e) => {
     try {
       e.preventDefault();
+
       const { email, password } = userFormData;
 
-      const body = {
-        email,
-        password
-      };
+      const token = await loginUser(email, password);
 
-      console.log("form data", body);
+      console.log("data", token);
+
     } catch (err) {
-      console.error(err);
+      console.error("ERROR WITH LOGIN:", err);
     }
   };
 
@@ -62,10 +62,10 @@ const LoginForm = (): JSX.Element => {
           <PrimaryButton
             type="submit"
             action={() => {
-              if (!password) return alert('Passwords must match');
+              if (!password) return alert("Passwords must match");
               setUserFormData({
                 email,
-                password
+                password,
               });
             }}
             title="Log In"
@@ -74,7 +74,7 @@ const LoginForm = (): JSX.Element => {
             Dont have an account? <a href="/register">Register here!</a>
           </p>
           <p>
-          <a href="/forgot-password">Forgot Password?</a>
+            <a href="/forgot-password">Forgot Password?</a>
           </p>
         </div>
       </form>

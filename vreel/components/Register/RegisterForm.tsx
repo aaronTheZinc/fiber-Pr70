@@ -1,6 +1,6 @@
 import React, { useState } from "react";
+import { registerUser } from "../../graphql/mutations";
 import { PrimaryButton, PrimaryInput, SecretInput } from "../index";
-import registerUser from "../../utils/registerUser";
 
 interface FormDataType {
   email: string;
@@ -24,20 +24,18 @@ const RegisterForm = (): JSX.Element => {
   const submitForm = async (e) => {
     try {
       e.preventDefault();
-      const { email, username, password, passwordConfirm } = userFormData;
 
-      const body = {
-        email,
-        username,
-        password,
-        passwordConfirm,
-      };
+      const { email, password, username } = userFormData;
 
-      console.log("form data", body);
+      const data = await registerUser('test1', 'testy1', '7731231231', '123 street', 'same', 'me.com', 'moman', username, email, password);
+
+      // console.log("data", data);
+
     } catch (err) {
-      console.error(err);
+      console.error("ERROR WITH REGISTER:", err);
     }
   };
+
 
   return (
     <div
