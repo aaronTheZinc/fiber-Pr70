@@ -25,9 +25,9 @@ type Group struct {
 	MeetTimes   []string `json:"meet_times"`
 	Private     bool     `json:"private"`
 	ParentGroup string   `json:"parent_group"`
-	ChildGroups []string `json:"child_groups"`
+	ChildGroups []*Group `json:"child_groups"`
 	Members     []string `json:"members"`
-	Events      []string `json:"events"`
+	Events      []*Event `json:"events"`
 }
 
 type LocalSession struct {
