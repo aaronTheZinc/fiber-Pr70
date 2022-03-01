@@ -27,7 +27,7 @@ const RegisterForm = (): JSX.Element => {
 
       const { email, password, username } = userFormData;
 
-      const data = await registerUser('test1', 'testy1', '7731231231', '123 street', 'same', 'me.com', 'moman', username, email, password);
+      const data = await registerUser(username, email, password);
 
       // console.log("data", data);
 

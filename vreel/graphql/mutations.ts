@@ -3,37 +3,26 @@ import { client } from "./index";
 import { User } from "../types";
 
 export const CREATE_USER = gql`
-  mutation CreateUser($first_name: String!, $last_name: String!, $email: String, $phone_number: String!, $password: String!, $business_address: String!, $billing_address: String!, $website: String!, $job_title: String!, $username: String!) {
-    register(
-      input: {
-        first_name: $first_name
-        last_name: $last_name
-        email: $email
-        phone_number: $phone_number
-        password: $password
-        business_address: $business_address
-        billing_address: $billing_address
-        website: $website
-        job_title: $job_title
-        username: $username
-      }
-    ) {
-      id
-      first_name
-      last_name
-      email
+mutation CreateUser(
+  $email: String!
+  $password: String!
+  $username: String!
+) {
+  register(
+    input: {
+      email: $email
+      password: $password
+      username: $username
     }
+  ) {
+    id
+    username
+    email
   }
+}
 `;
 
 export const registerUser = async (
-  first_name: string,
-  last_name: string,
-  phone_number: string,
-  business_address: string,
-  billing_address: string,
-  website: string,
-  job_title: string,
   username: string,
   email: string,
   password: string
@@ -44,17 +33,10 @@ export const registerUser = async (
       variables: {
         email,
         password,
-        first_name,
-        last_name,
-        phone_number,
-        business_address,
-        billing_address,
-        website,
-        job_title,
         username,
       },
     });
-    console.log("reg data", data);
+    console.log("reg data", data.register);
     return data;
   } catch (error) {
     console.error("ERROR WITH REGISTER:", error);

@@ -5,11 +5,15 @@ const Header = (): JSX.Element => {
     <>
       <header className="vreel-header vreel-header__wrapper">
         <img src="/logo.svg" alt="vreel logo" className="vreel-header__logo" />
-
         <img
+          onClick={(e) => {
+            const el = document.querySelector(
+              ".vreel-menu.vreel-menu__wrapper"
+            );
+            el.style.display = "flex";  
+          }}
           src="/menu-bars.svg"
           alt="vreel menu"
-          className="vreel-header__menu"
         />
       </header>
     </>
