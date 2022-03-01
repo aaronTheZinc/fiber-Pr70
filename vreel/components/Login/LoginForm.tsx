@@ -8,7 +8,6 @@ interface FormDataType {
 }
 
 const LoginForm = (): JSX.Element => {
-  const [login, { error, data }] = useLazyQuery(LoginQuery);
   const [userFormData, setUserFormData] = useState<FormDataType>({
     email: "",
     password: "",
@@ -16,17 +15,6 @@ const LoginForm = (): JSX.Element => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   // const [login, { loading, error, data }] = useQuery(LoginQuery);
-
-  useEffect(() => {
-    if (error) {
-      //handle login error 
-      alert(error.message)
-    }
-    if (data) {
-      //successful login
-      console.log(data)
-    }
-  }, [error, data])
 
   const submitForm = async (e) => {
     try {

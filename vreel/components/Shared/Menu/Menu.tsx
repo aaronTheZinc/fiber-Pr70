@@ -1,13 +1,14 @@
-import React from "react";
+import React, { useRef } from "react";
 
 const Menu = (): JSX.Element => {
+  const menuEl = useRef(null);
+  const onButtonClick = () => {
+    menuEl.current.style.display = "none";
+  };
   return (
-    <div className="vreel-menu vreel-menu__wrapper">
+    <div ref={menuEl} className="vreel-menu vreel-menu__wrapper">
       <img
-        onClick={(e) => {
-          const el = document.querySelector(".vreel-menu.vreel-menu__wrapper");
-          el.style.display = "none";
-        }}
+        onClick={onButtonClick}
         src="/close-icon.svg"
         alt="vreel menu close icon"
         className="vreel-menu__close-btn"
