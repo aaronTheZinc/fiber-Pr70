@@ -3,13 +3,18 @@
 package model
 
 type Event struct {
-	Name        string `json:"name"`
-	Thumbnail   string `json:"thumbnail"`
-	StartTime   string `json:"start_time"`
-	EndTime     string `json:"end_time"`
-	Description string `json:"description"`
-	Location    string `json:"location"`
-	GroupID     string `json:"group_id"`
+	ID          string   `json:"ID"`
+	Author      string   `json:"author"`
+	Name        string   `json:"name"`
+	Thumbnail   string   `json:"thumbnail"`
+	StartTime   string   `json:"start_time"`
+	EndTime     string   `json:"end_time"`
+	Description string   `json:"description"`
+	Location    string   `json:"location"`
+	GroupID     string   `json:"group_id"`
+	Repeat      string   `json:"repeat"`
+	Link        string   `json:"link"`
+	Groups      []string `json:"groups"`
 }
 
 type Group struct {
@@ -20,7 +25,9 @@ type Group struct {
 	MeetTimes   []string `json:"meet_times"`
 	Private     bool     `json:"private"`
 	ParentGroup string   `json:"parent_group"`
-	ChildGroups []string `json:"child_groups"`
+	ChildGroups []*Group `json:"child_groups"`
+	Members     []string `json:"members"`
+	Events      []*Event `json:"events"`
 }
 
 type LocalSession struct {
@@ -30,6 +37,24 @@ type LocalSession struct {
 type LoginInput struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
+}
+
+type MutationResponse struct {
+	Succeeded bool   `json:"succeeded"`
+	Message   string `json:"message"`
+}
+
+type NewEvent struct {
+	Name        string   `json:"name"`
+	Thumbnail   string   `json:"thumbnail"`
+	StartTime   string   `json:"start_time"`
+	EndTime     string   `json:"end_time"`
+	Description string   `json:"description"`
+	Location    string   `json:"location"`
+	GroupID     string   `json:"group_id"`
+	Repeat      string   `json:"repeat"`
+	Link        string   `json:"link"`
+	Groups      []string `json:"groups"`
 }
 
 type NewGroup struct {

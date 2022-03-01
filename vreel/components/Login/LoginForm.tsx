@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { PrimaryButton, PrimaryInput, SecretInput } from "../index";
 import { loginUser } from "../../graphql/query";
 
@@ -8,6 +8,7 @@ interface FormDataType {
 }
 
 const LoginForm = (): JSX.Element => {
+  const [login, { error, data }] = useLazyQuery(LoginQuery);
   const [userFormData, setUserFormData] = useState<FormDataType>({
     email: "",
     password: "",
@@ -15,6 +16,17 @@ const LoginForm = (): JSX.Element => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   // const [login, { loading, error, data }] = useQuery(LoginQuery);
+
+  useEffect(() => {
+    if (error) {
+      //handle login error 
+      alert(error.message)
+    }
+    if (data) {
+      //successful login
+      console.log(data)
+    }
+  }, [error, data])
 
   const submitForm = async (e) => {
     try {
@@ -62,7 +74,7 @@ const LoginForm = (): JSX.Element => {
           <PrimaryButton
             type="submit"
             action={() => {
-              if (!password) return alert("Passwords must match");
+              if (!password) return alert('Password is Required');
               setUserFormData({
                 email,
                 password,
