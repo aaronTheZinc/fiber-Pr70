@@ -12,7 +12,7 @@ import (
 
 func CreateGroup(author string, newGroup model.NewGroup) (model.Group, error) {
 	group := newGroup.ToDatabaseModel()
-	group.ID = utils.GenerateUID()
+	group.ID = utils.GenerateId()
 	group.Author = author
 
 	fmt.Println("passed in id: " + author)
@@ -139,6 +139,22 @@ func GroupRemoveMember(groupId, member string) (bool, error) {
 	}
 
 	return ok, err
+}
+
+func GroupAddChild(author, parentGroupId string, newGroup model.NewGroup) (model.Group, error) {
+	var err error
+	var group model.Group
+	findErr := db.Where("id = ?", parentGroupId).First(&group)
+	if findErr != nil {
+		err = e.GROUP_NOT_FOUND
+	} else {
+		ng := newGroup.ToDatabaseModel()
+		ng.ParentGroup = parentGroupId
+		ng.ID = utils.GenerateId()
+		ng.Author = author
+
+	}
+	return group, err
 }
 
 func GroupExists(id string) (bool, error) {

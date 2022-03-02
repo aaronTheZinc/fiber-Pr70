@@ -15,7 +15,6 @@ type User {
   website: String!
   job_title: String!
   groups: [Group!]!
-
 }
 # Create Group - name, location, meet times?, public/private?
 type Group {
@@ -26,12 +25,11 @@ type Group {
   meet_times: [String!]
   private: Boolean!
   parent_group: String!
-  child_groups: [String!]
+  child_groups: [Group!]
   members: [String!]
-  events: [String!]
+  events: [Event!]
 }
 type Event {
-
   ID: String!
   author: String!
   name: String!
@@ -117,9 +115,20 @@ type Mutation {
   register(input: NewUser!): User!
   createEvent(token: String!, input: NewEvent!): Event!
   createResetPasswordRequestIntent(email: String!): ResetPasswordResponse!
-  resolveResetPasswordRequestIntent(token: String!, password: String!): ResolvedPasswordReset!
+  resolveResetPasswordRequestIntent(
+    token: String!
+    password: String!
+  ): ResolvedPasswordReset!
   createGroup(input: NewGroup): Group!
   deleteGroup(id: String!, token: String!): MutationResponse!
-  addUserToGroup(token: String!, groupId: String!, userId: String!): MutationResponse!
-  removeUserFromGroup(token: String!, groupId: String!, member: String!): MutationResponse!
+  addUserToGroup(
+    token: String!
+    groupId: String!
+    userId: String!
+  ): MutationResponse!
+  removeUserFromGroup(
+    token: String!
+    groupId: String!
+    member: String!
+  ): MutationResponse!
 }

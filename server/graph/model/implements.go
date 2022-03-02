@@ -96,7 +96,7 @@ func (c *Group) ToDatabaseModel() GroupModel {
 		MeetTimes:   c.MeetTimes,
 		Private:     c.Private,
 		ParentGroup: c.ParentGroup,
-		ChildGroups: c.ChildGroups,
+		ChildGroups: []string{},
 		Members:     c.Members,
 	}
 }
@@ -121,7 +121,6 @@ func (c *GroupModel) ToGroup() Group {
 		Location:    c.Location,
 		Private:     c.Private,
 		ParentGroup: c.ParentGroup,
-		ChildGroups: c.ChildGroups,
 		MeetTimes:   c.MeetTimes,
 		Members:     c.Members,
 	}
