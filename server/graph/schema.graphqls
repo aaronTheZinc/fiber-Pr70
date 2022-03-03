@@ -43,6 +43,11 @@ type Event {
   link: String!
   groups: [String!]
 }
+
+type Vreel {
+  page_title: String!
+}
+
 type MutationResponse {
   succeeded: Boolean!
   message: String!
