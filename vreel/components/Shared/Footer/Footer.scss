@@ -1,0 +1,14 @@
+.vreel-footer {
+  width: 100%;
+  font-family: Poppins;
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 21px;
+  margin-top: 15px;
+  &__text-wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+  }
+}

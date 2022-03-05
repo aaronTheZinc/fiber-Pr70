@@ -1,13 +1,14 @@
-import React, { useEffect, useState } from "react";
-import { PrimaryButton, PrimaryInput, SecretInput } from "../components";
-import { ApolloProvider, useLazyQuery } from "@apollo/client";
+import React from "react";
+import { ApolloProvider} from "@apollo/client";
 import { client } from "../graphql";
-import { LoginQuery } from "../graphql/query";
-import LoginForm from "../components/Login/LoginForm";
+import LoginForm from "../components/Auth/Login/LoginForm";
 
 function LoginPage(): JSX.Element {
-
-  return <LoginForm />
+  return (
+    <div>
+      <LoginForm />
+    </div>
+  );
 }
 
 export default function Login(): JSX.Element {

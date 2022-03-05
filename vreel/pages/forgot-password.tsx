@@ -3,7 +3,7 @@ import { PrimaryButton, PrimaryInput, SecretInput } from "../components";
 import { ApolloProvider, useLazyQuery } from "@apollo/client";
 import { client } from "../graphql";
 import { LoginQuery } from "../graphql/query";
-import ChangePasswordForm from "../components/ChangePassword/ChangePasswordForm";
+import ChangePasswordForm from "../components/Auth/ChangePassword/ChangePasswordForm";
 
 function ChangePasswordPage(): JSX.Element {
   const [email, setEmail] = useState<string>("");
