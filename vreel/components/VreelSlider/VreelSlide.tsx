@@ -2,14 +2,27 @@ import React from "react";
 
 const VreelSlide = (): JSX.Element => {
   return (
-    <section
-      style={{
-        background:
-          "url('https://images.unsplash.com/photo-1626715185400-49cccfabc10f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=627&q=80') no-repeat center center fixed",
-        backgroundSize: "cover",
-      }}
-      className="vreel-slide vreel-slide__wrapper"
-    >
+    <section className="vreel-slide vreel-slide__wrapper">
+      {/* <img src="https://images.unsplash.com/photo-1626715185400-49cccfabc10f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=627&q=80" alt="background img" className="vreel-slide__background-img" /> */}
+
+      <video className="vreel-slide__background-video" autoPlay muted loop>
+        <source src="/vreel-vid.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+      {/* 
+        <div className="vreel-slide__background-video__yt">
+          <iframe
+            width="720"
+            height="1280"
+            src="https://www.youtube.com/embed/IInzXXJLYoY?autoplay=1&playsinline=1&controls=0&disablekb=1&enablejsapi=1&fs=0&loop=1&muted=1"
+            title="YouTube video player"
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          ></iframe>
+        </div> 
+      */}
+
       <div className="vreel-slide__overlay"></div>
 
       <div className="vreel-slide__text-wrapper">

@@ -11,7 +11,6 @@ import VreelSlide from './VreelSlide';
 export const VreelSlider = (): JSX.Element => {
   return (
     <Swiper
-
     modules={[Navigation, Pagination]}
     style={{ height: '100vh' }}
       slidesPerView={1}
