@@ -6,7 +6,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
-import VreelSlide from './VreelSlide';
+import VreelSlide from './VreelSlide/VreelSlide';
 
 export const VreelSlider = (): JSX.Element => {
   return (

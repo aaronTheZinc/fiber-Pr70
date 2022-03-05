@@ -1,3 +1,5 @@
+import Services from "../components/Elements/Services/Services";
+import TextArea from "../components/Elements/TextArea/TextArea";
 import { VreelSlider } from "../components/VreelSlider/VreelSlider";
 
 export default function Home() {
@@ -5,6 +7,8 @@ export default function Home() {
 
     <div>
       <VreelSlider />
+      <TextArea />
+      <Services />
     </div>
   )
 }

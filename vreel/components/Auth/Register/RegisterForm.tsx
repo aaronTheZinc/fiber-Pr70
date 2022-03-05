@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { registerUser } from "../../graphql/mutations";
-import { PrimaryButton, PrimaryInput, SecretInput } from "../index";
+import { registerUser } from "../../../graphql/mutations";
+import { PrimaryButton, PrimaryInput, SecretInput } from "../../index";
 
 interface FormDataType {
   email: string;

@@ -1,7 +1,5 @@
 import React, { useState } from "react";
-import { PrimaryButton, PrimaryInput, SecretInput } from "../index";
-import registerUser from "../../utils/registerUser";
-
+import { PrimaryButton, PrimaryInput, SecretInput } from "../../index";
 interface FormDataType {
   email: string;
 }

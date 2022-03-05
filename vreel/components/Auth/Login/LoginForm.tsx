@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { PrimaryButton, PrimaryInput, SecretInput } from "../index";
-import { loginUser } from "../../graphql/query";
+import { PrimaryButton, PrimaryInput, SecretInput } from "../../index";
+import { loginUser } from "../../../graphql/query";
 
 interface FormDataType {
   email: string;
