@@ -15,6 +15,7 @@ type User {
   website: String!
   job_title: String!
   groups: [Group!]!
+  vreel: Vreel!
 }
 # Create Group - name, location, meet times?, public/private?
 type Group {
@@ -28,6 +29,7 @@ type Group {
   child_groups: [Group!]
   members: [String!]
   events: [Event!]
+  vreel: Vreel!
 }
 type Event {
   ID: String!
@@ -43,9 +45,24 @@ type Event {
   link: String!
   groups: [String!]
 }
+type SlideMetaData {
+  created: String!
+  size: String!
+}
+type Slide {
+  id: String!
+  content_type: String!
+  uri: String!
+  slide_location: Int!
+  metadata: SlideMetaData!
+}
 
 type Vreel {
+  author: String!
   page_title: String!
+  button_uri: String
+  slides: [Slide]!
+
 }
 
 type MutationResponse {
@@ -87,15 +104,15 @@ input NewEvent {
 
 input NewUser {
   username: String!
-  first_name: String!
-  last_name: String!
+  first_name: String
+  last_name: String
   email: String!
-  phone_number: String!
+  phone_number: String
   password: String!
-  business_address: String!
-  billing_address: String!
-  website: String!
-  job_title: String!
+  business_address: String
+  billing_address: String
+  website: String
+  job_title: String
 }
 
 input ResetPasswordInput {
@@ -115,6 +132,14 @@ input NewGroup {
   private: Boolean!
   parent_group: String!
 }
+
+input NewSlide {
+  content_type: String!
+  uri: String!
+  slide_location: Int!
+}
+
+
 
 type Mutation {
   register(input: NewUser!): User!

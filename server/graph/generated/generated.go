@@ -69,6 +69,7 @@ type ComplexityRoot struct {
 		Name        func(childComplexity int) int
 		ParentGroup func(childComplexity int) int
 		Private     func(childComplexity int) int
+		Vreel       func(childComplexity int) int
 	}
 
 	LocalSession struct {
@@ -109,6 +110,19 @@ type ComplexityRoot struct {
 		Succeeded func(childComplexity int) int
 	}
 
+	Slide struct {
+		ContentType   func(childComplexity int) int
+		ID            func(childComplexity int) int
+		Metadata      func(childComplexity int) int
+		SlideLocation func(childComplexity int) int
+		URI           func(childComplexity int) int
+	}
+
+	SlideMetaData struct {
+		Created func(childComplexity int) int
+		Size    func(childComplexity int) int
+	}
+
 	User struct {
 		BillingAddress  func(childComplexity int) int
 		BusinessAddress func(childComplexity int) int
@@ -121,7 +135,15 @@ type ComplexityRoot struct {
 		Password        func(childComplexity int) int
 		PhoneNumber     func(childComplexity int) int
 		Username        func(childComplexity int) int
+		Vreel           func(childComplexity int) int
 		Website         func(childComplexity int) int
+	}
+
+	Vreel struct {
+		Author    func(childComplexity int) int
+		ButtonURI func(childComplexity int) int
+		PageTitle func(childComplexity int) int
+		Slides    func(childComplexity int) int
 	}
 }
 
@@ -310,6 +332,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Group.Private(childComplexity), true
+
+	case "Group.vreel":
+		if e.complexity.Group.Vreel == nil {
+			break
+		}
+
+		return e.complexity.Group.Vreel(childComplexity), true
 
 	case "LocalSession.token":
 		if e.complexity.LocalSession.Token == nil {
@@ -511,6 +540,55 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ResolvedPasswordReset.Succeeded(childComplexity), true
 
+	case "Slide.content_type":
+		if e.complexity.Slide.ContentType == nil {
+			break
+		}
+
+		return e.complexity.Slide.ContentType(childComplexity), true
+
+	case "Slide.id":
+		if e.complexity.Slide.ID == nil {
+			break
+		}
+
+		return e.complexity.Slide.ID(childComplexity), true
+
+	case "Slide.metadata":
+		if e.complexity.Slide.Metadata == nil {
+			break
+		}
+
+		return e.complexity.Slide.Metadata(childComplexity), true
+
+	case "Slide.slide_location":
+		if e.complexity.Slide.SlideLocation == nil {
+			break
+		}
+
+		return e.complexity.Slide.SlideLocation(childComplexity), true
+
+	case "Slide.uri":
+		if e.complexity.Slide.URI == nil {
+			break
+		}
+
+		return e.complexity.Slide.URI(childComplexity), true
+
+	case "SlideMetaData.created":
+		if e.complexity.SlideMetaData.Created == nil {
+			break
+		}
+
+		return e.complexity.SlideMetaData.Created(childComplexity), true
+
+	case "SlideMetaData.size":
+		if e.complexity.SlideMetaData.Size == nil {
+			break
+		}
+
+		return e.complexity.SlideMetaData.Size(childComplexity), true
+
 	case "User.billing_address":
 		if e.complexity.User.BillingAddress == nil {
 			break
@@ -588,12 +666,47 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.User.Username(childComplexity), true
 
+	case "User.vreel":
+		if e.complexity.User.Vreel == nil {
+			break
+		}
+
+		return e.complexity.User.Vreel(childComplexity), true
+
 	case "User.website":
 		if e.complexity.User.Website == nil {
 			break
 		}
 
 		return e.complexity.User.Website(childComplexity), true
+
+	case "Vreel.author":
+		if e.complexity.Vreel.Author == nil {
+			break
+		}
+
+		return e.complexity.Vreel.Author(childComplexity), true
+
+	case "Vreel.button_uri":
+		if e.complexity.Vreel.ButtonURI == nil {
+			break
+		}
+
+		return e.complexity.Vreel.ButtonURI(childComplexity), true
+
+	case "Vreel.page_title":
+		if e.complexity.Vreel.PageTitle == nil {
+			break
+		}
+
+		return e.complexity.Vreel.PageTitle(childComplexity), true
+
+	case "Vreel.slides":
+		if e.complexity.Vreel.Slides == nil {
+			break
+		}
+
+		return e.complexity.Vreel.Slides(childComplexity), true
 
 	}
 	return 0, false
@@ -676,6 +789,7 @@ type User {
   website: String!
   job_title: String!
   groups: [Group!]!
+  vreel: Vreel!
 }
 # Create Group - name, location, meet times?, public/private?
 type Group {
@@ -689,6 +803,7 @@ type Group {
   child_groups: [Group!]
   members: [String!]
   events: [Event!]
+  vreel: Vreel!
 }
 type Event {
   ID: String!
@@ -704,6 +819,26 @@ type Event {
   link: String!
   groups: [String!]
 }
+type SlideMetaData {
+    created: String!
+    size: String!
+}
+type Slide {
+  id: String!
+  content_type: String!
+  uri: String!
+  slide_location: Int!
+  metadata: SlideMetaData!
+}
+
+type Vreel {
+  author: String!
+  page_title: String!
+  button_uri: String
+  slides: [Slide]!
+
+}
+
 type MutationResponse {
   succeeded: Boolean!
   message: String!
@@ -743,15 +878,15 @@ input NewEvent {
 
 input NewUser {
   username: String!
-  first_name: String!
-  last_name: String!
+  first_name: String
+  last_name: String
   email: String!
-  phone_number: String!
+  phone_number: String
   password: String!
-  business_address: String!
-  billing_address: String!
-  website: String!
-  job_title: String!
+  business_address: String
+  billing_address: String
+  website: String
+  job_title: String
 }
 
 input ResetPasswordInput {
@@ -771,6 +906,14 @@ input NewGroup {
   private: Boolean!
   parent_group: String!
 }
+
+input NewSlide {
+  content_type: String!
+  uri: String!
+  slide_location: Int!
+}
+
+
 
 type Mutation {
   register(input: NewUser!): User!
@@ -1861,6 +2004,41 @@ func (ec *executionContext) _Group_events(ctx context.Context, field graphql.Col
 	return ec.marshalOEvent2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐEventᚄ(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Group_vreel(ctx context.Context, field graphql.CollectedField, obj *model.Group) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Group",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Vreel, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Vreel)
+	fc.Result = res
+	return ec.marshalNVreel2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐVreel(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _LocalSession_token(ctx context.Context, field graphql.CollectedField, obj *model.LocalSession) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -2716,6 +2894,251 @@ func (ec *executionContext) _ResolvedPasswordReset_succeeded(ctx context.Context
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Slide_id(ctx context.Context, field graphql.CollectedField, obj *model.Slide) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Slide",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Slide_content_type(ctx context.Context, field graphql.CollectedField, obj *model.Slide) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Slide",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ContentType, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Slide_uri(ctx context.Context, field graphql.CollectedField, obj *model.Slide) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Slide",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.URI, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Slide_slide_location(ctx context.Context, field graphql.CollectedField, obj *model.Slide) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Slide",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SlideLocation, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Slide_metadata(ctx context.Context, field graphql.CollectedField, obj *model.Slide) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Slide",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Metadata, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.SlideMetaData)
+	fc.Result = res
+	return ec.marshalNSlideMetaData2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐSlideMetaData(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _SlideMetaData_created(ctx context.Context, field graphql.CollectedField, obj *model.SlideMetaData) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "SlideMetaData",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Created, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _SlideMetaData_size(ctx context.Context, field graphql.CollectedField, obj *model.SlideMetaData) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "SlideMetaData",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Size, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _User_id(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -3134,6 +3557,178 @@ func (ec *executionContext) _User_groups(ctx context.Context, field graphql.Coll
 	res := resTmp.([]*model.Group)
 	fc.Result = res
 	return ec.marshalNGroup2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐGroupᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _User_vreel(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Vreel, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Vreel)
+	fc.Result = res
+	return ec.marshalNVreel2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐVreel(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Vreel_author(ctx context.Context, field graphql.CollectedField, obj *model.Vreel) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Vreel",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Author, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Vreel_page_title(ctx context.Context, field graphql.CollectedField, obj *model.Vreel) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Vreel",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PageTitle, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Vreel_button_uri(ctx context.Context, field graphql.CollectedField, obj *model.Vreel) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Vreel",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ButtonURI, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Vreel_slides(ctx context.Context, field graphql.CollectedField, obj *model.Vreel) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Vreel",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Slides, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Slide)
+	fc.Result = res
+	return ec.marshalNSlide2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐSlide(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) ___Directive_name(ctx context.Context, field graphql.CollectedField, obj *introspection.Directive) (ret graphql.Marshaler) {
@@ -4447,6 +5042,45 @@ func (ec *executionContext) unmarshalInputNewGroup(ctx context.Context, obj inte
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputNewSlide(ctx context.Context, obj interface{}) (model.NewSlide, error) {
+	var it model.NewSlide
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "content_type":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("content_type"))
+			it.ContentType, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "uri":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("uri"))
+			it.URI, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "slide_location":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("slide_location"))
+			it.SlideLocation, err = ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputNewUser(ctx context.Context, obj interface{}) (model.NewUser, error) {
 	var it model.NewUser
 	asMap := map[string]interface{}{}
@@ -4468,7 +5102,7 @@ func (ec *executionContext) unmarshalInputNewUser(ctx context.Context, obj inter
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("first_name"))
-			it.FirstName, err = ec.unmarshalNString2string(ctx, v)
+			it.FirstName, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -4476,7 +5110,7 @@ func (ec *executionContext) unmarshalInputNewUser(ctx context.Context, obj inter
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("last_name"))
-			it.LastName, err = ec.unmarshalNString2string(ctx, v)
+			it.LastName, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -4492,7 +5126,7 @@ func (ec *executionContext) unmarshalInputNewUser(ctx context.Context, obj inter
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("phone_number"))
-			it.PhoneNumber, err = ec.unmarshalNString2string(ctx, v)
+			it.PhoneNumber, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -4508,7 +5142,7 @@ func (ec *executionContext) unmarshalInputNewUser(ctx context.Context, obj inter
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("business_address"))
-			it.BusinessAddress, err = ec.unmarshalNString2string(ctx, v)
+			it.BusinessAddress, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -4516,7 +5150,7 @@ func (ec *executionContext) unmarshalInputNewUser(ctx context.Context, obj inter
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("billing_address"))
-			it.BillingAddress, err = ec.unmarshalNString2string(ctx, v)
+			it.BillingAddress, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -4524,7 +5158,7 @@ func (ec *executionContext) unmarshalInputNewUser(ctx context.Context, obj inter
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("website"))
-			it.Website, err = ec.unmarshalNString2string(ctx, v)
+			it.Website, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -4532,7 +5166,7 @@ func (ec *executionContext) unmarshalInputNewUser(ctx context.Context, obj inter
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("job_title"))
-			it.JobTitle, err = ec.unmarshalNString2string(ctx, v)
+			it.JobTitle, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -4701,6 +5335,11 @@ func (ec *executionContext) _Group(ctx context.Context, sel ast.SelectionSet, ob
 			out.Values[i] = ec._Group_members(ctx, field, obj)
 		case "events":
 			out.Values[i] = ec._Group_events(ctx, field, obj)
+		case "vreel":
+			out.Values[i] = ec._Group_vreel(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -4992,6 +5631,85 @@ func (ec *executionContext) _ResolvedPasswordReset(ctx context.Context, sel ast.
 	return out
 }
 
+var slideImplementors = []string{"Slide"}
+
+func (ec *executionContext) _Slide(ctx context.Context, sel ast.SelectionSet, obj *model.Slide) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, slideImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Slide")
+		case "id":
+			out.Values[i] = ec._Slide_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "content_type":
+			out.Values[i] = ec._Slide_content_type(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "uri":
+			out.Values[i] = ec._Slide_uri(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "slide_location":
+			out.Values[i] = ec._Slide_slide_location(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "metadata":
+			out.Values[i] = ec._Slide_metadata(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var slideMetaDataImplementors = []string{"SlideMetaData"}
+
+func (ec *executionContext) _SlideMetaData(ctx context.Context, sel ast.SelectionSet, obj *model.SlideMetaData) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, slideMetaDataImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("SlideMetaData")
+		case "created":
+			out.Values[i] = ec._SlideMetaData_created(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "size":
+			out.Values[i] = ec._SlideMetaData_size(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var userImplementors = []string{"User"}
 
 func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj *model.User) graphql.Marshaler {
@@ -5060,6 +5778,50 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			}
 		case "groups":
 			out.Values[i] = ec._User_groups(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "vreel":
+			out.Values[i] = ec._User_vreel(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var vreelImplementors = []string{"Vreel"}
+
+func (ec *executionContext) _Vreel(ctx context.Context, sel ast.SelectionSet, obj *model.Vreel) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, vreelImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Vreel")
+		case "author":
+			out.Values[i] = ec._Vreel_author(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "page_title":
+			out.Values[i] = ec._Vreel_page_title(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "button_uri":
+			out.Values[i] = ec._Vreel_button_uri(ctx, field, obj)
+		case "slides":
+			out.Values[i] = ec._Vreel_slides(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -5411,6 +6173,21 @@ func (ec *executionContext) marshalNGroup2ᚖgithubᚗcomᚋvreelᚋappᚋgraph�
 	return ec._Group(ctx, sel, v)
 }
 
+func (ec *executionContext) unmarshalNInt2int(ctx context.Context, v interface{}) (int, error) {
+	res, err := graphql.UnmarshalInt(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.SelectionSet, v int) graphql.Marshaler {
+	res := graphql.MarshalInt(v)
+	if res == graphql.Null {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+	}
+	return res
+}
+
 func (ec *executionContext) marshalNLocalSession2githubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐLocalSession(ctx context.Context, sel ast.SelectionSet, v model.LocalSession) graphql.Marshaler {
 	return ec._LocalSession(ctx, sel, &v)
 }
@@ -5477,6 +6254,54 @@ func (ec *executionContext) marshalNResolvedPasswordReset2ᚖgithubᚗcomᚋvree
 	return ec._ResolvedPasswordReset(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNSlide2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐSlide(ctx context.Context, sel ast.SelectionSet, v []*model.Slide) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOSlide2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐSlide(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	return ret
+}
+
+func (ec *executionContext) marshalNSlideMetaData2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐSlideMetaData(ctx context.Context, sel ast.SelectionSet, v *model.SlideMetaData) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._SlideMetaData(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNString2string(ctx context.Context, v interface{}) (string, error) {
 	res, err := graphql.UnmarshalString(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -5504,6 +6329,16 @@ func (ec *executionContext) marshalNUser2ᚖgithubᚗcomᚋvreelᚋappᚋgraph�
 		return graphql.Null
 	}
 	return ec._User(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNVreel2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐVreel(ctx context.Context, sel ast.SelectionSet, v *model.Vreel) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._Vreel(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalN__Directive2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐDirective(ctx context.Context, sel ast.SelectionSet, v introspection.Directive) graphql.Marshaler {
@@ -5895,6 +6730,13 @@ func (ec *executionContext) unmarshalONewGroup2ᚖgithubᚗcomᚋvreelᚋappᚋg
 	}
 	res, err := ec.unmarshalInputNewGroup(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOSlide2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐSlide(ctx context.Context, sel ast.SelectionSet, v *model.Slide) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Slide(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOString2string(ctx context.Context, v interface{}) (string, error) {

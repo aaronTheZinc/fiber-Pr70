@@ -19,8 +19,8 @@ const VreelSlide = (): JSX.Element => {
         <source src="/vreel-vid.mp4" type="video/mp4" />
         Your browser does not support the video tag.
       </video>
-      
-        {/* <div className="vreel-slide__background-video__yt">
+
+      {/* <div className="vreel-slide__background-video__yt">
           <iframe
             width="720"
             height="1280"
@@ -31,7 +31,7 @@ const VreelSlide = (): JSX.Element => {
             allowFullScreen
           ></iframe>
         </div>  */}
-     
+
 
       <div className="vreel-slide__overlay"></div>
 
