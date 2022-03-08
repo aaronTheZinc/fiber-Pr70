@@ -57,12 +57,60 @@ type Slide {
   metadata: SlideMetaData!
 }
 
+type Contact {
+  position: Int!
+  header: String!
+}
+
+type Service {
+  position: Int!
+  header: String!
+  info: TextArea!
+}
+
+type Link {
+  position: Int
+  header: String!
+  url: String!
+  link_type: String!
+  category: String!
+}
+
+type Links {
+  position: Int
+  links: [Link]
+}
+
+type TextArea {
+  content: String!
+}
+
+type Videos {
+  position: Int!
+  uri: String!
+  tag: String!
+}
+
+type Gallery {
+  position: Int
+  uris: [String!]
+  tag: String!
+}
+
+type VreelElements {
+  text_area: TextArea
+  videos: Videos
+  gallery: Gallery
+  services: Service
+  links: Links
+  contact: Contact
+}
 type Vreel {
   author: String!
   page_title: String!
   button_uri: String
   slides: [Slide]!
-
+  elements: VreelElements!
 }
 
 type MutationResponse {
@@ -138,8 +186,6 @@ input NewSlide {
   uri: String!
   slide_location: Int!
 }
-
-
 
 type Mutation {
   register(input: NewUser!): User!

@@ -43,6 +43,11 @@ type DirectiveRoot struct {
 }
 
 type ComplexityRoot struct {
+	Contact struct {
+		Header   func(childComplexity int) int
+		Position func(childComplexity int) int
+	}
+
 	Event struct {
 		Author      func(childComplexity int) int
 		Description func(childComplexity int) int
@@ -58,6 +63,12 @@ type ComplexityRoot struct {
 		Thumbnail   func(childComplexity int) int
 	}
 
+	Gallery struct {
+		Position func(childComplexity int) int
+		Tag      func(childComplexity int) int
+		Uris     func(childComplexity int) int
+	}
+
 	Group struct {
 		Author      func(childComplexity int) int
 		ChildGroups func(childComplexity int) int
@@ -70,6 +81,19 @@ type ComplexityRoot struct {
 		ParentGroup func(childComplexity int) int
 		Private     func(childComplexity int) int
 		Vreel       func(childComplexity int) int
+	}
+
+	Link struct {
+		Category func(childComplexity int) int
+		Header   func(childComplexity int) int
+		LinkType func(childComplexity int) int
+		Position func(childComplexity int) int
+		URL      func(childComplexity int) int
+	}
+
+	Links struct {
+		Links    func(childComplexity int) int
+		Position func(childComplexity int) int
 	}
 
 	LocalSession struct {
@@ -110,6 +134,12 @@ type ComplexityRoot struct {
 		Succeeded func(childComplexity int) int
 	}
 
+	Service struct {
+		Header   func(childComplexity int) int
+		Info     func(childComplexity int) int
+		Position func(childComplexity int) int
+	}
+
 	Slide struct {
 		ContentType   func(childComplexity int) int
 		ID            func(childComplexity int) int
@@ -121,6 +151,10 @@ type ComplexityRoot struct {
 	SlideMetaData struct {
 		Created func(childComplexity int) int
 		Size    func(childComplexity int) int
+	}
+
+	TextArea struct {
+		Content func(childComplexity int) int
 	}
 
 	User struct {
@@ -139,11 +173,27 @@ type ComplexityRoot struct {
 		Website         func(childComplexity int) int
 	}
 
+	Videos struct {
+		Position func(childComplexity int) int
+		Tag      func(childComplexity int) int
+		URI      func(childComplexity int) int
+	}
+
 	Vreel struct {
 		Author    func(childComplexity int) int
 		ButtonURI func(childComplexity int) int
+		Elements  func(childComplexity int) int
 		PageTitle func(childComplexity int) int
 		Slides    func(childComplexity int) int
+	}
+
+	VreelElements struct {
+		Contact  func(childComplexity int) int
+		Gallery  func(childComplexity int) int
+		Links    func(childComplexity int) int
+		Services func(childComplexity int) int
+		TextArea func(childComplexity int) int
+		Videos   func(childComplexity int) int
 	}
 }
 
@@ -178,6 +228,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	ec := executionContext{nil, e}
 	_ = ec
 	switch typeName + "." + field {
+
+	case "Contact.header":
+		if e.complexity.Contact.Header == nil {
+			break
+		}
+
+		return e.complexity.Contact.Header(childComplexity), true
+
+	case "Contact.position":
+		if e.complexity.Contact.Position == nil {
+			break
+		}
+
+		return e.complexity.Contact.Position(childComplexity), true
 
 	case "Event.author":
 		if e.complexity.Event.Author == nil {
@@ -263,6 +327,27 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Event.Thumbnail(childComplexity), true
 
+	case "Gallery.position":
+		if e.complexity.Gallery.Position == nil {
+			break
+		}
+
+		return e.complexity.Gallery.Position(childComplexity), true
+
+	case "Gallery.tag":
+		if e.complexity.Gallery.Tag == nil {
+			break
+		}
+
+		return e.complexity.Gallery.Tag(childComplexity), true
+
+	case "Gallery.uris":
+		if e.complexity.Gallery.Uris == nil {
+			break
+		}
+
+		return e.complexity.Gallery.Uris(childComplexity), true
+
 	case "Group.author":
 		if e.complexity.Group.Author == nil {
 			break
@@ -339,6 +424,55 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Group.Vreel(childComplexity), true
+
+	case "Link.category":
+		if e.complexity.Link.Category == nil {
+			break
+		}
+
+		return e.complexity.Link.Category(childComplexity), true
+
+	case "Link.header":
+		if e.complexity.Link.Header == nil {
+			break
+		}
+
+		return e.complexity.Link.Header(childComplexity), true
+
+	case "Link.link_type":
+		if e.complexity.Link.LinkType == nil {
+			break
+		}
+
+		return e.complexity.Link.LinkType(childComplexity), true
+
+	case "Link.position":
+		if e.complexity.Link.Position == nil {
+			break
+		}
+
+		return e.complexity.Link.Position(childComplexity), true
+
+	case "Link.url":
+		if e.complexity.Link.URL == nil {
+			break
+		}
+
+		return e.complexity.Link.URL(childComplexity), true
+
+	case "Links.links":
+		if e.complexity.Links.Links == nil {
+			break
+		}
+
+		return e.complexity.Links.Links(childComplexity), true
+
+	case "Links.position":
+		if e.complexity.Links.Position == nil {
+			break
+		}
+
+		return e.complexity.Links.Position(childComplexity), true
 
 	case "LocalSession.token":
 		if e.complexity.LocalSession.Token == nil {
@@ -540,6 +674,27 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ResolvedPasswordReset.Succeeded(childComplexity), true
 
+	case "Service.header":
+		if e.complexity.Service.Header == nil {
+			break
+		}
+
+		return e.complexity.Service.Header(childComplexity), true
+
+	case "Service.info":
+		if e.complexity.Service.Info == nil {
+			break
+		}
+
+		return e.complexity.Service.Info(childComplexity), true
+
+	case "Service.position":
+		if e.complexity.Service.Position == nil {
+			break
+		}
+
+		return e.complexity.Service.Position(childComplexity), true
+
 	case "Slide.content_type":
 		if e.complexity.Slide.ContentType == nil {
 			break
@@ -588,6 +743,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.SlideMetaData.Size(childComplexity), true
+
+	case "TextArea.content":
+		if e.complexity.TextArea.Content == nil {
+			break
+		}
+
+		return e.complexity.TextArea.Content(childComplexity), true
 
 	case "User.billing_address":
 		if e.complexity.User.BillingAddress == nil {
@@ -680,6 +842,27 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.User.Website(childComplexity), true
 
+	case "Videos.position":
+		if e.complexity.Videos.Position == nil {
+			break
+		}
+
+		return e.complexity.Videos.Position(childComplexity), true
+
+	case "Videos.tag":
+		if e.complexity.Videos.Tag == nil {
+			break
+		}
+
+		return e.complexity.Videos.Tag(childComplexity), true
+
+	case "Videos.uri":
+		if e.complexity.Videos.URI == nil {
+			break
+		}
+
+		return e.complexity.Videos.URI(childComplexity), true
+
 	case "Vreel.author":
 		if e.complexity.Vreel.Author == nil {
 			break
@@ -694,6 +877,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Vreel.ButtonURI(childComplexity), true
 
+	case "Vreel.elements":
+		if e.complexity.Vreel.Elements == nil {
+			break
+		}
+
+		return e.complexity.Vreel.Elements(childComplexity), true
+
 	case "Vreel.page_title":
 		if e.complexity.Vreel.PageTitle == nil {
 			break
@@ -707,6 +897,48 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Vreel.Slides(childComplexity), true
+
+	case "VreelElements.contact":
+		if e.complexity.VreelElements.Contact == nil {
+			break
+		}
+
+		return e.complexity.VreelElements.Contact(childComplexity), true
+
+	case "VreelElements.gallery":
+		if e.complexity.VreelElements.Gallery == nil {
+			break
+		}
+
+		return e.complexity.VreelElements.Gallery(childComplexity), true
+
+	case "VreelElements.links":
+		if e.complexity.VreelElements.Links == nil {
+			break
+		}
+
+		return e.complexity.VreelElements.Links(childComplexity), true
+
+	case "VreelElements.services":
+		if e.complexity.VreelElements.Services == nil {
+			break
+		}
+
+		return e.complexity.VreelElements.Services(childComplexity), true
+
+	case "VreelElements.text_area":
+		if e.complexity.VreelElements.TextArea == nil {
+			break
+		}
+
+		return e.complexity.VreelElements.TextArea(childComplexity), true
+
+	case "VreelElements.videos":
+		if e.complexity.VreelElements.Videos == nil {
+			break
+		}
+
+		return e.complexity.VreelElements.Videos(childComplexity), true
 
 	}
 	return 0, false
@@ -820,8 +1052,8 @@ type Event {
   groups: [String!]
 }
 type SlideMetaData {
-    created: String!
-    size: String!
+  created: String!
+  size: String!
 }
 type Slide {
   id: String!
@@ -831,12 +1063,60 @@ type Slide {
   metadata: SlideMetaData!
 }
 
+type Contact {
+  position: Int!
+  header: String!
+}
+
+type Service {
+  position: Int!
+  header: String!
+  info: TextArea!
+}
+
+type Link {
+  position: Int
+  header: String!
+  url: String!
+  link_type: String!
+  category: String!
+}
+
+type Links {
+  position: Int
+  links: [Link]
+}
+
+type TextArea {
+  content: String!
+}
+
+type Videos {
+  position: Int!
+  uri: String!
+  tag: String!
+}
+
+type Gallery {
+  position: Int
+  uris: [String!]
+  tag: String!
+}
+
+type VreelElements {
+  text_area: TextArea
+  videos: Videos
+  gallery: Gallery
+  services: Service
+  links: Links
+  contact: Contact
+}
 type Vreel {
   author: String!
   page_title: String!
   button_uri: String
   slides: [Slide]!
-
+  elements: VreelElements!
 }
 
 type MutationResponse {
@@ -912,8 +1192,6 @@ input NewSlide {
   uri: String!
   slide_location: Int!
 }
-
-
 
 type Mutation {
   register(input: NewUser!): User!
@@ -1248,6 +1526,76 @@ func (ec *executionContext) field___Type_fields_args(ctx context.Context, rawArg
 // endregion ************************** directives.gotpl **************************
 
 // region    **************************** field.gotpl *****************************
+
+func (ec *executionContext) _Contact_position(ctx context.Context, field graphql.CollectedField, obj *model.Contact) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Contact",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Position, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Contact_header(ctx context.Context, field graphql.CollectedField, obj *model.Contact) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Contact",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Header, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
 
 func (ec *executionContext) _Event_ID(ctx context.Context, field graphql.CollectedField, obj *model.Event) (ret graphql.Marshaler) {
 	defer func() {
@@ -1666,6 +2014,105 @@ func (ec *executionContext) _Event_groups(ctx context.Context, field graphql.Col
 	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Gallery_position(ctx context.Context, field graphql.CollectedField, obj *model.Gallery) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Gallery",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Position, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Gallery_uris(ctx context.Context, field graphql.CollectedField, obj *model.Gallery) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Gallery",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Uris, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]string)
+	fc.Result = res
+	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Gallery_tag(ctx context.Context, field graphql.CollectedField, obj *model.Gallery) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Gallery",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Tag, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Group_id(ctx context.Context, field graphql.CollectedField, obj *model.Group) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -2037,6 +2484,242 @@ func (ec *executionContext) _Group_vreel(ctx context.Context, field graphql.Coll
 	res := resTmp.(*model.Vreel)
 	fc.Result = res
 	return ec.marshalNVreel2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐVreel(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Link_position(ctx context.Context, field graphql.CollectedField, obj *model.Link) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Link",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Position, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Link_header(ctx context.Context, field graphql.CollectedField, obj *model.Link) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Link",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Header, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Link_url(ctx context.Context, field graphql.CollectedField, obj *model.Link) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Link",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.URL, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Link_link_type(ctx context.Context, field graphql.CollectedField, obj *model.Link) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Link",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LinkType, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Link_category(ctx context.Context, field graphql.CollectedField, obj *model.Link) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Link",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Category, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Links_position(ctx context.Context, field graphql.CollectedField, obj *model.Links) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Links",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Position, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Links_links(ctx context.Context, field graphql.CollectedField, obj *model.Links) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Links",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Links, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Link)
+	fc.Result = res
+	return ec.marshalOLink2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐLink(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _LocalSession_token(ctx context.Context, field graphql.CollectedField, obj *model.LocalSession) (ret graphql.Marshaler) {
@@ -2894,6 +3577,111 @@ func (ec *executionContext) _ResolvedPasswordReset_succeeded(ctx context.Context
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Service_position(ctx context.Context, field graphql.CollectedField, obj *model.Service) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Service",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Position, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Service_header(ctx context.Context, field graphql.CollectedField, obj *model.Service) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Service",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Header, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Service_info(ctx context.Context, field graphql.CollectedField, obj *model.Service) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Service",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Info, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.TextArea)
+	fc.Result = res
+	return ec.marshalNTextArea2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐTextArea(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Slide_id(ctx context.Context, field graphql.CollectedField, obj *model.Slide) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -3123,6 +3911,41 @@ func (ec *executionContext) _SlideMetaData_size(ctx context.Context, field graph
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return obj.Size, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _TextArea_content(ctx context.Context, field graphql.CollectedField, obj *model.TextArea) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "TextArea",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Content, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3594,6 +4417,111 @@ func (ec *executionContext) _User_vreel(ctx context.Context, field graphql.Colle
 	return ec.marshalNVreel2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐVreel(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Videos_position(ctx context.Context, field graphql.CollectedField, obj *model.Videos) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Videos",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Position, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Videos_uri(ctx context.Context, field graphql.CollectedField, obj *model.Videos) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Videos",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.URI, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Videos_tag(ctx context.Context, field graphql.CollectedField, obj *model.Videos) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Videos",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Tag, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Vreel_author(ctx context.Context, field graphql.CollectedField, obj *model.Vreel) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -3729,6 +4657,233 @@ func (ec *executionContext) _Vreel_slides(ctx context.Context, field graphql.Col
 	res := resTmp.([]*model.Slide)
 	fc.Result = res
 	return ec.marshalNSlide2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐSlide(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Vreel_elements(ctx context.Context, field graphql.CollectedField, obj *model.Vreel) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Vreel",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Elements, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.VreelElements)
+	fc.Result = res
+	return ec.marshalNVreelElements2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐVreelElements(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _VreelElements_text_area(ctx context.Context, field graphql.CollectedField, obj *model.VreelElements) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "VreelElements",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TextArea, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.TextArea)
+	fc.Result = res
+	return ec.marshalOTextArea2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐTextArea(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _VreelElements_videos(ctx context.Context, field graphql.CollectedField, obj *model.VreelElements) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "VreelElements",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Videos, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.Videos)
+	fc.Result = res
+	return ec.marshalOVideos2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐVideos(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _VreelElements_gallery(ctx context.Context, field graphql.CollectedField, obj *model.VreelElements) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "VreelElements",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Gallery, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.Gallery)
+	fc.Result = res
+	return ec.marshalOGallery2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐGallery(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _VreelElements_services(ctx context.Context, field graphql.CollectedField, obj *model.VreelElements) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "VreelElements",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Services, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.Service)
+	fc.Result = res
+	return ec.marshalOService2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐService(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _VreelElements_links(ctx context.Context, field graphql.CollectedField, obj *model.VreelElements) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "VreelElements",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Links, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.Links)
+	fc.Result = res
+	return ec.marshalOLinks2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐLinks(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _VreelElements_contact(ctx context.Context, field graphql.CollectedField, obj *model.VreelElements) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "VreelElements",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Contact, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.Contact)
+	fc.Result = res
+	return ec.marshalOContact2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐContact(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) ___Directive_name(ctx context.Context, field graphql.CollectedField, obj *introspection.Directive) (ret graphql.Marshaler) {
@@ -5207,6 +6362,38 @@ func (ec *executionContext) unmarshalInputResetPasswordInput(ctx context.Context
 
 // region    **************************** object.gotpl ****************************
 
+var contactImplementors = []string{"Contact"}
+
+func (ec *executionContext) _Contact(ctx context.Context, sel ast.SelectionSet, obj *model.Contact) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, contactImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Contact")
+		case "position":
+			out.Values[i] = ec._Contact_position(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "header":
+			out.Values[i] = ec._Contact_header(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var eventImplementors = []string{"Event"}
 
 func (ec *executionContext) _Event(ctx context.Context, sel ast.SelectionSet, obj *model.Event) graphql.Marshaler {
@@ -5286,6 +6473,37 @@ func (ec *executionContext) _Event(ctx context.Context, sel ast.SelectionSet, ob
 	return out
 }
 
+var galleryImplementors = []string{"Gallery"}
+
+func (ec *executionContext) _Gallery(ctx context.Context, sel ast.SelectionSet, obj *model.Gallery) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, galleryImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Gallery")
+		case "position":
+			out.Values[i] = ec._Gallery_position(ctx, field, obj)
+		case "uris":
+			out.Values[i] = ec._Gallery_uris(ctx, field, obj)
+		case "tag":
+			out.Values[i] = ec._Gallery_tag(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var groupImplementors = []string{"Group"}
 
 func (ec *executionContext) _Group(ctx context.Context, sel ast.SelectionSet, obj *model.Group) graphql.Marshaler {
@@ -5340,6 +6558,76 @@ func (ec *executionContext) _Group(ctx context.Context, sel ast.SelectionSet, ob
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var linkImplementors = []string{"Link"}
+
+func (ec *executionContext) _Link(ctx context.Context, sel ast.SelectionSet, obj *model.Link) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, linkImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Link")
+		case "position":
+			out.Values[i] = ec._Link_position(ctx, field, obj)
+		case "header":
+			out.Values[i] = ec._Link_header(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "url":
+			out.Values[i] = ec._Link_url(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "link_type":
+			out.Values[i] = ec._Link_link_type(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "category":
+			out.Values[i] = ec._Link_category(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var linksImplementors = []string{"Links"}
+
+func (ec *executionContext) _Links(ctx context.Context, sel ast.SelectionSet, obj *model.Links) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, linksImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Links")
+		case "position":
+			out.Values[i] = ec._Links_position(ctx, field, obj)
+		case "links":
+			out.Values[i] = ec._Links_links(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -5631,6 +6919,43 @@ func (ec *executionContext) _ResolvedPasswordReset(ctx context.Context, sel ast.
 	return out
 }
 
+var serviceImplementors = []string{"Service"}
+
+func (ec *executionContext) _Service(ctx context.Context, sel ast.SelectionSet, obj *model.Service) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, serviceImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Service")
+		case "position":
+			out.Values[i] = ec._Service_position(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "header":
+			out.Values[i] = ec._Service_header(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "info":
+			out.Values[i] = ec._Service_info(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var slideImplementors = []string{"Slide"}
 
 func (ec *executionContext) _Slide(ctx context.Context, sel ast.SelectionSet, obj *model.Slide) graphql.Marshaler {
@@ -5696,6 +7021,33 @@ func (ec *executionContext) _SlideMetaData(ctx context.Context, sel ast.Selectio
 			}
 		case "size":
 			out.Values[i] = ec._SlideMetaData_size(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var textAreaImplementors = []string{"TextArea"}
+
+func (ec *executionContext) _TextArea(ctx context.Context, sel ast.SelectionSet, obj *model.TextArea) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, textAreaImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("TextArea")
+		case "content":
+			out.Values[i] = ec._TextArea_content(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -5797,6 +7149,43 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 	return out
 }
 
+var videosImplementors = []string{"Videos"}
+
+func (ec *executionContext) _Videos(ctx context.Context, sel ast.SelectionSet, obj *model.Videos) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, videosImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Videos")
+		case "position":
+			out.Values[i] = ec._Videos_position(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "uri":
+			out.Values[i] = ec._Videos_uri(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "tag":
+			out.Values[i] = ec._Videos_tag(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var vreelImplementors = []string{"Vreel"}
 
 func (ec *executionContext) _Vreel(ctx context.Context, sel ast.SelectionSet, obj *model.Vreel) graphql.Marshaler {
@@ -5825,6 +7214,45 @@ func (ec *executionContext) _Vreel(ctx context.Context, sel ast.SelectionSet, ob
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "elements":
+			out.Values[i] = ec._Vreel_elements(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var vreelElementsImplementors = []string{"VreelElements"}
+
+func (ec *executionContext) _VreelElements(ctx context.Context, sel ast.SelectionSet, obj *model.VreelElements) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, vreelElementsImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("VreelElements")
+		case "text_area":
+			out.Values[i] = ec._VreelElements_text_area(ctx, field, obj)
+		case "videos":
+			out.Values[i] = ec._VreelElements_videos(ctx, field, obj)
+		case "gallery":
+			out.Values[i] = ec._VreelElements_gallery(ctx, field, obj)
+		case "services":
+			out.Values[i] = ec._VreelElements_services(ctx, field, obj)
+		case "links":
+			out.Values[i] = ec._VreelElements_links(ctx, field, obj)
+		case "contact":
+			out.Values[i] = ec._VreelElements_contact(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -6317,6 +7745,16 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 	return res
 }
 
+func (ec *executionContext) marshalNTextArea2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐTextArea(ctx context.Context, sel ast.SelectionSet, v *model.TextArea) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._TextArea(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalNUser2githubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v model.User) graphql.Marshaler {
 	return ec._User(ctx, sel, &v)
 }
@@ -6339,6 +7777,16 @@ func (ec *executionContext) marshalNVreel2ᚖgithubᚗcomᚋvreelᚋappᚋgraph�
 		return graphql.Null
 	}
 	return ec._Vreel(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNVreelElements2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐVreelElements(ctx context.Context, sel ast.SelectionSet, v *model.VreelElements) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._VreelElements(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalN__Directive2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐDirective(ctx context.Context, sel ast.SelectionSet, v introspection.Directive) graphql.Marshaler {
@@ -6622,6 +8070,13 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	return graphql.MarshalBoolean(*v)
 }
 
+func (ec *executionContext) marshalOContact2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐContact(ctx context.Context, sel ast.SelectionSet, v *model.Contact) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Contact(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalOEvent2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐEventᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Event) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
@@ -6667,6 +8122,13 @@ func (ec *executionContext) marshalOEvent2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgra
 	}
 
 	return ret
+}
+
+func (ec *executionContext) marshalOGallery2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐGallery(ctx context.Context, sel ast.SelectionSet, v *model.Gallery) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Gallery(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOGroup2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐGroupᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Group) graphql.Marshaler {
@@ -6716,6 +8178,76 @@ func (ec *executionContext) marshalOGroup2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgra
 	return ret
 }
 
+func (ec *executionContext) unmarshalOInt2ᚖint(ctx context.Context, v interface{}) (*int, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := graphql.UnmarshalInt(v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOInt2ᚖint(ctx context.Context, sel ast.SelectionSet, v *int) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return graphql.MarshalInt(*v)
+}
+
+func (ec *executionContext) marshalOLink2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐLink(ctx context.Context, sel ast.SelectionSet, v []*model.Link) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOLink2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐLink(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	return ret
+}
+
+func (ec *executionContext) marshalOLink2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐLink(ctx context.Context, sel ast.SelectionSet, v *model.Link) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Link(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOLinks2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐLinks(ctx context.Context, sel ast.SelectionSet, v *model.Links) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Links(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalOLoginInput2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐLoginInput(ctx context.Context, v interface{}) (*model.LoginInput, error) {
 	if v == nil {
 		return nil, nil
@@ -6730,6 +8262,13 @@ func (ec *executionContext) unmarshalONewGroup2ᚖgithubᚗcomᚋvreelᚋappᚋg
 	}
 	res, err := ec.unmarshalInputNewGroup(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOService2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐService(ctx context.Context, sel ast.SelectionSet, v *model.Service) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Service(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOSlide2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐSlide(ctx context.Context, sel ast.SelectionSet, v *model.Slide) graphql.Marshaler {
@@ -6803,6 +8342,20 @@ func (ec *executionContext) marshalOString2ᚖstring(ctx context.Context, sel as
 		return graphql.Null
 	}
 	return graphql.MarshalString(*v)
+}
+
+func (ec *executionContext) marshalOTextArea2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐTextArea(ctx context.Context, sel ast.SelectionSet, v *model.TextArea) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._TextArea(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOVideos2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐVideos(ctx context.Context, sel ast.SelectionSet, v *model.Videos) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Videos(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalO__EnumValue2ᚕgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐEnumValueᚄ(ctx context.Context, sel ast.SelectionSet, v []introspection.EnumValue) graphql.Marshaler {

@@ -2,6 +2,11 @@
 
 package model
 
+type Contact struct {
+	Position int    `json:"position"`
+	Header   string `json:"header"`
+}
+
 type Event struct {
 	ID          string   `json:"ID"`
 	Author      string   `json:"author"`
@@ -17,6 +22,12 @@ type Event struct {
 	Groups      []string `json:"groups"`
 }
 
+type Gallery struct {
+	Position *int     `json:"position"`
+	Uris     []string `json:"uris"`
+	Tag      string   `json:"tag"`
+}
+
 type Group struct {
 	ID          string   `json:"id"`
 	Author      string   `json:"author"`
@@ -29,6 +40,19 @@ type Group struct {
 	Members     []string `json:"members"`
 	Events      []*Event `json:"events"`
 	Vreel       *Vreel   `json:"vreel"`
+}
+
+type Link struct {
+	Position *int   `json:"position"`
+	Header   string `json:"header"`
+	URL      string `json:"url"`
+	LinkType string `json:"link_type"`
+	Category string `json:"category"`
+}
+
+type Links struct {
+	Position *int    `json:"position"`
+	Links    []*Link `json:"links"`
 }
 
 type LocalSession struct {
@@ -101,6 +125,12 @@ type ResolvedPasswordReset struct {
 	Succeeded bool   `json:"succeeded"`
 }
 
+type Service struct {
+	Position int       `json:"position"`
+	Header   string    `json:"header"`
+	Info     *TextArea `json:"info"`
+}
+
 type Slide struct {
 	ID            string         `json:"id"`
 	ContentType   string         `json:"content_type"`
@@ -112,6 +142,10 @@ type Slide struct {
 type SlideMetaData struct {
 	Created string `json:"created"`
 	Size    string `json:"size"`
+}
+
+type TextArea struct {
+	Content string `json:"content"`
 }
 
 type User struct {
@@ -130,9 +164,25 @@ type User struct {
 	Vreel           *Vreel   `json:"vreel"`
 }
 
+type Videos struct {
+	Position int    `json:"position"`
+	URI      string `json:"uri"`
+	Tag      string `json:"tag"`
+}
+
 type Vreel struct {
-	Author    string   `json:"author"`
-	PageTitle string   `json:"page_title"`
-	ButtonURI *string  `json:"button_uri"`
-	Slides    []*Slide `json:"slides"`
+	Author    string         `json:"author"`
+	PageTitle string         `json:"page_title"`
+	ButtonURI *string        `json:"button_uri"`
+	Slides    []*Slide       `json:"slides"`
+	Elements  *VreelElements `json:"elements"`
+}
+
+type VreelElements struct {
+	TextArea *TextArea `json:"text_area"`
+	Videos   *Videos   `json:"videos"`
+	Gallery  *Gallery  `json:"gallery"`
+	Services *Service  `json:"services"`
+	Links    *Links    `json:"links"`
+	Contact  *Contact  `json:"contact"`
 }
