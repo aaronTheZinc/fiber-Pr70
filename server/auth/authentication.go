@@ -145,6 +145,14 @@ func UpdatePassword(token string, password string) (model.ResolvedPasswordReset,
 
 }
 
+func CreatePhoneVerificationIntent() {
+
+}
+
+func ResolvePhoneVerificationInput() {
+
+}
+
 //Hash Passowrd To Be Stored In Database
 func HashPassword(password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)

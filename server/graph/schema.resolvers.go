@@ -19,7 +19,6 @@ func (r *mutationResolver) Register(ctx context.Context, input model.NewUser) (*
 
 func (r *mutationResolver) CreateEvent(ctx context.Context, token string, input model.NewEvent) (*model.Event, error) {
 	event, err := auth.CreateEvent(token, input)
-
 	return &event, err
 }
 
