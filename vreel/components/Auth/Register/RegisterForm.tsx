@@ -44,6 +44,10 @@ const RegisterForm = (): JSX.Element => {
           userFormData.password
         );
 
+        if (error) {
+          //handle if autologin doesn't work
+        }
+
         if (token) {
           setCookie("@token", token);
 
