@@ -141,3 +141,10 @@ func GetUserByEmail(email string) (model.UserModel, error) {
 	err := db.Where("email = ?", email).First(&user)
 	return user, err.Error
 }
+
+func GetAllUsernames() ([]model.UserModel, error) {
+	var users []model.UserModel
+	err := db.Select("username").Find(&users)
+
+	return users, err.Error
+}

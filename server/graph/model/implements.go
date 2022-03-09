@@ -62,18 +62,17 @@ type SlideModel struct {
 
 func (c *NewUser) ToDatabaseModel() UserModel {
 	// var groups pq.StringArray
-
 	return UserModel{
 		Username:        c.Username,
-		FirstName:       *c.FirstName,
-		LastName:        *c.LastName,
+		FirstName:       "",
+		LastName:        "",
 		Email:           c.Email,
 		Password:        c.Password,
-		PhoneNumber:     *c.PhoneNumber,
-		BusinessAddress: *c.BusinessAddress,
-		BillingAddress:  *c.BillingAddress,
-		Website:         *c.Website,
-		JobTitle:        *c.JobTitle,
+		PhoneNumber:     "",
+		BusinessAddress: "",
+		BillingAddress:  "",
+		Website:         "",
+		JobTitle:        "",
 		Groups:          []string{},
 	}
 
