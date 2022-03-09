@@ -47,21 +47,18 @@ func GetUserByUsername(username string) (model.User, error) {
 
 //Check If Username Has Been Taken
 func UsernameIsTaken(username string) (bool, error) {
+	var err error
 	var doesExist bool
-	var user model.UserModel
+	var users []model.UserModel
 
-	if db_init_err != nil {
-		return doesExist, db_init_err
-	} else {
-		err := db.Where("username = ?", username).First(&user)
-		if err.Error != nil {
-			doesExist = true
-		} else {
-			doesExist = false
-		}
+	e := db.Where("username = ?", username).Find(&users)
 
+	if e.Error != nil {
+		err = e.Error
 	}
-	return doesExist, nil
+	doesExist = len(users) > 0
+
+	return doesExist, err
 }
 
 //Update Password

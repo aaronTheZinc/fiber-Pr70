@@ -29,18 +29,35 @@ export const getUserByUsername = async (username: string): Promise<User> => {
   return data.username;
 };
 
+interface LoginResponse {
+  error: string;
+  token: string;
+}
+
 export const loginUser = async (
   email: string,
   password: string
-): Promise<User> => {
-  try {
-    const { data } = await client.query({
+): Promise<LoginResponse> => {
+  const response = {} as LoginResponse;
+
+  await client
+    .query({
       query: LoginQuery,
       variables: { email, password },
+    })
+    .then(({ data }) => {
+      response.token = data.login.token;
+    })
+    .catch((e) => {
+      response.error = e.message;
     });
 
-    return data.login.token;
-  } catch (error) {
-    console.error("ERROR WITH LOGIN:", error);
-  }
+  // .then(({ data }) => {
+  //   response.token = data.token;
+  // })
+  // .catch((e) => {
+  //   response.error = e.message;
+  // });
+
+  return response;
 };
