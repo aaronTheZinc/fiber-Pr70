@@ -36,13 +36,17 @@ func GetUser(id string) (model.User, error) {
 
 //Retrieve User by Username
 func GetUserByUsername(username string) (model.User, error) {
+	var err error
 	var user model.UserModel
-	if db_init_err != nil {
-		return user.ToUser(), db_init_err
+	var u model.User
+	getErr := db.Where("username = ?", username).First(&user)
+
+	if getErr.Error != nil {
+		err = getErr.Error
 	} else {
-		err := db.Where("username = ?", username).First(&model.UserModel{})
-		return user.ToUser(), err.Error
+		u = user.ToUser()
 	}
+	return u, err
 }
 
 //Check If Username Has Been Taken
