@@ -12,6 +12,7 @@ const VreelSlide = ({ username, user, slideId }): JSX.Element => {
   const toggleSlideSound = () => {
     setIsMuted(!isMuted);
   };
+
   return (
     <section id={slideId} className="vreel-slide vreel-slide__wrapper">
       {/* <img src="https://images.unsplash.com/photo-1626715185400-49cccfabc10f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=627&q=80" alt="background img" className="vreel-slide__background-img" /> */}
@@ -82,7 +83,7 @@ const VreelSlide = ({ username, user, slideId }): JSX.Element => {
       </div>
       <aside className="vreel-slide__right-icons__wrapper">
         <div className="top">
-          <a href="#">
+          <a href="tel:+17734453322">
             <img
               data-bs-toggle="tooltip"
               data-bs-placement="top"
@@ -92,16 +93,8 @@ const VreelSlide = ({ username, user, slideId }): JSX.Element => {
               className="vreel-slide__icon"
             />
           </a>
-          <a href="#">
-            <img
-              data-bs-toggle="tooltip"
-              data-bs-placement="top"
-              title="Join My Contact list"
-              src="/add-to-contact-icon.svg"
-              alt="add-to-contact-icon"
-              className="vreel-slide__icon"
-            />
-          </a>
+
+          <VreelModal isContact={true} icon="/add-to-contact-icon.svg" />
           <a href={username ? `/api/vcard?username=${username}` : "#"} download>
             <img
               data-bs-toggle="tooltip"

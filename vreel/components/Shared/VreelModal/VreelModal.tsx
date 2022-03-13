@@ -11,12 +11,13 @@ import {
   LinkedinIcon,
   PinterestIcon,
   RedditIcon,
-  EmailIcon
+  EmailIcon,
 } from "react-share";
 import { Modal, ModalBody, ModalHeader, Button } from "reactstrap";
 import { PrimaryButton } from "../Button/Button";
 import QRCode from "qrcode.react";
 import { useRouter } from "next/router";
+import AddToContact from "../../Elements/AddToContact/AddToContact";
 
 interface ModalProps {
   btnTitle: string;
@@ -27,20 +28,23 @@ interface ModalProps {
   origin: string;
   isQr: boolean;
   isSocial: boolean;
+  isContact: boolean;
 }
 
 export const VreelModal = ({
   isQr,
   icon,
   isSocial,
+  isContact,
 }: ModalProps): JSX.Element => {
   const [open, setOpen] = useState(false);
   const router = useRouter();
 
   const { username } = router.query;
 
-  useEffect(() => {
-  }, []);
+  const capitilizedUsername = username ? username[0].toUpperCase() + username.slice(1) : null
+
+  useEffect(() => {}, []);
 
   const onClick = () => {};
   return (
@@ -58,6 +62,18 @@ export const VreelModal = ({
         isOpen={open}
         toggle={() => setOpen(!open)}
       >
+        {isContact && (
+          <>
+            <button
+              className="btn-close vreel-modal__close-btn"
+              aria-label="Close"
+              onClick={() => setOpen(!open)}
+            ></button>
+            <ModalBody>
+              <AddToContact />
+            </ModalBody>
+          </>
+        )}
         {isQr && (
           <>
             <button
@@ -65,11 +81,14 @@ export const VreelModal = ({
               aria-label="Close"
               onClick={() => setOpen(!open)}
             ></button>
-            <QRCode
-              style={{ margin: "0 auto", marginBottom: "25px" }}
-              size={280}
-              value={`http://localhost:3000/${username}`}
-            />
+            <ModalBody>
+              <h1>Scan {capitilizedUsername && capitilizedUsername + "'s"} QR Code</h1>
+              <QRCode
+                style={{ alignSelf:'center', margin: "25px 0px" }}
+                size={280}
+                value={username ? `http://localhost:3000/${username}` : 'https://vreel.page'}
+              />
+            </ModalBody>
           </>
         )}
         {isSocial && (
@@ -81,72 +100,69 @@ export const VreelModal = ({
             ></button>
             <div className="d-flex flex-row flex-wrap m-auto">
               <EmailShareButton
-            
-              url={"https://facebook.com"}
-              quote={"フェイスブックはタイトルが付けれるようです"}
-              hashtag={"#hashtag"}
-              description={"kgjhwregkjrwghklrjehgljwlrg"}
-            >
-              <EmailIcon size={32} round />
-            </EmailShareButton>
+                url={"https://facebook.com"}
+                quote={"フェイスブックはタイトルが付けれるようです"}
+                hashtag={"#hashtag"}
+                description={"kgjhwregkjrwghklrjehgljwlrg"}
+              >
+                <EmailIcon size={50} round />
+              </EmailShareButton>
               <FacebookShareButton
-            
-              url={"https://facebook.com"}
-              quote={"フェイスブックはタイトルが付けれるようです"}
-              hashtag={"#hashtag"}
-              description={"kgjhwregkjrwghklrjehgljwlrg"}
-            >
-              <FacebookIcon size={32} round />
-            </FacebookShareButton>
-            <TwitterShareButton
-            
-              url={"https://facebook.com"}
-              quote={"フェイスブックはタイトルが付けれるようです"}
-              hashtag={"#hashtag"}
-              description={"kgjhwregkjrwghklrjehgljwlrg"}
-            >
-              <TwitterIcon size={32} round />
-            </TwitterShareButton>
-            <LinkedinShareButton
-            
-              url={"https://facebook.com"}
-              quote={"フェイスブックはタイトルが付けれるようです"}
-              hashtag={"#hashtag"}
-              description={"kgjhwregkjrwghklrjehgljwlrg"}
-            >
-              <LinkedinIcon size={32} round />
-            </LinkedinShareButton>
-            <PinterestShareButton
-            
-              url={"https://facebook.com"}
-              quote={"フェイスブックはタイトルが付けれるようです"}
-              hashtag={"#hashtag"}
-              description={"kgjhwregkjrwghklrjehgljwlrg"}
-            >
-              <PinterestIcon size={32} round />
-            </PinterestShareButton>
-            <RedditShareButton
-            
-              url={"https://facebook.com"}
-              quote={"フェイスブックはタイトルが付けれるようです"}
-              hashtag={"#hashtag"}
-              description={"kgjhwregkjrwghklrjehgljwlrg"}
-            >
-              <RedditIcon size={32} round />
-            </RedditShareButton>
-            
+                url={"https://facebook.com"}
+                quote={"フェイスブックはタイトルが付けれるようです"}
+                hashtag={"#hashtag"}
+                description={"kgjhwregkjrwghklrjehgljwlrg"}
+              >
+                <FacebookIcon size={50} round />
+              </FacebookShareButton>
+              <TwitterShareButton
+                url={"https://facebook.com"}
+                quote={"フェイスブックはタイトルが付けれるようです"}
+                hashtag={"#hashtag"}
+                description={"kgjhwregkjrwghklrjehgljwlrg"}
+              >
+                <TwitterIcon size={50} round />
+              </TwitterShareButton>
+              <LinkedinShareButton
+                url={"https://facebook.com"}
+                quote={"フェイスブックはタイトルが付けれるようです"}
+                hashtag={"#hashtag"}
+                description={"kgjhwregkjrwghklrjehgljwlrg"}
+              >
+                <LinkedinIcon size={50} round />
+              </LinkedinShareButton>
+              <PinterestShareButton
+                url={"https://facebook.com"}
+                quote={"フェイスブックはタイトルが付けれるようです"}
+                hashtag={"#hashtag"}
+                description={"kgjhwregkjrwghklrjehgljwlrg"}
+              >
+                <PinterestIcon size={50} round />
+              </PinterestShareButton>
+              <RedditShareButton
+                url={"https://facebook.com"}
+                quote={"フェイスブックはタイトルが付けれるようです"}
+                hashtag={"#hashtag"}
+                description={"kgjhwregkjrwghklrjehgljwlrg"}
+              >
+                <RedditIcon size={50} round />
+              </RedditShareButton>
             </div>
-            
           </>
         )}
 
-        {!isQr && !isSocial && (
+        {!isQr && !isSocial && !isContact && (
           <>
-            <ModalHeader toggle={() => setOpen(!open)}>
-              {" "}
-              Modal title
-            </ModalHeader>
-            <ModalBody>Modal body text goes here.</ModalBody>
+            <button
+              className="btn-close vreel-modal__close-btn"
+              aria-label="Close"
+              onClick={() => setOpen(!open)}
+            ></button>
+            <ModalBody>
+              <h1> Heading Text</h1>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+              eiusmod tempor incididunt ut labore et dolore magna aliqua.
+            </ModalBody>
           </>
         )}
       </Modal>
