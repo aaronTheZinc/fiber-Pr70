@@ -9,6 +9,7 @@ import (
 
 	"github.com/vreel/app/cache"
 	"github.com/vreel/app/database"
+	e "github.com/vreel/app/err"
 	"github.com/vreel/app/graph/model"
 	"github.com/vreel/app/utils"
 	"golang.org/x/crypto/bcrypt"
@@ -22,20 +23,39 @@ type PasswordResetCacheModel struct {
 // Create User & Validate Existence Of Conflicting Accounts
 func CreateNewUser(newUser model.NewUser) (model.User, error) {
 	var user model.User
+	var err error
 	isRegisted, registrationCheckError := database.UserIsRegistered(newUser.Email)
+	usernameIsRegistered, usernameCheckError := database.UsernameIsTaken(newUser.Username)
+
 	if registrationCheckError != nil {
-		return user, registrationCheckError
+		err = registrationCheckError
 	}
-	if !isRegisted {
+
+	if isRegisted {
+		err = e.EMAIL_IN_USE
+	}
+
+	if usernameIsRegistered {
+		err = e.USERNAME_IN_USE
+	}
+
+	if usernameCheckError != nil {
+		err = usernameCheckError
+	}
+
+	if !isRegisted && !usernameIsRegistered {
 		hashedPw, hashErr := HashPassword(newUser.Password)
 		if hashErr != nil {
 			return model.User{}, hashErr
 		}
-		user, err := database.CreateUser(newUser, utils.GenerateUID(), hashedPw)
-		return user, err
-	} else {
-		return user, errors.New("email in use")
+		u, e := database.CreateUser(newUser, utils.GenerateUID(), hashedPw)
+		user = u
+		if err != nil {
+			err = e
+		}
 	}
+
+	return user, err
 
 }
 
@@ -142,6 +162,14 @@ func UpdatePassword(token string, password string) (model.ResolvedPasswordReset,
 		}
 
 	}
+
+}
+
+func CreatePhoneVerificationIntent() {
+
+}
+
+func ResolvePhoneVerificationInput() {
 
 }
 

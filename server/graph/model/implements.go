@@ -45,20 +45,34 @@ type EventModel struct {
 	Groups      pq.StringArray `gorm:"type:text[]"`
 }
 
+type VreelModel struct {
+	Author    string         `json:"author"`
+	PageTitle string         `json:"page_title"`
+	ButtonURI *string        `json:"button_uri"`
+	Slides    pq.StringArray `gorm:"type:text[]"`
+}
+
+type SlideModel struct {
+	ID            string        `json:"id"`
+	ContentType   string        `json:"content_type"`
+	URI           string        `json:"uri"`
+	SlideLocation int           `json:"slide_location"`
+	Metadata      SlideMetaData `json:"metadata"`
+}
+
 func (c *NewUser) ToDatabaseModel() UserModel {
 	// var groups pq.StringArray
-
 	return UserModel{
 		Username:        c.Username,
-		FirstName:       c.FirstName,
-		LastName:        c.LastName,
+		FirstName:       "",
+		LastName:        "",
 		Email:           c.Email,
 		Password:        c.Password,
-		PhoneNumber:     c.PhoneNumber,
-		BusinessAddress: c.BusinessAddress,
-		BillingAddress:  c.BillingAddress,
-		Website:         c.Website,
-		JobTitle:        c.JobTitle,
+		PhoneNumber:     "",
+		BusinessAddress: "",
+		BillingAddress:  "",
+		Website:         "",
+		JobTitle:        "",
 		Groups:          []string{},
 	}
 
@@ -84,7 +98,6 @@ func (c *UserModel) ToUser() User {
 		Website:         c.Website,
 		JobTitle:        c.JobTitle,
 	}
-
 }
 
 func (c *Group) ToDatabaseModel() GroupModel {
@@ -154,5 +167,15 @@ func (c *EventModel) ToEvent() Event {
 		Repeat:      c.Repeat,
 		Link:        c.Link,
 		Groups:      c.Groups,
+	}
+}
+
+func (c *Slide) ToDatabaseModel() SlideModel {
+	return SlideModel{
+		ID:            c.ID,
+		ContentType:   c.ContentType,
+		URI:           c.URI,
+		SlideLocation: c.SlideLocation,
+		Metadata:      *c.Metadata,
 	}
 }

@@ -1,6 +1,10 @@
 # GraphQL schema example
 #
 # https://gqlgen.com/getting-started/
+type ServerAnalytics {
+  usernames: [String]!
+  userCount: Int!
+}
 
 type User {
   id: String!
@@ -15,6 +19,7 @@ type User {
   website: String!
   job_title: String!
   groups: [Group!]!
+  vreel: Vreel!
 }
 # Create Group - name, location, meet times?, public/private?
 type Group {
@@ -28,6 +33,7 @@ type Group {
   child_groups: [Group!]
   members: [String!]
   events: [Event!]
+  vreel: Vreel!
 }
 type Event {
   ID: String!
@@ -43,9 +49,72 @@ type Event {
   link: String!
   groups: [String!]
 }
+type SlideMetaData {
+  created: String!
+  size: String!
+}
+type Slide {
+  id: String!
+  content_type: String!
+  uri: String!
+  slide_location: Int!
+  metadata: SlideMetaData!
+}
 
+type Contact {
+  position: Int!
+  header: String!
+}
+
+type Service {
+  position: Int!
+  header: String!
+  info: TextArea!
+}
+
+type Link {
+  position: Int
+  header: String!
+  url: String!
+  link_type: String!
+  category: String!
+}
+
+type Links {
+  position: Int
+  links: [Link]
+}
+
+type TextArea {
+  content: String!
+}
+
+type Videos {
+  position: Int!
+  uri: String!
+  tag: String!
+}
+
+type Gallery {
+  position: Int
+  uris: [String!]
+  tag: String!
+}
+
+type VreelElements {
+  text_area: TextArea
+  videos: Videos
+  gallery: Gallery
+  services: Service
+  links: Links
+  contact: Contact
+}
 type Vreel {
+  author: String!
   page_title: String!
+  button_uri: String
+  slides: [Slide]!
+  elements: VreelElements!
 }
 
 type MutationResponse {
@@ -70,6 +139,7 @@ type Query {
   username(username: String): User!
   login(input: LoginInput): LocalSession!
   group(id: String!, token: String!): Group!
+  serverAnalytics: ServerAnalytics
 }
 
 input NewEvent {
@@ -87,15 +157,15 @@ input NewEvent {
 
 input NewUser {
   username: String!
-  first_name: String!
-  last_name: String!
+  first_name: String
+  last_name: String
   email: String!
-  phone_number: String!
+  phone_number: String
   password: String!
-  business_address: String!
-  billing_address: String!
-  website: String!
-  job_title: String!
+  business_address: String
+  billing_address: String
+  website: String
+  job_title: String
 }
 
 input ResetPasswordInput {
@@ -114,6 +184,12 @@ input NewGroup {
   meet_times: [String!]
   private: Boolean!
   parent_group: String!
+}
+
+input NewSlide {
+  content_type: String!
+  uri: String!
+  slide_location: Int!
 }
 
 type Mutation {

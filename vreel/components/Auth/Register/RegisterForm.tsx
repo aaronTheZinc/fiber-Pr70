@@ -1,12 +1,14 @@
 import React, { useState } from "react";
-import { registerUser } from "../../../graphql/mutations";
+import { loginUser, registerUser } from "../../../graphql";
 import { PrimaryButton, PrimaryInput, SecretInput } from "../../index";
+import { useRouter } from "next/router";
+import { useCookies } from "react-cookie";
 
 interface FormDataType {
   email: string;
   username: string;
   password: string;
-  passwordConfirm: string
+  passwordConfirm: string;
 }
 
 const RegisterForm = (): JSX.Element => {
@@ -21,21 +23,48 @@ const RegisterForm = (): JSX.Element => {
   const [password, setPassword] = useState<string>("");
   const [passwordConfirm, setPasswordConfirm] = useState<string>("");
 
+  const [_, setCookie] = useCookies(["userAuthToken"]);
+
+  const router = useRouter();
+
   const submitForm = async (e) => {
     try {
       e.preventDefault();
 
       const { email, password, username } = userFormData;
 
-      const data = await registerUser(username, email, password);
+      const response = await registerUser(username, email, password);
+      
+      console.log(response);
 
+      //Handle Errors
+      if (response.error) {
+        alert(response.error);
+      }
+      // //if successful registration, login and set Cookies
+      if (response.user) {
+        console.log(response);
+
+        const { token, error } = await loginUser(
+          userFormData.email,
+          userFormData.password
+        );
+
+        if (error) {
+          //handle if autologin doesn't work
+        }
+
+        if (token) {
+          setCookie("userAuthToken", token);
+
+          router.push(`/${username}`);
+        }
+      }
       // console.log("data", data);
-
     } catch (err) {
       console.error("ERROR WITH REGISTER:", err);
     }
   };
-
 
   return (
     <div
@@ -84,7 +113,8 @@ const RegisterForm = (): JSX.Element => {
           <PrimaryButton
             type="submit"
             action={() => {
-              if (password !== passwordConfirm) return alert('Passwords must match');
+              if (password !== passwordConfirm)
+                return alert("Passwords must match");
               setUserFormData({
                 email,
                 username,

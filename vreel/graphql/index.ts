@@ -9,3 +9,6 @@ export const client = new ApolloClient({
   uri: "http://localhost:8080/graphql",
   cache: new InMemoryCache(),
 });
+
+export { loginUser } from "./query";
+export { registerUser } from "./mutations";

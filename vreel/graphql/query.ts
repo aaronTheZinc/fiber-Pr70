@@ -19,6 +19,13 @@ const UsernameQuery = gql`
     }
   }
 `;
+const GetUsernamesQuery = gql`
+  query ServerAnalytics{
+    serverAnalytics{
+      usernames
+    }
+  }
+`;
 
 export const getUserByUsername = async (username: string): Promise<User> => {
   const { data } = await client.query({
@@ -29,18 +36,48 @@ export const getUserByUsername = async (username: string): Promise<User> => {
   return data.username;
 };
 
+interface ServerAnalytics {
+  usernames: [string];
+}
+export const getAllUsernames = async (): Promise<ServerAnalytics> => {
+  const response = {} as ServerAnalytics;
+
+  await client
+    .query({
+      query: GetUsernamesQuery
+    })
+    .then(({ data }) => {
+      response.usernames = data.serverAnalytics.usernames;
+    })
+    .catch((e) => {
+      console.error('ERROR WITH GET ALL USERNAMES QUERY', e.message)
+    });
+
+  return response;
+};
+
+interface LoginResponse {
+  error: string;
+  token: string;
+}
+
 export const loginUser = async (
   email: string,
   password: string
-): Promise<User> => {
-  try {
-    const { data } = await client.query({
+): Promise<LoginResponse> => {
+  const response = {} as LoginResponse;
+
+  await client
+    .query({
       query: LoginQuery,
       variables: { email, password },
+    })
+    .then(({ data }) => {
+      response.token = data.login.token;
+    })
+    .catch((e) => {
+      response.error = e.message;
     });
 
-    return data.login.token;
-  } catch (error) {
-    console.error("ERROR WITH LOGIN:", error);
-  }
+  return response;
 };

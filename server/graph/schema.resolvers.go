@@ -6,6 +6,7 @@ package graph
 import (
 	"context"
 
+	"github.com/vreel/app/analytics"
 	"github.com/vreel/app/auth"
 	"github.com/vreel/app/database"
 	"github.com/vreel/app/graph/generated"
@@ -19,7 +20,6 @@ func (r *mutationResolver) Register(ctx context.Context, input model.NewUser) (*
 
 func (r *mutationResolver) CreateEvent(ctx context.Context, token string, input model.NewEvent) (*model.Event, error) {
 	event, err := auth.CreateEvent(token, input)
-
 	return &event, err
 }
 
@@ -74,6 +74,12 @@ func (r *queryResolver) Login(ctx context.Context, input *model.LoginInput) (*mo
 func (r *queryResolver) Group(ctx context.Context, id string, token string) (*model.Group, error) {
 	g, err := auth.AuthorizeGetGroup(token, id)
 	return &g, err
+}
+
+func (r *queryResolver) ServerAnalytics(ctx context.Context) (*model.ServerAnalytics, error) {
+	a, err := analytics.GetServerAnalytics()
+
+	return &a, err
 }
 
 // Mutation returns generated.MutationResolver implementation.

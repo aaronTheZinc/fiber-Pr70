@@ -2,6 +2,11 @@
 
 package model
 
+type Contact struct {
+	Position int    `json:"position"`
+	Header   string `json:"header"`
+}
+
 type Event struct {
 	ID          string   `json:"ID"`
 	Author      string   `json:"author"`
@@ -17,6 +22,12 @@ type Event struct {
 	Groups      []string `json:"groups"`
 }
 
+type Gallery struct {
+	Position *int     `json:"position"`
+	Uris     []string `json:"uris"`
+	Tag      string   `json:"tag"`
+}
+
 type Group struct {
 	ID          string   `json:"id"`
 	Author      string   `json:"author"`
@@ -28,6 +39,20 @@ type Group struct {
 	ChildGroups []*Group `json:"child_groups"`
 	Members     []string `json:"members"`
 	Events      []*Event `json:"events"`
+	Vreel       *Vreel   `json:"vreel"`
+}
+
+type Link struct {
+	Position *int   `json:"position"`
+	Header   string `json:"header"`
+	URL      string `json:"url"`
+	LinkType string `json:"link_type"`
+	Category string `json:"category"`
+}
+
+type Links struct {
+	Position *int    `json:"position"`
+	Links    []*Link `json:"links"`
 }
 
 type LocalSession struct {
@@ -66,17 +91,23 @@ type NewGroup struct {
 	ParentGroup string   `json:"parent_group"`
 }
 
+type NewSlide struct {
+	ContentType   string `json:"content_type"`
+	URI           string `json:"uri"`
+	SlideLocation int    `json:"slide_location"`
+}
+
 type NewUser struct {
-	Username        string `json:"username"`
-	FirstName       string `json:"first_name"`
-	LastName        string `json:"last_name"`
-	Email           string `json:"email"`
-	PhoneNumber     string `json:"phone_number"`
-	Password        string `json:"password"`
-	BusinessAddress string `json:"business_address"`
-	BillingAddress  string `json:"billing_address"`
-	Website         string `json:"website"`
-	JobTitle        string `json:"job_title"`
+	Username        string  `json:"username"`
+	FirstName       *string `json:"first_name"`
+	LastName        *string `json:"last_name"`
+	Email           string  `json:"email"`
+	PhoneNumber     *string `json:"phone_number"`
+	Password        string  `json:"password"`
+	BusinessAddress *string `json:"business_address"`
+	BillingAddress  *string `json:"billing_address"`
+	Website         *string `json:"website"`
+	JobTitle        *string `json:"job_title"`
 }
 
 type ResetPasswordInput struct {
@@ -94,6 +125,34 @@ type ResolvedPasswordReset struct {
 	Succeeded bool   `json:"succeeded"`
 }
 
+type ServerAnalytics struct {
+	Usernames []*string `json:"usernames"`
+	UserCount int       `json:"userCount"`
+}
+
+type Service struct {
+	Position int       `json:"position"`
+	Header   string    `json:"header"`
+	Info     *TextArea `json:"info"`
+}
+
+type Slide struct {
+	ID            string         `json:"id"`
+	ContentType   string         `json:"content_type"`
+	URI           string         `json:"uri"`
+	SlideLocation int            `json:"slide_location"`
+	Metadata      *SlideMetaData `json:"metadata"`
+}
+
+type SlideMetaData struct {
+	Created string `json:"created"`
+	Size    string `json:"size"`
+}
+
+type TextArea struct {
+	Content string `json:"content"`
+}
+
 type User struct {
 	ID              string   `json:"id"`
 	Username        string   `json:"username"`
@@ -107,4 +166,28 @@ type User struct {
 	Website         string   `json:"website"`
 	JobTitle        string   `json:"job_title"`
 	Groups          []*Group `json:"groups"`
+	Vreel           *Vreel   `json:"vreel"`
+}
+
+type Videos struct {
+	Position int    `json:"position"`
+	URI      string `json:"uri"`
+	Tag      string `json:"tag"`
+}
+
+type Vreel struct {
+	Author    string         `json:"author"`
+	PageTitle string         `json:"page_title"`
+	ButtonURI *string        `json:"button_uri"`
+	Slides    []*Slide       `json:"slides"`
+	Elements  *VreelElements `json:"elements"`
+}
+
+type VreelElements struct {
+	TextArea *TextArea `json:"text_area"`
+	Videos   *Videos   `json:"videos"`
+	Gallery  *Gallery  `json:"gallery"`
+	Services *Service  `json:"services"`
+	Links    *Links    `json:"links"`
+	Contact  *Contact  `json:"contact"`
 }
