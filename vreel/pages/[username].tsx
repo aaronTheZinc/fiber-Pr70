@@ -1,5 +1,6 @@
 import { useRouter } from "next/router";
 import Services from "../components/Elements/Services/Services";
+import Social from "../components/Elements/Social/Social";
 import TextArea from "../components/Elements/TextArea/TextArea";
 import { VreelSlider } from "../components/VreelSlider/VreelSlider";
 import { getAllUsernames } from "../graphql/query";
@@ -15,6 +16,7 @@ const Username = ({ user }) => {
       }}
     >
       <VreelSlider isUser={true} user={user} username={username} />
+      <Social isUser={true} user={user} username={username} />
       <TextArea />
       <Services />
     </div>

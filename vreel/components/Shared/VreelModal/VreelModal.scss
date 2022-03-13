@@ -1,11 +1,40 @@
 .vreel-modal {
   &__close-btn.btn-close {
     align-self: flex-end;
-    margin: 0.8rem;
+    margin: 1rem;
     cursor: pointer;
+    position: relative;
+    top: 0px;
+    z-index: 0;
+    background-color: #fff;
+    padding: 10px;
+    font-size: small;
+  }
+  .modal-content {
+    background-color: #000;
+    .btn-close {
+      align-self: flex-end;
+      margin: 1rem;
+      cursor: pointer;
+      position: relative;
+      top: 0px;
+      z-index: 0;
+      background-color: #fff;
+      padding: 10px;
+      font-size: small;
+    }
+    .modal-body {
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      h1 {
+        font-size: 2.5rem;
+        text-align: center;
+      }
+    }
   }
   &__wrapper {
-    .react-share__ShareButton{
+    .react-share__ShareButton {
       margin: 12px 6px;
     }
   }

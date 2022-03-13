@@ -51,6 +51,9 @@ const Menu = (): JSX.Element => {
         ) : username ? (
             <>
               <li>
+                <a href="#">Social</a>
+              </li>
+              <li>
                 <a href="#">About</a>
               </li>
               <li>
