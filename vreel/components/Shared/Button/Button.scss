@@ -10,4 +10,9 @@
   background: #ff7a00;
   border: 1px solid #df6b00;
   border-radius: 20px;
+  transition: all .3s ease-in-out;
+  &:hover{
+    background-color: #ff7b00be;
+    color: #fff;
+  }
 }
