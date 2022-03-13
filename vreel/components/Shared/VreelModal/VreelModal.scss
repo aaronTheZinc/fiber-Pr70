@@ -1,0 +1,14 @@
+.vreel-modal {
+  &__close-btn.btn-close {
+    align-self: flex-end;
+    margin: 0.8rem;
+    cursor: pointer;
+  }
+  &__wrapper {
+    .react-share__ShareButton{
+      margin: 12px 6px;
+    }
+  }
+  &__overlay {
+  }
+}

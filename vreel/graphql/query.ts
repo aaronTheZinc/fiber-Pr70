@@ -19,6 +19,13 @@ const UsernameQuery = gql`
     }
   }
 `;
+const GetUsernamesQuery = gql`
+  query ServerAnalytics{
+    serverAnalytics{
+      usernames
+    }
+  }
+`;
 
 export const getUserByUsername = async (username: string): Promise<User> => {
   const { data } = await client.query({
@@ -27,6 +34,26 @@ export const getUserByUsername = async (username: string): Promise<User> => {
   });
 
   return data.username;
+};
+
+interface ServerAnalytics {
+  usernames: [string];
+}
+export const getAllUsernames = async (): Promise<ServerAnalytics> => {
+  const response = {} as ServerAnalytics;
+
+  await client
+    .query({
+      query: GetUsernamesQuery
+    })
+    .then(({ data }) => {
+      response.usernames = data.serverAnalytics.usernames;
+    })
+    .catch((e) => {
+      console.error('ERROR WITH GET ALL USERNAMES QUERY', e.message)
+    });
+
+  return response;
 };
 
 interface LoginResponse {
@@ -51,13 +78,6 @@ export const loginUser = async (
     .catch((e) => {
       response.error = e.message;
     });
-
-  // .then(({ data }) => {
-  //   response.token = data.token;
-  // })
-  // .catch((e) => {
-  //   response.error = e.message;
-  // });
 
   return response;
 };

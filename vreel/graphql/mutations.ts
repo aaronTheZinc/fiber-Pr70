@@ -38,7 +38,7 @@ export const registerUser = async (
     .catch((e) => {
       response.error = e.message;
     });
-  console.log(response);
+  // console.log('res', response);
 
   return response;
 };

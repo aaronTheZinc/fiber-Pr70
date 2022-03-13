@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { VreelModal } from "../../Shared/VreelModal/VreelModal";
 
-const VreelSlide = (): JSX.Element => {
+const VreelSlide = ({ username, user, slideId }): JSX.Element => {
   const [isLiked, setIsLiked] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
 
@@ -12,7 +13,7 @@ const VreelSlide = (): JSX.Element => {
     setIsMuted(!isMuted);
   };
   return (
-    <section className="vreel-slide vreel-slide__wrapper">
+    <section id={slideId} className="vreel-slide vreel-slide__wrapper">
       {/* <img src="https://images.unsplash.com/photo-1626715185400-49cccfabc10f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=627&q=80" alt="background img" className="vreel-slide__background-img" /> */}
 
       <video className="vreel-slide__background-video" autoPlay muted loop>
@@ -21,23 +22,25 @@ const VreelSlide = (): JSX.Element => {
       </video>
 
       {/* <div className="vreel-slide__background-video__yt">
+        <div className="vreel-slide__background-video__yt-inner">
           <iframe
-            width="720"
-            height="1280"
+          height={1080} width={1920}
             src="https://www.youtube.com/embed/IInzXXJLYoY?autoplay=1&playsinline=1&controls=0&disablekb=1&enablejsapi=1&fs=0&loop=1&muted=1"
             title="YouTube video player"
             frameBorder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
           ></iframe>
-        </div>  */}
-
+        </div>
+      </div> */}
 
       <div className="vreel-slide__overlay"></div>
 
       <div className="vreel-slide__text-wrapper">
         <h1 className="vreel-slide__heading-text">
-          THE INTERFACE THAT VISUALLY ELEVATES YOUR BRAND™
+          {username
+            ? `${user.first_name === "" ? username : user.first_name}'s vreel`
+            : "THE INTERFACE THAT VISUALLY ELEVATES YOUR BRAND™"}
         </h1>
         <p className="vreel-slide__text">
           Upload some files in file manager and then use editor to personalize
@@ -54,16 +57,7 @@ const VreelSlide = (): JSX.Element => {
         className="vreel-slide__down-arrow"
       />
       <div className="vreel-slide__left-icons__wrapper">
-        <a href="#">
-          <img
-            data-bs-toggle="tooltip"
-            data-bs-placement="top"
-            title="Background Credits"
-            src="/background-credit-icon.svg"
-            alt="background-credit-icon"
-            className="vreel-slide__icon"
-          />
-        </a>
+        <VreelModal icon="/background-credit-icon.svg" />
         {isMuted ? (
           <img
             onClick={toggleSlideSound}
@@ -108,7 +102,7 @@ const VreelSlide = (): JSX.Element => {
               className="vreel-slide__icon"
             />
           </a>
-          <a href="#">
+          <a href={username ? `/api/vcard?username=${username}` : "#"} download>
             <img
               data-bs-toggle="tooltip"
               data-bs-placement="top"
@@ -121,16 +115,7 @@ const VreelSlide = (): JSX.Element => {
         </div>
 
         <div className="bottom">
-          <a href="#">
-            <img
-              data-bs-toggle="tooltip"
-              data-bs-placement="top"
-              title="Share My Vreel"
-              src="/share-icon.svg"
-              alt="share-icon"
-              className="vreel-slide__icon"
-            />
-          </a>
+          <VreelModal isSocial={true} icon="/share-icon.svg" />
           {isLiked ? (
             <img
               onClick={toggleSlideLike}
@@ -152,27 +137,8 @@ const VreelSlide = (): JSX.Element => {
               className="vreel-slide__icon"
             />
           )}
-
-          <a href="#">
-            <img
-              data-bs-toggle="tooltip"
-              data-bs-placement="top"
-              title="Slide Credits"
-              src="/slide-credit-icon.svg"
-              alt="slide-credit-icon"
-              className="vreel-slide__icon"
-            />
-          </a>
-          <a href="#">
-            <img
-              data-bs-toggle="tooltip"
-              data-bs-placement="top"
-              title="Scan My QR Code"
-              src="/qr-icon.svg"
-              alt="qr-icon"
-              className="vreel-slide__icon"
-            />
-          </a>
+          <VreelModal icon="/slide-credit-icon.svg" />
+          <VreelModal isQr={true} icon="/qr-icon.svg" />
         </div>
       </aside>
     </section>

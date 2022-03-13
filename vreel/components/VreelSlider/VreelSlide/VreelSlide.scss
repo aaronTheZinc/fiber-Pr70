@@ -31,20 +31,25 @@
   }
   &__background-video__yt {
     position: relative;
-    height: 100%;
-    width: 100%;
-    pointer-events: none;
-    top: 0;
-    z-index: 1;
+    padding-bottom: 56.25%;
+    /* 16:9 */
+    padding-top: 25px;
+    height: 0;
+    &-inner {
+    }
   }
   &__background-video__yt iframe {
     position: absolute;
     top: 0;
     left: 0;
-    height: 100%;
     width: 100%;
-    bottom: 0;
-    min-height: 100%;
+    height: 100%;
+    // @media (min-aspect-ratio: 16/9) {
+    //   height: 56.25vw;
+    // }
+    // @media (max-aspect-ratio: 16/9) {
+    //   width: 177.78vh;
+    // }
   }
   &__overlay {
     position: absolute;
@@ -98,6 +103,7 @@
     justify-content: center;
     width: 185px;
     height: 38px;
+    background: #fff;
     border: 2px solid #ffffff;
     border-radius: 5px;
     font-weight: 600;
@@ -105,12 +111,12 @@
     line-height: 21px;
     text-transform: uppercase;
     text-decoration: none;
-    color: inherit;
-    transition: all 0.3s ease-in-out;
+    color: #000;
+    transition: all 0.2s ease-in-out;
     &:hover {
-      background: rgba(255, 255, 255, 0.7);
+      background: rgba(255, 255, 255, 0.4);
       cursor: pointer;
-      color: #000;
+      color: inherit;
     }
   }
   &__down-arrow {

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { PrimaryButton, PrimaryInput, SecretInput } from "../../index";
 import { loginUser } from "../../../graphql/query";
+import { useCookies } from "react-cookie";
+import { useRouter } from "next/router";
 
 interface FormDataType {
   email: string;
@@ -8,12 +10,19 @@ interface FormDataType {
 }
 
 const LoginForm = (): JSX.Element => {
+
+  const router = useRouter();
+
   const [userFormData, setUserFormData] = useState<FormDataType>({
     email: "",
     password: "",
   });
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+
+
+  const [cookies, setCookie] = useCookies(["userAuthToken"]);
+
   // const [login, { loading, error, data }] = useQuery(LoginQuery);
 
   const submitForm = async (e) => {
@@ -22,10 +31,14 @@ const LoginForm = (): JSX.Element => {
 
       const { email, password } = userFormData;
 
-      const token = await loginUser(email, password);
+      const { token, error } = await loginUser(email, password);
 
-      console.log("data", token);
-
+      if (error) return alert(error);
+      
+      setCookie('userAuthToken', token)
+      
+      // router.push(`/${username}`);
+      console.log("data", cookies.userAuthToken);
     } catch (err) {
       console.error("ERROR WITH LOGIN:", err);
     }
@@ -62,7 +75,7 @@ const LoginForm = (): JSX.Element => {
           <PrimaryButton
             type="submit"
             action={() => {
-              if (!password) return alert('Password is Required');
+              if (!password) return alert("Password is Required");
               setUserFormData({
                 email,
                 password,

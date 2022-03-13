@@ -3,6 +3,7 @@ import type { AppProps /*, AppContext */ } from "next/app";
 import MainLayout from "../components/MainLayout/MainLayout";
 import Head from "next/head";
 import { CookiesProvider } from "react-cookie";
+
 function App({ Component, pageProps }: AppProps) {
   return (
     <CookiesProvider>

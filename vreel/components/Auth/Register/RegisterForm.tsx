@@ -3,6 +3,7 @@ import { loginUser, registerUser } from "../../../graphql";
 import { PrimaryButton, PrimaryInput, SecretInput } from "../../index";
 import { useRouter } from "next/router";
 import { useCookies } from "react-cookie";
+
 interface FormDataType {
   email: string;
   username: string;
@@ -21,7 +22,9 @@ const RegisterForm = (): JSX.Element => {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [passwordConfirm, setPasswordConfirm] = useState<string>("");
-  const [cookies, setCookie] = useCookies(["@token"]);
+
+  const [_, setCookie] = useCookies(["userAuthToken"]);
+
   const router = useRouter();
 
   const submitForm = async (e) => {
@@ -31,7 +34,9 @@ const RegisterForm = (): JSX.Element => {
       const { email, password, username } = userFormData;
 
       const response = await registerUser(username, email, password);
+      
       console.log(response);
+
       //Handle Errors
       if (response.error) {
         alert(response.error);
@@ -39,6 +44,7 @@ const RegisterForm = (): JSX.Element => {
       // //if successful registration, login and set Cookies
       if (response.user) {
         console.log(response);
+
         const { token, error } = await loginUser(
           userFormData.email,
           userFormData.password
@@ -49,9 +55,9 @@ const RegisterForm = (): JSX.Element => {
         }
 
         if (token) {
-          setCookie("@token", token);
+          setCookie("userAuthToken", token);
 
-          router.push("/acc");
+          router.push(`/${username}`);
         }
       }
       // console.log("data", data);
