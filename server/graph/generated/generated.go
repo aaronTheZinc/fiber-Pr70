@@ -117,10 +117,11 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		Group    func(childComplexity int, id string, token string) int
-		Login    func(childComplexity int, input *model.LoginInput) int
-		User     func(childComplexity int, id *string) int
-		Username func(childComplexity int, username *string) int
+		Group           func(childComplexity int, id string, token string) int
+		Login           func(childComplexity int, input *model.LoginInput) int
+		ServerAnalytics func(childComplexity int) int
+		User            func(childComplexity int, id *string) int
+		Username        func(childComplexity int, username *string) int
 	}
 
 	ResetPasswordResponse struct {
@@ -132,6 +133,11 @@ type ComplexityRoot struct {
 	ResolvedPasswordReset struct {
 		Message   func(childComplexity int) int
 		Succeeded func(childComplexity int) int
+	}
+
+	ServerAnalytics struct {
+		UserCount func(childComplexity int) int
+		Usernames func(childComplexity int) int
 	}
 
 	Service struct {
@@ -212,6 +218,7 @@ type QueryResolver interface {
 	Username(ctx context.Context, username *string) (*model.User, error)
 	Login(ctx context.Context, input *model.LoginInput) (*model.LocalSession, error)
 	Group(ctx context.Context, id string, token string) (*model.Group, error)
+	ServerAnalytics(ctx context.Context) (*model.ServerAnalytics, error)
 }
 
 type executableSchema struct {
@@ -615,6 +622,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Login(childComplexity, args["input"].(*model.LoginInput)), true
 
+	case "Query.serverAnalytics":
+		if e.complexity.Query.ServerAnalytics == nil {
+			break
+		}
+
+		return e.complexity.Query.ServerAnalytics(childComplexity), true
+
 	case "Query.user":
 		if e.complexity.Query.User == nil {
 			break
@@ -673,6 +687,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ResolvedPasswordReset.Succeeded(childComplexity), true
+
+	case "ServerAnalytics.userCount":
+		if e.complexity.ServerAnalytics.UserCount == nil {
+			break
+		}
+
+		return e.complexity.ServerAnalytics.UserCount(childComplexity), true
+
+	case "ServerAnalytics.usernames":
+		if e.complexity.ServerAnalytics.Usernames == nil {
+			break
+		}
+
+		return e.complexity.ServerAnalytics.Usernames(childComplexity), true
 
 	case "Service.header":
 		if e.complexity.Service.Header == nil {
@@ -1007,6 +1035,10 @@ var sources = []*ast.Source{
 	{Name: "graph/schema.graphqls", Input: `# GraphQL schema example
 #
 # https://gqlgen.com/getting-started/
+type ServerAnalytics {
+  usernames: [String]!
+  userCount: Int!
+}
 
 type User {
   id: String!
@@ -1141,6 +1173,7 @@ type Query {
   username(username: String): User!
   login(input: LoginInput): LocalSession!
   group(id: String!, token: String!): Group!
+  serverAnalytics: ServerAnalytics
 }
 
 input NewEvent {
@@ -3331,6 +3364,38 @@ func (ec *executionContext) _Query_group(ctx context.Context, field graphql.Coll
 	return ec.marshalNGroup2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐGroup(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Query_serverAnalytics(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().ServerAnalytics(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.ServerAnalytics)
+	fc.Result = res
+	return ec.marshalOServerAnalytics2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐServerAnalytics(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -3575,6 +3640,76 @@ func (ec *executionContext) _ResolvedPasswordReset_succeeded(ctx context.Context
 	res := resTmp.(bool)
 	fc.Result = res
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ServerAnalytics_usernames(ctx context.Context, field graphql.CollectedField, obj *model.ServerAnalytics) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ServerAnalytics",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Usernames, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*string)
+	fc.Result = res
+	return ec.marshalNString2ᚕᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ServerAnalytics_userCount(ctx context.Context, field graphql.CollectedField, obj *model.ServerAnalytics) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ServerAnalytics",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UserCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Service_position(ctx context.Context, field graphql.CollectedField, obj *model.Service) (ret graphql.Marshaler) {
@@ -6835,6 +6970,17 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}
 				return res
 			})
+		case "serverAnalytics":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_serverAnalytics(ctx, field)
+				return res
+			})
 		case "__type":
 			out.Values[i] = ec._Query___type(ctx, field)
 		case "__schema":
@@ -6905,6 +7051,38 @@ func (ec *executionContext) _ResolvedPasswordReset(ctx context.Context, sel ast.
 			}
 		case "succeeded":
 			out.Values[i] = ec._ResolvedPasswordReset_succeeded(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var serverAnalyticsImplementors = []string{"ServerAnalytics"}
+
+func (ec *executionContext) _ServerAnalytics(ctx context.Context, sel ast.SelectionSet, obj *model.ServerAnalytics) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, serverAnalyticsImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ServerAnalytics")
+		case "usernames":
+			out.Values[i] = ec._ServerAnalytics_usernames(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "userCount":
+			out.Values[i] = ec._ServerAnalytics_userCount(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -7745,6 +7923,36 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 	return res
 }
 
+func (ec *executionContext) unmarshalNString2ᚕᚖstring(ctx context.Context, v interface{}) ([]*string, error) {
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*string, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalOString2ᚖstring(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) marshalNString2ᚕᚖstring(ctx context.Context, sel ast.SelectionSet, v []*string) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	for i := range v {
+		ret[i] = ec.marshalOString2ᚖstring(ctx, sel, v[i])
+	}
+
+	return ret
+}
+
 func (ec *executionContext) marshalNTextArea2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐTextArea(ctx context.Context, sel ast.SelectionSet, v *model.TextArea) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -8262,6 +8470,13 @@ func (ec *executionContext) unmarshalONewGroup2ᚖgithubᚗcomᚋvreelᚋappᚋg
 	}
 	res, err := ec.unmarshalInputNewGroup(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOServerAnalytics2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐServerAnalytics(ctx context.Context, sel ast.SelectionSet, v *model.ServerAnalytics) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._ServerAnalytics(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOService2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐService(ctx context.Context, sel ast.SelectionSet, v *model.Service) graphql.Marshaler {

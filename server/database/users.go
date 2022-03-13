@@ -36,32 +36,33 @@ func GetUser(id string) (model.User, error) {
 
 //Retrieve User by Username
 func GetUserByUsername(username string) (model.User, error) {
+	var err error
 	var user model.UserModel
-	if db_init_err != nil {
-		return user.ToUser(), db_init_err
+	var u model.User
+	getErr := db.Where("username = ?", username).First(&user)
+
+	if getErr.Error != nil {
+		err = getErr.Error
 	} else {
-		err := db.Where("username = ?", username).First(&model.UserModel{})
-		return user.ToUser(), err.Error
+		u = user.ToUser()
 	}
+	return u, err
 }
 
 //Check If Username Has Been Taken
 func UsernameIsTaken(username string) (bool, error) {
+	var err error
 	var doesExist bool
-	var user model.UserModel
+	var users []model.UserModel
 
-	if db_init_err != nil {
-		return doesExist, db_init_err
-	} else {
-		err := db.Where("username = ?", username).First(&user)
-		if err.Error != nil {
-			doesExist = true
-		} else {
-			doesExist = false
-		}
+	e := db.Where("username = ?", username).Find(&users)
 
+	if e.Error != nil {
+		err = e.Error
 	}
-	return doesExist, nil
+	doesExist = len(users) > 0
+
+	return doesExist, err
 }
 
 //Update Password
@@ -140,4 +141,11 @@ func GetUserByEmail(email string) (model.UserModel, error) {
 	var user model.UserModel
 	err := db.Where("email = ?", email).First(&user)
 	return user, err.Error
+}
+
+func GetAllUsernames() ([]model.UserModel, error) {
+	var users []model.UserModel
+	err := db.Select("username").Find(&users)
+
+	return users, err.Error
 }

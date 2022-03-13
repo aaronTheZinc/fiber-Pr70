@@ -1,5 +1,7 @@
 package test
 
+import "github.com/vreel/app/database"
+
 func CreateUser() {
 	// newUser := model.NewUser{
 	// 	FirstName:       "Aarona",
@@ -19,4 +21,8 @@ func CreateUser() {
 	// 	log.Panic(err)
 	// }
 	// fmt.Printf("Successfully Created User With Id: %s \n", user.ID)
+}
+
+func ClearAllUsers() {
+	database.ClearAllTestUsers()
 }

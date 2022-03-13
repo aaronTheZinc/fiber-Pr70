@@ -125,6 +125,11 @@ type ResolvedPasswordReset struct {
 	Succeeded bool   `json:"succeeded"`
 }
 
+type ServerAnalytics struct {
+	Usernames []*string `json:"usernames"`
+	UserCount int       `json:"userCount"`
+}
+
 type Service struct {
 	Position int       `json:"position"`
 	Header   string    `json:"header"`

@@ -1,6 +1,10 @@
 # GraphQL schema example
 #
 # https://gqlgen.com/getting-started/
+type ServerAnalytics {
+  usernames: [String]!
+  userCount: Int!
+}
 
 type User {
   id: String!
@@ -135,6 +139,7 @@ type Query {
   username(username: String): User!
   login(input: LoginInput): LocalSession!
   group(id: String!, token: String!): Group!
+  serverAnalytics: ServerAnalytics
 }
 
 input NewEvent {
