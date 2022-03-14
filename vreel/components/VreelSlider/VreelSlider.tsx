@@ -9,7 +9,7 @@ import "swiper/css/pagination";
 import VreelSlide from "./VreelSlide/VreelSlide";
 
 export const VreelSlider = ({ isUser, username, user }): JSX.Element => {
-  let slides = new Array("a", "b", "c", "d", "e", "f");
+  let slides = new Array("a", "b", "c", "d");
   return (
     <Swiper
       modules={[Navigation, Pagination]}

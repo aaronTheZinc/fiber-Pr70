@@ -166,6 +166,11 @@
   "resolved" "https://registry.npmjs.org/@types/scheduler/-/scheduler-0.16.2.tgz"
   "version" "0.16.2"
 
+"@types/vcards-js@^2.10.2":
+  "integrity" "sha512-GWWAsAwQhWlZP0meGEbB0RHpyCn8ckwDohsznxhpRlb5jWL9atirM8Vknn8oJfOcQzE7x3oq5GtgFKdSvvWl1g=="
+  "resolved" "https://registry.npmjs.org/@types/vcards-js/-/vcards-js-2.10.2.tgz"
+  "version" "2.10.2"
+
 "@typescript-eslint/parser@^5.0.0":
   "integrity" "sha512-x0DCjetHZYBRovJdr3U0zG9OOdNXUaFLJ82ehr1AlkArljJuwEsgnud+Q7umlGDFLFrs8tU8ybQDFocp/eX8mQ=="
   "resolved" "https://registry.npmjs.org/@typescript-eslint/parser/-/parser-5.11.0.tgz"
@@ -1518,13 +1523,6 @@
   "resolved" "https://registry.npmjs.org/queue-microtask/-/queue-microtask-1.2.3.tgz"
   "version" "1.2.3"
 
-"quoted-printable@^1.0.0":
-  "integrity" "sha1-nuv16z0R7vAismT9LStrK7O4TMM="
-  "resolved" "https://registry.npmjs.org/quoted-printable/-/quoted-printable-1.0.1.tgz"
-  "version" "1.0.1"
-  dependencies:
-    "utf8" "^2.1.0"
-
 "react-cookie@^4.1.1":
   "integrity" "sha512-ffn7Y7G4bXiFbnE+dKhHhbP+b8I34mH9jqnm8Llhj89zF4nPxPutxHT1suUqMeCEhLDBI7InYwf1tpaSoK5w8A=="
   "resolved" "https://registry.npmjs.org/react-cookie/-/react-cookie-4.1.1.tgz"
@@ -1914,28 +1912,15 @@
   dependencies:
     "object-assign" "^4.1.1"
 
-"utf8@^2.1.0", "utf8@^2.1.1":
-  "integrity" "sha1-H6DZJw6b6FDZsFAn9jUZv0ZFfZY="
-  "resolved" "https://registry.npmjs.org/utf8/-/utf8-2.1.2.tgz"
-  "version" "2.1.2"
-
 "v8-compile-cache@^2.0.3":
   "integrity" "sha512-l8lCEmLcLYZh4nbunNZvQCJc5pv7+RCwa8q/LdUx8u7lsWvPDKmpodJAJNwkAhJC//dFY48KuIEmjtd4RViDrA=="
   "resolved" "https://registry.npmjs.org/v8-compile-cache/-/v8-compile-cache-2.3.0.tgz"
   "version" "2.3.0"
 
-"vcard-js@^1.2.2":
-  "integrity" "sha1-Z85PFdgl6tsuVATG9dcPJK6hllM="
-  "resolved" "https://registry.npmjs.org/vcard-js/-/vcard-js-1.2.2.tgz"
-  "version" "1.2.2"
-  dependencies:
-    "quoted-printable" "^1.0.0"
-    "utf8" "^2.1.1"
-
-"vcard4@^3.0.1":
-  "integrity" "sha512-v7eXKQwEiTIEQykpXJl6GxXenqQTurh2LPt0mre8X9rB1infxUDkKr5qZmjzr0omGZftf5zYvwnHntwn8C7pPw=="
-  "resolved" "https://registry.npmjs.org/vcard4/-/vcard4-3.0.1.tgz"
-  "version" "3.0.1"
+"vcards-js@^2.10.0":
+  "integrity" "sha512-nah+xbVInVJaO6+C5PEUqaougmv8BN8aa7ZCtmVQcX6eWIZGRukckFtseXSI7KD7/nXtwkJe624y42T0r+L+AQ=="
+  "resolved" "https://registry.npmjs.org/vcards-js/-/vcards-js-2.10.0.tgz"
+  "version" "2.10.0"
 
 "warning@^4.0.2":
   "integrity" "sha512-rpJyN222KWIvHJ/F53XSZv0Zl/accqHR8et1kpaMTD/fLCRxtV8iX8czMzY7sVZupTI3zcUTg8eycS2kNF9l6w=="
