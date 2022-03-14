@@ -100,50 +100,53 @@ export const VreelModal = ({
             ></button>
             <div className="d-flex flex-row flex-wrap m-auto">
               <EmailShareButton
-                url={"https://facebook.com"}
-                quote={"フェイスブックはタイトルが付けれるようです"}
+                url={"https://kevinjmosley.com"}
+                quote={"This my quote"}
                 hashtag={"#hashtag"}
-                description={"kgjhwregkjrwghklrjehgljwlrg"}
+                description={"This my description"}
               >
                 <EmailIcon size={50} round />
               </EmailShareButton>
               <FacebookShareButton
-                url={"https://facebook.com"}
-                quote={"フェイスブックはタイトルが付けれるようです"}
+                url={"https://kevinjmosley.com"}
+                quote={"This my quote"}
                 hashtag={"#hashtag"}
-                description={"kgjhwregkjrwghklrjehgljwlrg"}
+                description={"This my description"}
               >
                 <FacebookIcon size={50} round />
               </FacebookShareButton>
               <TwitterShareButton
-                url={"https://facebook.com"}
-                quote={"フェイスブックはタイトルが付けれるようです"}
+                url={"https://kevinjmosley.com"}
+                quote={"This my quote"}
                 hashtag={"#hashtag"}
-                description={"kgjhwregkjrwghklrjehgljwlrg"}
+                description={"This my description"}
               >
                 <TwitterIcon size={50} round />
               </TwitterShareButton>
               <LinkedinShareButton
-                url={"https://facebook.com"}
-                quote={"フェイスブックはタイトルが付けれるようです"}
+                url={"https://kevinjmosley.com"}
+                quote={"This my quote"}
                 hashtag={"#hashtag"}
-                description={"kgjhwregkjrwghklrjehgljwlrg"}
+                description={"This my description"}
+                title={"This my title"}
+                summary={"This my summary"}
+                source={"https://kevinjmosley.com"}
               >
                 <LinkedinIcon size={50} round />
               </LinkedinShareButton>
               <PinterestShareButton
-                url={"https://facebook.com"}
-                quote={"フェイスブックはタイトルが付けれるようです"}
+                url={"https://kevinjmosley.com"}
+                quote={"This my quote"}
                 hashtag={"#hashtag"}
-                description={"kgjhwregkjrwghklrjehgljwlrg"}
+                description={"This my description"}
               >
                 <PinterestIcon size={50} round />
               </PinterestShareButton>
               <RedditShareButton
-                url={"https://facebook.com"}
-                quote={"フェイスブックはタイトルが付けれるようです"}
+                url={"https://kevinjmosley.com"}
+                quote={"This my quote"}
                 hashtag={"#hashtag"}
-                description={"kgjhwregkjrwghklrjehgljwlrg"}
+                description={"This my description"}
               >
                 <RedditIcon size={50} round />
               </RedditShareButton>
