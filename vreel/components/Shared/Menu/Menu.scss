@@ -11,6 +11,7 @@
   background: #000;
   z-index: 1000;
   padding-right: 15px;
+  background: rgba(228, 110, 2, .3);
   &__close-btn {
     &:hover {
       cursor: pointer;
@@ -20,21 +21,24 @@
     font-family: Anton;
     font-size: 50px;
     line-height: 75px;
+    font-weight: 100;
     text-align: right;
     letter-spacing: 0.08em;
     font-feature-settings: "kern" off;
 
     a {
-      transition: color 0.3s ease-in;
+      transition: all 0.3s ease-in;
       text-decoration: none;
-      color: #000;
-      text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff,
-        1px 1px 0 #fff;
+      color: #fff;
       &:hover {
-        text-decoration: underline;
-        text-decoration-color: #ff7a00;
-        color: inherit;
-        text-shadow: none;
+        color: #FF7A00;
+        &::before{
+          content: '•';
+          position: absolute;
+          margin-left: -30px;
+          height: 10px;
+          width: 10px;
+        }
       }
     }
   }

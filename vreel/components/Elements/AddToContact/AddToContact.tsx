@@ -43,20 +43,20 @@ const AddToContact = (): JSX.Element => {
       style={{ height: "100%", background: '#000', padding: '30px 0px 40px' }}
       className="d-flex flex-column justify-content-center align-items-center vreel-add-to-contact-form"
     >
-      <img src="/vreel-logo.png" alt="Vreel Logo" width="60" height="60" />
+      <img src="/vreel-logo.png" alt="Vreel Logo" width="100" height="100" />
       <h1>Join {username ? `${username[0].toUpperCase() + username.slice(1) + "'s"}` : 'Our'} Contact List</h1>
       <form onSubmit={submitForm} className="vreel-add-to-contact-form__wrapper">
-        <PrimaryInput
-          setValue={setEmail}
-          placeHolder="Email"
-          value={email}
-          type="email"
-        />
         <PrimaryInput
           setValue={setName}
           placeHolder="Name"
           value={name}
           type="text"
+        />
+        <PrimaryInput
+          setValue={setEmail}
+          placeHolder="Email"
+          value={email}
+          type="email"
         />
         <PrimaryInput
           setValue={setPhone}
