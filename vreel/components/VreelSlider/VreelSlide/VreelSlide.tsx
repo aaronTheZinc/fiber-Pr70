@@ -2,9 +2,13 @@ import React, { useState, useEffect } from "react";
 import { VreelModal } from "../../Shared/VreelModal/VreelModal";
 
 const VreelSlide = ({ username, user, slideId }): JSX.Element => {
+  const [isFollowed, setIsFollowed] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
 
+  const toggleSlideFollow = () => {
+    setIsFollowed(!isFollowed);
+  };
   const toggleSlideLike = () => {
     setIsLiked(!isLiked);
   };
@@ -94,17 +98,38 @@ const VreelSlide = ({ username, user, slideId }): JSX.Element => {
             />
           </a>
 
-          <VreelModal isContact={true} icon="/add-to-contact-icon.svg" />
-          <a href={username ? `/api/vcard?username=${username}` : "#"} download>
+          {/* <VreelModal isContact={true} icon="/add-to-contact-icon.svg" /> */}
+          <a href={username ? `/api/vcard?username=${username}` : "#"} download={username ? `${username}.vcf` : null}>
             <img
               data-bs-toggle="tooltip"
               data-bs-placement="top"
               title="Download My Vcard"
-              src="/add-contact-icon.svg"
-              alt="add-contact-icon"
+              src="/add-to-contact-icon.svg"
+              alt="add-to-contact-icon"
               className="vreel-slide__icon"
             />
           </a>
+          {isFollowed ? (
+            <img
+              onClick={toggleSlideFollow}
+              data-bs-toggle="tooltip"
+              data-bs-placement="top"
+              title="Remove this Slide from your Feed"
+              src="/followed-icon.svg"
+              alt="followed-icon"
+              className="vreel-slide__icon"
+            />
+          ) : (
+            <img
+              onClick={toggleSlideFollow}
+              data-bs-toggle="tooltip"
+              data-bs-placement="top"
+              title="Add this Slide to your Feed"
+              src="/follow-icon.svg"
+              alt="follow-icon"
+              className="vreel-slide__icon"
+            />
+          )}
         </div>
 
         <div className="bottom">
