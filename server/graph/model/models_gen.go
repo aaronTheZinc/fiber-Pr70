@@ -191,3 +191,8 @@ type VreelElements struct {
 	Links    *Links    `json:"links"`
 	Contact  *Contact  `json:"contact"`
 }
+
+type VreelFields struct {
+	Field string `json:"field"`
+	Value string `json:"value"`
+}

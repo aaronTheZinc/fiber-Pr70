@@ -16,3 +16,7 @@ var FAILED_EVENT_CREATE error = errors.New("failed to create event")
 var FAILED_GET_USERNAME error = errors.New("failed to fetch all usernames")
 var EMAIL_IN_USE error = errors.New("email is in use")
 var USERNAME_IN_USE error = errors.New("username is in use")
+
+func VreelFieldError(field string) error {
+	return errors.New("vreel field: " + field)
+}

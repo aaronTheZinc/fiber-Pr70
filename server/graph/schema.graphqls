@@ -192,6 +192,10 @@ input NewSlide {
   slide_location: Int!
 }
 
+input VreelFields {
+  field: String!
+  value: String!
+}
 type Mutation {
   register(input: NewUser!): User!
   createEvent(token: String!, input: NewEvent!): Event!
@@ -212,4 +216,6 @@ type Mutation {
     groupId: String!
     member: String!
   ): MutationResponse!
+
+  updateVreelField(token: String!, fields: [VreelFields]): MutationResponse!
 }
