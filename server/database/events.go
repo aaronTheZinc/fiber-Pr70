@@ -14,3 +14,15 @@ func CreateEvent(author string, newEvent model.NewEvent) (model.Event, error) {
 
 	return event.ToEvent(), err
 }
+
+func GetEvent(id string) (model.Event, error) {
+	var event model.Event
+	var err error
+	getErr := db.Where("where = ?", id).First(&event)
+
+	if getErr != nil {
+
+	}
+	return event, err
+
+}

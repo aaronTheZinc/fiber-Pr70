@@ -11,6 +11,7 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/joho/godotenv"
 	"github.com/rs/cors"
+	"github.com/vreel/app/api"
 	"github.com/vreel/app/cache"
 	"github.com/vreel/app/database"
 	"github.com/vreel/app/graph"
@@ -51,11 +52,17 @@ func GQLHandler() {
 		panic(err)
 	}
 }
+
+func RestHandler() {
+	defer fmt.Println("rest is setup")
+	api.Init()
+}
+
 func main() {
 	godotenv.Load(".env")
 	database.Migrate()
-	// test.CreateUser()
-	// test.GenerateToken()
+	RestHandler()
+
 	var wg sync.WaitGroup
 	// test.TestCache()
 	database.Migrate()

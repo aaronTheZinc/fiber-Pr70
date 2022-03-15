@@ -5,6 +5,7 @@ package graph
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/vreel/app/analytics"
 	"github.com/vreel/app/auth"
@@ -53,6 +54,10 @@ func (r *mutationResolver) AddUserToGroup(ctx context.Context, token string, gro
 func (r *mutationResolver) RemoveUserFromGroup(ctx context.Context, token string, groupID string, member string) (*model.MutationResponse, error) {
 	resp, err := auth.AuthorizeRemoveUserFromGroup(token, groupID, member)
 	return &resp, err
+}
+
+func (r *mutationResolver) UpdateVreelField(ctx context.Context, token string, fields []*model.VreelFields) (*model.MutationResponse, error) {
+	panic(fmt.Errorf("not implemented"))
 }
 
 func (r *queryResolver) User(ctx context.Context, id *string) (*model.User, error) {

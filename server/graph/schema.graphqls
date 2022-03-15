@@ -3,6 +3,7 @@
 # https://gqlgen.com/getting-started/
 type ServerAnalytics {
   usernames: [String]!
+  vreels: [Vreel]
   userCount: Int!
 }
 
@@ -64,16 +65,18 @@ type Slide {
 type Contact {
   position: Int!
   header: String!
+  hidden: Boolean
 }
 
 type Service {
   position: Int!
   header: String!
   info: TextArea!
+  hidden: Boolean
 }
 
 type Link {
-  position: Int
+  position: Int!
   header: String!
   url: String!
   link_type: String!
@@ -81,24 +84,29 @@ type Link {
 }
 
 type Links {
-  position: Int
+  position: Int!
   links: [Link]
+  hidden: Boolean
 }
 
 type TextArea {
+  position: Int!
   content: String!
+  hidden: Boolean
 }
 
 type Videos {
   position: Int!
   uri: String!
   tag: String!
+  hidden: Boolean
 }
 
 type Gallery {
-  position: Int
+  position: Int!
   uris: [String!]
   tag: String!
+  hidden: Boolean
 }
 
 type VreelElements {
@@ -192,6 +200,10 @@ input NewSlide {
   slide_location: Int!
 }
 
+input VreelFields {
+  field: String!
+  value: String!
+}
 type Mutation {
   register(input: NewUser!): User!
   createEvent(token: String!, input: NewEvent!): Event!
@@ -212,4 +224,6 @@ type Mutation {
     groupId: String!
     member: String!
   ): MutationResponse!
+
+  updateVreelField(token: String!, fields: [VreelFields]): MutationResponse!
 }

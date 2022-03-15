@@ -9,6 +9,24 @@ export const LoginQuery = gql`
     }
   }
 `;
+const UserQuery = gql`
+  query User($Id: String) {
+    user(id: $Id) {
+      id
+      username
+      first_name
+      last_name
+      email
+      phone_number
+      business_address
+      billing_address
+      website
+      job_title
+      groups
+      vreel
+    }
+  }
+`;
 const UsernameQuery = gql`
   query User($Username: String) {
     username(username: $Username) {
@@ -56,6 +74,15 @@ export const getAllUsernames = async (): Promise<ServerAnalytics> => {
   return response;
 };
 
+export const getUserById = async (id: string): Promise<User> => {
+  const { data } = await client.query({
+    query: UserQuery,
+    variables: { Id: id },
+  });
+
+  return data.user;
+};
+
 interface LoginResponse {
   error: string;
   token: string;
@@ -74,6 +101,7 @@ export const loginUser = async (
     })
     .then(({ data }) => {
       response.token = data.login.token;
+      response.id = data.login.id
     })
     .catch((e) => {
       response.error = e.message;

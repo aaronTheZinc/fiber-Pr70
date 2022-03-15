@@ -45,6 +45,7 @@ type DirectiveRoot struct {
 type ComplexityRoot struct {
 	Contact struct {
 		Header   func(childComplexity int) int
+		Hidden   func(childComplexity int) int
 		Position func(childComplexity int) int
 	}
 
@@ -64,6 +65,7 @@ type ComplexityRoot struct {
 	}
 
 	Gallery struct {
+		Hidden   func(childComplexity int) int
 		Position func(childComplexity int) int
 		Tag      func(childComplexity int) int
 		Uris     func(childComplexity int) int
@@ -92,6 +94,7 @@ type ComplexityRoot struct {
 	}
 
 	Links struct {
+		Hidden   func(childComplexity int) int
 		Links    func(childComplexity int) int
 		Position func(childComplexity int) int
 	}
@@ -109,6 +112,7 @@ type ComplexityRoot struct {
 		Register                          func(childComplexity int, input model.NewUser) int
 		RemoveUserFromGroup               func(childComplexity int, token string, groupID string, member string) int
 		ResolveResetPasswordRequestIntent func(childComplexity int, token string, password string) int
+		UpdateVreelField                  func(childComplexity int, token string, fields []*model.VreelFields) int
 	}
 
 	MutationResponse struct {
@@ -138,10 +142,12 @@ type ComplexityRoot struct {
 	ServerAnalytics struct {
 		UserCount func(childComplexity int) int
 		Usernames func(childComplexity int) int
+		Vreels    func(childComplexity int) int
 	}
 
 	Service struct {
 		Header   func(childComplexity int) int
+		Hidden   func(childComplexity int) int
 		Info     func(childComplexity int) int
 		Position func(childComplexity int) int
 	}
@@ -160,7 +166,9 @@ type ComplexityRoot struct {
 	}
 
 	TextArea struct {
-		Content func(childComplexity int) int
+		Content  func(childComplexity int) int
+		Hidden   func(childComplexity int) int
+		Position func(childComplexity int) int
 	}
 
 	User struct {
@@ -180,6 +188,7 @@ type ComplexityRoot struct {
 	}
 
 	Videos struct {
+		Hidden   func(childComplexity int) int
 		Position func(childComplexity int) int
 		Tag      func(childComplexity int) int
 		URI      func(childComplexity int) int
@@ -212,6 +221,7 @@ type MutationResolver interface {
 	DeleteGroup(ctx context.Context, id string, token string) (*model.MutationResponse, error)
 	AddUserToGroup(ctx context.Context, token string, groupID string, userID string) (*model.MutationResponse, error)
 	RemoveUserFromGroup(ctx context.Context, token string, groupID string, member string) (*model.MutationResponse, error)
+	UpdateVreelField(ctx context.Context, token string, fields []*model.VreelFields) (*model.MutationResponse, error)
 }
 type QueryResolver interface {
 	User(ctx context.Context, id *string) (*model.User, error)
@@ -242,6 +252,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Contact.Header(childComplexity), true
+
+	case "Contact.hidden":
+		if e.complexity.Contact.Hidden == nil {
+			break
+		}
+
+		return e.complexity.Contact.Hidden(childComplexity), true
 
 	case "Contact.position":
 		if e.complexity.Contact.Position == nil {
@@ -333,6 +350,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Event.Thumbnail(childComplexity), true
+
+	case "Gallery.hidden":
+		if e.complexity.Gallery.Hidden == nil {
+			break
+		}
+
+		return e.complexity.Gallery.Hidden(childComplexity), true
 
 	case "Gallery.position":
 		if e.complexity.Gallery.Position == nil {
@@ -467,6 +491,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Link.URL(childComplexity), true
 
+	case "Links.hidden":
+		if e.complexity.Links.Hidden == nil {
+			break
+		}
+
+		return e.complexity.Links.Hidden(childComplexity), true
+
 	case "Links.links":
 		if e.complexity.Links.Links == nil {
 			break
@@ -583,6 +614,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.ResolveResetPasswordRequestIntent(childComplexity, args["token"].(string), args["password"].(string)), true
+
+	case "Mutation.updateVreelField":
+		if e.complexity.Mutation.UpdateVreelField == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateVreelField_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateVreelField(childComplexity, args["token"].(string), args["fields"].([]*model.VreelFields)), true
 
 	case "MutationResponse.message":
 		if e.complexity.MutationResponse.Message == nil {
@@ -702,12 +745,26 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ServerAnalytics.Usernames(childComplexity), true
 
+	case "ServerAnalytics.vreels":
+		if e.complexity.ServerAnalytics.Vreels == nil {
+			break
+		}
+
+		return e.complexity.ServerAnalytics.Vreels(childComplexity), true
+
 	case "Service.header":
 		if e.complexity.Service.Header == nil {
 			break
 		}
 
 		return e.complexity.Service.Header(childComplexity), true
+
+	case "Service.hidden":
+		if e.complexity.Service.Hidden == nil {
+			break
+		}
+
+		return e.complexity.Service.Hidden(childComplexity), true
 
 	case "Service.info":
 		if e.complexity.Service.Info == nil {
@@ -778,6 +835,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.TextArea.Content(childComplexity), true
+
+	case "TextArea.hidden":
+		if e.complexity.TextArea.Hidden == nil {
+			break
+		}
+
+		return e.complexity.TextArea.Hidden(childComplexity), true
+
+	case "TextArea.Position":
+		if e.complexity.TextArea.Position == nil {
+			break
+		}
+
+		return e.complexity.TextArea.Position(childComplexity), true
 
 	case "User.billing_address":
 		if e.complexity.User.BillingAddress == nil {
@@ -869,6 +940,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.User.Website(childComplexity), true
+
+	case "Videos.hidden":
+		if e.complexity.Videos.Hidden == nil {
+			break
+		}
+
+		return e.complexity.Videos.Hidden(childComplexity), true
 
 	case "Videos.position":
 		if e.complexity.Videos.Position == nil {
@@ -1037,6 +1115,7 @@ var sources = []*ast.Source{
 # https://gqlgen.com/getting-started/
 type ServerAnalytics {
   usernames: [String]!
+  vreels: [Vreel]
   userCount: Int!
 }
 
@@ -1098,16 +1177,18 @@ type Slide {
 type Contact {
   position: Int!
   header: String!
+  hidden: Boolean
 }
 
 type Service {
   position: Int!
   header: String!
   info: TextArea!
+  hidden: Boolean
 }
 
 type Link {
-  position: Int
+  position: Int!
   header: String!
   url: String!
   link_type: String!
@@ -1115,24 +1196,29 @@ type Link {
 }
 
 type Links {
-  position: Int
+  position: Int!
   links: [Link]
+  hidden: Boolean
 }
 
 type TextArea {
+  Position: Int!
   content: String!
+  hidden: Boolean
 }
 
 type Videos {
   position: Int!
   uri: String!
   tag: String!
+  hidden: Boolean
 }
 
 type Gallery {
-  position: Int
+  position: Int!
   uris: [String!]
   tag: String!
+  hidden: Boolean
 }
 
 type VreelElements {
@@ -1226,6 +1312,10 @@ input NewSlide {
   slide_location: Int!
 }
 
+input VreelFields {
+  field: String!
+  value: String!
+}
 type Mutation {
   register(input: NewUser!): User!
   createEvent(token: String!, input: NewEvent!): Event!
@@ -1246,6 +1336,8 @@ type Mutation {
     groupId: String!
     member: String!
   ): MutationResponse!
+
+  updateVreelField(token: String!, fields: [VreelFields]): MutationResponse!
 }
 `, BuiltIn: false},
 }
@@ -1435,6 +1527,30 @@ func (ec *executionContext) field_Mutation_resolveResetPasswordRequestIntent_arg
 		}
 	}
 	args["password"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_updateVreelField_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["token"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("token"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["token"] = arg0
+	var arg1 []*model.VreelFields
+	if tmp, ok := rawArgs["fields"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("fields"))
+		arg1, err = ec.unmarshalOVreelFields2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐVreelFields(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["fields"] = arg1
 	return args, nil
 }
 
@@ -1628,6 +1744,38 @@ func (ec *executionContext) _Contact_header(ctx context.Context, field graphql.C
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Contact_hidden(ctx context.Context, field graphql.CollectedField, obj *model.Contact) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Contact",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Hidden, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*bool)
+	fc.Result = res
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Event_ID(ctx context.Context, field graphql.CollectedField, obj *model.Event) (ret graphql.Marshaler) {
@@ -2072,11 +2220,14 @@ func (ec *executionContext) _Gallery_position(ctx context.Context, field graphql
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
-	res := resTmp.(*int)
+	res := resTmp.(int)
 	fc.Result = res
-	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Gallery_uris(ctx context.Context, field graphql.CollectedField, obj *model.Gallery) (ret graphql.Marshaler) {
@@ -2144,6 +2295,38 @@ func (ec *executionContext) _Gallery_tag(ctx context.Context, field graphql.Coll
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Gallery_hidden(ctx context.Context, field graphql.CollectedField, obj *model.Gallery) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Gallery",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Hidden, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*bool)
+	fc.Result = res
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Group_id(ctx context.Context, field graphql.CollectedField, obj *model.Group) (ret graphql.Marshaler) {
@@ -2544,11 +2727,14 @@ func (ec *executionContext) _Link_position(ctx context.Context, field graphql.Co
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
-	res := resTmp.(*int)
+	res := resTmp.(int)
 	fc.Result = res
-	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Link_header(ctx context.Context, field graphql.CollectedField, obj *model.Link) (ret graphql.Marshaler) {
@@ -2716,11 +2902,14 @@ func (ec *executionContext) _Links_position(ctx context.Context, field graphql.C
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
-	res := resTmp.(*int)
+	res := resTmp.(int)
 	fc.Result = res
-	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Links_links(ctx context.Context, field graphql.CollectedField, obj *model.Links) (ret graphql.Marshaler) {
@@ -2753,6 +2942,38 @@ func (ec *executionContext) _Links_links(ctx context.Context, field graphql.Coll
 	res := resTmp.([]*model.Link)
 	fc.Result = res
 	return ec.marshalOLink2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐLink(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Links_hidden(ctx context.Context, field graphql.CollectedField, obj *model.Links) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Links",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Hidden, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*bool)
+	fc.Result = res
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _LocalSession_token(ctx context.Context, field graphql.CollectedField, obj *model.LocalSession) (ret graphql.Marshaler) {
@@ -3110,6 +3331,48 @@ func (ec *executionContext) _Mutation_removeUserFromGroup(ctx context.Context, f
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return ec.resolvers.Mutation().RemoveUserFromGroup(rctx, args["token"].(string), args["groupId"].(string), args["member"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.MutationResponse)
+	fc.Result = res
+	return ec.marshalNMutationResponse2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐMutationResponse(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_updateVreelField(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_updateVreelField_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpdateVreelField(rctx, args["token"].(string), args["fields"].([]*model.VreelFields))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3677,6 +3940,38 @@ func (ec *executionContext) _ServerAnalytics_usernames(ctx context.Context, fiel
 	return ec.marshalNString2ᚕᚖstring(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _ServerAnalytics_vreels(ctx context.Context, field graphql.CollectedField, obj *model.ServerAnalytics) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ServerAnalytics",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Vreels, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Vreel)
+	fc.Result = res
+	return ec.marshalOVreel2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐVreel(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _ServerAnalytics_userCount(ctx context.Context, field graphql.CollectedField, obj *model.ServerAnalytics) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -3815,6 +4110,38 @@ func (ec *executionContext) _Service_info(ctx context.Context, field graphql.Col
 	res := resTmp.(*model.TextArea)
 	fc.Result = res
 	return ec.marshalNTextArea2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐTextArea(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Service_hidden(ctx context.Context, field graphql.CollectedField, obj *model.Service) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Service",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Hidden, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*bool)
+	fc.Result = res
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Slide_id(ctx context.Context, field graphql.CollectedField, obj *model.Slide) (ret graphql.Marshaler) {
@@ -4062,6 +4389,41 @@ func (ec *executionContext) _SlideMetaData_size(ctx context.Context, field graph
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _TextArea_Position(ctx context.Context, field graphql.CollectedField, obj *model.TextArea) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "TextArea",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Position, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _TextArea_content(ctx context.Context, field graphql.CollectedField, obj *model.TextArea) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -4095,6 +4457,38 @@ func (ec *executionContext) _TextArea_content(ctx context.Context, field graphql
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _TextArea_hidden(ctx context.Context, field graphql.CollectedField, obj *model.TextArea) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "TextArea",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Hidden, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*bool)
+	fc.Result = res
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _User_id(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
@@ -4655,6 +5049,38 @@ func (ec *executionContext) _Videos_tag(ctx context.Context, field graphql.Colle
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Videos_hidden(ctx context.Context, field graphql.CollectedField, obj *model.Videos) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Videos",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Hidden, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*bool)
+	fc.Result = res
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Vreel_author(ctx context.Context, field graphql.CollectedField, obj *model.Vreel) (ret graphql.Marshaler) {
@@ -6489,6 +6915,37 @@ func (ec *executionContext) unmarshalInputResetPasswordInput(ctx context.Context
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputVreelFields(ctx context.Context, obj interface{}) (model.VreelFields, error) {
+	var it model.VreelFields
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "field":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("field"))
+			it.Field, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "value":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("value"))
+			it.Value, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 // endregion **************************** input.gotpl *****************************
 
 // region    ************************** interface.gotpl ***************************
@@ -6518,6 +6975,8 @@ func (ec *executionContext) _Contact(ctx context.Context, sel ast.SelectionSet, 
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "hidden":
+			out.Values[i] = ec._Contact_hidden(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -6621,6 +7080,9 @@ func (ec *executionContext) _Gallery(ctx context.Context, sel ast.SelectionSet, 
 			out.Values[i] = graphql.MarshalString("Gallery")
 		case "position":
 			out.Values[i] = ec._Gallery_position(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "uris":
 			out.Values[i] = ec._Gallery_uris(ctx, field, obj)
 		case "tag":
@@ -6628,6 +7090,8 @@ func (ec *executionContext) _Gallery(ctx context.Context, sel ast.SelectionSet, 
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "hidden":
+			out.Values[i] = ec._Gallery_hidden(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -6717,6 +7181,9 @@ func (ec *executionContext) _Link(ctx context.Context, sel ast.SelectionSet, obj
 			out.Values[i] = graphql.MarshalString("Link")
 		case "position":
 			out.Values[i] = ec._Link_position(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "header":
 			out.Values[i] = ec._Link_header(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -6761,8 +7228,13 @@ func (ec *executionContext) _Links(ctx context.Context, sel ast.SelectionSet, ob
 			out.Values[i] = graphql.MarshalString("Links")
 		case "position":
 			out.Values[i] = ec._Links_position(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "links":
 			out.Values[i] = ec._Links_links(ctx, field, obj)
+		case "hidden":
+			out.Values[i] = ec._Links_hidden(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -6853,6 +7325,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			}
 		case "removeUserFromGroup":
 			out.Values[i] = ec._Mutation_removeUserFromGroup(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "updateVreelField":
+			out.Values[i] = ec._Mutation_updateVreelField(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -7081,6 +7558,8 @@ func (ec *executionContext) _ServerAnalytics(ctx context.Context, sel ast.Select
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "vreels":
+			out.Values[i] = ec._ServerAnalytics_vreels(ctx, field, obj)
 		case "userCount":
 			out.Values[i] = ec._ServerAnalytics_userCount(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -7123,6 +7602,8 @@ func (ec *executionContext) _Service(ctx context.Context, sel ast.SelectionSet, 
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "hidden":
+			out.Values[i] = ec._Service_hidden(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -7224,11 +7705,18 @@ func (ec *executionContext) _TextArea(ctx context.Context, sel ast.SelectionSet,
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("TextArea")
+		case "Position":
+			out.Values[i] = ec._TextArea_Position(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "content":
 			out.Values[i] = ec._TextArea_content(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "hidden":
+			out.Values[i] = ec._TextArea_hidden(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -7353,6 +7841,8 @@ func (ec *executionContext) _Videos(ctx context.Context, sel ast.SelectionSet, o
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "hidden":
+			out.Values[i] = ec._Videos_hidden(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -8386,21 +8876,6 @@ func (ec *executionContext) marshalOGroup2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgra
 	return ret
 }
 
-func (ec *executionContext) unmarshalOInt2ᚖint(ctx context.Context, v interface{}) (*int, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := graphql.UnmarshalInt(v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalOInt2ᚖint(ctx context.Context, sel ast.SelectionSet, v *int) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return graphql.MarshalInt(*v)
-}
-
 func (ec *executionContext) marshalOLink2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐLink(ctx context.Context, sel ast.SelectionSet, v []*model.Link) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
@@ -8571,6 +9046,86 @@ func (ec *executionContext) marshalOVideos2ᚖgithubᚗcomᚋvreelᚋappᚋgraph
 		return graphql.Null
 	}
 	return ec._Videos(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOVreel2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐVreel(ctx context.Context, sel ast.SelectionSet, v []*model.Vreel) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOVreel2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐVreel(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	return ret
+}
+
+func (ec *executionContext) marshalOVreel2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐVreel(ctx context.Context, sel ast.SelectionSet, v *model.Vreel) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Vreel(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOVreelFields2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐVreelFields(ctx context.Context, v interface{}) ([]*model.VreelFields, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*model.VreelFields, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalOVreelFields2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐVreelFields(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalOVreelFields2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐVreelFields(ctx context.Context, v interface{}) (*model.VreelFields, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputVreelFields(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalO__EnumValue2ᚕgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐEnumValueᚄ(ctx context.Context, sel ast.SelectionSet, v []introspection.EnumValue) graphql.Marshaler {
