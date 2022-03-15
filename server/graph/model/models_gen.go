@@ -5,6 +5,7 @@ package model
 type Contact struct {
 	Position int    `json:"position"`
 	Header   string `json:"header"`
+	Hidden   *bool  `json:"hidden"`
 }
 
 type Event struct {
@@ -23,9 +24,10 @@ type Event struct {
 }
 
 type Gallery struct {
-	Position *int     `json:"position"`
+	Position int      `json:"position"`
 	Uris     []string `json:"uris"`
 	Tag      string   `json:"tag"`
+	Hidden   *bool    `json:"hidden"`
 }
 
 type Group struct {
@@ -43,7 +45,7 @@ type Group struct {
 }
 
 type Link struct {
-	Position *int   `json:"position"`
+	Position int    `json:"position"`
 	Header   string `json:"header"`
 	URL      string `json:"url"`
 	LinkType string `json:"link_type"`
@@ -51,8 +53,9 @@ type Link struct {
 }
 
 type Links struct {
-	Position *int    `json:"position"`
+	Position int     `json:"position"`
 	Links    []*Link `json:"links"`
+	Hidden   *bool   `json:"hidden"`
 }
 
 type LocalSession struct {
@@ -127,6 +130,7 @@ type ResolvedPasswordReset struct {
 
 type ServerAnalytics struct {
 	Usernames []*string `json:"usernames"`
+	Vreels    []*Vreel  `json:"vreels"`
 	UserCount int       `json:"userCount"`
 }
 
@@ -134,6 +138,7 @@ type Service struct {
 	Position int       `json:"position"`
 	Header   string    `json:"header"`
 	Info     *TextArea `json:"info"`
+	Hidden   *bool     `json:"hidden"`
 }
 
 type Slide struct {
@@ -150,7 +155,9 @@ type SlideMetaData struct {
 }
 
 type TextArea struct {
-	Content string `json:"content"`
+	Position int    `json:"Position"`
+	Content  string `json:"content"`
+	Hidden   *bool  `json:"hidden"`
 }
 
 type User struct {
@@ -173,6 +180,7 @@ type Videos struct {
 	Position int    `json:"position"`
 	URI      string `json:"uri"`
 	Tag      string `json:"tag"`
+	Hidden   *bool  `json:"hidden"`
 }
 
 type Vreel struct {

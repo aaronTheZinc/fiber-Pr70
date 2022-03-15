@@ -27,7 +27,7 @@ func EditVreel(userId string, f []model.VreelFields) (model.MutationResponse, er
 		err = errors.New(strings.Join(fieldErrs[:], ","))
 	} else {
 		for _, v := range f {
-			go database.UpdateVreelField(userId, v.Field, v.Value)
+			go database.UpdateVreelElements(userId, v.Field)
 		}
 	}
 	// if VreelFieldExits() {

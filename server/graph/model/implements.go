@@ -1,6 +1,8 @@
 package model
 
 import (
+	"encoding/json"
+
 	"github.com/lib/pq"
 )
 
@@ -46,10 +48,12 @@ type EventModel struct {
 }
 
 type VreelModel struct {
+	ID        string         `json:"id"`
 	Author    string         `json:"author"`
 	PageTitle string         `json:"page_title"`
 	ButtonURI *string        `json:"button_uri"`
 	Slides    pq.StringArray `gorm:"type:text[]"`
+	Elements  string         `json:"elements"`
 }
 
 type SlideModel struct {
@@ -178,4 +182,29 @@ func (c *Slide) ToDatabaseModel() SlideModel {
 		SlideLocation: c.SlideLocation,
 		Metadata:      *c.Metadata,
 	}
+}
+
+func (c *VreelModel) ToVreel() (Vreel, error) {
+	var err error
+	var e VreelElements
+	s := []*Slide{}
+	// for _, sl := range c.Slides {
+	// 	t, e := database.GetSlide(sl)
+	// 	if e != nil {
+	// 		err = e
+	// 	}
+	// 	s = append(s, &t)
+	// }
+	gErr := json.Unmarshal([]byte(c.Elements), &e)
+
+	if gErr != nil {
+		err = gErr
+	}
+	return Vreel{
+		Author:    c.Author,
+		Elements:  &e,
+		PageTitle: c.PageTitle,
+		ButtonURI: c.ButtonURI,
+		Slides:    s,
+	}, err
 }
