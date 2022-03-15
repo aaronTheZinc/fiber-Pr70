@@ -16,3 +16,10 @@ var FAILED_EVENT_CREATE error = errors.New("failed to create event")
 var FAILED_GET_USERNAME error = errors.New("failed to fetch all usernames")
 var EMAIL_IN_USE error = errors.New("email is in use")
 var USERNAME_IN_USE error = errors.New("username is in use")
+var FAILED_CREATE_VREEL error = errors.New("failed to create vreel")
+var FAILED_CREATE_USER error = errors.New("failed to create user")
+var SLIDE_NOT_FOUND error = errors.New("slide not found")
+
+func VreelFieldError(field string) error {
+	return errors.New("vreel field: " + field)
+}

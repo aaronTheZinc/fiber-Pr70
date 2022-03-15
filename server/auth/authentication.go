@@ -48,10 +48,14 @@ func CreateNewUser(newUser model.NewUser) (model.User, error) {
 		if hashErr != nil {
 			return model.User{}, hashErr
 		}
-		u, e := database.CreateUser(newUser, utils.GenerateUID(), hashedPw)
+		u, oerr := database.CreateUser(newUser, utils.GenerateUID(), hashedPw)
+		cErr := database.CreateNewVreel(u.ID)
 		user = u
-		if err != nil {
-			err = e
+		if oerr != nil {
+			err = e.FAILED_CREATE_USER
+		}
+		if cErr != nil {
+			err = e.FAILED_CREATE_VREEL
 		}
 	}
 
