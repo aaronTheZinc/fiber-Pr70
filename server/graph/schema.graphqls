@@ -90,7 +90,7 @@ type Links {
 }
 
 type TextArea {
-  Position: Int!
+  position: Int!
   content: String!
   hidden: Boolean
 }
