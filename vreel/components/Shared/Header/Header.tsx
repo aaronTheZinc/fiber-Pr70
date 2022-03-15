@@ -3,9 +3,16 @@ import React from "react";
 
 const Header = (): JSX.Element => {
   const router = useRouter();
+  console.log("router", router);
+  const styles =
+    router.pathname.includes("login") || router.pathname.includes("register")
+      ? {
+          display: "none",
+        }
+      : {};
   return (
     <>
-      <header className="vreel-header vreel-header__wrapper">
+      <header style={styles} className="vreel-header vreel-header__wrapper">
         <img
           onClick={() => router.push("/")}
           src="/logo.svg"

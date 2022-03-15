@@ -14,6 +14,7 @@ const Menu = (): JSX.Element => {
   const menuEl = useRef(null);
   const onButtonClick = () => {
     menuEl.current.style.display = "none";
+    console.log('el', menuEl.current.children[1].children)
   };
   return (
     <div ref={menuEl} className="vreel-menu vreel-menu__wrapper">
@@ -23,7 +24,7 @@ const Menu = (): JSX.Element => {
         alt="vreel menu close icon"
         className="vreel-menu__close-btn"
       />
-      <ul className="vreel-menu__wrapper">
+      <ul className="vreel-menu-items__wrapper">
         {cookies.userAuthToken ? (
           <>
             <li>
@@ -49,26 +50,37 @@ const Menu = (): JSX.Element => {
             </li>
           </>
         ) : username ? (
-            <>
-              <li>
-                <a href="#">Social</a>
-              </li>
-              <li>
-                <a href="#">About</a>
-              </li>
-              <li>
-                <a href="#">Services</a>
-              </li>
-            </>
+          <>
+            <li>
+              <a href="#">Social</a>
+            </li>
+            <li>
+              <a href="#">About</a>
+            </li>
+            <li>
+              <a href="#">Services</a>
+            </li>
+          </>
         ) : (
-            <>
+          <>
+            <li>
+              <a href="#">Social</a>
+            </li>
+            <li>
+              <a href="#">About</a>
+            </li>
+            <li>
+              <a href="#">Services</a>
+            </li>
+            <div className="vreel-menu__auth-btn__wrapper">
               <li>
                 <a href="/login">Login</a>
               </li>
               <li>
                 <a href="/register">Register</a>
               </li>
-            </>
+            </div>
+          </>
         )}
       </ul>
     </div>
