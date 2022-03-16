@@ -82,7 +82,7 @@
     padding-bottom: 12px;
     text-transform: uppercase;
     @media only screen and (max-width: 768px) {
-      font-size: 20px;
+      font-size: 1.6rem;
     }
   }
   &__text {
@@ -92,8 +92,14 @@
     line-height: 21px;
     text-transform: uppercase;
     @media only screen and (max-width: 768px) {
-      font-size: 10.5px;
+      font-size: .7rem;
     }
+  }
+  &__btn-wrapper {
+    display: flex;
+    flex-direction: row;
+    max-width: 80%;
+    gap: 12px;
   }
   &__btn {
     font-family: Poppins;
@@ -137,10 +143,6 @@
         cursor: pointer;
       }
     }
-    @media only screen and (max-width: 768px) {
-      height: 25px;
-      width: 25px;
-    }
   }
 
   &__left-icons__wrapper {
@@ -151,7 +153,7 @@
     left: 5px;
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 15px;
   }
   &__right-icons__wrapper {
     position: absolute;
@@ -163,7 +165,7 @@
     .bottom {
       display: flex;
       flex-direction: column;
-      gap: 7px;
+      gap: 15px;
     }
     .bottom {
       position: fixed;

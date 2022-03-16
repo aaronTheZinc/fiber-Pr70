@@ -45,7 +45,7 @@ const Menu = (): JSX.Element => {
             <li>
               <a href="#">Help</a>
             </li>
-            <li onClick={() => removeCookies("userAuthToken")}>
+            <li style={{ position: 'fixed', bottom: "0px", right:'7px' }} onClick={() => removeCookies("userAuthToken")}>
               <a href="#">Logout</a>
             </li>
           </>
@@ -60,6 +60,9 @@ const Menu = (): JSX.Element => {
             <li>
               <a href="#">Services</a>
             </li>
+            <li style={{ position: 'fixed', bottom: "0px", right:'7px' }}>
+              <a href="/login">Login</a>
+            </li>
           </>
         ) : (
           <>
@@ -72,14 +75,6 @@ const Menu = (): JSX.Element => {
             <li>
               <a href="#">Services</a>
             </li>
-            <div className="vreel-menu__auth-btn__wrapper">
-              <li>
-                <a href="/login">Login</a>
-              </li>
-              <li>
-                <a href="/register">Register</a>
-              </li>
-            </div>
           </>
         )}
       </ul>
