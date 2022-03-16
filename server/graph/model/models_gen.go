@@ -155,7 +155,7 @@ type SlideMetaData struct {
 }
 
 type TextArea struct {
-	Position int    `json:"Position"`
+	Position int    `json:"position"`
 	Content  string `json:"content"`
 	Hidden   *bool  `json:"hidden"`
 }

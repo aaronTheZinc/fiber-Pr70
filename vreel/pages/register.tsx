@@ -9,7 +9,7 @@ function RegisterPage(): JSX.Element {
   useEffect(() => {}, []);
 
   return (
-    <div className="container">
+    <div className="container py-2">
       <RegisterForm />
     </div>
   );

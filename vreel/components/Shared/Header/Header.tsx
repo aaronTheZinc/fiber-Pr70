@@ -5,7 +5,7 @@ const Header = (): JSX.Element => {
   const router = useRouter();
   console.log("router", router);
   const styles =
-    router.pathname.includes("login") || router.pathname.includes("register")
+    router.pathname.includes("login") || router.pathname.includes("register") || router.pathname.includes("forgot-password")
       ? {
           display: "none",
         }
