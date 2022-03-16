@@ -1,4 +1,6 @@
 .vreel-modal {
+      max-width: 100% !important;
+      margin: 0 !important;
   &__close-btn.btn-close {
     align-self: flex-end;
     margin: 1rem;
@@ -10,8 +12,14 @@
     padding: 10px;
     font-size: small;
   }
+  .modal {
+    top: 0 !important;
+    right: 0 !important;
+    height: 100vh !important;
+  }
   .modal-content {
-    background-color: #000;
+    background-color: rgba(0, 0, 0, 0.7);
+    height: 100vh;
     .btn-close {
       align-self: flex-end;
       margin: 1rem;
@@ -21,7 +29,7 @@
       z-index: 0;
       background-color: #fff;
       padding: 10px;
-      font-size: small;
+      font-size: larger;
     }
     .modal-body {
       color: #fff;

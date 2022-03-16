@@ -1,3 +1,4 @@
+import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { PrimaryButton, PrimaryInput, SecretInput } from "../../index";
 interface FormDataType {
@@ -5,6 +6,9 @@ interface FormDataType {
 }
 
 const RegisterForm = (): JSX.Element => {
+
+  const router = useRouter();
+  
   const [userFormData, setUserFormData] = useState<FormDataType>({
     email: "",
   });
@@ -30,7 +34,7 @@ const RegisterForm = (): JSX.Element => {
       style={{ height: "100vh" }}
       className="d-flex flex-column justify-content-center align-items-center vreel-forgot-password-form"
     >
-      <img src="/vreel-logo.png" alt="Vreel Logo" width="181" height="202" />
+      <img style={{ cursor:'pointer' }} onClick={() => router.push("/")} src="/vreel-logo.png" alt="Vreel Logo" width="181" height="202" />
       <h1>Forgot Password?</h1>
       <form
         onSubmit={submitForm}

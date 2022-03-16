@@ -11,6 +11,9 @@
       border: none;
       border-radius: 5px;
       padding-left: 25px;
+      @media only screen and (max-width: 768px) {
+        width: 100%;
+      }
 
       &::placeholder {
         /* Chrome, Firefox, Opera, Safari 10.1+ */
