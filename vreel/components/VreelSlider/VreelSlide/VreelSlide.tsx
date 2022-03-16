@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { VreelModal } from "../../Shared/VreelModal/VreelModal";
 
-const VreelSlide = ({ username, user, slideId }): JSX.Element => {
+const VreelSlide = ({ username, user, slideId, slide, isChanged }): JSX.Element => {
+  const audioEl = useRef(null)
+
   const [isFollowed, setIsFollowed] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
@@ -15,6 +17,8 @@ const VreelSlide = ({ username, user, slideId }): JSX.Element => {
 
   const toggleSlideSound = () => {
     setIsMuted(!isMuted);
+    isMuted ? audioEl.current.play() : audioEl.current.pause()
+    isChanged && audioEl.current.pause()
   };
 
   return (
@@ -167,6 +171,7 @@ const VreelSlide = ({ username, user, slideId }): JSX.Element => {
           <VreelModal isQr={true} icon="/qr-icon.svg" />
         </div>
       </aside>
+      <audio ref={audioEl} id="vreelBackgroundAudio" loop={true} src="/background-vreel.mp3"></audio>
     </section>
   );
 };
