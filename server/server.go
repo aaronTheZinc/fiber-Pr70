@@ -61,13 +61,16 @@ func RestHandler() {
 func main() {
 	godotenv.Load(".env")
 	database.Migrate()
-	RestHandler()
 
 	var wg sync.WaitGroup
 	// test.TestCache()
 	database.Migrate()
 	InitializeCache()
-
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		RestHandler()
+	}()
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
