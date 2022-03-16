@@ -1,5 +1,11 @@
 .vreel-login-form {
   font-size: 22px;
+  @media only screen and (max-width: 768px) {
+    img{
+      height: 85px;
+      width: 85px;
+    }
+  }
   h1 {
     font-family: Pragati Narrow;
     margin: 35px 0;

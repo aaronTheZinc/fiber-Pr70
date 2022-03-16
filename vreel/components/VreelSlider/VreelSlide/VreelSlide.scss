@@ -82,7 +82,7 @@
     padding-bottom: 12px;
     text-transform: uppercase;
     @media only screen and (max-width: 768px) {
-      font-size: 20px;
+      font-size: 1.6rem;
     }
   }
   &__text {
@@ -92,8 +92,14 @@
     line-height: 21px;
     text-transform: uppercase;
     @media only screen and (max-width: 768px) {
-      font-size: 10.5px;
+      font-size: 0.8rem;
     }
+  }
+  &__btn-wrapper {
+    display: flex;
+    flex-direction: row;
+    max-width: 80%;
+    gap: 12px;
   }
   &__btn {
     font-family: Poppins;
@@ -136,10 +142,6 @@
       :hover {
         cursor: pointer;
       }
-    }
-    @media only screen and (max-width: 768px) {
-      height: 25px;
-      width: 25px;
     }
   }
 

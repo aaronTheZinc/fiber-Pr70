@@ -51,9 +51,14 @@ const VreelSlide = ({ username, user, slideId }): JSX.Element => {
           Upload some files in file manager and then use editor to personalize
           your Vreel
         </p>
-        <a className="vreel-slide__btn" href="#">
-          Link Your Button
-        </a>
+        <div className="vreel-slide__btn-wrapper">
+          <a className="vreel-slide__btn" href="/register">
+            Register
+          </a>
+          <a className="vreel-slide__btn" href="/login">
+            Login
+          </a>
+        </div>
       </div>
 
       <img
@@ -99,7 +104,10 @@ const VreelSlide = ({ username, user, slideId }): JSX.Element => {
           </a>
 
           {/* <VreelModal isContact={true} icon="/add-to-contact-icon.svg" /> */}
-          <a href={username ? `/api/vcard?username=${username}` : "#"} download={username ? `${username}.vcf` : null}>
+          <a
+            href={username ? `/api/vcard?username=${username}` : "#"}
+            download={username ? `${username}.vcf` : null}
+          >
             <img
               data-bs-toggle="tooltip"
               data-bs-placement="top"

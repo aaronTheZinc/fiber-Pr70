@@ -20,6 +20,9 @@
     background-size: 100% auto;
     background-position: center;
     height: 75px;
+    @media only screen and (max-width: 768px) {
+      display: none;
+    }
   }
   .swiper-button-next {
     background-image: url("../../public/next.svg");

@@ -71,7 +71,7 @@ const RegisterForm = (): JSX.Element => {
       style={{ height: "100vh" }}
       className="d-flex flex-column justify-content-center align-items-center vreel-register-form"
     >
-      <img src="/vreel-logo.png" alt="Vreel Logo" width="181" height="202" />
+      <img style={{ cursor:'pointer' }} onClick={() => router.push("/")} src="/vreel-logo.png" alt="Vreel Logo" width="181" height="202" />
       <h1>Create Your FREE VReel Account</h1>
       <form onSubmit={submitForm} className="vreel-register-form__wrapper">
         <PrimaryInput
