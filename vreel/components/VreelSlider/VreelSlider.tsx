@@ -7,9 +7,12 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import VreelSlide from "./VreelSlide/VreelSlide";
+import { useState } from "react";
 
 export const VreelSlider = ({ isUser, username, user }): JSX.Element => {
   let slides = new Array("a", "b", "c", "d");
+  const [isChanged, setIsChanged] = useState(false)
+  const [currentSlide, setCurrentSlide] = useState(null)
   return (
     <Swiper
       modules={[Navigation, Pagination]}
@@ -17,18 +20,22 @@ export const VreelSlider = ({ isUser, username, user }): JSX.Element => {
       slidesPerView={1}
       navigation
       pagination={true}
-      onSlideChange={() => console.log("slide change")}
+      onSlideChange={(slide) => {
+        setIsChanged(true)
+        setCurrentSlide(slide)
+        console.log("slide change", slide, isChanged)
+      }}
       onSwiper={(swiper) => console.log(swiper)}
     >
       {slides.length > 0
         ? slides.map((slide, idx) => (
             <SwiperSlide key={idx}>
-              <VreelSlide slideId={idx} user={user} username={username} />
+              <VreelSlide slide={slide} isChanged={isChanged} slideId={idx} user={user} username={username} />
             </SwiperSlide>
           ))
         : slides.map((slide, idx) => (
             <SwiperSlide key={idx}>
-              <VreelSlide />
+              <VreelSlide slide={slide} isChanged={isChanged} />
             </SwiperSlide>
           ))}
     </Swiper>

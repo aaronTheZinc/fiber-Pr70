@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { VreelModal } from "../../Shared/VreelModal/VreelModal";
 
-const VreelSlide = ({ username, user, slideId }): JSX.Element => {
+const VreelSlide = ({ username, user, slideId, slide, isChanged }): JSX.Element => {
+  const audioEl = useRef(null)
+
   const [isFollowed, setIsFollowed] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
@@ -15,6 +17,8 @@ const VreelSlide = ({ username, user, slideId }): JSX.Element => {
 
   const toggleSlideSound = () => {
     setIsMuted(!isMuted);
+    isMuted ? audioEl.current.play() : audioEl.current.pause()
+    isChanged && audioEl.current.pause()
   };
 
   return (
@@ -51,9 +55,14 @@ const VreelSlide = ({ username, user, slideId }): JSX.Element => {
           Upload some files in file manager and then use editor to personalize
           your Vreel
         </p>
-        <a className="vreel-slide__btn" href="#">
-          Link Your Button
-        </a>
+        <div className="vreel-slide__btn-wrapper">
+          <a className="vreel-slide__btn" href="/register">
+            Register
+          </a>
+          <a className="vreel-slide__btn" href="/login">
+            Login
+          </a>
+        </div>
       </div>
 
       <img
@@ -99,7 +108,10 @@ const VreelSlide = ({ username, user, slideId }): JSX.Element => {
           </a>
 
           {/* <VreelModal isContact={true} icon="/add-to-contact-icon.svg" /> */}
-          <a href={username ? `/api/vcard?username=${username}` : "#"} download={username ? `${username}.vcf` : null}>
+          <a
+            href={username ? `/api/vcard?username=${username}` : "#"}
+            download={username ? `${username}.vcf` : null}
+          >
             <img
               data-bs-toggle="tooltip"
               data-bs-placement="top"
@@ -159,6 +171,7 @@ const VreelSlide = ({ username, user, slideId }): JSX.Element => {
           <VreelModal isQr={true} icon="/qr-icon.svg" />
         </div>
       </aside>
+      <audio ref={audioEl} id="vreelBackgroundAudio" loop={true} src="/background-vreel.mp3"></audio>
     </section>
   );
 };

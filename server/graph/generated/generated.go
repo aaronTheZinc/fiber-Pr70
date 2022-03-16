@@ -843,7 +843,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.TextArea.Hidden(childComplexity), true
 
-	case "TextArea.Position":
+	case "TextArea.position":
 		if e.complexity.TextArea.Position == nil {
 			break
 		}
@@ -1202,7 +1202,7 @@ type Links {
 }
 
 type TextArea {
-  Position: Int!
+  position: Int!
   content: String!
   hidden: Boolean
 }
@@ -4389,7 +4389,7 @@ func (ec *executionContext) _SlideMetaData_size(ctx context.Context, field graph
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _TextArea_Position(ctx context.Context, field graphql.CollectedField, obj *model.TextArea) (ret graphql.Marshaler) {
+func (ec *executionContext) _TextArea_position(ctx context.Context, field graphql.CollectedField, obj *model.TextArea) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -7705,8 +7705,8 @@ func (ec *executionContext) _TextArea(ctx context.Context, sel ast.SelectionSet,
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("TextArea")
-		case "Position":
-			out.Values[i] = ec._TextArea_Position(ctx, field, obj)
+		case "position":
+			out.Values[i] = ec._TextArea_position(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
