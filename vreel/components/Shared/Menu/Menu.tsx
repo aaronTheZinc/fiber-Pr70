@@ -16,6 +16,7 @@ const Menu = (): JSX.Element => {
     menuEl.current.style.display = "none";
     console.log('el', menuEl.current.children[1].children)
   };
+  
   return (
     <div ref={menuEl} className="vreel-menu vreel-menu__wrapper">
       <img
@@ -31,7 +32,11 @@ const Menu = (): JSX.Element => {
               <a href="#">My VReel</a>
             </li>
             <li>
-              <a href="#">Edit VReel</a>
+              <a href="#" onClick={()=> {
+                const editMenuEl = document.querySelector('.vreel-edit-menu.vreel-edit-menu__wrapper')
+                editMenuEl.style.display = 'flex'
+                return
+              }}>Edit VReel</a>
             </li>
             <li>
               <a href="#">News Feed</a>
