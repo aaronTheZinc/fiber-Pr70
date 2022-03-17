@@ -55,7 +55,7 @@ func GQLHandler() {
 
 func RestHandler() {
 	defer fmt.Println("rest is setup")
-	api.Init()
+	api.Start()
 }
 
 func main() {
