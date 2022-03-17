@@ -5,7 +5,7 @@ import (
 	"github.com/vreel/app/utils"
 )
 
-func Init() {
+func Start() {
 	app := fiber.New()
 	app.Get("/", func(c *fiber.Ctx) error {
 		v, _ := utils.GetDefaultElementsString()
