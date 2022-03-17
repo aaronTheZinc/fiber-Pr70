@@ -3,11 +3,24 @@ import type { AppProps /*, AppContext */ } from "next/app";
 import MainLayout from "../components/MainLayout/MainLayout";
 import Head from "next/head";
 import { CookiesProvider } from "react-cookie";
+import { useEffect, useState } from "react";
+import MobileDetect from "mobile-detect";
 
 function App({ Component, pageProps }: AppProps) {
+
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    let md = new MobileDetect(window.navigator.userAgent)
+
+    if(md.mobile() === null) return
+    
+    setIsMobile(true)
+  }, [isMobile])
+  
   return (
     <CookiesProvider>
-      <MainLayout>
+      <MainLayout isMobile={isMobile}>
         <Head>
           <meta
             name="viewport"

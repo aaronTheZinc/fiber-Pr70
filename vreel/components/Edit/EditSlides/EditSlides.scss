@@ -1,0 +1,53 @@
+.vreel-edit-slides {
+  &__bg-audio__wrapper,
+  &__new-slide,
+  &__new-slide__toggle-btn {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 25px 15px;
+    p {
+      font-family: "Poppins";
+      font-weight: 600;
+      font-size: 30px;
+      line-height: 21px;
+      letter-spacing: 1px;
+      margin: 0;
+      @media only screen and (max-width: 768px) {
+        font-size: 15px;
+      }
+    }
+  }
+  &__new-slide__wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 12px;
+  }
+  &__new-slide__slide-wrapper {
+    border: #ff7a00 2px dashed;
+    padding: 5px 15px 15px;
+  }
+  &__new-slide__slide-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    font-family: "Poppins";
+    font-weight: 600;
+    font-size: 25px;
+    line-height: 21px;
+    color: #ff7a00;
+    @media only screen and (max-width: 768px) {
+      font-size: 15px;
+    }
+  }
+  &__new-slide__toggle-btn {
+    padding: 25px 5px;
+    svg {
+      &:hover {
+        cursor: pointer;
+      }
+    }
+  }
+}

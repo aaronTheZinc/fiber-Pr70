@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
 import { VreelModal } from "../../Shared/VreelModal/VreelModal";
-
 const VreelSlide = ({ username, user, slideId, slide, isChanged }): JSX.Element => {
   const audioEl = useRef(null)
 
@@ -18,8 +17,9 @@ const VreelSlide = ({ username, user, slideId, slide, isChanged }): JSX.Element 
   const toggleSlideSound = () => {
     setIsMuted(!isMuted);
     isMuted ? audioEl.current.play() : audioEl.current.pause()
-    isChanged && audioEl.current.pause()
+    // isChanged && audioEl.current.pause()
   };
+  
 
   return (
     <section id={slideId} className="vreel-slide vreel-slide__wrapper">

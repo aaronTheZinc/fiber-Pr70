@@ -1,5 +1,7 @@
 @use './Shared/Header/Header.scss';
 @use './Shared/Menu/Menu.scss';
+@use './Edit/EditMenu/EditMenu.scss';
+@use './Edit/EditSlides/EditSlides.scss';
 @use './Shared/Button/Button.scss';
 @use './Shared/Input/Input.scss';
 @use './Shared/VreelModal/VreelModal.scss';
@@ -12,5 +14,6 @@
 @use './Elements/TextArea/TextArea.scss';
 @use './Elements/Social/Social.scss';
 @use './Elements/Links/Links.scss';
+@use './Elements/Embed/Embed.scss';
 @use './Elements/Services/Services.scss';
 @use './Shared/Footer/Footer.scss';
