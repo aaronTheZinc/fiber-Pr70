@@ -30,13 +30,6 @@ const EditMenu = (): JSX.Element => {
         <EditSlides />
         <EditSlides />
         <EditSlides />
-        <EditSlides />
-        <EditSlides />
-        <EditSlides />
-        <EditSlides />
-        <EditSlides />
-        <EditSlides />
-        <EditSlides />
       </ul>
     </div>
   );
