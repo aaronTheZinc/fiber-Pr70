@@ -12,5 +12,5 @@ func Start() {
 	app := fiber.New()
 
 	FolderHandler(app)
-	app.Listen(":3000")
+	app.Listen(":7071")
 }

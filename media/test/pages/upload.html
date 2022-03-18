@@ -1,17 +1,24 @@
-<html lang="en">
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Uppy</title>
+    <link href="https://releases.transloadit.com/uppy/v2.8.0/uppy.min.css" rel="stylesheet">
+  </head>
+  <body>
+    <div id="drag-drop-area"></div>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-  <title>Upload File</title>
-</head>
+    <script src="https://releases.transloadit.com/uppy/v2.8.0/uppy.min.js"></script>
+    <script>
+      var uppy = new Uppy.Core()
+        .use(Uppy.Dashboard, {
+          inline: true,
+          target: '#drag-drop-area'
+        })
+        .use(Uppy.Tus, {endpoint: 'http://localhost:8080/files'})
 
-<body>
-  <form enctype="multipart/form-data" action="http://localhost:7070/upload" method="post">
-    <input type="file" name="myFile" />
-    <input type="submit" value="upload" />
-  </form>
-</body>
-
+      uppy.on('complete', (result) => {
+        console.log('Upload complete! We’ve uploaded these files:', result.successful)
+      })
+    </script>
+  </body>
 </html>

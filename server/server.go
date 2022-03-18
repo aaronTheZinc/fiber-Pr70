@@ -61,7 +61,7 @@ func RestHandler() {
 func main() {
 	godotenv.Load(".env")
 	database.Migrate()
-
+	fmt.Printf("val: %s", os.Getenv("MEDIA_SERVER_ENDPOINT"))
 	var wg sync.WaitGroup
 	// test.TestCache()
 	database.Migrate()
