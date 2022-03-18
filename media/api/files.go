@@ -15,6 +15,10 @@ type FileCreation struct {
 	FileSize int
 }
 
+type FileResponse struct {
+	ErrorMessage string `json:"error_message"`
+}
+
 func CreateFolder(c *fiber.Ctx) error {
 	return c.SendString("")
 }
