@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"sync"
 
+	"github.com/joho/godotenv"
 	"github.com/vreel/media/api"
 	"github.com/vreel/media/handler"
 )
@@ -27,6 +28,7 @@ import (
 
 func main() {
 	// Upload route
+	godotenv.Load(".env")
 	var wg sync.WaitGroup
 
 	wg.Add(1)

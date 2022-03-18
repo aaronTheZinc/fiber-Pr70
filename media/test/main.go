@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-var templates = template.Must(template.ParseFiles("pages/upload.html"))
+var templates = template.Must(template.ParseFiles("test/pages/upload.html"))
 
 // Display the named template
 func Display(w http.ResponseWriter, page string, data interface{}) {
