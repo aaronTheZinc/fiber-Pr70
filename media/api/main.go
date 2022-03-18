@@ -1,6 +1,12 @@
 package api
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"os"
+
+	"github.com/gofiber/fiber/v2"
+)
+
+var ServerEndPoint = os.Getenv("SERVER_ENDPOINT")
 
 func Start() {
 	app := fiber.New()
