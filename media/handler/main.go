@@ -1,24 +1,13 @@
-package main
+package handler
 
 import (
 	"fmt"
 	"io"
 	"net/http"
 	"os"
-	"text/template"
-
-	"github.com/vreel/media/api"
 )
 
-// Compile templates on start of the application
-var templates = template.Must(template.ParseFiles("test/pages/upload.html"))
-
-// Display the named template
-func display(w http.ResponseWriter, page string, data interface{}) {
-	templates.ExecuteTemplate(w, page+".html", data)
-}
-
-func uploadFile(w http.ResponseWriter, r *http.Request) {
+func UploadFileHandler(w http.ResponseWriter, r *http.Request) {
 	var err error
 	// Maximum upload of 10 MB files
 	r.ParseMultipartForm(10 << 20)
@@ -53,23 +42,4 @@ func uploadFile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fmt.Fprintf(w, "Successfully Uploaded File\n")
-}
-
-func uploadHandler(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case "GET":
-		display(w, "upload", nil)
-	case "POST":
-		uploadFile(w, r)
-	}
-}
-
-func main() {
-	// Upload route
-	api.Start()
-	http.HandleFunc("/upload", uploadHandler)
-
-	//Listen on port 8080
-	http.ListenAndServe(":8080", nil)
-
 }
