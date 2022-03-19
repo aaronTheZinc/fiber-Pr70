@@ -69,7 +69,6 @@ func UIHandler(w http.ResponseWriter, req *http.Request) {
 }
 
 func main() {
-
 	// Create a new FileStore instance which is responsible for
 	// storing the uploaded file on disk in the specified directory.
 	// This path _must_ exist before tusd will store uploads in it.
@@ -85,6 +84,7 @@ func main() {
 	// place where all those separated pieces are joined together. In this example
 	// we only use the file store but you may plug in multiple.
 	composer := tusd.NewStoreComposer()
+	// composer.Core.GetUpload()
 	store.UseIn(composer)
 
 	// Create a new HTTP handler for the tusd server by providing a configuration.
@@ -101,6 +101,7 @@ func main() {
 	// Start another goroutine for receiving events from the handler whenever
 	// an upload is completed. The event will contains details about the upload
 	// itself and the relevant HTTP request.
+	// handler.GetFile()
 	go func() {
 		for {
 			event := <-handler.CompleteUploads
@@ -113,7 +114,7 @@ func main() {
 	// http://localhost:8080/files
 	http.Handle("/files/", http.StripPrefix("/files/", handler))
 	http.HandleFunc("/ui", UIHandler)
-	err = http.ListenAndServe(":8080", nil)
+	err = http.ListenAndServe(":3000", nil)
 	if err != nil {
 		panic(fmt.Errorf("Unable to listen: %s", err))
 	}
