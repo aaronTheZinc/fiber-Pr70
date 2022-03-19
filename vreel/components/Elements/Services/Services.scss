@@ -1,7 +1,74 @@
 .vreel-services {
-&__wrapper{
-  h1{
-    text-align: center;
+  &__wrapper {
+    h1 {
+      text-align: center;
+    }
   }
-}
+  &__card-wrapper {
+    display: flex;
+    flex-direction: row;
+    height: 300px;
+    @media only screen and (max-width: 768px) {
+      height: 130px;
+    }
+    img {
+      max-width: 300px;
+      max-height: 300px;
+      height: 100%;
+      object-fit: cover;
+      object-position: top;
+      @media only screen and (max-width: 768px) {
+        max-width: 150px;
+        max-height: 150px;
+        object-position: center;
+      }
+    }
+  }
+  &__grid-wrapper{
+    row-gap: 20px;
+    @media only screen and (max-width: 768px) {
+      gap: 20px;
+    }
+  }
+  &__text-wrapper {
+    display: flex;
+    flex-direction: column;
+    padding-left: 8px;
+    h1 {
+      text-align: left;
+      width: 100%;
+      padding-top: 10px;
+      padding-bottom: 10px;
+      font-size: 18px;
+      @media only screen and (max-width: 768px) {
+        font-size: 16px;
+        padding-top: 0px;
+        padding-bottom: 4px;
+      }
+    }
+    p {
+      font-size: 12px;
+      @media only screen and (max-width: 768px) {
+        font-size: 11px;
+        -webkit-line-clamp: 3;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+    }
+    button {
+      margin-top: auto;
+      justify-self: flex-end;
+      width: 45%;
+      border: 1px solid #fff;
+      background-color: transparent;
+      color: #fff;
+      height: 35px;
+      @media only screen and (max-width: 768px) {
+        margin-top: 0;
+        width: 55%;
+        font-size: 10px;
+      }
+    }
+  }
 }
