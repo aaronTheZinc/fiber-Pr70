@@ -184,7 +184,7 @@ func (c *Slide) ToDatabaseModel() SlideModel {
 	}
 }
 
-func (c *VreelModel) ToVreel() (Vreel, error) {
+func (c VreelModel) ToVreel() (Vreel, error) {
 	var err error
 	var e VreelElements
 	s := []*Slide{}
