@@ -59,11 +59,12 @@
     button {
       margin-top: auto;
       justify-self: flex-end;
-      width: 45%;
+      width: 60%;
       border: 1px solid #fff;
       background-color: transparent;
       color: #fff;
       height: 35px;
+      font-size: .8rem;
       @media only screen and (max-width: 768px) {
         margin-top: 0;
         width: 55%;
