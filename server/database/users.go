@@ -30,6 +30,7 @@ func GetUser(id string) (model.User, error) {
 	groups, _ := GetGroups(user.Groups)
 	r = user.ToUser()
 	r.Groups = groups
+	// r.Vreel = GetVreel()
 
 	return r, err
 }

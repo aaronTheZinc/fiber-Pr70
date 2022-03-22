@@ -8,11 +8,11 @@ import (
 	"github.com/vreel/media/utils"
 )
 
-var templates = template.Must(template.ParseFiles("test/pages/upload.html"))
+var templates = template.Must(template.ParseFiles("test/pages/index.html"))
 
 // Display the named template
 func Display(w http.ResponseWriter, page string, data interface{}) {
-	templates.ExecuteTemplate(w, page+".html", data)
+	templates.ExecuteTemplate(w, "index.html", data)
 }
 
 func CheckFolder() {

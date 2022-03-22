@@ -64,10 +64,22 @@ import (
 	"github.com/vreel/media/test"
 )
 
-func UIHandler(w http.ResponseWriter, req *http.Request) {
+var n = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	// log.Println("Before")
+	// h.ServeHTTP(w, r) // call original
+	// log.Println("After")
+	fmt.Fprintf(w, "")
+})
+
+func UIHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("....")
 	test.Display(w, "upload", nil)
 }
+func ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
+}
+
+// func
 func main() {
 	// Create a new FileStore instance which is responsible for
 	// storing the uploaded file on disk in the specified directory.
@@ -105,10 +117,18 @@ func main() {
 	go func() {
 		for {
 			event := <-handler.CompleteUploads
+
+			dd := event.Upload.MetaData["test"]
+			fmt.Println(dd)
 			fmt.Printf("Upload %s finished\n", event.Upload.ID)
 		}
-	}()
 
+	}()
+	go func() {
+		for {
+			handler.Middleware(n)
+		}
+	}()
 	// Right now, nothing has happened since we need to start the HTTP server on
 	// our own. In the end, tusd will start listening on and accept request at
 	// http://localhost:8080/files

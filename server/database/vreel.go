@@ -32,8 +32,12 @@ func CreateNewVreel(author string) error {
 
 }
 
-func GetVreel() {
+func GetVreel(id string) {
 
+	// var vreel model.VreelModel
+
+	// err := db.Where("id = ? ", id).First(&vreel).Error
+	// return vreel.ToVreel(), err
 }
 
 func UpdateVreelElements(id, elements string) error {
