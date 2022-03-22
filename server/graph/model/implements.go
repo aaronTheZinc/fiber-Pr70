@@ -184,7 +184,7 @@ func (c *Slide) ToDatabaseModel() SlideModel {
 	}
 }
 
-func (c VreelModel) ToVreel() (Vreel, error) {
+func (c VreelModel) ToVreel(slides []*Slide) (Vreel, error) {
 	var err error
 	var e VreelElements
 	s := []*Slide{}
@@ -208,3 +208,23 @@ func (c VreelModel) ToVreel() (Vreel, error) {
 		Slides:    s,
 	}, err
 }
+
+func (c *NewSlide) ToSlide() Slide {
+	return Slide{}
+}
+
+func (c *NewSlide) ToDatabaseModel() SlideModel {
+	return SlideModel{
+		ContentType:   c.ContentType,
+		SlideLocation: c.SlideLocation,
+		URI:           c.URI,
+	}
+}
+
+func (c *SlideModel) ToSlide() Slide {
+	return Slide{
+		ID: c.ID,
+	}
+}
+
+// }

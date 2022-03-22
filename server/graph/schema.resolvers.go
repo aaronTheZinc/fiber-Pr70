@@ -60,6 +60,11 @@ func (r *mutationResolver) UpdateVreelField(ctx context.Context, token string, f
 	panic(fmt.Errorf("not implemented"))
 }
 
+func (r *mutationResolver) UpdateUser(ctx context.Context, token string, fields []*model.VreelFields) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeUpdateUserFields(token, fields)
+	return &resp, err
+}
+
 func (r *queryResolver) User(ctx context.Context, id *string) (*model.User, error) {
 	user, err := database.GetUser(*id)
 	return &user, err
