@@ -5,9 +5,13 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"path/filepath"
+
+	"github.com/gofrs/uuid"
+	"github.com/vreel/media/test"
 )
 
-func UploadFileHandler(w http.ResponseWriter, r *http.Request) {
+func UploadFile(w http.ResponseWriter, r *http.Request) {
 	var err error
 	// Maximum upload of 10 MB files
 	r.ParseMultipartForm(10 << 20)
@@ -21,19 +25,11 @@ func UploadFileHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	defer file.Close()
-	fmt.Printf("Uploaded File: %+v\n", handler.Filename)
-	fmt.Printf("File Size: %+v\n", handler.Size)
-	fmt.Printf("MIME Header: %+v\n", handler.Header)
 
 	// Create file
-	dst, err := os.Create(handler.Filename)
-	defer func() {
-		err = dst.Close()
-	}()
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	dst, _ := os.Create(handler.Filename)
+
+	defer func() { dst.Close() }()
 
 	// Copy the uploaded file to the created file on the filesystem
 	if _, err := io.Copy(dst, file); err != nil {
@@ -41,5 +37,37 @@ func UploadFileHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	dst.Close()
+	file.Close()
+
+	// retrieve the file extension
+	fe := filepath.Ext("/" + dst.Name())
+	id, _ := uuid.NewV4()
+
+	//rename file to specified
+	s := os.Rename(dst.Name(), id.String()+fe)
+
+	if s != nil {
+		fmt.Println(s.Error())
+	}
 	fmt.Fprintf(w, "Successfully Uploaded File\n")
+}
+
+func UploadFileHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Println(r.Method)
+	if r.Method == "POST" {
+
+		fmt.Println("Running P{o")
+		UploadFile(w, r)
+	} else if r.Method == "GET" {
+		fmt.Println("running get func...")
+		test.Display(w, "upload", nil)
+	} else {
+		fmt.Fprintf(w, "Method Not Allowed")
+	}
+
+}
+
+func RenderFile() {
+
 }

@@ -3,6 +3,7 @@ package database
 import (
 	"errors"
 
+	e "github.com/vreel/app/err"
 	"github.com/vreel/app/graph/model"
 	"github.com/vreel/app/utils"
 )
@@ -13,7 +14,7 @@ func CreateNewVreel(author string) error {
 	buttonUri := "https://vreel.page"
 	e, gErr := utils.GetDefaultElementsString()
 	vreel := model.VreelModel{
-		ID:        utils.GenerateUID(),
+		ID:        author,
 		Author:    author,
 		PageTitle: "Your Vreel",
 		ButtonURI: &buttonUri,
@@ -32,8 +33,28 @@ func CreateNewVreel(author string) error {
 
 }
 
-func GetVreel() {
+func GetVreel(id string) (model.Vreel, error) {
 
+	var vreel model.VreelModel
+	var r model.Vreel
+	var err error
+	if f := db.Where("id = ? ", id).First(&vreel).Error; f != nil {
+		err = e.VREEL_NOT_FOUND
+	} else {
+		slides, slidesErr := GetSlides(vreel.Slides)
+		if slidesErr != nil {
+			err = slidesErr
+		} else {
+			v, conversionErr := vreel.ToVreel(slides)
+			if conversionErr != nil {
+				err = conversionErr
+			} else {
+				r = v
+			}
+
+		}
+	}
+	return r, err
 }
 
 func UpdateVreelElements(id, elements string) error {

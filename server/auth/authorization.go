@@ -167,3 +167,38 @@ func CreateEvent(token string, newEvent model.NewEvent) (model.Event, error) {
 	}
 	return event, err
 }
+
+func AuthorizeCreateSlide(token string, s model.NewSlide) (model.Slide, error) {
+	var err error
+	var slide model.Slide
+
+	claims, isAuth, parseErr := ParseToken(token)
+	userId := claims.ID
+
+	if isAuth && parseErr == nil {
+		database.CreateSlide(userId, s)
+	} else {
+		err = e.UNAUTHORIZED_ERROR
+	}
+	return slide, err
+}
+
+func AuthorizeUpdateUserFields(token string, fields []*model.VreelFields) (model.MutationResponse, error) {
+	var err error
+	var r model.MutationResponse
+
+	claims, isAuth, parseErr := ParseToken(token)
+	userId := claims.ID
+
+	if isAuth && parseErr == nil {
+		updateErr := database.UpdateUserFields(userId, fields)
+		if updateErr != nil {
+			err = updateErr
+
+		}
+	} else {
+		err = e.UNAUTHORIZED_ERROR
+	}
+
+	return r, err
+}

@@ -2,6 +2,9 @@ package database
 
 import (
 	"errors"
+	"fmt"
+	"log"
+	"sync"
 
 	"github.com/lib/pq"
 	e "github.com/vreel/app/err"
@@ -30,6 +33,11 @@ func GetUser(id string) (model.User, error) {
 	groups, _ := GetGroups(user.Groups)
 	r = user.ToUser()
 	r.Groups = groups
+	if v, e := GetVreel(id); e != nil {
+		err = e
+	} else {
+		r.Vreel = &v
+	}
 
 	return r, err
 }
@@ -148,4 +156,35 @@ func GetAllUsernames() ([]model.UserModel, error) {
 	err := db.Select("username").Find(&users)
 
 	return users, err.Error
+}
+
+func UpdateUserFields(id string, fields []*model.VreelFields) error {
+	userFields := []string{"first_name", "last_name", "email", "prefix", "suffix"}
+	var wg sync.WaitGroup
+	var err error
+	// fmt.Printf("input: %s", fields)
+	for _, f := range fields {
+		var o model.VreelFields = *f
+		wg.Add(1)
+		go func() {
+			defer fmt.Println("completed!!!!")
+			defer wg.Done()
+			if utils.ItemExistsInStringSlice(o.Field, userFields) {
+				fmt.Printf("field: %s, value: %s", o.Field, o.Value)
+				err := db.Model(&model.UserModel{}).Where("id = ?", id).Update(o.Field, o.Value).Error
+				fmt.Println("Made it here!")
+				if err != nil {
+					log.Printf(err.Error())
+					err = e.VreelFieldError(o.Field)
+					return
+				}
+			} else {
+				err = e.VreelFieldError(o.Field)
+			}
+		}()
+	}
+
+	wg.Wait()
+
+	return err
 }
