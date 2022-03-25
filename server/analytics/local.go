@@ -25,7 +25,7 @@ func GetServerAnalytics() (model.ServerAnalytics, error) {
 				usernames = append(usernames, &username)
 			}
 			for _, o := range v {
-				r, _ := o.ToVreel()
+				r, _ := o.ToVreel([]*model.Slide{})
 				vreels = append(vreels, &r)
 			}
 			userCount = len(usernames)

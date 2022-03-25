@@ -106,6 +106,7 @@ func main() {
 		StoreComposer:         composer,
 		NotifyCompleteUploads: true,
 	})
+
 	if err != nil {
 		panic(fmt.Errorf("Unable to create handler: %s", err))
 	}
@@ -134,6 +135,7 @@ func main() {
 	// http://localhost:8080/files
 	http.Handle("/files/", http.StripPrefix("/files/", handler))
 	http.HandleFunc("/ui", UIHandler)
+
 	err = http.ListenAndServe(":3000", nil)
 	if err != nil {
 		panic(fmt.Errorf("Unable to listen: %s", err))

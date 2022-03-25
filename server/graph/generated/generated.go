@@ -112,6 +112,7 @@ type ComplexityRoot struct {
 		Register                          func(childComplexity int, input model.NewUser) int
 		RemoveUserFromGroup               func(childComplexity int, token string, groupID string, member string) int
 		ResolveResetPasswordRequestIntent func(childComplexity int, token string, password string) int
+		UpdateUser                        func(childComplexity int, token string, fields []*model.VreelFields) int
 		UpdateVreelField                  func(childComplexity int, token string, fields []*model.VreelFields) int
 	}
 
@@ -222,6 +223,7 @@ type MutationResolver interface {
 	AddUserToGroup(ctx context.Context, token string, groupID string, userID string) (*model.MutationResponse, error)
 	RemoveUserFromGroup(ctx context.Context, token string, groupID string, member string) (*model.MutationResponse, error)
 	UpdateVreelField(ctx context.Context, token string, fields []*model.VreelFields) (*model.MutationResponse, error)
+	UpdateUser(ctx context.Context, token string, fields []*model.VreelFields) (*model.MutationResponse, error)
 }
 type QueryResolver interface {
 	User(ctx context.Context, id *string) (*model.User, error)
@@ -614,6 +616,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.ResolveResetPasswordRequestIntent(childComplexity, args["token"].(string), args["password"].(string)), true
+
+	case "Mutation.updateUser":
+		if e.complexity.Mutation.UpdateUser == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateUser_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateUser(childComplexity, args["token"].(string), args["fields"].([]*model.VreelFields)), true
 
 	case "Mutation.updateVreelField":
 		if e.complexity.Mutation.UpdateVreelField == nil {
@@ -1336,8 +1350,8 @@ type Mutation {
     groupId: String!
     member: String!
   ): MutationResponse!
-
   updateVreelField(token: String!, fields: [VreelFields]): MutationResponse!
+  updateUser(token: String!, fields: [VreelFields!]): MutationResponse!
 }
 `, BuiltIn: false},
 }
@@ -1527,6 +1541,30 @@ func (ec *executionContext) field_Mutation_resolveResetPasswordRequestIntent_arg
 		}
 	}
 	args["password"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_updateUser_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["token"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("token"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["token"] = arg0
+	var arg1 []*model.VreelFields
+	if tmp, ok := rawArgs["fields"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("fields"))
+		arg1, err = ec.unmarshalOVreelFields2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐVreelFieldsᚄ(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["fields"] = arg1
 	return args, nil
 }
 
@@ -3373,6 +3411,48 @@ func (ec *executionContext) _Mutation_updateVreelField(ctx context.Context, fiel
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return ec.resolvers.Mutation().UpdateVreelField(rctx, args["token"].(string), args["fields"].([]*model.VreelFields))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.MutationResponse)
+	fc.Result = res
+	return ec.marshalNMutationResponse2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐMutationResponse(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_updateUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_updateUser_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpdateUser(rctx, args["token"].(string), args["fields"].([]*model.VreelFields))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -7333,6 +7413,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "updateUser":
+			out.Values[i] = ec._Mutation_updateUser(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -8487,6 +8572,11 @@ func (ec *executionContext) marshalNVreelElements2ᚖgithubᚗcomᚋvreelᚋapp�
 	return ec._VreelElements(ctx, sel, v)
 }
 
+func (ec *executionContext) unmarshalNVreelFields2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐVreelFields(ctx context.Context, v interface{}) (*model.VreelFields, error) {
+	res, err := ec.unmarshalInputVreelFields(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) marshalN__Directive2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐDirective(ctx context.Context, sel ast.SelectionSet, v introspection.Directive) graphql.Marshaler {
 	return ec.___Directive(ctx, sel, &v)
 }
@@ -9113,6 +9203,30 @@ func (ec *executionContext) unmarshalOVreelFields2ᚕᚖgithubᚗcomᚋvreelᚋa
 	for i := range vSlice {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
 		res[i], err = ec.unmarshalOVreelFields2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐVreelFields(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalOVreelFields2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐVreelFieldsᚄ(ctx context.Context, v interface{}) ([]*model.VreelFields, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*model.VreelFields, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNVreelFields2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐVreelFields(ctx, vSlice[i])
 		if err != nil {
 			return nil, err
 		}

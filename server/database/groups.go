@@ -30,10 +30,12 @@ func GetGroups(ids []string) ([]*model.Group, error) {
 	var groups []*model.Group
 	var err error
 	for _, id := range ids {
-		var group model.GroupModel
-		err = db.Where("id = ?", id).First(&group).Error
-		g := group.ToGroup()
-		groups = append(groups, &g)
+		go func() {
+			var group model.GroupModel
+			err = db.Where("id = ?", id).First(&group).Error
+			g := group.ToGroup()
+			groups = append(groups, &g)
+		}()
 	}
 	return groups, err
 }

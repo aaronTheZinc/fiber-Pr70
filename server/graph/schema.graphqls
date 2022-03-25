@@ -225,4 +225,5 @@ type Mutation {
     member: String!
   ): MutationResponse!
   updateVreelField(token: String!, fields: [VreelFields]): MutationResponse!
+  updateUser(token: String!, fields: [VreelFields!]): MutationResponse!
 }
