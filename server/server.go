@@ -67,10 +67,10 @@ func main() {
 	database.Migrate()
 	InitializeCache()
 	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		RestHandler()
-	}()
+	// go func() {
+	// 	defer wg.Done()
+	// 	RestHandler()
+	// }()
 	wg.Add(1)
 	go func() {
 		defer wg.Done()

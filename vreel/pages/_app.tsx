@@ -44,7 +44,7 @@ function App({ Component, pageProps }: AppProps) {
             referrerPolicy="no-referrer"
           />
         </Head>
-        <Component {...pageProps} />
+        <Component isMobile={isMobile} {...pageProps} />
       </MainLayout>
     </CookiesProvider>
   );

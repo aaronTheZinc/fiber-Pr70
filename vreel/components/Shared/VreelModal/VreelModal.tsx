@@ -163,8 +163,8 @@ export const VreelModal = ({
             ></button>
             <ModalBody>
               <h1> Heading Text</h1>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua.
+              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+              eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
             </ModalBody>
           </>
         )}
