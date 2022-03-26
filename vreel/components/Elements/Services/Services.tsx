@@ -12,7 +12,7 @@ const Services = ({ isMobile }): JSX.Element => {
       <div className="row vreel-services__grid-wrapper">
         {services.length > 0 &&
           services.map((service, idx) => (
-            <div className="col-md-6 vreel-services__card-wrapper">
+            <div key={idx} className="col-md-6 vreel-services__card-wrapper">
               <img
                 style={idx % 2 && isMobile ? { order: 2 } : {}}
                 src="/service-img.jpeg"

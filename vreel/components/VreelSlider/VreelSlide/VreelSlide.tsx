@@ -1,7 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
 import { VreelModal } from "../../Shared/VreelModal/VreelModal";
-const VreelSlide = ({ username, user, slideId, slide, isChanged }): JSX.Element => {
-  const audioEl = useRef(null)
+
+const VreelSlide = ({
+  username,
+  user,
+  slideId,
+  slide,
+  isChanged,
+}): JSX.Element => {
+  const audioEl = useRef(null);
 
   const [isFollowed, setIsFollowed] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
@@ -16,20 +23,20 @@ const VreelSlide = ({ username, user, slideId, slide, isChanged }): JSX.Element 
 
   const toggleSlideSound = () => {
     setIsMuted(!isMuted);
-    isMuted ? audioEl.current.play() : audioEl.current.pause()
+    isMuted ? audioEl.current.play() : audioEl.current.pause();
     // isChanged && audioEl.current.pause()
   };
-  
+
+
 
   return (
     <section id={slideId} className="vreel-slide vreel-slide__wrapper">
-      <img src="https://images.unsplash.com/photo-1626715185400-49cccfabc10f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=627&q=80" alt="background img" className="vreel-slide__background-img" />
+      {/* <img src="https://images.unsplash.com/photo-1626715185400-49cccfabc10f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=627&q=80" alt="background img" className="vreel-slide__background-img" /> */}
 
-      {/* <video className="vreel-slide__background-video" autoPlay muted loop>
+      <video className="vreel-slide__background-video" autoPlay muted loop>
         <source src="/vreel-vid.mp4" type="video/mp4" />
         Your browser does not support the video tag.
-      </video> */}
-
+      </video>
 
       <div className="vreel-slide__overlay"></div>
 
@@ -159,7 +166,12 @@ const VreelSlide = ({ username, user, slideId, slide, isChanged }): JSX.Element 
           <VreelModal isQr={true} icon="/qr-icon.svg" />
         </div>
       </aside>
-      <audio ref={audioEl} id="vreelBackgroundAudio" loop={true} src="/background-vreel.mp3"></audio>
+      <audio
+        ref={audioEl}
+        id="vreelBackgroundAudio"
+        loop={true}
+        src="/background-vreel.mp3"
+      ></audio>
     </section>
   );
 };
