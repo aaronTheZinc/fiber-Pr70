@@ -2,6 +2,7 @@ package database
 
 import (
 	"errors"
+	"fmt"
 
 	e "github.com/vreel/app/err"
 	"github.com/vreel/app/graph/model"
@@ -68,6 +69,43 @@ func GetAllVreels() ([]model.VreelModel, error) {
 	var v []model.VreelModel
 	var err error
 	return v, err
+}
+
+func VreelAddSlide(slideId, userId string) error {
+	var err error
+	vreel := model.VreelModel{}
+
+	if getErr := db.Where("id = ? ", userId).First(&vreel).Error; getErr != nil {
+		err = getErr
+	} else {
+		slides := vreel.Slides
+
+		slides = append(slides, slideId)
+		updateErr := db.Model(model.VreelModel{}).Where("id = ?", userId).Update("slides", slides).Error
+
+		if updateErr != nil {
+			err = updateErr
+		}
+
+	}
+
+	return err
+}
+func VreelRemoveSlide(vreelId, slideId string) error {
+	var err error
+	v := model.VreelModel{}
+	fmt.Printf("brooo %s ---- %s", vreelId, slideId)
+	if findErr := db.Where("id = ?", vreelId).First(&v).Error; findErr != nil {
+		err = e.VREEL_NOT_FOUND
+	} else {
+		slides := v.Slides
+		slides = utils.RemoveStringFromSlice(slides, slideId)
+		if updateErr := db.Model(model.VreelModel{}).Where("id = ?", vreelId).Update("slides", slides).Error; updateErr != nil {
+			err = e.FAILED_VREEL_UPDATE
+		}
+	}
+
+	return err
 }
 
 //create a function called CreateVreel that accepts a title as a string and saves to gorm database
