@@ -1,9 +1,7 @@
 package database
 
 import (
-	"log"
-
-	"github.com/vreel/app/graph/model"
+	"github.com/vreel/media/models"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -19,13 +17,5 @@ func databaseInit() (*gorm.DB, error) {
 }
 
 func Migrate() {
-	log.Println("Migrating...")
-	db.AutoMigrate(model.UserModel{})
-	db.AutoMigrate(model.GroupModel{})
-	db.AutoMigrate(model.EventModel{})
-	db.AutoMigrate(model.VreelModel{})
-	db.AutoMigrate(model.SlideModel{})
-	// db.AutoMigrate(model.Group{})
+	db.AutoMigrate(&models.File{})
 }
-
-// docker run --name vreel -e MYSQL_ROOT_PASSWORD=password -d mysql:tag

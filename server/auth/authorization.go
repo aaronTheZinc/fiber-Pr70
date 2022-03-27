@@ -176,7 +176,15 @@ func AuthorizeCreateSlide(token string, s model.NewSlide) (model.Slide, error) {
 	userId := claims.ID
 
 	if isAuth && parseErr == nil {
-		database.CreateSlide(userId, s)
+		if s, creationErr := database.CreateSlide(userId, s); creationErr != nil {
+			err = creationErr
+		} else {
+			slide = s
+			if updateErr := database.VreelAddSlide(s.ID, userId); updateErr != nil {
+				err = updateErr
+			}
+
+		}
 	} else {
 		err = e.UNAUTHORIZED_ERROR
 	}
@@ -194,7 +202,39 @@ func AuthorizeUpdateUserFields(token string, fields []*model.VreelFields) (model
 		updateErr := database.UpdateUserFields(userId, fields)
 		if updateErr != nil {
 			err = updateErr
+		}
+	} else {
+		err = e.UNAUTHORIZED_ERROR
+	}
 
+	return r, err
+}
+
+func AuthorizeRemoveSlide(token, slideId string) (model.MutationResponse, error) {
+	var err error
+	var r model.MutationResponse
+
+	claims, isAuth, parseErr := ParseToken(token)
+	userId := claims.ID
+
+	if isAuth && parseErr == nil {
+		if s, getErr := database.GetSlide(slideId); getErr != nil {
+			err = e.SLIDE_NOT_FOUND
+		} else {
+			fmt.Printf("compare %s vs. %s", s.Author, userId)
+			if s.Author == userId {
+				deletionErr := database.DeleteSlide(slideId)
+				if deletionErr != nil {
+					err = deletionErr
+				} else {
+					r := database.VreelRemoveSlide(userId, slideId)
+					if r != nil {
+						err = r
+					}
+				}
+			} else {
+				err = e.UNAUTHORIZED_ERROR
+			}
 		}
 	} else {
 		err = e.UNAUTHORIZED_ERROR
