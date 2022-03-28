@@ -31,10 +31,11 @@
             });
         });
         uppy.on('complete', (result) => {
-            result.successful.forEach((item) => {
-                console.log(item.uploadURL)
-            })
-            console.log('Upload complete! We’ve uploaded these files:', result.successful)
+            console.log("response ->", result)
+            // result.successful.forEach((item) => {
+            //     console.log(item.uploadURL)
+            // })
+            // console.log('Upload complete! We’ve uploaded these files:', result.successful)
         })
     </script>
 </body>
