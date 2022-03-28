@@ -211,7 +211,14 @@ func (c VreelModel) ToVreel(slides []*Slide) (Vreel, error) {
 }
 
 func (c *NewSlide) ToSlide() Slide {
-	return Slide{}
+	return Slide{
+		ID:            "",
+		Author:        "",
+		ContentType:   "",
+		URI:           "",
+		SlideLocation: 0,
+		Metadata:      &SlideMetaData{},
+	}
 }
 
 func (c *NewSlide) ToDatabaseModel() SlideModel {

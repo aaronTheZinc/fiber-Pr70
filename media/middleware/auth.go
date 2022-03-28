@@ -22,7 +22,7 @@ func AuthMiddleware(h http.Handler) http.Handler {
 			}
 		} else {
 
-			fmt.Fprint(w, "No Token Provided")
+			w.WriteHeader(http.StatusUnauthorized)
 		}
 		h.ServeHTTP(w, r)
 	})
