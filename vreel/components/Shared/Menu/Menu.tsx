@@ -26,7 +26,7 @@ const Menu = (): JSX.Element => {
         className="vreel-menu__close-btn"
       />
       <ul className="vreel-menu-items__wrapper">
-        {cookies.userAuthToken ? (
+        {/* {cookies.userAuthToken && !username && (
           <>
             <li>
               <a href="#">My VReel</a>
@@ -54,7 +54,9 @@ const Menu = (): JSX.Element => {
               <a href="#">Logout</a>
             </li>
           </>
-        ) : username ? (
+        )} */}
+        
+        {username && !cookies.userAuthToken ? (
           <>
             <li>
               <a href="#">Social</a>
@@ -66,10 +68,41 @@ const Menu = (): JSX.Element => {
               <a href="#">Services</a>
             </li>
             <li style={{ position: 'fixed', bottom: "0px", right:'7px' }}>
-              <a href="/login">Login</a>
+              <a href="login">Login</a>
             </li>
           </>
-        ) : (
+        ) : ''}
+        {(username && cookies.userAuthToken) && (
+            <>
+            <li>
+              <a href="#">My VReel</a>
+            </li>
+            <li>
+              <a href="#" onClick={()=> {
+                const editMenuEl = document.querySelector('.vreel-edit-menu.vreel-edit-menu__wrapper')
+                editMenuEl.style.display = 'flex'
+                return
+              }}>Edit VReel</a>
+            </li>
+            <li>
+              <a href="#">News Feed</a>
+            </li>
+            <li>
+              <a href="#">Analytics</a>
+            </li>
+            <li>
+              <a href="#">Display Mode</a>
+            </li>
+            <li>
+              <a href="#">Help</a>
+            </li>
+            <li style={{ position: 'fixed', bottom: "0px", right:'7px' }} onClick={() => removeCookies("userAuthToken")}>
+              <a href="#">Logout</a>
+            </li>
+          </>
+        )}
+
+        {!cookies.userAuthToken && !username &&  (
           <>
             <li>
               <a href="#">Social</a>

@@ -8,6 +8,12 @@ type Contact struct {
 	Hidden   *bool  `json:"hidden"`
 }
 
+type CreateSlide struct {
+	ContentType   string `json:"content_type"`
+	URI           string `json:"uri"`
+	SlideLocation int    `json:"slide_location"`
+}
+
 type Event struct {
 	ID          string   `json:"ID"`
 	Author      string   `json:"author"`
@@ -21,6 +27,18 @@ type Event struct {
 	Repeat      string   `json:"repeat"`
 	Link        string   `json:"link"`
 	Groups      []string `json:"groups"`
+}
+
+type File struct {
+	FileName string `json:"file_name"`
+	FileType string `json:"file_type"`
+	URI      string `json:"uri"`
+	FileSize int    `json:"file_size"`
+}
+
+type Files struct {
+	FileCount int     `json:"file_count"`
+	Files     []*File `json:"files"`
 }
 
 type Gallery struct {
@@ -143,6 +161,7 @@ type Service struct {
 
 type Slide struct {
 	ID            string         `json:"id"`
+	Author        string         `json:"author"`
 	ContentType   string         `json:"content_type"`
 	URI           string         `json:"uri"`
 	SlideLocation int            `json:"slide_location"`
@@ -165,6 +184,8 @@ type User struct {
 	Username        string   `json:"username"`
 	FirstName       string   `json:"first_name"`
 	LastName        string   `json:"last_name"`
+	Prefix          string   `json:"prefix"`
+	Suffix          string   `json:"suffix"`
 	Email           string   `json:"email"`
 	PhoneNumber     string   `json:"phone_number"`
 	Password        string   `json:"password"`
@@ -174,6 +195,7 @@ type User struct {
 	JobTitle        string   `json:"job_title"`
 	Groups          []*Group `json:"groups"`
 	Vreel           *Vreel   `json:"vreel"`
+	Files           *Files   `json:"files"`
 }
 
 type Videos struct {
@@ -184,11 +206,12 @@ type Videos struct {
 }
 
 type Vreel struct {
-	Author    string         `json:"author"`
-	PageTitle string         `json:"page_title"`
-	ButtonURI *string        `json:"button_uri"`
-	Slides    []*Slide       `json:"slides"`
-	Elements  *VreelElements `json:"elements"`
+	Author     string         `json:"author"`
+	PageTitle  string         `json:"page_title"`
+	ButtonURI  *string        `json:"button_uri"`
+	Slides     []*Slide       `json:"slides"`
+	Elements   *VreelElements `json:"elements"`
+	SlideCount *int           `json:"slide_count"`
 }
 
 type VreelElements struct {

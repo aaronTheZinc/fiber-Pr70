@@ -57,11 +57,12 @@ type VreelModel struct {
 }
 
 type SlideModel struct {
-	ID            string        `json:"id"`
-	ContentType   string        `json:"content_type"`
-	URI           string        `json:"uri"`
-	SlideLocation int           `json:"slide_location"`
-	Metadata      SlideMetaData `json:"metadata"`
+	ID            string `json:"id"`
+	ContentType   string `json:"content_type"`
+	Author        string `json:"author"`
+	URI           string `json:"uri"`
+	SlideLocation int    `json:"slide_location"`
+	Metadata      string `json:"metadata"`
 }
 
 func (c *NewUser) ToDatabaseModel() UserModel {
@@ -180,14 +181,14 @@ func (c *Slide) ToDatabaseModel() SlideModel {
 		ContentType:   c.ContentType,
 		URI:           c.URI,
 		SlideLocation: c.SlideLocation,
-		Metadata:      *c.Metadata,
+		// Metadata:      *c.Metadata,
 	}
 }
 
-func (c *VreelModel) ToVreel() (Vreel, error) {
+func (c VreelModel) ToVreel(slides []*Slide) (Vreel, error) {
 	var err error
 	var e VreelElements
-	s := []*Slide{}
+
 	// for _, sl := range c.Slides {
 	// 	t, e := database.GetSlide(sl)
 	// 	if e != nil {
@@ -205,6 +206,42 @@ func (c *VreelModel) ToVreel() (Vreel, error) {
 		Elements:  &e,
 		PageTitle: c.PageTitle,
 		ButtonURI: c.ButtonURI,
-		Slides:    s,
+		Slides:    slides,
 	}, err
 }
+
+func (c *NewSlide) ToSlide() Slide {
+	return Slide{
+		ID:            "",
+		Author:        "",
+		ContentType:   "",
+		URI:           "",
+		SlideLocation: 0,
+		Metadata:      &SlideMetaData{},
+	}
+}
+
+func (c *NewSlide) ToDatabaseModel() SlideModel {
+	return SlideModel{
+		ContentType:   c.ContentType,
+		SlideLocation: c.SlideLocation,
+		URI:           c.URI,
+	}
+}
+
+func (c *SlideModel) ToSlide() Slide {
+	m := SlideMetaData{}
+
+	json.Unmarshal([]byte(c.Metadata), &m)
+
+	return Slide{
+		ID:            c.ID,
+		URI:           c.URI,
+		Author:        c.Author,
+		SlideLocation: c.SlideLocation,
+		ContentType:   c.ContentType,
+		Metadata:      &m,
+	}
+}
+
+// }

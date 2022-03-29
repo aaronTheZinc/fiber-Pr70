@@ -2,74 +2,71 @@ package main
 
 import (
 	"fmt"
-	"io"
 	"net/http"
-	"os"
-	"text/template"
 
-	"github.com/vreel/media/api"
+	"github.com/joho/godotenv"
+	"github.com/tus/tusd/pkg/filestore"
+	tusd "github.com/tus/tusd/pkg/handler"
+	"github.com/vreel/media/middleware"
+	"github.com/vreel/media/test"
 )
 
-// Compile templates on start of the application
-var templates = template.Must(template.ParseFiles("test/pages/upload.html"))
+var n = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	// log.Println("Before")
+	// h.ServeHTTP(w, r) // call original
+	// log.Println("After")
+	fmt.Fprintf(w, "")
+})
 
-// Display the named template
-func display(w http.ResponseWriter, page string, data interface{}) {
-	templates.ExecuteTemplate(w, page+".html", data)
+func UIHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("....")
+	test.Display(w, "upload", nil)
+}
+func ServeHTTP(w http.ResponseWriter, r *http.Request) {
+
 }
 
-func uploadFile(w http.ResponseWriter, r *http.Request) {
-	var err error
-	// Maximum upload of 10 MB files
-	r.ParseMultipartForm(10 << 20)
-
-	// Get handler for filename, size and headers
-	file, handler, err := r.FormFile("myFile")
-	if err != nil {
-		fmt.Println("Error Retrieving the File")
-		fmt.Println(err)
-		return
-	}
-
-	defer file.Close()
-	fmt.Printf("Uploaded File: %+v\n", handler.Filename)
-	fmt.Printf("File Size: %+v\n", handler.Size)
-	fmt.Printf("MIME Header: %+v\n", handler.Header)
-
-	// Create file
-	dst, err := os.Create(handler.Filename)
-	defer func() {
-		err = dst.Close()
-	}()
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	// Copy the uploaded file to the created file on the filesystem
-	if _, err := io.Copy(dst, file); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	fmt.Fprintf(w, "Successfully Uploaded File\n")
-}
-
-func uploadHandler(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case "GET":
-		display(w, "upload", nil)
-	case "POST":
-		uploadFile(w, r)
-	}
-}
-
+// func
 func main() {
-	// Upload route
-	api.Start()
-	http.HandleFunc("/upload", uploadHandler)
+	godotenv.Load(".env")
+	// r := mux.NewRouter()
+	store := filestore.FileStore{
+		Path: "./uploads",
+	}
+	composer := tusd.NewStoreComposer()
+	store.UseIn(composer)
+	handler, err := tusd.NewHandler(tusd.Config{
+		BasePath:              "/files/",
+		StoreComposer:         composer,
+		NotifyCompleteUploads: true,
+	})
 
-	//Listen on port 8080
-	http.ListenAndServe(":8080", nil)
+	if err != nil {
+		panic(fmt.Errorf("Unable to create handler: %s", err))
+	}
+	go func() {
+		for {
+			event := <-handler.CompleteUploads
 
+			dd := event.Upload.MetaData["test"]
+			fmt.Println(dd)
+			fmt.Printf("Upload %s finished\n", event.Upload.ID)
+		}
+
+	}()
+	go func() {
+		for {
+			handler.Middleware(n)
+		}
+	}()
+	// Right now, nothing has happened since we need to start the HTTP server on
+	// our own. In the end, tusd will start listening on and accept request at
+	// http://localhost:8080/files
+	http.Handle("/files/", middleware.AuthMiddleware(http.StripPrefix("/files/", handler)))
+	http.HandleFunc("/ui", UIHandler)
+
+	err = http.ListenAndServe(":7070", nil)
+	if err != nil {
+		panic(fmt.Errorf("Unable to listen: %s", err))
+	}
 }

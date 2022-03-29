@@ -55,22 +55,22 @@ func GQLHandler() {
 
 func RestHandler() {
 	defer fmt.Println("rest is setup")
-	api.Init()
+	api.Start()
 }
 
 func main() {
 	godotenv.Load(".env")
 	database.Migrate()
-
+	fmt.Printf("val: %s", os.Getenv("MEDIA_SERVER_ENDPOINT"))
 	var wg sync.WaitGroup
 	// test.TestCache()
 	database.Migrate()
 	InitializeCache()
 	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		RestHandler()
-	}()
+	// go func() {
+	// 	defer wg.Done()
+	// 	RestHandler()
+	// }()
 	wg.Add(1)
 	go func() {
 		defer wg.Done()

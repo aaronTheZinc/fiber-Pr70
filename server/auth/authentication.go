@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/vreel/app/api/client"
 	"github.com/vreel/app/cache"
 	"github.com/vreel/app/database"
 	e "github.com/vreel/app/err"
@@ -49,6 +50,10 @@ func CreateNewUser(newUser model.NewUser) (model.User, error) {
 			return model.User{}, hashErr
 		}
 		u, oerr := database.CreateUser(newUser, utils.GenerateUID(), hashedPw)
+		folderErr := client.CreateNewFolder(newUser.Username)
+		if folderErr != nil {
+			fmt.Println(folderErr.Error())
+		}
 		cErr := database.CreateNewVreel(u.ID)
 		user = u
 		if oerr != nil {

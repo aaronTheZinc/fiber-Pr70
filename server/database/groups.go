@@ -3,6 +3,7 @@ package database
 import (
 	"errors"
 	"fmt"
+	"sync"
 
 	"github.com/lib/pq"
 	e "github.com/vreel/app/err"
@@ -29,12 +30,19 @@ func GetGroup(id string) (model.Group, error) {
 func GetGroups(ids []string) ([]*model.Group, error) {
 	var groups []*model.Group
 	var err error
+	var wg sync.WaitGroup
 	for _, id := range ids {
-		var group model.GroupModel
-		err = db.Where("id = ?", id).First(&group).Error
-		g := group.ToGroup()
-		groups = append(groups, &g)
+		wg.Add(1)
+		o := id
+		go func() {
+			defer wg.Done()
+			var group model.GroupModel
+			err = db.Where("id = ?", o).First(&group).Error
+			g := group.ToGroup()
+			groups = append(groups, &g)
+		}()
 	}
+	wg.Wait()
 	return groups, err
 }
 

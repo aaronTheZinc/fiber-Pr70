@@ -1,19 +1,7 @@
 version: '3'
 
 services:
-  sftp-server:
-    image: "atmoz/sftp"
-    container_name: "sftp-server"
-    ports:
-      - "2022:22"
-    volumes:
-      - "../tmp:/home/inanzzz/tmp"
-      - "$HOME/.ssh/id_rsa:/etc/ssh/ssh_host_rsa_key:ro"
-      - "$HOME/.ssh/id_rsa.pub:/home/inanzzz/.ssh/keys/id_rsa.pub:ro"
-      # - "$HOME/.ssh/id_ed25519:/etc/ssh/ssh_host_ed25519_key:ro"
-      # - "$HOME/.ssh/id_ed25519.pub:/home/inanzzz/.ssh/keys/id_ed25519.pub:ro"
-    command: "inanzzz:password:1001"
-  postgres:
+  db:
     image: 'postgres:latest'
     ports:
       - 5432:5432
@@ -21,6 +9,14 @@ services:
       - POSTGRES_DB=gorm
       - POSTGRES_USER=gorm
       - POSTGRES_PASSWORD=gorm
+  # media_db:
+  #     image: 'postgres:latest'
+  #     ports:
+  #       - 5432:5432
+  #     environment:
+  #       - POSTGRES_DB=media
+  #       - POSTGRES_USER=gorm
+  #       - POSTGRES_PASSWORD=gorm
   cache:
     image: redis:6.2-alpine
     restart: always

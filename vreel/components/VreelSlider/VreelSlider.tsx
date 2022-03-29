@@ -35,7 +35,7 @@ export const VreelSlider = ({ isUser, username, user }): JSX.Element => {
           ))
         : slides.map((slide, idx) => (
             <SwiperSlide key={idx}>
-              <VreelSlide slide={slide} isChanged={isChanged} />
+              <VreelSlide slide={slide} slideId={idx} isChanged={isChanged} />
             </SwiperSlide>
           ))}
     </Swiper>

@@ -24,6 +24,7 @@ func Migrate() {
 	db.AutoMigrate(model.GroupModel{})
 	db.AutoMigrate(model.EventModel{})
 	db.AutoMigrate(model.VreelModel{})
+	db.AutoMigrate(model.SlideModel{})
 	// db.AutoMigrate(model.Group{})
 }
 
