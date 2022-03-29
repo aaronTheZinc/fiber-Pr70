@@ -40,6 +40,12 @@ func (r *mutationResolver) CreateGroup(ctx context.Context, input *model.NewGrou
 	return &g, err
 }
 
+func (r *mutationResolver) CreateSlide(ctx context.Context, token string, input model.NewSlide) (*model.Slide, error) {
+	resp, err := auth.AuthorizeCreateSlide(token, input)
+
+	return &resp, err
+}
+
 func (r *mutationResolver) DeleteGroup(ctx context.Context, id string, token string) (*model.MutationResponse, error) {
 	resp, err := auth.AuthorizeDeleteGroup(token, id)
 	return &resp, err
@@ -53,6 +59,11 @@ func (r *mutationResolver) AddUserToGroup(ctx context.Context, token string, gro
 
 func (r *mutationResolver) RemoveUserFromGroup(ctx context.Context, token string, groupID string, member string) (*model.MutationResponse, error) {
 	resp, err := auth.AuthorizeRemoveUserFromGroup(token, groupID, member)
+	return &resp, err
+}
+
+func (r *mutationResolver) RemoveSlide(ctx context.Context, token string, slideID *string) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeRemoveSlide(token, *slideID)
 	return &resp, err
 }
 
@@ -76,9 +87,20 @@ func (r *queryResolver) Username(ctx context.Context, username *string) (*model.
 	return &user, err
 }
 
+func (r *queryResolver) Email(ctx context.Context, email string) (*model.User, error) {
+	user, err := database.GetUserByEmail(email)
+	return &user, err
+}
+
 func (r *queryResolver) Login(ctx context.Context, input *model.LoginInput) (*model.LocalSession, error) {
 	localSession, err := auth.Login(input.Email, input.Password)
 	return &localSession, err
+}
+
+func (r *queryResolver) Slide(ctx context.Context, id string) (*model.Slide, error) {
+	slide, err := database.GetSlide(id)
+
+	return &slide, err
 }
 
 func (r *queryResolver) Group(ctx context.Context, id string, token string) (*model.Group, error) {

@@ -6,12 +6,23 @@ type ServerAnalytics {
   vreels: [Vreel]
   userCount: Int!
 }
-
+type File {
+  file_name: String!
+  file_type: String!
+  uri: String!
+  file_size: Int!
+}
+type Files {
+  file_count: Int!
+  files: [File!]!
+}
 type User {
   id: String!
   username: String!
   first_name: String!
   last_name: String!
+  prefix: String!
+  suffix: String!
   email: String!
   phone_number: String!
   password: String!
@@ -21,7 +32,9 @@ type User {
   job_title: String!
   groups: [Group!]!
   vreel: Vreel!
+  files: Files!
 }
+
 # Create Group - name, location, meet times?, public/private?
 type Group {
   id: String!
@@ -56,6 +69,7 @@ type SlideMetaData {
 }
 type Slide {
   id: String!
+  author: String!
   content_type: String!
   uri: String!
   slide_location: Int!
@@ -123,6 +137,7 @@ type Vreel {
   button_uri: String
   slides: [Slide]!
   elements: VreelElements!
+  slide_count: Int
 }
 
 type MutationResponse {
@@ -145,7 +160,9 @@ type ResetPasswordResponse {
 type Query {
   user(id: String): User!
   username(username: String): User!
+  email(email: String!): User!
   login(input: LoginInput): LocalSession!
+  slide(id: String!): Slide!
   group(id: String!, token: String!): Group!
   serverAnalytics: ServerAnalytics
 }
@@ -194,6 +211,12 @@ input NewGroup {
   parent_group: String!
 }
 
+input CreateSlide {
+  content_type: String!
+  uri: String!
+  slide_location: Int!
+}
+
 input NewSlide {
   content_type: String!
   uri: String!
@@ -213,6 +236,7 @@ type Mutation {
     password: String!
   ): ResolvedPasswordReset!
   createGroup(input: NewGroup): Group!
+  createSlide(token: String!, input: NewSlide!): Slide
   deleteGroup(id: String!, token: String!): MutationResponse!
   addUserToGroup(
     token: String!
@@ -224,6 +248,7 @@ type Mutation {
     groupId: String!
     member: String!
   ): MutationResponse!
+  removeSlide(token: String!, slideId: String): MutationResponse!
   updateVreelField(token: String!, fields: [VreelFields]): MutationResponse!
   updateUser(token: String!, fields: [VreelFields!]): MutationResponse!
 }
