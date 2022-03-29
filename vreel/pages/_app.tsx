@@ -7,17 +7,29 @@ import { useEffect, useState } from "react";
 import MobileDetect from "mobile-detect";
 
 function App({ Component, pageProps }: AppProps) {
-
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    let md = new MobileDetect(window.navigator.userAgent)
+    let md = new MobileDetect(window.navigator.userAgent);
 
-    if(md.mobile() === null) return
+    if (md.mobile() === null) return;
+
+    setIsMobile(true);
+  }, [isMobile]);
+
+  useEffect(() => {
+    const slideIcons = document.querySelectorAll(".vreel-slide__icon");
     
-    setIsMobile(true)
-  }, [isMobile])
-  
+    window.addEventListener("scroll", () => {
+      console.log("scroll", window.scrollY);
+      slideIcons.forEach((icon) => {
+        if (window.scrollY >= 100) {
+          icon.style.opacity = 0;
+        }
+      });
+    });
+  });
+
   return (
     <CookiesProvider>
       <MainLayout isMobile={isMobile}>
@@ -44,7 +56,7 @@ function App({ Component, pageProps }: AppProps) {
             referrerPolicy="no-referrer"
           />
         </Head>
-        <Component {...pageProps} />
+        <Component isMobile={isMobile} {...pageProps} />
       </MainLayout>
     </CookiesProvider>
   );

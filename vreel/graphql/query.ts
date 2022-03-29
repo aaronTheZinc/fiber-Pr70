@@ -31,9 +31,8 @@ const UsernameQuery = gql`
   query User($Username: String) {
     username(username: $Username) {
       id
-      first_name
-      last_name
       email
+      vreel
     }
   }
 `;
