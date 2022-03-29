@@ -2,10 +2,11 @@ import React, { useEffect, useRef } from "react";
 import { Col, Container, Row } from "reactstrap";
 
 const Links = (): JSX.Element => {
-  let navs = new Array("All", "Business", "artist");
+  let navs = new Array("All", "Business", "Artist");
   let links = new Array("a", "b", "c", "d", "e", "f", "h", "l", "r", "j", "x");
   
   const linkEl = useRef(null);
+
   const filterRes = links.filter((link) => console.log("link", link));
 
   return (
@@ -17,9 +18,13 @@ const Links = (): JSX.Element => {
             console.log("res", linkEl);
           }}
         >
-          <li>All</li>
-          <li>Business</li>
-          <li>Artist</li>
+        {
+          navs.length > 0 && (
+            navs.map((nav, idx) => (
+              <li key={idx}>{nav}</li>
+            ))
+          )
+        }
         </ul>
       </nav>
       <Row className="vreel-links__wrapper">
