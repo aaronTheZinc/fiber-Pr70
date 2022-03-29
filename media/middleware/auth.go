@@ -14,18 +14,16 @@ func AuthMiddleware(h http.Handler) http.Handler {
 		if token != "" {
 			ok, err := api.ClientIsAuthorized(token)
 			if err != nil {
-				if ok {
-					h.ServeHTTP(w, r)
-				} else {
-					fmt.Fprint(w, "Not Authorized")
-				}
+				w.WriteHeader(http.StatusInternalServerError)
 			} else {
-				// fmt.Fprint(w, err.Error())
+				if !ok {
+					w.WriteHeader(http.StatusUnauthorized)
+				}
 			}
-
 		} else {
 
-			fmt.Fprint(w, "No Token Provided")
+			w.WriteHeader(http.StatusUnauthorized)
 		}
+		h.ServeHTTP(w, r)
 	})
 }

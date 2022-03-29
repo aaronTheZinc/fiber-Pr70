@@ -160,6 +160,7 @@ type ResetPasswordResponse {
 type Query {
   user(id: String): User!
   username(username: String): User!
+  email(email: String!): User!
   login(input: LoginInput): LocalSession!
   slide(id: String!): Slide!
   group(id: String!, token: String!): Group!

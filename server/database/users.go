@@ -79,16 +79,16 @@ func UpdatePassword(email, password string) (model.User, error) {
 	user, get_err := GetUserByEmail(email)
 	if get_err != nil {
 		err = get_err
-		return user.ToUser(), err
+		return user, err
 	}
 	update_err := db.Model(&user).Update("password", password)
 
 	if update_err != nil {
 		err = get_err
-		return user.ToUser(), err
+		return user, err
 	}
 
-	return user.ToUser(), nil
+	return user, nil
 
 }
 
@@ -145,10 +145,10 @@ func UserDeleteGroup(userId, groupId string) error {
 	return err
 
 }
-func GetUserByEmail(email string) (model.UserModel, error) {
+func GetUserByEmail(email string) (model.User, error) {
 	var user model.UserModel
 	err := db.Where("email = ?", email).First(&user)
-	return user, err.Error
+	return user.ToUser(), err.Error
 }
 
 func GetAllUsernames() ([]model.UserModel, error) {

@@ -87,6 +87,11 @@ func (r *queryResolver) Username(ctx context.Context, username *string) (*model.
 	return &user, err
 }
 
+func (r *queryResolver) Email(ctx context.Context, email string) (*model.User, error) {
+	user, err := database.GetUserByEmail(email)
+	return &user, err
+}
+
 func (r *queryResolver) Login(ctx context.Context, input *model.LoginInput) (*model.LocalSession, error) {
 	localSession, err := auth.Login(input.Email, input.Password)
 	return &localSession, err

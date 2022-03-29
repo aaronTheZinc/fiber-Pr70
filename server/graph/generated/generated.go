@@ -136,6 +136,7 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
+		Email           func(childComplexity int, email string) int
 		Group           func(childComplexity int, id string, token string) int
 		Login           func(childComplexity int, input *model.LoginInput) int
 		ServerAnalytics func(childComplexity int) int
@@ -250,6 +251,7 @@ type MutationResolver interface {
 type QueryResolver interface {
 	User(ctx context.Context, id *string) (*model.User, error)
 	Username(ctx context.Context, username *string) (*model.User, error)
+	Email(ctx context.Context, email string) (*model.User, error)
 	Login(ctx context.Context, input *model.LoginInput) (*model.LocalSession, error)
 	Slide(ctx context.Context, id string) (*model.Slide, error)
 	Group(ctx context.Context, id string, token string) (*model.Group, error)
@@ -743,6 +745,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.MutationResponse.Succeeded(childComplexity), true
+
+	case "Query.email":
+		if e.complexity.Query.Email == nil {
+			break
+		}
+
+		args, err := ec.field_Query_email_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Email(childComplexity, args["email"].(string)), true
 
 	case "Query.group":
 		if e.complexity.Query.Group == nil {
@@ -1422,6 +1436,7 @@ type ResetPasswordResponse {
 type Query {
   user(id: String): User!
   username(username: String): User!
+  email(email: String!): User!
   login(input: LoginInput): LocalSession!
   slide(id: String!): Slide!
   group(id: String!, token: String!): Group!
@@ -1812,6 +1827,21 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 		}
 	}
 	args["name"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_email_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["email"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("email"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["email"] = arg0
 	return args, nil
 }
 
@@ -4121,6 +4151,48 @@ func (ec *executionContext) _Query_username(ctx context.Context, field graphql.C
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return ec.resolvers.Query().Username(rctx, args["username"].(*string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.User)
+	fc.Result = res
+	return ec.marshalNUser2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_email(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_email_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Email(rctx, args["email"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -8347,6 +8419,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_username(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "email":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_email(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
