@@ -38,10 +38,11 @@ const VreelSlide = ({
 
     // setStartTime()
 
-    console.log("video", videoEl.current, swiper);
+    console.log("video", videoEl.current, swiper,  username,
+    user);
 
     window.addEventListener("blur", (e) => {
-      videoEl.current.pause((self) => console.log("self", self));
+      videoEl.current.pause();
       console.log("focus", e);
     });
 
@@ -64,6 +65,7 @@ const VreelSlide = ({
         className="vreel-slide__background-video"
         autoPlay
         muted
+        loop
         onEnded={(e) => {
           swiper.slideNext();
 
@@ -94,7 +96,7 @@ const VreelSlide = ({
       <div className="vreel-slide__text-wrapper">
         <h1 className="vreel-slide__heading-text">
           {username
-            ? `${user.first_name === "" ? username : user.first_name}'s vreel`
+            ? `${username}'s vreel`
             : "THE INTERFACE THAT VISUALLY ELEVATES YOUR BRAND™"}
         </h1>
         <p className="vreel-slide__text">
@@ -105,10 +107,10 @@ const VreelSlide = ({
           {username ? (
             <>
               <a className="vreel-slide__btn" href="#">
-                {user.first_name === "" ? username : user.first_name}'s Button
+                {username}'s Button
               </a>
               <a className="vreel-slide__btn" href="#">
-                {user.first_name === "" ? username : user.first_name} choose a
+                {username} choose a
                 url
               </a>
             </>

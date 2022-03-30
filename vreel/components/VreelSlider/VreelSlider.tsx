@@ -10,7 +10,7 @@ import VreelSlide from "./VreelSlide/VreelSlide";
 import { useState } from "react";
 
 export const VreelSlider = ({ isUser, username, user }): JSX.Element => {
-  let slides = new Array("a", "b", "c", "d");
+  let slides = user ? user.vreel.slides : ['a', 'b', 'c', 'd'];
   const [isChanged, setIsChanged] = useState(false)
   const [currentSlide, setCurrentSlide] = useState(null)
   const [swiper, setSwiper] = useState(null)
@@ -24,7 +24,7 @@ export const VreelSlider = ({ isUser, username, user }): JSX.Element => {
       onSlideChange={(slide) => {
         setIsChanged(true)
         setCurrentSlide(slide)
-        console.log("slide change", slide, isChanged)
+        console.log("slide change", user)
       }}
       onSwiper={(swiper) => setSwiper(swiper)}
     >

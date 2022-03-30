@@ -13,6 +13,42 @@ export const CREATE_USER = gql`
     }
   }
 `;
+export const CREATE_SLIDE = gql`
+  mutation CreateSlide($token: String!, $input: NewSlide!) {
+    createSlide(token: $token, input: $input) {
+      author
+    }
+  }
+`;
+
+interface NewSlide {
+  content_type: string;
+  uri: string;
+  slide_location: number;
+}
+
+export const createSlide = async (token: string, input: NewSlide) => {
+  await client
+    .mutate({
+      mutation: CREATE_SLIDE,
+      variables: {
+        token,
+        input: {
+          content_type: input.content_type,
+          uri: input.uri,
+          slide_location: input.slide_location,
+        },
+      },
+    })
+    .then(({ data }) => {
+      // console.log("slide data", data.createSlide);
+      return data.createSlide;
+    })
+    .catch((err) => {
+      console.error("ERROOORRRR with CREATE_SLIDE MUTATION", err);
+    });
+};
+
 interface RegistrationResponse {
   error: string;
   user: User;
