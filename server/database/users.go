@@ -46,15 +46,21 @@ func GetUser(id string) (model.User, error) {
 func GetUserByUsername(username string) (model.User, error) {
 	var err error
 	var user model.UserModel
-	var u model.User
-	getErr := db.Where("username = ?", username).First(&user)
-
-	if getErr.Error != nil {
-		err = getErr.Error
-	} else {
-		u = user.ToUser()
+	var r model.User
+	if db_init_err != nil {
+		return r, db_init_err
 	}
-	return u, err
+	db.First(&user, "username = ?", username)
+	groups, _ := GetGroups(user.Groups)
+	r = user.ToUser()
+	r.Groups = groups
+	if v, e := GetVreel(user.ID); e != nil {
+		err = e
+	} else {
+		r.Vreel = &v
+	}
+
+	return r, err
 }
 
 //Check If Username Has Been Taken
@@ -146,9 +152,23 @@ func UserDeleteGroup(userId, groupId string) error {
 
 }
 func GetUserByEmail(email string) (model.User, error) {
+	var err error
 	var user model.UserModel
-	err := db.Where("email = ?", email).First(&user)
-	return user.ToUser(), err.Error
+	var r model.User
+	if db_init_err != nil {
+		return r, db_init_err
+	}
+	db.First(&user, "email = ?", email)
+	groups, _ := GetGroups(user.Groups)
+	r = user.ToUser()
+	r.Groups = groups
+	if v, e := GetVreel(user.ID); e != nil {
+		err = e
+	} else {
+		r.Vreel = &v
+	}
+
+	return r, err
 }
 
 func GetAllUsernames() ([]model.UserModel, error) {
