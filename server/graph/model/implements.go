@@ -97,6 +97,7 @@ func (c *UserModel) ToUser() User {
 		FirstName:       c.FirstName,
 		LastName:        c.LastName,
 		Email:           c.Email,
+		Password:        c.Password,
 		PhoneNumber:     c.PhoneNumber,
 		BusinessAddress: c.BusinessAddress,
 		BillingAddress:  c.BillingAddress,

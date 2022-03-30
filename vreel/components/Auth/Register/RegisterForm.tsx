@@ -3,6 +3,7 @@ import { loginUser, registerUser } from "../../../graphql";
 import { PrimaryButton, PrimaryInput, SecretInput } from "../../index";
 import { useRouter } from "next/router";
 import { useCookies } from "react-cookie";
+import { createSlide } from "../../../graphql/mutations";
 
 interface FormDataType {
   email: string;
@@ -34,8 +35,8 @@ const RegisterForm = (): JSX.Element => {
       const { email, password, username } = userFormData;
 
       const response = await registerUser(username, email, password);
-      
-      console.log(response);
+
+      // console.log(response);
 
       //Handle Errors
       if (response.error) {
@@ -43,7 +44,7 @@ const RegisterForm = (): JSX.Element => {
       }
       // //if successful registration, login and set Cookies
       if (response.user) {
-        console.log(response);
+        // console.log(response);
 
         const { token, error } = await loginUser(
           userFormData.email,
@@ -56,7 +57,11 @@ const RegisterForm = (): JSX.Element => {
 
         if (token) {
           setCookie("userAuthToken", token);
-
+          await createSlide(token, {
+            content_type: "video",
+            uri: "https://vreel.page/users/vreel/videos/waterfall.mp4",
+            slide_location: 0,
+          });
           router.push(`/${username}`);
         }
       }
@@ -71,7 +76,14 @@ const RegisterForm = (): JSX.Element => {
       style={{ height: "100vh" }}
       className="d-flex flex-column justify-content-center align-items-center vreel-register-form"
     >
-      <img style={{ cursor:'pointer' }} onClick={() => router.push("/")} src="/vreel-logo.png" alt="Vreel Logo" width="181" height="202" />
+      <img
+        style={{ cursor: "pointer" }}
+        onClick={() => router.push("/")}
+        src="/vreel-logo.png"
+        alt="Vreel Logo"
+        width="181"
+        height="202"
+      />
       <h1>Create Your FREE VReel Account</h1>
       <form onSubmit={submitForm} className="vreel-register-form__wrapper">
         <PrimaryInput

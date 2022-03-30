@@ -3,20 +3,20 @@ interface InputProps {
   setValue: (s: string) => void;
   placeHolder: string;
   type?: string;
-  pattern: string;
+  // pattern: string;
 }
 
 export const PrimaryInput = ({
   value,
   setValue,
   placeHolder,
-  type,
-  pattern,
+  type
+  // pattern,
 }: InputProps): JSX.Element => {
   return (
     <div className="vreel-input vreel-input__wrapper">
       <input
-        pattern={pattern}
+        // pattern={pattern}
         type={type}
         onChange={(e) => setValue(e.target.value.toLowerCase())}
         value={value}

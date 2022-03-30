@@ -16,6 +16,7 @@ import (
 	"github.com/vreel/app/database"
 	"github.com/vreel/app/graph"
 	"github.com/vreel/app/graph/generated"
+	"github.com/vreel/app/test"
 )
 
 const defaultPort = "8080"
@@ -59,6 +60,7 @@ func RestHandler() {
 }
 
 func main() {
+
 	godotenv.Load(".env")
 	database.Migrate()
 	fmt.Printf("val: %s", os.Getenv("MEDIA_SERVER_ENDPOINT"))
@@ -66,6 +68,7 @@ func main() {
 	// test.TestCache()
 	database.Migrate()
 	InitializeCache()
+	test.ClearAllUsers()
 	wg.Add(1)
 	// go func() {
 	// 	defer wg.Done()

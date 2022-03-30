@@ -20,15 +20,15 @@ function App({ Component, pageProps }: AppProps) {
   useEffect(() => {
     const slideIcons = document.querySelectorAll(".vreel-slide__icon");
     
-    window.addEventListener("scroll", () => {
-      console.log("scroll", window.scrollY);
-      slideIcons.forEach((icon) => {
-        if (window.scrollY >= 100) {
-          icon.style.opacity = 0;
-        }
-      });
-    });
-  });
+    // window.addEventListener("scroll", () => {
+    //   console.log("scroll", window.scrollY);
+    //   slideIcons.forEach((icon) => {
+    //     if (window.scrollY >= 100) {
+    //       icon.style.opacity = 0;
+    //     }
+    //   });
+    // });
+  }, []);
 
   return (
     <CookiesProvider>

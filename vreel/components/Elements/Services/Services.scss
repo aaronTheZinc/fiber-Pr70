@@ -7,13 +7,13 @@
   &__card-wrapper {
     display: flex;
     flex-direction: row;
-    height: 300px;
+    height: 100%;
     @media only screen and (max-width: 768px) {
-      height: 130px;
+      max-height: 130px;
     }
     img {
-      max-width: 300px;
-      max-height: 300px;
+      max-width: 220px;
+      max-height: 220px;
       height: 100%;
       object-fit: cover;
       object-position: top;
@@ -48,13 +48,10 @@
     }
     p {
       font-size: 12px;
-      @media only screen and (max-width: 768px) {
-        font-size: 11px;
         -webkit-line-clamp: 3;
         display: -webkit-box;
         -webkit-box-orient: vertical;
         overflow: hidden;
-      }
     }
     button {
       margin-top: auto;

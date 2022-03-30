@@ -45,7 +45,7 @@ const Links = (): JSX.Element => {
                   alt="Vreel Link Image"
                   className="vreel-links__img"
                 />
-                <p className="vreel-links__text">Alicia Simone</p>
+                <p className="vreel-links__text">{idx % 2 ? "Pour Up" : "Alicia Simone"}</p>
               </a>
             </Col>
           ))
