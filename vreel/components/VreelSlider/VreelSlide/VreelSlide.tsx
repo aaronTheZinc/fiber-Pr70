@@ -6,8 +6,11 @@ const VreelSlide = ({
   user,
   slideId,
   slide,
+  currentSlide,
+  swiper,
   isChanged,
 }): JSX.Element => {
+  const slideEl = useRef(null);
   const audioEl = useRef(null);
   const videoEl = useRef(null);
 
@@ -32,12 +35,28 @@ const VreelSlide = ({
 
   useEffect(() => {
     slideId !== 0 && videoEl.current.pause();
+
     // setStartTime()
-    console.log("video", videoEl.current, isChanged);
+
+    console.log("video", videoEl.current, swiper);
+
+    window.addEventListener("blur", (e) => {
+      videoEl.current.pause((self) => console.log("self", self));
+      console.log("focus", e);
+    });
+
+    window.addEventListener("focus", (e) => {
+      videoEl.current.play();
+      console.log("play", e);
+    });
   }, [isChanged]);
 
   return (
-    <section id={slideId} className="vreel-slide vreel-slide__wrapper">
+    <section
+      ref={slideEl}
+      id={slideId}
+      className="vreel-slide vreel-slide__wrapper"
+    >
       {/* <img src="https://images.unsplash.com/photo-1626715185400-49cccfabc10f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=627&q=80" alt="background img" className="vreel-slide__background-img" /> */}
 
       <video
@@ -45,9 +64,28 @@ const VreelSlide = ({
         className="vreel-slide__background-video"
         autoPlay
         muted
-        loop
+        onEnded={(e) => {
+          swiper.slideNext();
+
+          if (currentSlide) {
+            console.log("info", slideId, currentSlide.activeIndex, isChanged);
+            slideId === currentSlide.activeIndex
+              ? videoEl.current.play()
+              : videoEl.current.pause();
+          }
+
+          // if (slideId === currentSlide.activeIndex) {
+          //   videoEl.current.play()
+          // } else {
+          //   videoEl.current.pause()
+          // }
+          console.log("ended", currentSlide, slideId);
+        }}
       >
-        <source src="/vreel-vid.mp4" type="video/mp4" />
+        <source
+          src="https://vreel.page/users/vreel/videos/waterfall.mp4"
+          type="video/mp4"
+        />
         Your browser does not support the video tag.
       </video>
 
@@ -57,8 +95,7 @@ const VreelSlide = ({
         <h1 className="vreel-slide__heading-text">
           {username
             ? `${user.first_name === "" ? username : user.first_name}'s vreel`
-            : "THE INTERFACE THAT VISUALLY ELEVATES YOUR BRAND™"
-            }
+            : "THE INTERFACE THAT VISUALLY ELEVATES YOUR BRAND™"}
         </h1>
         <p className="vreel-slide__text">
           Upload some files in file manager and then use editor to personalize
@@ -71,7 +108,7 @@ const VreelSlide = ({
                 {user.first_name === "" ? username : user.first_name}'s Button
               </a>
               <a className="vreel-slide__btn" href="#">
-               {user.first_name === "" ? username : user.first_name} choose a
+                {user.first_name === "" ? username : user.first_name} choose a
                 url
               </a>
             </>

@@ -13,6 +13,7 @@ export const VreelSlider = ({ isUser, username, user }): JSX.Element => {
   let slides = new Array("a", "b", "c", "d");
   const [isChanged, setIsChanged] = useState(false)
   const [currentSlide, setCurrentSlide] = useState(null)
+  const [swiper, setSwiper] = useState(null)
   return (
     <Swiper
       modules={[Navigation, Pagination]}
@@ -25,17 +26,17 @@ export const VreelSlider = ({ isUser, username, user }): JSX.Element => {
         setCurrentSlide(slide)
         console.log("slide change", slide, isChanged)
       }}
-      onSwiper={(swiper) => console.log(swiper)}
+      onSwiper={(swiper) => setSwiper(swiper)}
     >
       {slides.length > 0
         ? slides.map((slide, idx) => (
             <SwiperSlide key={idx}>
-              <VreelSlide slide={slide} isChanged={isChanged} slideId={idx} user={user} username={username} />
+              <VreelSlide slide={slide} swiper={swiper} currentSlide={currentSlide} isChanged={isChanged} slideId={idx} user={user} username={username} />
             </SwiperSlide>
           ))
         : slides.map((slide, idx) => (
             <SwiperSlide key={idx}>
-              <VreelSlide slide={slide} slideId={idx} isChanged={isChanged} />
+              <VreelSlide slide={slide} swiper={swiper} currentSlide={currentSlide} slideId={idx} isChanged={isChanged} />
             </SwiperSlide>
           ))}
     </Swiper>
