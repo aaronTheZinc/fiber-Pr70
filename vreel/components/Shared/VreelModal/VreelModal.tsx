@@ -67,6 +67,7 @@ export const VreelModal = ({
             <button
               className="btn-close vreel-modal__close-btn"
               aria-label="Close"
+              type="button"
               onClick={() => setOpen(!open)}
             ></button>
             <ModalBody>
@@ -163,8 +164,8 @@ export const VreelModal = ({
             ></button>
             <ModalBody>
               <h1> Heading Text</h1>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua.
+              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+              eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
             </ModalBody>
           </>
         )}

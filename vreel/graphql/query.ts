@@ -9,41 +9,71 @@ export const LoginQuery = gql`
     }
   }
 `;
+
 const UserQuery = gql`
   query User($Id: String) {
     user(id: $Id) {
       id
       username
-      first_name
-      last_name
       email
-      phone_number
-      business_address
-      billing_address
-      website
-      job_title
-      groups
-      vreel
+      vreel {
+        author
+        slides {
+          id
+          slide_location
+          content_type
+          uri
+        }
+      }
     }
   }
 `;
+
 const UsernameQuery = gql`
   query User($Username: String) {
     username(username: $Username) {
       id
-      first_name
-      last_name
       email
+      username
+      vreel {
+        author
+        slides {
+          id
+          slide_location
+          content_type
+          uri
+        }
+      }
     }
   }
 `;
+
 const GetUsernamesQuery = gql`
-  query ServerAnalytics{
-    serverAnalytics{
+  query ServerAnalytics {
+    serverAnalytics {
       usernames
     }
   }
 `;
+const GetUserByEmailQuery = gql`
+  query Email ($Email: String!) {
+    email (email: $Email) {
+      id
+      email
+      username
+      vreel {
+        author
+        slides {
+          id
+          slide_location
+          content_type
+          uri
+        }
+      }
+    }
+  }
+`;
+
 
 export const getUserByUsername = async (username: string): Promise<User> => {
   const { data } = await client.query({
@@ -53,22 +83,31 @@ export const getUserByUsername = async (username: string): Promise<User> => {
 
   return data.username;
 };
+export const getUserByEmail = async (email: string): Promise<User> => {
+  const { data } = await client.query({
+    query: GetUserByEmailQuery,
+    variables: { Email: email },
+  });
+
+  return data.email;
+};
 
 interface ServerAnalytics {
   usernames: [string];
 }
+
 export const getAllUsernames = async (): Promise<ServerAnalytics> => {
   const response = {} as ServerAnalytics;
 
   await client
     .query({
-      query: GetUsernamesQuery
+      query: GetUsernamesQuery,
     })
     .then(({ data }) => {
       response.usernames = data.serverAnalytics.usernames;
     })
     .catch((e) => {
-      console.error('ERROR WITH GET ALL USERNAMES QUERY', e.message)
+      console.error("ERROR WITH GET ALL USERNAMES QUERY", e.message);
     });
 
   return response;
@@ -101,7 +140,7 @@ export const loginUser = async (
     })
     .then(({ data }) => {
       response.token = data.login.token;
-      response.id = data.login.id
+      response.id = data.login.id;
     })
     .catch((e) => {
       response.error = e.message;

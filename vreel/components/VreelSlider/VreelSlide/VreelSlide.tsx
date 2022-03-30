@@ -1,11 +1,24 @@
 import React, { useState, useEffect, useRef } from "react";
 import { VreelModal } from "../../Shared/VreelModal/VreelModal";
-const VreelSlide = ({ username, user, slideId, slide, isChanged }): JSX.Element => {
-  const audioEl = useRef(null)
+
+const VreelSlide = ({
+  username,
+  user,
+  slideId,
+  slide,
+  currentSlide,
+  swiper,
+  isChanged,
+}): JSX.Element => {
+  const slideEl = useRef(null);
+  const audioEl = useRef(null);
+  const videoEl = useRef(null);
 
   const [isFollowed, setIsFollowed] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
+  const [startTime, setStartTime] = useState(12);
+  const [endTime, setEndTime] = useState(13);
 
   const toggleSlideFollow = () => {
     setIsFollowed(!isFollowed);
@@ -16,39 +29,74 @@ const VreelSlide = ({ username, user, slideId, slide, isChanged }): JSX.Element 
 
   const toggleSlideSound = () => {
     setIsMuted(!isMuted);
-    isMuted ? audioEl.current.play() : audioEl.current.pause()
+    isMuted ? audioEl.current.play() : audioEl.current.pause();
     // isChanged && audioEl.current.pause()
   };
-  
+
+  useEffect(() => {
+    slideId !== 0 && videoEl.current.pause();
+
+    // setStartTime()
+
+    console.log("video", videoEl.current, swiper,  username,
+    user);
+
+    window.addEventListener("blur", (e) => {
+      videoEl.current.pause();
+      console.log("focus", e);
+    });
+
+    window.addEventListener("focus", (e) => {
+      videoEl.current.play();
+      console.log("play", e);
+    });
+  }, [isChanged]);
 
   return (
-    <section id={slideId} className="vreel-slide vreel-slide__wrapper">
+    <section
+      ref={slideEl}
+      id={slideId}
+      className="vreel-slide vreel-slide__wrapper"
+    >
       {/* <img src="https://images.unsplash.com/photo-1626715185400-49cccfabc10f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=627&q=80" alt="background img" className="vreel-slide__background-img" /> */}
 
-      <video className="vreel-slide__background-video" autoPlay muted loop>
-        <source src="/vreel-vid.mp4" type="video/mp4" />
+      <video
+        ref={videoEl}
+        className="vreel-slide__background-video"
+        autoPlay
+        muted
+        loop
+        onEnded={(e) => {
+          swiper.slideNext();
+
+          if (currentSlide) {
+            console.log("info", slideId, currentSlide.activeIndex, isChanged);
+            slideId === currentSlide.activeIndex
+              ? videoEl.current.play()
+              : videoEl.current.pause();
+          }
+
+          // if (slideId === currentSlide.activeIndex) {
+          //   videoEl.current.play()
+          // } else {
+          //   videoEl.current.pause()
+          // }
+          console.log("ended", currentSlide, slideId);
+        }}
+      >
+        <source
+          src="https://vreel.page/users/vreel/videos/waterfall.mp4"
+          type="video/mp4"
+        />
         Your browser does not support the video tag.
       </video>
-
-      {/* <div className="vreel-slide__background-video__yt">
-        <div className="vreel-slide__background-video__yt-inner">
-          <iframe
-          height={1080} width={1920}
-            src="https://www.youtube.com/embed/IInzXXJLYoY?autoplay=1&playsinline=1&controls=0&disablekb=1&enablejsapi=1&fs=0&loop=1&muted=1"
-            title="YouTube video player"
-            frameBorder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-          ></iframe>
-        </div>
-      </div> */}
 
       <div className="vreel-slide__overlay"></div>
 
       <div className="vreel-slide__text-wrapper">
         <h1 className="vreel-slide__heading-text">
           {username
-            ? `${user.first_name === "" ? username : user.first_name}'s vreel`
+            ? `${username}'s vreel`
             : "THE INTERFACE THAT VISUALLY ELEVATES YOUR BRAND™"}
         </h1>
         <p className="vreel-slide__text">
@@ -56,12 +104,26 @@ const VreelSlide = ({ username, user, slideId, slide, isChanged }): JSX.Element 
           your Vreel
         </p>
         <div className="vreel-slide__btn-wrapper">
-          <a className="vreel-slide__btn" href="/register">
-            Register
-          </a>
-          <a className="vreel-slide__btn" href="/login">
-            Login
-          </a>
+          {username ? (
+            <>
+              <a className="vreel-slide__btn" href="#">
+                {username}'s Button
+              </a>
+              <a className="vreel-slide__btn" href="#">
+                {username} choose a
+                url
+              </a>
+            </>
+          ) : (
+            <>
+              <a className="vreel-slide__btn" href="/register">
+                Register
+              </a>
+              <a className="vreel-slide__btn" href="/login">
+                Login
+              </a>
+            </>
+          )}
         </div>
       </div>
 
@@ -171,7 +233,12 @@ const VreelSlide = ({ username, user, slideId, slide, isChanged }): JSX.Element 
           <VreelModal isQr={true} icon="/qr-icon.svg" />
         </div>
       </aside>
-      <audio ref={audioEl} id="vreelBackgroundAudio" loop={true} src="/background-vreel.mp3"></audio>
+      <audio
+        ref={audioEl}
+        id="vreelBackgroundAudio"
+        loop={true}
+        src="/background-vreel.mp3"
+      ></audio>
     </section>
   );
 };
