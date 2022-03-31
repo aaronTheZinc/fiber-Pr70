@@ -33,6 +33,10 @@ func databaseInit() (*gorm.DB, error) {
 	return db, err
 }
 
+func IsConnected() bool {
+	return db == nil
+}
+
 func Migrate() {
 	log.Println("Migrating...")
 	db.AutoMigrate(model.UserModel{})

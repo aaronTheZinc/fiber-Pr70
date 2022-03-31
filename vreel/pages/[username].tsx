@@ -1,12 +1,12 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
 import Links from "../components/Elements/Links/Links";
 import Services from "../components/Elements/Services/Services";
 import Social from "../components/Elements/Social/Social";
 import TextArea from "../components/Elements/TextArea/TextArea";
 import { VreelSlider } from "../components/VreelSlider/VreelSlider";
 import { getAllUsernames, getUserByUsername } from "../graphql/query";
-
 const Username = ({ user, isMobile }) => {
   const router = useRouter();
   const { username } = router.query;
@@ -44,7 +44,7 @@ export async function getStaticPaths() {
       return { params: { username } }
     });
 
-    return { paths, fallback: false };
+    return { paths, fallback: 'blocking' };
   } catch (error) {
     console.error("ERRORRRR in [username] getStaticPaths", error);
   }
@@ -62,6 +62,6 @@ export async function getStaticProps({ params }) {
     }
     return { props: { user } };
   } catch (error) {
-    console.error("ERRORRRR in [username] getStaticProps", error);
+    return { notFound: true }
   }
 }
