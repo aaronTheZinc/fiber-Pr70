@@ -5,7 +5,7 @@ import Services from "../components/Elements/Services/Services";
 import Social from "../components/Elements/Social/Social";
 import TextArea from "../components/Elements/TextArea/TextArea";
 import { VreelSlider } from "../components/VreelSlider/VreelSlider";
-import { getAllUsernames } from "../graphql/query";
+import { getAllUsernames, getUserByUsername } from "../graphql/query";
 
 const Username = ({ user, isMobile }) => {
   const router = useRouter();
@@ -18,7 +18,7 @@ const Username = ({ user, isMobile }) => {
       }}
     >
       <Head>
-        <title>{username}'s VReel</title>
+        <title>{`${username}'s`} VReel</title>
       </Head>
       <VreelSlider isUser={true} user={user} username={username} />
       <Links />
@@ -32,20 +32,33 @@ const Username = ({ user, isMobile }) => {
 export default Username;
 
 export async function getStaticPaths() {
-  const { usernames } = await getAllUsernames();
+  try {
+    const { usernames } = await getAllUsernames();
+    console.log("running")
+    const paths = usernames.map((username) => {
+      console.log(`username ${username}`)
 
-  const paths = usernames.map((username) => ({
-    params: { username },
-  }));
-  return { paths, fallback: false };
+      return { params: { username } }
+    });
+
+    return { paths, fallback: false };
+  } catch (error) {
+    console.error("ERRORRRR in [username] getStaticPaths", error);
+  }
 }
 
 export async function getStaticProps({ params }) {
-  const router = useRouter()
+  try {
 
-  const { username } = router.query;
-  
-  const res = await fetch(`https://dev1.vreel.page/api/${username}`);
-  const { user } = await res.json();
-  return { props: { user } };
+    const user = await getUserByUsername(params.username);
+    console.log("[user]", user)
+    if (!user) {
+      return {
+        notFound: true,
+      }
+    }
+    return { props: { user } };
+  } catch (error) {
+    console.error("ERRORRRR in [username] getStaticProps", error);
+  }
 }
