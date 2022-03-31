@@ -41,7 +41,11 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params }) {
-  const res = await fetch(`${process.env.DEV_URL}/api/${params.username}`);
+  const router = useRouter()
+
+  const { username } = router.query;
+  
+  const res = await fetch(`https://dev1.vreel.page/api/${username}`);
   const { user } = await res.json();
   return { props: { user } };
 }
