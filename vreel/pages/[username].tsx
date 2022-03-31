@@ -33,8 +33,11 @@ export default Username;
 
 export async function getStaticPaths() {
   try {
-    const { usernames } = await getAllUsernames();
+    let { usernames }: any = await getAllUsernames();
     console.log("running")
+    if (!usernames) {
+      usernames = []
+    }
     const paths = usernames.map((username) => {
       console.log(`username ${username}`)
 
