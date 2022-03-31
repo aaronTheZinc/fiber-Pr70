@@ -38,8 +38,7 @@ const VreelSlide = ({
 
     // setStartTime()
 
-    console.log("video", videoEl.current, swiper,  username,
-    user);
+    console.log("video", videoEl.current, slide, user);
 
     window.addEventListener("blur", (e) => {
       videoEl.current.pause();
