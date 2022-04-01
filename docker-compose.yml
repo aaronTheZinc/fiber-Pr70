@@ -19,17 +19,6 @@ services:
       - "8081:8081"
     depends_on:
       - db
-    healthcheck:
-      test:
-        [
-          "CMD",
-          "curl",
-          "-f",
-          "http://localhost:8081/health/health"
-        ]
-      interval: 30s
-      timeout: 10s
-      retries: 20
     environment:
       - DB_HOST=db
   web:
@@ -39,8 +28,7 @@ services:
     ports:
       - "3000:3000"
     depends_on:
-      server:
-        condition: service_healthy
+      - server
     restart: always
   cache:
     image: redis:6.2-alpine
