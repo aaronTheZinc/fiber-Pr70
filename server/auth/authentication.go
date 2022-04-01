@@ -50,11 +50,20 @@ func CreateNewUser(newUser model.NewUser) (model.User, error) {
 			return model.User{}, hashErr
 		}
 		u, oerr := database.CreateUser(newUser, utils.GenerateUID(), hashedPw)
+		s, _ := database.CreateSlide(u.ID, model.NewSlide{
+			URI:           "https://vreel.page/users/vreel/videos/waterfall.mp4",
+			ContentType:   "video",
+			SlideLocation: 1,
+		})
+
 		folderErr := client.CreateNewFolder(newUser.Username)
 		if folderErr != nil {
 			fmt.Println(folderErr.Error())
 		}
 		cErr := database.CreateNewVreel(u.ID)
+		if cErr == nil {
+			database.VreelAddSlide(s.ID, u.ID)
+		}
 		user = u
 		if oerr != nil {
 			err = e.FAILED_CREATE_USER
