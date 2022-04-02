@@ -32,20 +32,32 @@ const Username = ({ user, isMobile }) => {
 export default Username;
 
 export async function getStaticPaths() {
-  const { usernames } = await getAllUsernames();
+  try {
+    const { usernames } = await getAllUsernames();
 
-  const paths = usernames.map((username) => ({
-    params: { username },
-  }));
-  return { paths, fallback: false };
+    const paths = usernames.map((username) => ({
+      params: { username },
+    }));
+
+    return { paths, fallback: false };
+  } catch (error) {
+    console.error("ERRORRRR in [username] getStaticPaths", error);
+  }
 }
 
 export async function getStaticProps({ params }) {
-  const router = useRouter()
+  try {
+    const res = await fetch(`https://dev1.vreel.page/api/${params.username}`);
 
-  const { username } = router.query;
-  
-  const res = await fetch(`https://dev1.vreel.page/api/${username}`);
-  const { user } = await res.json();
-  return { props: { user } };
+    const { user } = await res.json();
+
+    if (!user) {
+      return {
+        notFound: true,
+      }
+    }
+    return { props: { user } };
+  } catch (error) {
+    console.error("ERRORRRR in [username] getStaticProps", error);
+  }
 }
