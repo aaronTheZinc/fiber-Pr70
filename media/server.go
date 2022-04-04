@@ -44,16 +44,7 @@ func main() {
 	if err != nil {
 		panic(fmt.Errorf("Unable to create handler: %s", err))
 	}
-	go func() {
-		for {
-			event := <-handler.CompleteUploads
 
-			dd := event.Upload.MetaData["test"]
-			fmt.Println(dd)
-			fmt.Printf("Upload %s finished\n", event.Upload.ID)
-		}
-
-	}()
 	// Right now, nothing has happened since we need to start the HTTP server on
 	// our own. In the end, tusd will start listening on and accept request at
 	// http://localhost:8080/files
