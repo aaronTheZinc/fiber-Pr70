@@ -54,11 +54,6 @@ func main() {
 		}
 
 	}()
-	go func() {
-		for {
-			handler.Middleware(n)
-		}
-	}()
 	// Right now, nothing has happened since we need to start the HTTP server on
 	// our own. In the end, tusd will start listening on and accept request at
 	// http://localhost:8080/files
