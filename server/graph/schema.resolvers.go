@@ -24,6 +24,10 @@ func (r *mutationResolver) CreateEvent(ctx context.Context, token string, input 
 	return &event, err
 }
 
+func (r *mutationResolver) CreateEnterprise(ctx context.Context, input model.NewEnterprise) (*model.MutationResponse, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
 func (r *mutationResolver) CreateResetPasswordRequestIntent(ctx context.Context, email string) (*model.ResetPasswordResponse, error) {
 	auth, err := auth.CreateResetPasswordRequestIntent(email)
 	return &auth, err
