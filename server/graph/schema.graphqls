@@ -18,6 +18,7 @@ type Files {
 }
 type User {
   id: String!
+  account_type: String!
   username: String!
   first_name: String!
   last_name: String!
@@ -33,6 +34,13 @@ type User {
   groups: [Group!]!
   vreel: Vreel!
   files: Files!
+}
+
+type Enterprise {
+  id: String
+  name: String!
+  owner: String!
+  employees: [User!]!
 }
 
 # Create Group - name, location, meet times?, public/private?
@@ -182,6 +190,7 @@ input NewEvent {
 
 input NewUser {
   username: String!
+  account_type: String!
   first_name: String
   last_name: String
   email: String!
@@ -227,9 +236,14 @@ input VreelFields {
   field: String!
   value: String!
 }
+input NewEnterprise {
+  name: String!
+  owner: String!
+}
 type Mutation {
   register(input: NewUser!): User!
   createEvent(token: String!, input: NewEvent!): Event!
+  createEnterprise(input: NewEnterprise!): MutationResponse!
   createResetPasswordRequestIntent(email: String!): ResetPasswordResponse!
   resolveResetPasswordRequestIntent(
     token: String!

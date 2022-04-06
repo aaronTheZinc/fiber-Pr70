@@ -65,6 +65,30 @@ type SlideModel struct {
 	Metadata      string `json:"metadata"`
 }
 
+type EnterpriseModel struct {
+	ID        string         `json:"id"`
+	Name      string         `json:"name"`
+	Owner     string         `json:"owner"`
+	Employees pq.StringArray `gorm:"type:text[]"`
+}
+
+func (c *NewEnterprise) ToModel() EnterpriseModel {
+	return EnterpriseModel{
+		Name:      c.Name,
+		Owner:     "",
+		Employees: []string{},
+	}
+}
+
+func (c *EnterpriseModel) ToEnterprise(employees []*User) Enterprise {
+	return Enterprise{
+		ID:        &c.ID,
+		Name:      c.Name,
+		Owner:     c.Owner,
+		Employees: employees,
+	}
+}
+
 func (c *NewUser) ToDatabaseModel() UserModel {
 	// var groups pq.StringArray
 	return UserModel{

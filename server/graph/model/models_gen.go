@@ -14,6 +14,13 @@ type CreateSlide struct {
 	SlideLocation int    `json:"slide_location"`
 }
 
+type Enterprise struct {
+	ID        *string `json:"id"`
+	Name      string  `json:"name"`
+	Owner     string  `json:"owner"`
+	Employees []*User `json:"employees"`
+}
+
 type Event struct {
 	ID          string   `json:"ID"`
 	Author      string   `json:"author"`
@@ -88,6 +95,11 @@ type LoginInput struct {
 type MutationResponse struct {
 	Succeeded bool   `json:"succeeded"`
 	Message   string `json:"message"`
+}
+
+type NewEnterprise struct {
+	Name  string `json:"name"`
+	Owner string `json:"owner"`
 }
 
 type NewEvent struct {
