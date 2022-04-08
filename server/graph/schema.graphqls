@@ -4,6 +4,7 @@
 type ServerAnalytics {
   usernames: [String]!
   vreels: [Vreel]
+  enterprises: [Enterprise]!
   userCount: Int!
 }
 type File {
@@ -40,6 +41,7 @@ type Enterprise {
   id: String
   name: String!
   owner: String!
+  email: String!
   employees: [User!]!
 }
 
@@ -239,11 +241,13 @@ input VreelFields {
 input NewEnterprise {
   name: String!
   owner: String!
+  email: String!
+  password: String!
 }
 type Mutation {
   register(input: NewUser!): User!
   createEvent(token: String!, input: NewEvent!): Event!
-  createEnterprise(input: NewEnterprise!): MutationResponse!
+  createEnterprise(input: NewEnterprise!): Enterprise!
   createResetPasswordRequestIntent(email: String!): ResetPasswordResponse!
   resolveResetPasswordRequestIntent(
     token: String!

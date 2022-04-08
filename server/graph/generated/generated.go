@@ -50,6 +50,7 @@ type ComplexityRoot struct {
 	}
 
 	Enterprise struct {
+		Email     func(childComplexity int) int
 		Employees func(childComplexity int) int
 		ID        func(childComplexity int) int
 		Name      func(childComplexity int) int
@@ -165,9 +166,10 @@ type ComplexityRoot struct {
 	}
 
 	ServerAnalytics struct {
-		UserCount func(childComplexity int) int
-		Usernames func(childComplexity int) int
-		Vreels    func(childComplexity int) int
+		Enterprises func(childComplexity int) int
+		UserCount   func(childComplexity int) int
+		Usernames   func(childComplexity int) int
+		Vreels      func(childComplexity int) int
 	}
 
 	Service struct {
@@ -198,6 +200,7 @@ type ComplexityRoot struct {
 	}
 
 	User struct {
+		AccountType     func(childComplexity int) int
 		BillingAddress  func(childComplexity int) int
 		BusinessAddress func(childComplexity int) int
 		Email           func(childComplexity int) int
@@ -245,7 +248,7 @@ type ComplexityRoot struct {
 type MutationResolver interface {
 	Register(ctx context.Context, input model.NewUser) (*model.User, error)
 	CreateEvent(ctx context.Context, token string, input model.NewEvent) (*model.Event, error)
-	CreateEnterprise(ctx context.Context, input model.NewEnterprise) (*model.MutationResponse, error)
+	CreateEnterprise(ctx context.Context, input model.NewEnterprise) (*model.Enterprise, error)
 	CreateResetPasswordRequestIntent(ctx context.Context, email string) (*model.ResetPasswordResponse, error)
 	ResolveResetPasswordRequestIntent(ctx context.Context, token string, password string) (*model.ResolvedPasswordReset, error)
 	CreateGroup(ctx context.Context, input *model.NewGroup) (*model.Group, error)
@@ -302,6 +305,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Contact.Position(childComplexity), true
+
+	case "Enterprise.email":
+		if e.complexity.Enterprise.Email == nil {
+			break
+		}
+
+		return e.complexity.Enterprise.Email(childComplexity), true
 
 	case "Enterprise.employees":
 		if e.complexity.Enterprise.Employees == nil {
@@ -909,6 +919,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ResolvedPasswordReset.Succeeded(childComplexity), true
 
+	case "ServerAnalytics.enterprises":
+		if e.complexity.ServerAnalytics.Enterprises == nil {
+			break
+		}
+
+		return e.complexity.ServerAnalytics.Enterprises(childComplexity), true
+
 	case "ServerAnalytics.userCount":
 		if e.complexity.ServerAnalytics.UserCount == nil {
 			break
@@ -1034,6 +1051,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.TextArea.Position(childComplexity), true
+
+	case "User.account_type":
+		if e.complexity.User.AccountType == nil {
+			break
+		}
+
+		return e.complexity.User.AccountType(childComplexity), true
 
 	case "User.billing_address":
 		if e.complexity.User.BillingAddress == nil {
@@ -1329,6 +1353,7 @@ var sources = []*ast.Source{
 type ServerAnalytics {
   usernames: [String]!
   vreels: [Vreel]
+  enterprises: [Enterprise]!
   userCount: Int!
 }
 type File {
@@ -1343,6 +1368,7 @@ type Files {
 }
 type User {
   id: String!
+  account_type: String!
   username: String!
   first_name: String!
   last_name: String!
@@ -1364,6 +1390,7 @@ type Enterprise {
   id: String
   name: String!
   owner: String!
+  email: String!
   employees: [User!]!
 }
 
@@ -1514,6 +1541,7 @@ input NewEvent {
 
 input NewUser {
   username: String!
+  account_type: String!
   first_name: String
   last_name: String
   email: String!
@@ -1562,11 +1590,13 @@ input VreelFields {
 input NewEnterprise {
   name: String!
   owner: String!
+  email: String!
+  password: String!
 }
 type Mutation {
   register(input: NewUser!): User!
   createEvent(token: String!, input: NewEvent!): Event!
-  createEnterprise(input: NewEnterprise!): MutationResponse!
+  createEnterprise(input: NewEnterprise!): Enterprise!
   createResetPasswordRequestIntent(email: String!): ResetPasswordResponse!
   resolveResetPasswordRequestIntent(
     token: String!
@@ -2231,6 +2261,41 @@ func (ec *executionContext) _Enterprise_owner(ctx context.Context, field graphql
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return obj.Owner, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Enterprise_email(ctx context.Context, field graphql.CollectedField, obj *model.Enterprise) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Enterprise",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Email, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3846,9 +3911,9 @@ func (ec *executionContext) _Mutation_createEnterprise(ctx context.Context, fiel
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.MutationResponse)
+	res := resTmp.(*model.Enterprise)
 	fc.Result = res
-	return ec.marshalNMutationResponse2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐMutationResponse(ctx, field.Selections, res)
+	return ec.marshalNEnterprise2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐEnterprise(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_createResetPasswordRequestIntent(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -4935,6 +5000,41 @@ func (ec *executionContext) _ServerAnalytics_vreels(ctx context.Context, field g
 	return ec.marshalOVreel2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐVreel(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _ServerAnalytics_enterprises(ctx context.Context, field graphql.CollectedField, obj *model.ServerAnalytics) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ServerAnalytics",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Enterprises, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Enterprise)
+	fc.Result = res
+	return ec.marshalNEnterprise2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐEnterprise(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _ServerAnalytics_userCount(ctx context.Context, field graphql.CollectedField, obj *model.ServerAnalytics) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -5508,6 +5608,41 @@ func (ec *executionContext) _User_id(ctx context.Context, field graphql.Collecte
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _User_account_type(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AccountType, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -7799,6 +7934,22 @@ func (ec *executionContext) unmarshalInputNewEnterprise(ctx context.Context, obj
 			if err != nil {
 				return it, err
 			}
+		case "email":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("email"))
+			it.Email, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "password":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("password"))
+			it.Password, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		}
 	}
 
@@ -8019,6 +8170,14 @@ func (ec *executionContext) unmarshalInputNewUser(ctx context.Context, obj inter
 			if err != nil {
 				return it, err
 			}
+		case "account_type":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("account_type"))
+			it.AccountType, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "first_name":
 			var err error
 
@@ -8213,6 +8372,11 @@ func (ec *executionContext) _Enterprise(ctx context.Context, sel ast.SelectionSe
 			}
 		case "owner":
 			out.Values[i] = ec._Enterprise_owner(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "email":
+			out.Values[i] = ec._Enterprise_email(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -8923,6 +9087,11 @@ func (ec *executionContext) _ServerAnalytics(ctx context.Context, sel ast.Select
 			}
 		case "vreels":
 			out.Values[i] = ec._ServerAnalytics_vreels(ctx, field, obj)
+		case "enterprises":
+			out.Values[i] = ec._ServerAnalytics_enterprises(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "userCount":
 			out.Values[i] = ec._ServerAnalytics_userCount(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -9109,6 +9278,11 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			out.Values[i] = graphql.MarshalString("User")
 		case "id":
 			out.Values[i] = ec._User_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "account_type":
+			out.Values[i] = ec._User_account_type(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -9580,6 +9754,58 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) marshalNEnterprise2githubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐEnterprise(ctx context.Context, sel ast.SelectionSet, v model.Enterprise) graphql.Marshaler {
+	return ec._Enterprise(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNEnterprise2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐEnterprise(ctx context.Context, sel ast.SelectionSet, v []*model.Enterprise) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOEnterprise2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐEnterprise(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	return ret
+}
+
+func (ec *executionContext) marshalNEnterprise2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐEnterprise(ctx context.Context, sel ast.SelectionSet, v *model.Enterprise) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._Enterprise(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNEvent2githubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐEvent(ctx context.Context, sel ast.SelectionSet, v model.Event) graphql.Marshaler {
@@ -10295,6 +10521,13 @@ func (ec *executionContext) marshalOContact2ᚖgithubᚗcomᚋvreelᚋappᚋgrap
 		return graphql.Null
 	}
 	return ec._Contact(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOEnterprise2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐEnterprise(ctx context.Context, sel ast.SelectionSet, v *model.Enterprise) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Enterprise(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOEvent2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐEventᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Event) graphql.Marshaler {
