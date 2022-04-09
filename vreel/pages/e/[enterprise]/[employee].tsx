@@ -40,6 +40,10 @@ export async function getStaticProps({ params }) {
     // consol
     try {
         const employee = await getEnterpriseEmployee(params.enterprise, params.employee)
+        console.log("[returned employee]: ", employee)
+        if (!employee) {
+            throw new Error("failed to load employee")
+        }
         return {
             props: {
                 employee
@@ -47,6 +51,7 @@ export async function getStaticProps({ params }) {
         }
     }
     catch (e) {
+        console.log(e)
         return { notFound: true }
     }
 }

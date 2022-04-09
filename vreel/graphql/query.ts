@@ -104,10 +104,7 @@ export const getEnterpriseEmployee = async (EnterpriseName: string, EmployeeId: 
     query: GetEnterpriseEmployee,
     variables: { EnterpriseName, EmployeeId }
   });
-  if (errors) {
-    console.log("[error]: ", errors)
-  }
-  return data.enterpriseEmployee
+  return data
 }
 export const getUserByUsername = async (username: string): Promise<User> => {
   const { data } = await client.query({

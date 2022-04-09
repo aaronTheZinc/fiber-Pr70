@@ -61,12 +61,10 @@ func CreateNewUser(newUser model.NewUser) (model.User, error) {
 	}
 
 	if isRegisted {
-		println("email is registered!!")
 		err = e.EMAIL_IN_USE
 	}
 
 	if usernameIsRegistered {
-		println("username is registered!!")
 		err = e.USERNAME_IN_USE
 	}
 
@@ -80,7 +78,7 @@ func CreateNewUser(newUser model.NewUser) (model.User, error) {
 			log.Panicln("failed to hash pw")
 			return model.User{}, hashErr
 		}
-		u, oerr := database.CreateUser(newUser, utils.GenerateUID(), hashedPw)
+		u, oerr := database.CreateUser(newUser, utils.GenerateId(), hashedPw)
 		fmt.Printf("enterprise uid: %s", u.ID)
 		s, _ := database.CreateSlide(u.ID, model.NewSlide{
 			URI:           "https://vreel.page/users/vreel/videos/waterfall.mp4",

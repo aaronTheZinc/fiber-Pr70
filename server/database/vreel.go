@@ -3,6 +3,7 @@ package database
 import (
 	"errors"
 	"fmt"
+	"log"
 
 	e "github.com/vreel/app/err"
 	"github.com/vreel/app/graph/model"
@@ -11,6 +12,7 @@ import (
 
 //creates  when new account is created
 func CreateNewVreel(author string) error {
+	log.Println("[vreel] created")
 	var err error
 	buttonUri := "https://vreel.page"
 	e, gErr := utils.GetDefaultElementsString()
@@ -35,7 +37,6 @@ func CreateNewVreel(author string) error {
 }
 
 func GetVreel(id string) (model.Vreel, error) {
-
 	var vreel model.VreelModel
 	var r model.Vreel
 	var err error
@@ -59,6 +60,7 @@ func GetVreel(id string) (model.Vreel, error) {
 }
 
 func UpdateVreelElements(id, elements string) error {
+	log.Println("[vreel] created")
 	var u model.UserModel
 	err := db.Where("id = ? ", id).First(&u)
 
