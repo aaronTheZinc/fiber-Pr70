@@ -11,10 +11,15 @@ func GetServerAnalytics() (model.ServerAnalytics, error) {
 	var usernames []*string
 	var userCount int
 	var vreels []*model.Vreel
-
+	var enterprises []*model.Enterprise
 	users, getErr := database.GetAllUsernames()
 	v, vErr := database.GetAllVreels()
+	ent, _ := database.GetAllEnterprises()
 
+	for _, enterprise := range ent {
+		o := enterprise
+		enterprises = append(enterprises, &o)
+	}
 	if vErr != nil {
 	} else {
 		if getErr != nil {
@@ -33,8 +38,9 @@ func GetServerAnalytics() (model.ServerAnalytics, error) {
 		}
 	}
 	return model.ServerAnalytics{
-		UserCount: userCount,
-		Usernames: usernames,
-		Vreels:    vreels,
+		UserCount:   userCount,
+		Usernames:   usernames,
+		Vreels:      vreels,
+		Enterprises: enterprises,
 	}, err
 }

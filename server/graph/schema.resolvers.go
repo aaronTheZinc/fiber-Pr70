@@ -24,6 +24,12 @@ func (r *mutationResolver) CreateEvent(ctx context.Context, token string, input 
 	return &event, err
 }
 
+func (r *mutationResolver) CreateEnterprise(ctx context.Context, input model.NewEnterprise) (*model.Enterprise, error) {
+	enterprise, err := auth.CreateNewEnterprise(input)
+
+	return &enterprise, err
+}
+
 func (r *mutationResolver) CreateResetPasswordRequestIntent(ctx context.Context, email string) (*model.ResetPasswordResponse, error) {
 	auth, err := auth.CreateResetPasswordRequestIntent(email)
 	return &auth, err
@@ -53,6 +59,12 @@ func (r *mutationResolver) DeleteGroup(ctx context.Context, id string, token str
 
 func (r *mutationResolver) AddUserToGroup(ctx context.Context, token string, groupID string, userID string) (*model.MutationResponse, error) {
 	resp, err := auth.AuthorizeAddUserToGroup(token, groupID, userID)
+
+	return &resp, err
+}
+
+func (r *mutationResolver) AddEmployeeToEnterprise(ctx context.Context, token string, newUser model.NewUser) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeAddEmployeeToEnterprise(token, newUser)
 
 	return &resp, err
 }
@@ -106,6 +118,12 @@ func (r *queryResolver) Slide(ctx context.Context, id string) (*model.Slide, err
 func (r *queryResolver) Group(ctx context.Context, id string, token string) (*model.Group, error) {
 	g, err := auth.AuthorizeGetGroup(token, id)
 	return &g, err
+}
+
+func (r *queryResolver) Enterprise(ctx context.Context, id string) (*model.Enterprise, error) {
+	enterprise, err := database.GetEnterprise(id)
+
+	return &enterprise, err
 }
 
 func (r *queryResolver) ServerAnalytics(ctx context.Context) (*model.ServerAnalytics, error) {

@@ -9,6 +9,7 @@ import (
 type UserModel struct {
 	ID              string         `gorm:"primaryKey"`
 	Username        string         `json:"username"`
+	AccountType     string         `json:"ac"`
 	FirstName       string         `json:"first_name"`
 	LastName        string         `json:"last_name"`
 	Email           string         `json:"email"`
@@ -65,6 +66,33 @@ type SlideModel struct {
 	Metadata      string `json:"metadata"`
 }
 
+type EnterpriseModel struct {
+	ID        string         `json:"id"`
+	Name      string         `json:"name"`
+	Owner     string         `json:"owner"`
+	Email     string         `json:"email"`
+	Employees pq.StringArray `gorm:"type:text[]"`
+}
+
+func (c *NewEnterprise) ToModel() EnterpriseModel {
+	return EnterpriseModel{
+		Name:      c.Name,
+		Owner:     "",
+		Email:     c.Email,
+		Employees: []string{},
+	}
+}
+
+func (c *EnterpriseModel) ToEnterprise(employees []*User) Enterprise {
+	return Enterprise{
+		ID:        &c.ID,
+		Name:      c.Name,
+		Owner:     c.Owner,
+		Email:     c.Email,
+		Employees: employees,
+	}
+}
+
 func (c *NewUser) ToDatabaseModel() UserModel {
 	// var groups pq.StringArray
 	return UserModel{
@@ -73,6 +101,7 @@ func (c *NewUser) ToDatabaseModel() UserModel {
 		LastName:        "",
 		Email:           c.Email,
 		Password:        c.Password,
+		AccountType:     c.AccountType,
 		PhoneNumber:     "",
 		BusinessAddress: "",
 		BillingAddress:  "",
@@ -103,6 +132,7 @@ func (c *UserModel) ToUser() User {
 		BillingAddress:  c.BillingAddress,
 		Website:         c.Website,
 		JobTitle:        c.JobTitle,
+		AccountType:     c.AccountType,
 	}
 }
 

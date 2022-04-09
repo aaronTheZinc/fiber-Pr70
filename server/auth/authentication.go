@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
 	"strconv"
 	"time"
 
@@ -21,6 +22,33 @@ type PasswordResetCacheModel struct {
 	Requester string `json:"requester"`
 }
 
+func CreateNewEnterprise(ent model.NewEnterprise) (model.Enterprise, error) {
+	var enterprise model.Enterprise
+	var err error
+
+	if u, creationErr := CreateNewUser(model.NewUser{
+		Username:    ent.Name,
+		Email:       ent.Email,
+		Password:    ent.Password,
+		AccountType: "enterprise",
+	}); creationErr != nil {
+		err = creationErr
+	} else {
+		log.Println("successfully created!")
+		if r, creationErr := database.CreateEnterprise(u.ID, ent); creationErr != nil {
+			err = e.FAILED_ENTERPRISE_CREATE
+		} else {
+			if createVreelErr := database.CreateNewVreel(*r.ID); createVreelErr != nil {
+				err = e.FAILED_CREATE_VREEL
+			} else {
+				enterprise = r
+			}
+		}
+	}
+
+	return enterprise, err
+}
+
 // Create User & Validate Existence Of Conflicting Accounts
 func CreateNewUser(newUser model.NewUser) (model.User, error) {
 	var user model.User
@@ -33,23 +61,27 @@ func CreateNewUser(newUser model.NewUser) (model.User, error) {
 	}
 
 	if isRegisted {
+		println("email is registered!!")
 		err = e.EMAIL_IN_USE
 	}
 
 	if usernameIsRegistered {
+		println("username is registered!!")
 		err = e.USERNAME_IN_USE
 	}
 
 	if usernameCheckError != nil {
 		err = usernameCheckError
 	}
-
 	if !isRegisted && !usernameIsRegistered {
+		fmt.Println("running!")
 		hashedPw, hashErr := HashPassword(newUser.Password)
 		if hashErr != nil {
+			log.Panicln("failed to hash pw")
 			return model.User{}, hashErr
 		}
 		u, oerr := database.CreateUser(newUser, utils.GenerateUID(), hashedPw)
+		fmt.Printf("enterprise uid: %s", u.ID)
 		s, _ := database.CreateSlide(u.ID, model.NewSlide{
 			URI:           "https://vreel.page/users/vreel/videos/waterfall.mp4",
 			ContentType:   "video",
@@ -71,6 +103,8 @@ func CreateNewUser(newUser model.NewUser) (model.User, error) {
 		if cErr != nil {
 			err = e.FAILED_CREATE_VREEL
 		}
+	} else {
+		fmt.Println("Failed!!!!!")
 	}
 
 	return user, err
@@ -93,7 +127,7 @@ func Login(email string, password string) (model.LocalSession, error) {
 			fmt.Println(err.Error())
 			return localSession, errors.New("incorrect password")
 		} else {
-			tkn, _ := CreateToken(user.ID)
+			tkn, _ := CreateToken(user.ID, user.AccountType)
 			localSession = model.LocalSession{
 				Token: tkn,
 			}
