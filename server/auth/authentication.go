@@ -123,7 +123,7 @@ func Login(email string, password string) (model.LocalSession, error) {
 			fmt.Println(err.Error())
 			return localSession, errors.New("incorrect password")
 		} else {
-			tkn, _ := CreateToken(user.ID)
+			tkn, _ := CreateToken(user.ID, user.AccountType)
 			localSession = model.LocalSession{
 				Token: tkn,
 			}

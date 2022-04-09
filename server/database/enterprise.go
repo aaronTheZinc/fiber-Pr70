@@ -14,8 +14,16 @@ func CreateEnterprise(owner string, e model.NewEnterprise) (model.Enterprise, er
 	return enterprise.ToEnterprise([]*model.User{}), err
 }
 
-func AddEmployeeToEnterprise() {
+func AddEmployeeToEnterprise(enterpriseId, newUserId string) error {
+	var enterprise model.EnterpriseModel
 
+	err := db.Where("id = ?", enterpriseId).First(&enterprise).Error
+	if err == nil {
+		employees := enterprise.Employees
+		employees = append(employees, newUserId)
+		db.Where("id = ?", enterpriseId).Update("employees", employees)
+	}
+	return err
 }
 
 func RemoveEmployeeFromEnterprise() {
