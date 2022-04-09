@@ -20,7 +20,7 @@ const Username = ({ user, isMobile }) => {
       <Head>
         <title>{`${username}'s`} VReel</title>
       </Head>
-      <VreelSlider isUser={true} user={user} username={username} />
+      <VreelSlider data={false} isUser={true} user={user} username={username} />
       <Links />
       <Social isUser={true} user={user} username={username} />
       <TextArea />
@@ -34,17 +34,11 @@ export default Username;
 export async function getStaticPaths() {
   try {
     let { usernames }: any = await getAllUsernames();
-    console.log("running")
-    if (!usernames) {
-      usernames = []
-    }
+    if (!usernames) return (usernames = []);
     const paths = usernames.map((username) => {
-      console.log(`username ${username}`)
-
-      return { params: { username } }
+      return { params: { username } };
     });
-
-    return { paths, fallback: 'blocking' };
+    return { paths, fallback: "blocking" };
   } catch (error) {
     console.error("ERRORRRR in [username] getStaticPaths", error);
   }
@@ -52,16 +46,14 @@ export async function getStaticPaths() {
 
 export async function getStaticProps({ params }) {
   try {
-
     const user = await getUserByUsername(params.username);
-    console.log("[user]", user)
-    if (!user) {
+    if (!user)
       return {
         notFound: true,
-      }
-    }
+      };
+
     return { props: { user } };
   } catch (error) {
-    return { notFound: true }
+    return { notFound: true };
   }
 }

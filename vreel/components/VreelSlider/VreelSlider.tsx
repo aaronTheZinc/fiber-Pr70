@@ -39,7 +39,7 @@ export const VreelSlider = ({ isUser, username, user, data }): JSX.Element => {
           ))
         : data.map((video, idx) => (
           <SwiperSlide key={idx}>
-            <VreelSlide slide={video} swiper={swiper} currentSlide={currentSlide} slideId={idx} isChanged={isChanged} />
+            <VreelSlide username={false} user={false} slide={video} swiper={swiper} currentSlide={currentSlide} slideId={idx} isChanged={isChanged} />
           </SwiperSlide>
         ))}
     </Swiper>
