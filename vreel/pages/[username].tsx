@@ -6,7 +6,7 @@ import Services from "../components/Elements/Services/Services";
 import Social from "../components/Elements/Social/Social";
 import TextArea from "../components/Elements/TextArea/TextArea";
 import { VreelSlider } from "../components/VreelSlider/VreelSlider";
-import { getAllUsernames, getUserByUsername } from "../graphql/query";
+import { getServerAnalytics, getUserByUsername } from "../graphql/query";
 const Username = ({ user, isMobile }) => {
   const router = useRouter();
   const { username } = router.query;
@@ -33,14 +33,16 @@ export default Username;
 
 export async function getStaticPaths() {
   try {
-    let { usernames }: any = await getAllUsernames();
+    let { usernames } = await getServerAnalytics();
     console.log("running")
     if (!usernames) {
-      usernames = []
+      usernames = [""]
     }
     const paths = usernames.map((username) => {
       console.log(`username ${username}`)
-
+      if (username == "") {
+        username = "--"
+      }
       return { params: { username } }
     });
 

@@ -31,6 +31,34 @@ func GetEnterprise(id string) (model.Enterprise, error) {
 	return response, err
 }
 
+func GetEnterpriseIdByName(name string) (string, error) {
+	var enterprise model.EnterpriseModel
+	err := db.Where("name = ? ", name).First(&enterprise).Error
+	return enterprise.ID, err
+}
+
+func GetEnterpriseByName(name string) (model.Enterprise, error) {
+	var enterprise model.EnterpriseModel
+	var response model.Enterprise
+	var err error
+	fetchErr := db.Where("name = ?", name).First(&enterprise).Error
+	if fetchErr != nil {
+		err = e.ENTERPRISE_NOT_FOUND
+	}
+	employees, _ := GetEnterpriseEmployees(enterprise.ID)
+
+	if vreel, get_err := GetVreel(enterprise.ID); get_err != nil {
+		err = e.VREEL_NOT_FOUND
+	} else {
+		r := enterprise.ToEnterprise(employees)
+		r.Vreel = &vreel
+
+		response = r
+	}
+
+	return response, err
+}
+
 func CreateEnterprise(owner string, e model.NewEnterprise) (model.Enterprise, error) {
 	enterprise := e.ToModel()
 	enterprise.ID = utils.GenerateId()
@@ -42,13 +70,11 @@ func CreateEnterprise(owner string, e model.NewEnterprise) (model.Enterprise, er
 
 func AddEmployeeToEnterprise(enterpriseId, newUserId string) error {
 	var enterprise model.EnterpriseModel
-	log.Println("attempting to add user!")
 	err := db.Where("id = ?", enterpriseId).First(&enterprise).Error
 	if err == nil {
 		employees := enterprise.Employees
 		employees = append(employees, newUserId)
 
-		log.Println("[employee id]", employees)
 		f := db.Model(&enterprise).Where("id = ?", enterpriseId).Update("employees", employees).Error
 
 		if f != nil {
@@ -117,4 +143,49 @@ func GetAllEnterprises() ([]model.Enterprise, error) {
 	}
 
 	return r, err.Error
+}
+
+func GetEenterpriseEmployee(enterpriseName, employeeId string) (model.EnterpriseEmployee, error) {
+	var employee model.EnterpriseEmployee
+	var err error
+	var user model.User
+	var vreel model.Vreel
+
+	wg := sync.WaitGroup{}
+
+	if entId, fetchErr := GetEnterpriseIdByName(enterpriseName); fetchErr != nil {
+		err = e.ENTERPRISE_NOT_FOUND
+	} else {
+		//get vreel
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			if v, fetchErr := GetVreel(entId); fetchErr != nil {
+				err = fetchErr
+			} else {
+				vreel = v
+			}
+		}()
+		//get user
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			if u, fetchErr := GetUser(employeeId); fetchErr != nil {
+				err = fetchErr
+			} else {
+				user = u
+			}
+
+		}()
+		wg.Wait()
+
+		if err == nil {
+			employee = model.EnterpriseEmployee{
+				Employee: &user,
+				Vreel:    &vreel,
+			}
+		}
+
+	}
+	return employee, err
 }

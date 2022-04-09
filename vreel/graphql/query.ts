@@ -48,13 +48,26 @@ const UsernameQuery = gql`
   }
 `;
 
-const GetUsernamesQuery = gql`
+const GetServerAnalyticsQuery = gql`
   query ServerAnalytics {
     serverAnalytics {
       usernames
+      enterprises {
+        name
+        employees {
+          id
+        }
+    }
     }
   }
 `;
+export const GetEnterpisesQuery = gql` 
+ query ServerAnalytics {
+  serverAnalytics {
+    usernames
+  }
+}
+  `
 const GetUserByEmailQuery = gql`
   query Email ($Email: String!) {
     email (email: $Email) {
@@ -74,7 +87,28 @@ const GetUserByEmailQuery = gql`
   }
 `;
 
-
+const GetEnterpriseEmployee = gql`
+  query EnterpriseEmployee($EnterpriseName: String!, $EmployeeId: String!) {
+    enterpiseEmployee(enterpriseName:$EnterpriseName, employeeId: $EmployeeId) {
+      employee {
+        id
+      }
+      vreel {
+        author
+      }
+    }
+  }
+  `
+export const getEnterpriseEmployee = async (EnterpriseName: string, EmployeeId: string) => {
+  const { data, errors } = await client.query({
+    query: GetEnterpriseEmployee,
+    variables: { EnterpriseName, EmployeeId }
+  });
+  if (errors) {
+    console.log("[error]: ", errors)
+  }
+  return data.enterpriseEmployee
+}
 export const getUserByUsername = async (username: string): Promise<User> => {
   const { data } = await client.query({
     query: UsernameQuery,
@@ -94,23 +128,29 @@ export const getUserByEmail = async (email: string): Promise<User> => {
 
 interface ServerAnalytics {
   usernames: [string];
+  enterprises: [{
+    name: string;
+    employees: {
+      id: string
+    }[]
+  }]
 }
 
-export const getAllUsernames = async (): Promise<ServerAnalytics> => {
-  const response = {} as ServerAnalytics;
+export const getServerAnalytics = async (): Promise<ServerAnalytics> => {
+  let response = {}
 
   await client
     .query({
-      query: GetUsernamesQuery,
+      query: GetServerAnalyticsQuery,
     })
-    .then(({ data }) => {
-      response.usernames = data.serverAnalytics.usernames;
+    .then(({ data: { serverAnalytics: data } }) => {
+      response = data
     })
     .catch((e) => {
-      console.error("ERROR WITH GET ALL USERNAMES QUERY", e.message);
+      console.error("[server analytics error]", e.message);
     });
 
-  return response;
+  return response as ServerAnalytics;
 };
 
 export const getUserById = async (id: string): Promise<User> => {
@@ -125,6 +165,7 @@ export const getUserById = async (id: string): Promise<User> => {
 interface LoginResponse {
   error: string;
   token: string;
+  id: string;
 }
 
 export const loginUser = async (

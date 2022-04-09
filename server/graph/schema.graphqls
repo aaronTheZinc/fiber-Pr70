@@ -168,6 +168,11 @@ type ResetPasswordResponse {
   reset_token: String!
 }
 
+type EnterpriseEmployee {
+  employee: User!
+  vreel: Vreel!
+}
+
 type Query {
   user(id: String): User!
   username(username: String): User!
@@ -176,6 +181,7 @@ type Query {
   slide(id: String!): Slide!
   group(id: String!, token: String!): Group!
   enterprise(id: String!): Enterprise!
+  enterpiseEmployee(enterpriseName: String!, employeeId: String! ): EnterpriseEmployee!
   serverAnalytics: ServerAnalytics
 }
 

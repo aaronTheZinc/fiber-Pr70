@@ -58,6 +58,11 @@ type ComplexityRoot struct {
 		Vreel     func(childComplexity int) int
 	}
 
+	EnterpriseEmployee struct {
+		Employee func(childComplexity int) int
+		Vreel    func(childComplexity int) int
+	}
+
 	Event struct {
 		Author      func(childComplexity int) int
 		Description func(childComplexity int) int
@@ -147,14 +152,15 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		Email           func(childComplexity int, email string) int
-		Enterprise      func(childComplexity int, id string) int
-		Group           func(childComplexity int, id string, token string) int
-		Login           func(childComplexity int, input *model.LoginInput) int
-		ServerAnalytics func(childComplexity int) int
-		Slide           func(childComplexity int, id string) int
-		User            func(childComplexity int, id *string) int
-		Username        func(childComplexity int, username *string) int
+		Email             func(childComplexity int, email string) int
+		EnterpiseEmployee func(childComplexity int, enterpriseName string, employeeID string) int
+		Enterprise        func(childComplexity int, id string) int
+		Group             func(childComplexity int, id string, token string) int
+		Login             func(childComplexity int, input *model.LoginInput) int
+		ServerAnalytics   func(childComplexity int) int
+		Slide             func(childComplexity int, id string) int
+		User              func(childComplexity int, id *string) int
+		Username          func(childComplexity int, username *string) int
 	}
 
 	ResetPasswordResponse struct {
@@ -272,6 +278,7 @@ type QueryResolver interface {
 	Slide(ctx context.Context, id string) (*model.Slide, error)
 	Group(ctx context.Context, id string, token string) (*model.Group, error)
 	Enterprise(ctx context.Context, id string) (*model.Enterprise, error)
+	EnterpiseEmployee(ctx context.Context, enterpriseName string, employeeID string) (*model.EnterpriseEmployee, error)
 	ServerAnalytics(ctx context.Context) (*model.ServerAnalytics, error)
 }
 
@@ -352,6 +359,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Enterprise.Vreel(childComplexity), true
+
+	case "EnterpriseEmployee.employee":
+		if e.complexity.EnterpriseEmployee.Employee == nil {
+			break
+		}
+
+		return e.complexity.EnterpriseEmployee.Employee(childComplexity), true
+
+	case "EnterpriseEmployee.vreel":
+		if e.complexity.EnterpriseEmployee.Vreel == nil {
+			break
+		}
+
+		return e.complexity.EnterpriseEmployee.Vreel(childComplexity), true
 
 	case "Event.author":
 		if e.complexity.Event.Author == nil {
@@ -840,6 +861,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.Email(childComplexity, args["email"].(string)), true
+
+	case "Query.enterpiseEmployee":
+		if e.complexity.Query.EnterpiseEmployee == nil {
+			break
+		}
+
+		args, err := ec.field_Query_enterpiseEmployee_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.EnterpiseEmployee(childComplexity, args["enterpriseName"].(string), args["employeeId"].(string)), true
 
 	case "Query.enterprise":
 		if e.complexity.Query.Enterprise == nil {
@@ -1553,6 +1586,11 @@ type ResetPasswordResponse {
   reset_token: String!
 }
 
+type EnterpriseEmployee {
+  employee: User!
+  vreel: Vreel!
+}
+
 type Query {
   user(id: String): User!
   username(username: String): User!
@@ -1561,6 +1599,7 @@ type Query {
   slide(id: String!): Slide!
   group(id: String!, token: String!): Group!
   enterprise(id: String!): Enterprise!
+  enterpiseEmployee(enterpriseName: String!, employeeId: String! ): EnterpriseEmployee!
   serverAnalytics: ServerAnalytics
 }
 
@@ -2014,6 +2053,30 @@ func (ec *executionContext) field_Query_email_args(ctx context.Context, rawArgs 
 	return args, nil
 }
 
+func (ec *executionContext) field_Query_enterpiseEmployee_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["enterpriseName"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("enterpriseName"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["enterpriseName"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["employeeId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("employeeId"))
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["employeeId"] = arg1
+	return args, nil
+}
+
 func (ec *executionContext) field_Query_enterprise_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -2434,6 +2497,76 @@ func (ec *executionContext) _Enterprise_vreel(ctx context.Context, field graphql
 	}()
 	fc := &graphql.FieldContext{
 		Object:     "Enterprise",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Vreel, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Vreel)
+	fc.Result = res
+	return ec.marshalNVreel2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐVreel(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _EnterpriseEmployee_employee(ctx context.Context, field graphql.CollectedField, obj *model.EnterpriseEmployee) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "EnterpriseEmployee",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Employee, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.User)
+	fc.Result = res
+	return ec.marshalNUser2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _EnterpriseEmployee_vreel(ctx context.Context, field graphql.CollectedField, obj *model.EnterpriseEmployee) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "EnterpriseEmployee",
 		Field:      field,
 		Args:       nil,
 		IsMethod:   false,
@@ -4850,6 +4983,48 @@ func (ec *executionContext) _Query_enterprise(ctx context.Context, field graphql
 	res := resTmp.(*model.Enterprise)
 	fc.Result = res
 	return ec.marshalNEnterprise2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐEnterprise(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_enterpiseEmployee(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_enterpiseEmployee_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().EnterpiseEmployee(rctx, args["enterpriseName"].(string), args["employeeId"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.EnterpriseEmployee)
+	fc.Result = res
+	return ec.marshalNEnterpriseEmployee2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐEnterpriseEmployee(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_serverAnalytics(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -8598,6 +8773,38 @@ func (ec *executionContext) _Enterprise(ctx context.Context, sel ast.SelectionSe
 	return out
 }
 
+var enterpriseEmployeeImplementors = []string{"EnterpriseEmployee"}
+
+func (ec *executionContext) _EnterpriseEmployee(ctx context.Context, sel ast.SelectionSet, obj *model.EnterpriseEmployee) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, enterpriseEmployeeImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("EnterpriseEmployee")
+		case "employee":
+			out.Values[i] = ec._EnterpriseEmployee_employee(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "vreel":
+			out.Values[i] = ec._EnterpriseEmployee_vreel(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var eventImplementors = []string{"Event"}
 
 func (ec *executionContext) _Event(ctx context.Context, sel ast.SelectionSet, obj *model.Event) graphql.Marshaler {
@@ -9190,6 +9397,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_enterprise(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "enterpiseEmployee":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_enterpiseEmployee(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -10027,6 +10248,20 @@ func (ec *executionContext) marshalNEnterprise2ᚖgithubᚗcomᚋvreelᚋappᚋg
 		return graphql.Null
 	}
 	return ec._Enterprise(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNEnterpriseEmployee2githubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐEnterpriseEmployee(ctx context.Context, sel ast.SelectionSet, v model.EnterpriseEmployee) graphql.Marshaler {
+	return ec._EnterpriseEmployee(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNEnterpriseEmployee2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐEnterpriseEmployee(ctx context.Context, sel ast.SelectionSet, v *model.EnterpriseEmployee) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._EnterpriseEmployee(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNEvent2githubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐEvent(ctx context.Context, sel ast.SelectionSet, v model.Event) graphql.Marshaler {
