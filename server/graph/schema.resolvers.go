@@ -126,6 +126,12 @@ func (r *queryResolver) Enterprise(ctx context.Context, id string) (*model.Enter
 	return &enterprise, err
 }
 
+func (r *queryResolver) EnterpiseEmployee(ctx context.Context, enterpriseName string, employeeID string) (*model.EnterpriseEmployee, error) {
+	employee, err := database.GetEenterpriseEmployee(enterpriseName, employeeID)
+
+	return &employee, err
+}
+
 func (r *queryResolver) ServerAnalytics(ctx context.Context) (*model.ServerAnalytics, error) {
 	a, err := analytics.GetServerAnalytics()
 

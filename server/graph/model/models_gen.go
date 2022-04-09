@@ -23,6 +23,11 @@ type Enterprise struct {
 	Vreel     *Vreel  `json:"vreel"`
 }
 
+type EnterpriseEmployee struct {
+	Employee *User  `json:"employee"`
+	Vreel    *Vreel `json:"vreel"`
+}
+
 type Event struct {
 	ID          string   `json:"ID"`
 	Author      string   `json:"author"`
