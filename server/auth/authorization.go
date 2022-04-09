@@ -242,3 +242,34 @@ func AuthorizeRemoveSlide(token, slideId string) (model.MutationResponse, error)
 
 	return r, err
 }
+
+func AuthorizeAddEmployeeToEnterprise(token string, newUser model.NewUser) (model.MutationResponse, error) {
+	var err error
+	var r model.MutationResponse
+
+	claims, isAuth, parseErr := ParseToken(token)
+	userId := claims.ID
+
+	if isAuth && parseErr == nil {
+		if user, get_err := database.GetUser(userId); get_err != nil {
+			err = e.USER_NOT_FOUND
+		} else {
+			if user.AccountType == "enterprise" {
+				u, creationErr := CreateNewUser(newUser)
+				if creationErr != nil {
+					err = creationErr
+				} else {
+					database.AddEmployeeToEnterprise("", u.ID)
+				}
+			} else {
+				err = e.INVALID_ACCOUNT_TYPE
+			}
+		}
+	} else {
+		err = e.UNAUTHORIZED_ERROR
+	}
+	return r, err
+}
+func AuthorizeRemoveEmployeeToEnterpirse() {
+
+}
