@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { VreelModal } from "../../Shared/VreelModal/VreelModal";
+import { Player } from 'video-react';
 
 const VreelSlide = ({
   username,
@@ -17,8 +18,6 @@ const VreelSlide = ({
   const [isFollowed, setIsFollowed] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
-  const [startTime, setStartTime] = useState(12);
-  const [endTime, setEndTime] = useState(13);
 
   const toggleSlideFollow = () => {
     setIsFollowed(!isFollowed);
@@ -32,24 +31,10 @@ const VreelSlide = ({
     isMuted ? audioEl.current.play() : audioEl.current.pause();
     // isChanged && audioEl.current.pause()
   };
-
   useEffect(() => {
-    slideId !== 0 && videoEl.current.pause();
-
-    // setStartTime()
-
-    console.log("video", videoEl.current, slide, user);
-
-    window.addEventListener("blur", (e) => {
-      videoEl.current.pause();
-      console.log("focus", e);
-    });
-
-    window.addEventListener("focus", (e) => {
-      videoEl.current.play();
-      console.log("play", e);
-    });
-  }, [isChanged]);
+    slideId !== 0 ? videoEl.current.pause() : videoEl.current.play();
+    console.log("this is skide video", currentSlide, slideId);
+  }, []);
 
   return (
     <section
@@ -68,25 +53,13 @@ const VreelSlide = ({
         onEnded={(e) => {
           swiper.slideNext();
 
-          if (currentSlide) {
-            console.log("info", slideId, currentSlide.activeIndex, isChanged);
-            slideId === currentSlide.activeIndex
-              ? videoEl.current.play()
-              : videoEl.current.pause();
-          }
-
-          // if (slideId === currentSlide.activeIndex) {
-          //   videoEl.current.play()
-          // } else {
-          //   videoEl.current.pause()
-          // }
           console.log("ended", currentSlide, slideId);
         }}
       >
         <source
-          src="https://vreel.page/users/vreel/videos/waterfall.mp4"
+          src={user ? user.vreel.slides[0].uri : slide.video_files[0].link}
           type="video/mp4"
-        />
+        ></source>
         Your browser does not support the video tag.
       </video>
 
@@ -109,8 +82,7 @@ const VreelSlide = ({
                 {username}'s Button
               </a>
               <a className="vreel-slide__btn" href="#">
-                {username} choose a
-                url
+                {username} choose a url
               </a>
             </>
           ) : (
