@@ -221,7 +221,6 @@ func AuthorizeRemoveSlide(token, slideId string) (model.MutationResponse, error)
 		if s, getErr := database.GetSlide(slideId); getErr != nil {
 			err = e.SLIDE_NOT_FOUND
 		} else {
-			fmt.Printf("compare %s vs. %s", s.Author, userId)
 			if s.Author == userId {
 				deletionErr := database.DeleteSlide(slideId)
 				if deletionErr != nil {
@@ -255,11 +254,25 @@ func AuthorizeAddEmployeeToEnterprise(token string, newUser model.NewUser) (mode
 			err = e.USER_NOT_FOUND
 		} else {
 			if user.AccountType == "enterprise" {
+				newUser.AccountType = "employee"
 				u, creationErr := CreateNewUser(newUser)
 				if creationErr != nil {
 					err = creationErr
 				} else {
-					database.AddEmployeeToEnterprise("", u.ID)
+					if enterprise, fetchErr := database.GetEnterpriseByOwner(userId); fetchErr != nil {
+						err = e.ENTERPRISE_NOT_FOUND
+					} else {
+
+						updateErr := database.AddEmployeeToEnterprise(*enterprise.ID, u.ID)
+						if updateErr != nil {
+							err = e.ENTERPRISE_FAILED_ADD_EMPLOYEE
+						} else {
+							r = model.MutationResponse{
+								Succeeded: true,
+								Message:   "added user to enterprise: " + *enterprise.ID,
+							}
+						}
+					}
 				}
 			} else {
 				err = e.INVALID_ACCOUNT_TYPE

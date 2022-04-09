@@ -38,7 +38,11 @@ func CreateNewEnterprise(ent model.NewEnterprise) (model.Enterprise, error) {
 		if r, creationErr := database.CreateEnterprise(u.ID, ent); creationErr != nil {
 			err = e.FAILED_ENTERPRISE_CREATE
 		} else {
-			enterprise = r
+			if createVreelErr := database.CreateNewVreel(*r.ID); createVreelErr != nil {
+				err = e.FAILED_CREATE_VREEL
+			} else {
+				enterprise = r
+			}
 		}
 	}
 

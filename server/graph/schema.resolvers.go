@@ -63,6 +63,12 @@ func (r *mutationResolver) AddUserToGroup(ctx context.Context, token string, gro
 	return &resp, err
 }
 
+func (r *mutationResolver) AddEmployeeToEnterprise(ctx context.Context, token string, newUser model.NewUser) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeAddEmployeeToEnterprise(token, newUser)
+
+	return &resp, err
+}
+
 func (r *mutationResolver) RemoveUserFromGroup(ctx context.Context, token string, groupID string, member string) (*model.MutationResponse, error) {
 	resp, err := auth.AuthorizeRemoveUserFromGroup(token, groupID, member)
 	return &resp, err
@@ -112,6 +118,12 @@ func (r *queryResolver) Slide(ctx context.Context, id string) (*model.Slide, err
 func (r *queryResolver) Group(ctx context.Context, id string, token string) (*model.Group, error) {
 	g, err := auth.AuthorizeGetGroup(token, id)
 	return &g, err
+}
+
+func (r *queryResolver) Enterprise(ctx context.Context, id string) (*model.Enterprise, error) {
+	enterprise, err := database.GetEnterprise(id)
+
+	return &enterprise, err
 }
 
 func (r *queryResolver) ServerAnalytics(ctx context.Context) (*model.ServerAnalytics, error) {

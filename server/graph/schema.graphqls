@@ -43,6 +43,7 @@ type Enterprise {
   owner: String!
   email: String!
   employees: [User!]!
+  vreel: Vreel! 
 }
 
 # Create Group - name, location, meet times?, public/private?
@@ -174,6 +175,7 @@ type Query {
   login(input: LoginInput): LocalSession!
   slide(id: String!): Slide!
   group(id: String!, token: String!): Group!
+  enterprise(id: String!): Enterprise!
   serverAnalytics: ServerAnalytics
 }
 
@@ -261,6 +263,7 @@ type Mutation {
     groupId: String!
     userId: String!
   ): MutationResponse!
+  addEmployeeToEnterprise(token: String!, newUser: NewUser!): MutationResponse!
   removeUserFromGroup(
     token: String!
     groupId: String!

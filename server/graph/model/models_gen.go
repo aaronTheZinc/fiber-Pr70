@@ -20,6 +20,7 @@ type Enterprise struct {
 	Owner     string  `json:"owner"`
 	Email     string  `json:"email"`
 	Employees []*User `json:"employees"`
+	Vreel     *Vreel  `json:"vreel"`
 }
 
 type Event struct {
