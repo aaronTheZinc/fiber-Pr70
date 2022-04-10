@@ -49,7 +49,6 @@ const VreelSlide = ({
         className="vreel-slide__background-video"
         autoPlay
         muted
-        loop
         onEnded={(e) => {
           swiper.slideNext();
 
@@ -142,8 +141,8 @@ const VreelSlide = ({
 
           {/* <VreelModal isContact={true} icon="/add-to-contact-icon.svg" /> */}
           <a
-            href={username ? `/api/vcard?username=${username}` : "#"}
-            download={username ? `${username}.vcf` : null}
+            href={username ? `/api/vcard?username=${username}` : '/api/vcard?username=vreel'}
+            download={username ? `${username}.vcf` : 'vreel.vcf'}
           >
             <img
               data-bs-toggle="tooltip"

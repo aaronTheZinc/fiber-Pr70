@@ -1,6 +1,6 @@
 .vreel-edit-menu {
   transition: display 0.3s ease-in;
-  display: none;
+  display: flex;
   position: fixed;
   right: 0;
   flex-direction: column;
@@ -75,6 +75,12 @@
     color: #ffffff;
     &.green{
       background: #11B03E;
+    }
+    &.red{
+      background: #FF0000;
+    }
+    &.blue{
+      background: #1758B9;
     }
     @media only screen and (max-width: 768px) {
       font-size: 11px;

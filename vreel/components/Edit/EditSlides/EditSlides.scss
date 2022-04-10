@@ -51,4 +51,13 @@
       }
     }
   }
+  &__new-slide__advanced-btn-wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top: 20px;
+    button{
+      width: 150px;
+    }
+  }
 }

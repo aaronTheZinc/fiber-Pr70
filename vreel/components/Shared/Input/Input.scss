@@ -3,6 +3,22 @@
     margin-top: 36px;
   }
   &__wrapper {
+    &.edit {
+      margin-top: 0;
+    }
+    label {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      margin: 15px 0;
+      &.checkbox-label {
+        display: inline-block;
+        font-size: 12px;
+        margin-right: 10px;
+      }
+    }
+
     input {
       position: relative;
       width: 449px;
@@ -14,7 +30,18 @@
       @media only screen and (max-width: 768px) {
         width: 100%;
       }
-
+      &#edit {
+        width: 100%;
+        height: 40px;
+      }
+      &#edit-checkbox {
+        position: relative;
+        top: 3px;
+        width: 20px;
+        height: 20px;
+        background: #ffffff;
+        border-radius: 3px;
+      }
       &::placeholder {
         /* Chrome, Firefox, Opera, Safari 10.1+ */
         font-family: Poppins;

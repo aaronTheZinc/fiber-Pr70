@@ -3,7 +3,7 @@ import React, { useRef, useState } from "react";
 import { AiOutlineMinusCircle } from "react-icons/ai";
 import { IoMdAddCircleOutline } from "react-icons/io";
 import { Collapse } from "reactstrap";
-import { PrimaryInput } from "../../Shared/Input/Input";
+import { CheckboxInput, EditInput, PrimaryInput } from "../../Shared/Input/Input";
 
 const EditSlides = (): JSX.Element => {
   const [editAccordionIsOpen, setEditAccordionIsOpen] = useState(false);
@@ -56,7 +56,13 @@ const EditSlides = (): JSX.Element => {
                   />
                 )}
               </div>
+
               <Collapse isOpen={editSlideIsOpen}>
+                <EditInput
+                  type="text"
+                  label="Position"
+                  style={{ marginBottom: "30px" }}
+                />
                 <button
                   className="vreel-edit-menu__accordion white"
                   type="button"
@@ -72,8 +78,15 @@ const EditSlides = (): JSX.Element => {
                   </span>
                 </button>
                 <Collapse isOpen={editTitleIsOpen}>
-                  <PrimaryInput />
-                  <PrimaryInput />
+                  <EditInput type="text" label="Header" style={{}} />
+                  <EditInput
+                    type="textarea"
+                    label="Description"
+                    style={{
+                      marginBottom: "30px",
+                      height: "10rem",
+                    }}
+                  />
                 </Collapse>
               </Collapse>
               <Collapse isOpen={editSlideIsOpen}>
@@ -112,8 +125,9 @@ const EditSlides = (): JSX.Element => {
                   </span>
                 </button>
                 <Collapse isOpen={editCtaIsOpen}>
-                  <PrimaryInput />
-                  <PrimaryInput />
+                  <EditInput type="text" label="Link Header" />
+                  <EditInput type="text" label="Link Type" />
+                  <EditInput type="text" label="Link URL" />
                 </Collapse>
               </Collapse>
               <Collapse isOpen={editSlideIsOpen}>
@@ -132,8 +146,14 @@ const EditSlides = (): JSX.Element => {
                   </span>
                 </button>
                 <Collapse isOpen={editAdvancedIsOpen}>
-                  <PrimaryInput />
-                  <PrimaryInput />
+                  
+                <EditInput type="text" label="Info" />
+                  <EditInput type="text" label="Link Header" />
+                  <EditInput type="text" label="Link Type" />
+                  <div className="vreel-edit-slides__new-slide__advanced-btn-wrapper">
+                    <button className="vreel-edit-menu__button blue"> + Add Credits</button>
+                    <CheckboxInput type="checkbox" label="Invert Group Filter" />
+                  </div>
                 </Collapse>
               </Collapse>
             </div>
