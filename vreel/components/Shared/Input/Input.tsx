@@ -41,6 +41,7 @@ InputProps): JSX.Element => {
       <label htmlFor="edit">{label}:</label>
       <input
         style={style}
+        name='edit'
         id="edit"
         // pattern={pattern}
         type={type}
@@ -65,6 +66,7 @@ InputProps): JSX.Element => {
       <label className="checkbox-label" htmlFor="edit-checkbox">{label}:</label>
       <input
         style={style}
+        name='edit-checkbox'
         id="edit-checkbox"
         // pattern={pattern}
         type={type}
