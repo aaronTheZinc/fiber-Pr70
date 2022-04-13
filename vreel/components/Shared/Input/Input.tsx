@@ -1,7 +1,7 @@
 interface InputProps {
-  value: string;
-  setValue: (s: string) => void;
-  placeHolder: string;
+  value?: string;
+  setValue?: (s: string) => void;
+  placeHolder?: string;
   type?: string;
   style?: object;
   label?: string;
@@ -33,7 +33,7 @@ export const EditInput = ({
   placeHolder,
   type,
   style,
-  label
+  label,
 }: // pattern,
 InputProps): JSX.Element => {
   return (
@@ -41,7 +41,7 @@ InputProps): JSX.Element => {
       <label htmlFor="edit">{label}:</label>
       <input
         style={style}
-        name='edit'
+        name="edit"
         id="edit"
         // pattern={pattern}
         type={type}
@@ -58,15 +58,17 @@ export const CheckboxInput = ({
   placeHolder,
   type,
   style,
-  label
+  label,
 }: // pattern,
 InputProps): JSX.Element => {
   return (
     <div className="vreel-input vreel-input__wrapper edit">
-      <label className="checkbox-label" htmlFor="edit-checkbox">{label}:</label>
+      <label className="checkbox-label" htmlFor="edit-checkbox">
+        {label}:
+      </label>
       <input
         style={style}
-        name='edit-checkbox'
+        name="edit-checkbox"
         id="edit-checkbox"
         // pattern={pattern}
         type={type}

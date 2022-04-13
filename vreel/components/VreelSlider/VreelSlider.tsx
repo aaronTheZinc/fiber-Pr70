@@ -1,4 +1,5 @@
 import { Navigation, Pagination } from "swiper";
+import type { User } from "../../types";
 // Import Swiper React components
 import { Swiper, SwiperSlide } from "swiper/react";
 
@@ -9,16 +10,24 @@ import "swiper/css/pagination";
 import VreelSlide from "./VreelSlide/VreelSlide";
 import { useEffect, useState } from "react";
 
-export const VreelSlider = ({ isUser, username, user, data }): JSX.Element => {
-  let slides = user ? user.vreel.slides : false
-  const [isChanged, setIsChanged] = useState(false)
-  const [currentSlide, setCurrentSlide] = useState(null)
-  const [swiper, setSwiper] = useState(null)
-  
-  useEffect(() => {
-    
-  }, [isChanged])
-  
+interface VreelSliderProps {
+  isUser?: boolean;
+  username?: string;
+  user?: User;
+  data?: any;
+}
+export const VreelSlider = ({
+  isUser,
+  username,
+  user,
+  data,
+}: VreelSliderProps): JSX.Element => {
+  let slides = user ? user.vreel.slides : false;
+  const [isChanged, setIsChanged] = useState(false);
+  const [currentSlide, setCurrentSlide] = useState(null);
+  const [swiper, setSwiper] = useState(null);
+
+  useEffect(() => {}, [isChanged]);
 
   return (
     <Swiper
@@ -28,20 +37,37 @@ export const VreelSlider = ({ isUser, username, user, data }): JSX.Element => {
       navigation
       pagination={true}
       onSlideChange={(slide) => {
-        console.log("slide change", slide.realIndex)
+        console.log("slide change", slide.realIndex);
       }}
       onSwiper={(swiper) => setSwiper(swiper)}
     >
-      {user ?  user.vreel.slides.map((slide, idx) => (
+      {user
+        ? user.vreel.slides.map((slide, idx) => (
             <SwiperSlide key={idx}>
-              <VreelSlide slide={slide} swiper={swiper} currentSlide={currentSlide} isChanged={isChanged} slideId={slide.id} user={user} username={username} />
+              <VreelSlide
+                slide={slide}
+                swiper={swiper}
+                currentSlide={currentSlide}
+                isChanged={isChanged}
+                slideId={slide.id}
+                user={user}
+                username={username}
+              />
             </SwiperSlide>
           ))
-        : data.map((video, idx) => (
-          <SwiperSlide key={idx}>
-            <VreelSlide username={false} user={false} slide={video} swiper={swiper} currentSlide={currentSlide} slideId={idx} isChanged={isChanged} />
-          </SwiperSlide>
-        ))}
+        : data?.map((video, idx) => (
+            <SwiperSlide key={idx}>
+              <VreelSlide
+                username={false}
+                user={false}
+                slide={video}
+                swiper={swiper}
+                currentSlide={currentSlide}
+                slideId={idx}
+                isChanged={isChanged}
+              />
+            </SwiperSlide>
+          ))}
     </Swiper>
   );
 };

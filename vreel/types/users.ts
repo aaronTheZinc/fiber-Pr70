@@ -9,4 +9,9 @@ export interface User {
   job_title: string;
   password: string;
   password_confirm: string;
+  vreel: {
+    slides: {
+      id: string
+    }[]
+  }
 }
