@@ -1,3 +1,5 @@
+import '@uppy/core/dist/style.css'
+import '@uppy/dashboard/dist/style.css'
 import "../styles/main.scss";
 import type { AppProps /*, AppContext */ } from "next/app";
 import MainLayout from "../components/MainLayout/MainLayout";

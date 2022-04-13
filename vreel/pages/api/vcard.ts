@@ -1,5 +1,7 @@
 import { NextApiRequest as Request, NextApiResponse as Response } from "next";
 import { getUserByUsername } from "../../graphql/query";
+import * as fs from "fs";
+import path from 'path'
 // import GenerateVcard from "../../utils/vcard";
 import vCardsJS from "vcards-js";
 const kevImg = require("../../public/kev.jpeg");
@@ -7,15 +9,33 @@ const kevImg = require("../../public/kev.jpeg");
 //create a new vCard
 var vCard = vCardsJS();
 
+// const EncodedAudio = (): Buffer => { 
+//   const dir = path.resolve(".../../public/background-vreel.mp3");
+//   const wavUrl = fs 
+//     .readFileSync(dir)
+//     .toString();
+//   const buffer = Buffer.from(
+//     wavUrl.split("base64,")[1], // only use encoded data after "base64,"
+//     "base64"
+//   );
+//   console.log(`url is: ${wavUrl}`);
+
+//   return buffer;
+// };
+
 export default async function handler(req: Request, res: Response) {
   const { username } = req.query;
-  console.log("query", req.query);
+  console.log("vCard", vCard);
   if (!username) {
-    res.json({
-      error: {
-        message: "must provide an username.",
-      },
-    });
+    vCard.firstName = "Donta'";
+    vCard.lastName = "Bell";
+    vCard.cellPhone = "(856) 625-0364";
+    vCard.title = "CEO Vreel Inc.";
+    vCard.url = "https://vreel.page/vreel";
+    vCard.note = "We make you look better!";
+    res.setHeader("Content-Type", `text/vcard; name="vreel.vcf"`);
+    res.setHeader("Content-Disposition", `inline; filename="vreel.vcf"`);
+    res.send(vCard.getFormattedString());
   } else {
     try {
       const user = await getUserByUsername(username.toString());

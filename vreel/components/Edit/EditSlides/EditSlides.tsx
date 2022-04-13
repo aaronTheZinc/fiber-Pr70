@@ -6,6 +6,20 @@ import { IoMdAddCircleOutline } from "react-icons/io";
 import { Collapse } from "reactstrap";
 import { getUserByUsername } from "../../../graphql/query";
 import { CheckboxInput, EditInput } from "../../Shared/Input/Input";
+import { UppyModal } from "../../Shared/UppyModal/UppyModal";
+
+type SlidesStateType = {
+  isOpen: boolean,
+  editAccordionIsOpen: boolean,
+  editSlideIsOpen: boolean,
+  editTitleIsOpen: boolean,
+  editMediaIsOpen: boolean,
+  editCtaIsOpen: boolean,
+  editAdvancedIsOpen: boolean,
+  values: {
+    position: number
+  }
+}
 
 const SlideEditor = ({ slide, idx, state, setState }) => {
   const { id } = slide;
@@ -76,8 +90,7 @@ const SlideEditor = ({ slide, idx, state, setState }) => {
         <Collapse isOpen={true}>
           <div className="vreel-edit-slides__new-slide__media-wrapper">
             <p>Mobile Options:</p>
-            <CheckboxInput type="checkbox" label="Use External Link" />
-            <EditInput type="text" label="External Link URL" />
+           <UppyModal />
             <div className="vreel-edit-slides__new-slide__video-times-wrapper">
               <div className="vreel-edit-slides__new-slide__time-wrapper">
                 <p>Start Time:</p>
@@ -101,8 +114,7 @@ const SlideEditor = ({ slide, idx, state, setState }) => {
           </div>
           <div className="vreel-edit-slides__new-slide__media-wrapper">
             <p>Desktop Options:</p>
-            <CheckboxInput type="checkbox" label="Use External Link" />
-            <EditInput type="text" label="External Link URL" />
+            <UppyModal />
             <div className="vreel-edit-slides__new-slide__video-times-wrapper"></div>
           </div>
         </Collapse>
@@ -172,19 +184,6 @@ const EditSlides = (): JSX.Element => {
   const [user, setUser] = useState(null);
   // console.log("cookies:", cookies.userAuthToken);
 
-  // const setStateOnSlideEditor = (varibleName, functionName) => {
-  //   if (!user) return;
-  //   user.vreel.slides.map((slide, index) => {
-  //     const [editAccordionIsOpen, setEditAccordionIsOpen] = useState(false);
-  //     const [editSlideIsOpen, setEditSlideIsOpen] = useState(false);
-  //     const [editTitleIsOpen, setEditTitleIsOpen] = useState(false);
-  //     const [editMediaIsOpen, setEditMediaIsOpen] = useState(false);
-  //     const [editCtaIsOpen, setEditCtaIsOpen] = useState(false);
-  //     const [editAdvancedIsOpen, setEditAdvancedIsOpen] = useState(false);
-
-  //   });
-  // };
-
   const [editAccordionIsOpen, setEditAccordionIsOpen] = useState(false);
   const [editSlideIsOpen, setEditSlideIsOpen] = useState(false);
   const [editTitleIsOpen, setEditTitleIsOpen] = useState(false);
@@ -217,6 +216,9 @@ const EditSlides = (): JSX.Element => {
           editMediaIsOpen: false,
           editCtaIsOpen: false,
           editAdvancedIsOpen: false,
+          values: {
+
+          }
         };
       }
       console.log("[-->]", slidesInitialState);
@@ -331,11 +333,7 @@ const EditSlides = (): JSX.Element => {
                   <Collapse isOpen={editMediaIsOpen}>
                     <div className="vreel-edit-slides__new-slide__media-wrapper">
                       <p>Mobile Options:</p>
-                      <CheckboxInput
-                        type="checkbox"
-                        label="Use External Link"
-                      />
-                      <EditInput type="text" label="External Link URL" />
+                      <UppyModal />
                       <div className="vreel-edit-slides__new-slide__video-times-wrapper">
                         <div className="vreel-edit-slides__new-slide__time-wrapper">
                           <p>Start Time:</p>
@@ -359,11 +357,7 @@ const EditSlides = (): JSX.Element => {
                     </div>
                     <div className="vreel-edit-slides__new-slide__media-wrapper">
                       <p>Desktop Options:</p>
-                      <CheckboxInput
-                        type="checkbox"
-                        label="Use External Link"
-                      />
-                      <EditInput type="text" label="External Link URL" />
+                      <UppyModal />
                       <div className="vreel-edit-slides__new-slide__video-times-wrapper"></div>
                     </div>
                   </Collapse>
