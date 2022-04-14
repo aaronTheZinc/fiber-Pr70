@@ -222,6 +222,23 @@ func CreatePhoneVerificationIntent() {
 func ResolvePhoneVerificationInput() {
 
 }
+func GetUserByToken(token string) (model.User, error) {
+	var err error
+	var user model.User
+	if claims, _, pasrseErr := ParseToken(token); pasrseErr != nil {
+		err = e.UNAUTHORIZED_ERROR
+	} else {
+		if err == nil {
+			if u, fetchErr := database.GetUser(claims.ID); fetchErr != nil {
+				err = e.USER_NOT_FOUND
+			} else {
+				user = u
+			}
+		}
+	}
+
+	return user, err
+}
 
 //Hash Passowrd To Be Stored In Database
 func HashPassword(password string) (string, error) {

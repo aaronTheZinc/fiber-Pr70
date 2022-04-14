@@ -4,11 +4,14 @@ import { useCookies } from "react-cookie";
 import { AiOutlineMinusCircle } from "react-icons/ai";
 import { IoMdAddCircleOutline } from "react-icons/io";
 import { Collapse } from "reactstrap";
-import { getUserByUsername } from "../../../graphql/query";
+import { getUserByToken, getUserByUsername } from "../../../graphql/query";
+import { Slide, User } from "../../../types";
 import { CheckboxInput, EditInput } from "../../Shared/Input/Input";
 import { UppyModal } from "../../Shared/UppyModal/UppyModal";
-
-type SlidesStateType = {
+import SlideEditor from "./SlideEditor";
+//call to actio: cta
+//time stamp string 3:30
+export type SlidesStateType = {
   isOpen: boolean,
   editAccordionIsOpen: boolean,
   editSlideIsOpen: boolean,
@@ -17,171 +20,38 @@ type SlidesStateType = {
   editCtaIsOpen: boolean,
   editAdvancedIsOpen: boolean,
   values: {
-    position: number
+    title: {
+      header: string,
+      description: string,
+    },
+    media: {
+      mobileOptions: {
+
+      },
+      desktopOptions: {
+
+      },
+      start_time: string,
+      stop_time: string
+    }
+    cta: {
+      linkHeader: string,
+      linkType: string,
+      linkUrl: string
+    },
+    advanced: {
+      info: string,
+      linkHeader: string,
+      linkType: string
+    }
   }
+
+  position: number
 }
-
-const SlideEditor = ({ slide, idx, state, setState }) => {
-  const { id } = slide;
-  const { isOpen } = state;
-
-  useEffect(() => {
-    console.log("[current slide state]: ", state);
-    console.log("[slide]", isOpen);
-  }, [state]);
-  return (
-    <div
-      onClick={() => {}}
-      className="vreel-edit-slides__new-slide__slide-wrapper"
-    >
-      <div className="vreel-edit-slides__new-slide__toggle-btn">
-        <p>
-          Slide {idx + 1} - id number {slide.id}
-        </p>
-        s
-        {isOpen ? (
-          <AiOutlineMinusCircle
-            onClick={() => setState(id, "isOpen", !isOpen)}
-          />
-        ) : (
-          <IoMdAddCircleOutline onClick={() => () => {}} />
-        )}
-      </div>
-
-      <Collapse isOpen={slide}>
-        <EditInput
-          type="text"
-          label="Position"
-          style={{ marginBottom: "30px" }}
-        />
-        <button
-          className="vreel-edit-menu__accordion white"
-          type="button"
-          onClick={() => {}}
-        >
-          <span>
-            <p>Title</p>
-            {true ? <AiOutlineMinusCircle /> : <IoMdAddCircleOutline />}
-          </span>
-        </button>
-        <Collapse isOpen={true}>
-          <EditInput type="text" label="Header" style={{}} />
-          <EditInput
-            type="textarea"
-            label="Description"
-            style={{
-              marginBottom: "30px",
-              height: "12rem",
-            }}
-          />
-        </Collapse>
-      </Collapse>
-      <Collapse isOpen={true}>
-        <button
-          className="vreel-edit-menu__accordion white"
-          type="button"
-          onClick={() => {}}
-        >
-          <span>
-            <p>Media</p>
-            {true ? <AiOutlineMinusCircle /> : <IoMdAddCircleOutline />}
-          </span>
-        </button>
-        <Collapse isOpen={true}>
-          <div className="vreel-edit-slides__new-slide__media-wrapper">
-            <p>Mobile Options:</p>
-           <UppyModal />
-            <div className="vreel-edit-slides__new-slide__video-times-wrapper">
-              <div className="vreel-edit-slides__new-slide__time-wrapper">
-                <p>Start Time:</p>
-                <div>
-                  <label htmlFor="min">min</label>
-                  <input type="text" name="min" id="min" />
-                  <label htmlFor="sec">sec</label>
-                  <input type="text" name="sec" id="sec" />
-                </div>
-              </div>
-              <div className="vreel-edit-slides__new-slide__time-wrapper">
-                <p>Stop Time:</p>
-                <div>
-                  <label htmlFor="min">min</label>
-                  <input type="text" name="min" id="min" />
-                  <label htmlFor="sec">sec</label>
-                  <input type="text" name="sec" id="sec" />
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="vreel-edit-slides__new-slide__media-wrapper">
-            <p>Desktop Options:</p>
-            <UppyModal />
-            <div className="vreel-edit-slides__new-slide__video-times-wrapper"></div>
-          </div>
-        </Collapse>
-      </Collapse>
-      <Collapse isOpen={true}>
-        <button
-          className="vreel-edit-menu__accordion white"
-          type="button"
-          onClick={() => {}}
-        >
-          <span>
-            <p>Call To Action</p>
-            {true ? <AiOutlineMinusCircle /> : <IoMdAddCircleOutline />}
-          </span>
-        </button>
-        <Collapse isOpen={true}>
-          <EditInput type="text" label="Link Header" />
-          <EditInput type="text" label="Link Type" />
-          <EditInput type="text" label="Link URL" />
-        </Collapse>
-      </Collapse>
-      <Collapse isOpen={true}>
-        <button
-          className="vreel-edit-menu__accordion white"
-          type="button"
-          onClick={() => {}}
-        >
-          <span>
-            <p>Advanced</p>
-            {true ? <AiOutlineMinusCircle /> : <IoMdAddCircleOutline />}
-          </span>
-        </button>
-        <Collapse isOpen={true}>
-          <EditInput
-            type="textarea"
-            label="Info"
-            style={{
-              marginBottom: "30px",
-              height: "12rem",
-            }}
-          />
-          <EditInput type="text" label="Link Header" />
-          <EditInput type="text" label="Link Type" />
-          <div className="vreel-edit-slides__new-slide__advanced-btn-wrapper">
-            <button className="vreel-edit-menu__button blue">
-              {" "}
-              + Add Credits
-            </button>
-            <CheckboxInput type="checkbox" label="Invert Group Filter" />
-          </div>
-        </Collapse>
-        <div className="vreel-edit-slides__new-slide__btn-wrapper">
-          <button type="button" className="vreel-edit-menu__button red">
-            Delete Slide
-          </button>
-          <button type="button" className="vreel-edit-menu__button green">
-            Save Slide
-          </button>
-        </div>
-      </Collapse>
-    </div>
-  );
-};
 
 const EditSlides = (): JSX.Element => {
   const [cookies, _, removeCookies] = useCookies(["userAuthToken"]);
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<User>(null);
   // console.log("cookies:", cookies.userAuthToken);
 
   const [editAccordionIsOpen, setEditAccordionIsOpen] = useState(false);
@@ -194,21 +64,35 @@ const EditSlides = (): JSX.Element => {
   const [slidesState, setSlidesState] = useState<any>([]);
 
   function ChangeState(slideId: string, field: string, value: boolean) {
-    setSlidesState({ ...slidesState, [slideId]: { [field]: value } });
+    const v = { ...slidesState, [slideId]: { ...slidesState[slideId], [field]: value } }
+    setSlidesState(v);
+    console.log("[full state]: ", v)
   }
 
   useEffect(() => {
     console.log("id =>", username);
-    // getUserByUsername(username as string).then((data) => setUser(data));
+    // .then((data) => setUser(data));
+    (async () => {
+      try {
+        const user = await getUserByToken(cookies.userAuthToken)
+        if (user) {
+          setUser(user)
+        }
+      } catch (e) {
+        console.log(e)
+      }
+
+
+    })()
   }, []);
 
   useEffect(() => {
-    let slidesInitialState = {};
+    let slidesInitialState = {} as [key: SlidesStateType];
     if (user) {
       const { slides } = user?.vreel;
-      for (let i = 0; i < slides?.length; i++) {
-        const slide = slides[i];
-        slidesInitialState[slide.id] = {
+
+      slides?.forEach(({ id, position }) => {
+        slidesInitialState[id] = {
           isOpen: false,
           editAccordionIsOpen: false,
           editSlideIsOpen: false,
@@ -216,13 +100,16 @@ const EditSlides = (): JSX.Element => {
           editMediaIsOpen: false,
           editCtaIsOpen: false,
           editAdvancedIsOpen: false,
+          position,
           values: {
 
           }
-        };
-      }
+        } as SlidesStateType;
+
+      })
+
       console.log("[-->]", slidesInitialState);
-      setSlidesState(new Object(slidesInitialState));
+      setSlidesState(slidesInitialState);
     }
   }, [user]);
 
@@ -261,6 +148,7 @@ const EditSlides = (): JSX.Element => {
                 <>
                   {console.log("current vals:", slidesState[slide.id])}
                   <SlideEditor
+                    key={slide.id}
                     slide={slide}
                     idx={idx}
                     state={{ ...slidesState[slide.id] }}
@@ -269,173 +157,7 @@ const EditSlides = (): JSX.Element => {
                 </>
               ))
             ) : (
-              <div className="vreel-edit-slides__new-slide__slide-wrapper">
-                <div className="vreel-edit-slides__new-slide__toggle-btn">
-                  <p>Slide 1</p>
-                  {editSlideIsOpen ? (
-                    <AiOutlineMinusCircle
-                      onClick={() => setEditSlideIsOpen(!editSlideIsOpen)}
-                    />
-                  ) : (
-                    <IoMdAddCircleOutline
-                      onClick={() => setEditSlideIsOpen(!editSlideIsOpen)}
-                    />
-                  )}
-                </div>
-
-                <Collapse isOpen={editSlideIsOpen}>
-                  <EditInput
-                    type="text"
-                    label="Position"
-                    style={{ marginBottom: "30px" }}
-                  />
-                  <button
-                    className="vreel-edit-menu__accordion white"
-                    type="button"
-                    onClick={() => setEditTitleIsOpen(!editTitleIsOpen)}
-                  >
-                    <span>
-                      <p>Title</p>
-                      {editTitleIsOpen ? (
-                        <AiOutlineMinusCircle />
-                      ) : (
-                        <IoMdAddCircleOutline />
-                      )}
-                    </span>
-                  </button>
-                  <Collapse isOpen={editTitleIsOpen}>
-                    <EditInput type="text" label="Header" style={{}} />
-                    <EditInput
-                      type="textarea"
-                      label="Description"
-                      style={{
-                        marginBottom: "30px",
-                        height: "12rem",
-                      }}
-                    />
-                  </Collapse>
-                </Collapse>
-                <Collapse isOpen={editSlideIsOpen}>
-                  <button
-                    className="vreel-edit-menu__accordion white"
-                    type="button"
-                    onClick={() => setEditMediaIsOpen(!editMediaIsOpen)}
-                  >
-                    <span>
-                      <p>Media</p>
-                      {editMediaIsOpen ? (
-                        <AiOutlineMinusCircle />
-                      ) : (
-                        <IoMdAddCircleOutline />
-                      )}
-                    </span>
-                  </button>
-                  <Collapse isOpen={editMediaIsOpen}>
-                    <div className="vreel-edit-slides__new-slide__media-wrapper">
-                      <p>Mobile Options:</p>
-                      <UppyModal />
-                      <div className="vreel-edit-slides__new-slide__video-times-wrapper">
-                        <div className="vreel-edit-slides__new-slide__time-wrapper">
-                          <p>Start Time:</p>
-                          <div>
-                            <label htmlFor="min">min</label>
-                            <input type="text" name="min" id="min" />
-                            <label htmlFor="sec">sec</label>
-                            <input type="text" name="sec" id="sec" />
-                          </div>
-                        </div>
-                        <div className="vreel-edit-slides__new-slide__time-wrapper">
-                          <p>Stop Time:</p>
-                          <div>
-                            <label htmlFor="min">min</label>
-                            <input type="text" name="min" id="min" />
-                            <label htmlFor="sec">sec</label>
-                            <input type="text" name="sec" id="sec" />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="vreel-edit-slides__new-slide__media-wrapper">
-                      <p>Desktop Options:</p>
-                      <UppyModal />
-                      <div className="vreel-edit-slides__new-slide__video-times-wrapper"></div>
-                    </div>
-                  </Collapse>
-                </Collapse>
-                <Collapse isOpen={editSlideIsOpen}>
-                  <button
-                    className="vreel-edit-menu__accordion white"
-                    type="button"
-                    onClick={() => setEditCtaIsOpen(!editCtaIsOpen)}
-                  >
-                    <span>
-                      <p>Call To Action</p>
-                      {editCtaIsOpen ? (
-                        <AiOutlineMinusCircle />
-                      ) : (
-                        <IoMdAddCircleOutline />
-                      )}
-                    </span>
-                  </button>
-                  <Collapse isOpen={editCtaIsOpen}>
-                    <EditInput type="text" label="Link Header" />
-                    <EditInput type="text" label="Link Type" />
-                    <EditInput type="text" label="Link URL" />
-                  </Collapse>
-                </Collapse>
-                <Collapse isOpen={editSlideIsOpen}>
-                  <button
-                    className="vreel-edit-menu__accordion white"
-                    type="button"
-                    onClick={() => setEditAdvancedIsOpen(!editAdvancedIsOpen)}
-                  >
-                    <span>
-                      <p>Advanced</p>
-                      {editAdvancedIsOpen ? (
-                        <AiOutlineMinusCircle />
-                      ) : (
-                        <IoMdAddCircleOutline />
-                      )}
-                    </span>
-                  </button>
-                  <Collapse isOpen={editAdvancedIsOpen}>
-                    <EditInput
-                      type="textarea"
-                      label="Info"
-                      style={{
-                        marginBottom: "30px",
-                        height: "12rem",
-                      }}
-                    />
-                    <EditInput type="text" label="Link Header" />
-                    <EditInput type="text" label="Link Type" />
-                    <div className="vreel-edit-slides__new-slide__advanced-btn-wrapper">
-                      <button className="vreel-edit-menu__button blue">
-                        {" "}
-                        + Add Credits
-                      </button>
-                      <CheckboxInput
-                        type="checkbox"
-                        label="Invert Group Filter"
-                      />
-                    </div>
-                  </Collapse>
-                  <div className="vreel-edit-slides__new-slide__btn-wrapper">
-                    <button
-                      type="button"
-                      className="vreel-edit-menu__button red"
-                    >
-                      Delete Slide
-                    </button>
-                    <button
-                      type="button"
-                      className="vreel-edit-menu__button green"
-                    >
-                      Save Slide
-                    </button>
-                  </div>
-                </Collapse>
-              </div>
+              <label>No Slides!</label>
             )}
           </div>
         </div>

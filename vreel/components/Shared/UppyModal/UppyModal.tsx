@@ -59,22 +59,27 @@ export const UppyModal = (): JSX.Element => {
     // })
     // console.log('Upload complete! We’ve uploaded these files:', result.successful)
   });
-  
+
   const { username } = router.query;
 
   const capitilizedUsername = username
     ? username[0].toUpperCase() + username.slice(1)
     : null;
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    setInterval(() => {
+      uppy.retryAll()
+    }, 5000)
 
-  const onClick = () => {};
+  }, []);
+
+  const onClick = () => { };
   const handleClose = () => {
     setOpen(!open)
   };
   return (
     <div>
-      <button type="button" style={{ width: "100%"}} className="vreel-edit-menu__button blue" onClick={() => setOpen(!open)}>
+      <button type="button" style={{ width: "100%" }} className="vreel-edit-menu__button blue" onClick={() => setOpen(!open)}>
         Upload some music
       </button>
       <DashboardModal

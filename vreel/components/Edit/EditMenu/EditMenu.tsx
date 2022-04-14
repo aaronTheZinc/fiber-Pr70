@@ -27,6 +27,7 @@ const EditMenu = (): JSX.Element => {
       />
       <ul className="vreel-edit-menu__items-wrapper">
         <EditSlides />
+
       </ul>
     </div>
   );

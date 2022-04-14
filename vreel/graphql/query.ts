@@ -48,6 +48,25 @@ const UsernameQuery = gql`
   }
 `;
 
+const UserTokenQuery = gql`
+  query User($token: String!) {
+    getUserByToken(token: $token) {
+      id
+      email
+      username
+      vreel {
+        author
+        slides {
+          id
+          slide_location
+          content_type
+          uri
+        }
+      }
+    }
+  }
+`;
+
 const GetServerAnalyticsQuery = gql`
   query ServerAnalytics {
     serverAnalytics {
@@ -149,6 +168,15 @@ export const getServerAnalytics = async (): Promise<ServerAnalytics> => {
 
   return response as ServerAnalytics;
 };
+
+export const getUserByToken = async (token: string): Promise<User> => {
+  const { data, errors } = await client.query({
+    query: UserTokenQuery,
+    variables: { token },
+  });
+  console.log(errors)
+  return data.getUserByToken
+}
 
 export const getUserById = async (id: string): Promise<User> => {
   const { data } = await client.query({

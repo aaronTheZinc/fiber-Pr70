@@ -34,7 +34,7 @@ const RegisterForm = (): JSX.Element => {
 
       const { email, password, username } = userFormData;
 
-      const response = await registerUser(username, email, password);
+      const response = await registerUser(username, email, password, "standard");
 
       // console.log(response);
 

@@ -14,7 +14,7 @@ export const PrimaryInput = ({
   placeHolder,
   type,
 }: // pattern,
-InputProps): JSX.Element => {
+  InputProps): JSX.Element => {
   return (
     <div className="vreel-input vreel-input__wrapper">
       <input
@@ -35,7 +35,7 @@ export const EditInput = ({
   style,
   label,
 }: // pattern,
-InputProps): JSX.Element => {
+  InputProps): JSX.Element => {
   return (
     <div className="vreel-input vreel-input__wrapper edit">
       <label htmlFor="edit">{label}:</label>
@@ -60,7 +60,7 @@ export const CheckboxInput = ({
   style,
   label,
 }: // pattern,
-InputProps): JSX.Element => {
+  InputProps): JSX.Element => {
   return (
     <div className="vreel-input vreel-input__wrapper edit">
       <label className="checkbox-label" htmlFor="edit-checkbox">
