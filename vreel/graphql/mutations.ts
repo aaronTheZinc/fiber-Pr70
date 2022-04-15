@@ -3,9 +3,9 @@ import { client } from "./index";
 import { User } from "../types";
 
 export const CREATE_USER = gql`
-  mutation CreateUser($email: String!, $password: String!, $username: String!) {
+  mutation CreateUser($email: String!, $password: String!, $username: String!, $account_type: String!) {
     register(
-      input: { email: $email, password: $password, username: $username }
+      input: { email: $email, password: $password, username: $username, account_type: $account_type  }
     ) {
       id
       username
@@ -56,7 +56,8 @@ interface RegistrationResponse {
 export const registerUser = async (
   username: string,
   email: string,
-  password: string
+  password: string,
+  account_type: string
 ): Promise<RegistrationResponse> => {
   const response = {} as RegistrationResponse;
   await client
@@ -66,6 +67,7 @@ export const registerUser = async (
         email,
         password,
         username,
+        account_type
       },
     })
     .then(({ data }) => {

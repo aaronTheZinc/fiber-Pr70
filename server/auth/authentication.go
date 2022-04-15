@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
 	"strconv"
 	"time"
 
@@ -19,6 +20,33 @@ import (
 type PasswordResetCacheModel struct {
 	Token     string `json:"token"`
 	Requester string `json:"requester"`
+}
+
+func CreateNewEnterprise(ent model.NewEnterprise) (model.Enterprise, error) {
+	var enterprise model.Enterprise
+	var err error
+
+	if u, creationErr := CreateNewUser(model.NewUser{
+		Username:    ent.Name,
+		Email:       ent.Email,
+		Password:    ent.Password,
+		AccountType: "enterprise",
+	}); creationErr != nil {
+		err = creationErr
+	} else {
+		log.Println("successfully created!")
+		if r, creationErr := database.CreateEnterprise(u.ID, ent); creationErr != nil {
+			err = e.FAILED_ENTERPRISE_CREATE
+		} else {
+			if createVreelErr := database.CreateNewVreel(*r.ID); createVreelErr != nil {
+				err = e.FAILED_CREATE_VREEL
+			} else {
+				enterprise = r
+			}
+		}
+	}
+
+	return enterprise, err
 }
 
 // Create User & Validate Existence Of Conflicting Accounts
@@ -43,18 +71,29 @@ func CreateNewUser(newUser model.NewUser) (model.User, error) {
 	if usernameCheckError != nil {
 		err = usernameCheckError
 	}
-
 	if !isRegisted && !usernameIsRegistered {
+		fmt.Println("running!")
 		hashedPw, hashErr := HashPassword(newUser.Password)
 		if hashErr != nil {
+			log.Panicln("failed to hash pw")
 			return model.User{}, hashErr
 		}
-		u, oerr := database.CreateUser(newUser, utils.GenerateUID(), hashedPw)
+		u, oerr := database.CreateUser(newUser, utils.GenerateId(), hashedPw)
+		fmt.Printf("enterprise uid: %s", u.ID)
+		s, _ := database.CreateSlide(u.ID, model.NewSlide{
+			URI:           "https://vreel.page/users/vreel/videos/waterfall.mp4",
+			ContentType:   "video",
+			SlideLocation: 1,
+		})
+
 		folderErr := client.CreateNewFolder(newUser.Username)
 		if folderErr != nil {
 			fmt.Println(folderErr.Error())
 		}
 		cErr := database.CreateNewVreel(u.ID)
+		if cErr == nil {
+			database.VreelAddSlide(s.ID, u.ID)
+		}
 		user = u
 		if oerr != nil {
 			err = e.FAILED_CREATE_USER
@@ -62,6 +101,8 @@ func CreateNewUser(newUser model.NewUser) (model.User, error) {
 		if cErr != nil {
 			err = e.FAILED_CREATE_VREEL
 		}
+	} else {
+		fmt.Println("Failed!!!!!")
 	}
 
 	return user, err
@@ -84,7 +125,7 @@ func Login(email string, password string) (model.LocalSession, error) {
 			fmt.Println(err.Error())
 			return localSession, errors.New("incorrect password")
 		} else {
-			tkn, _ := CreateToken(user.ID)
+			tkn, _ := CreateToken(user.ID, user.AccountType)
 			localSession = model.LocalSession{
 				Token: tkn,
 			}
@@ -180,6 +221,23 @@ func CreatePhoneVerificationIntent() {
 
 func ResolvePhoneVerificationInput() {
 
+}
+func GetUserByToken(token string) (model.User, error) {
+	var err error
+	var user model.User
+	if claims, _, pasrseErr := ParseToken(token); pasrseErr != nil {
+		err = e.UNAUTHORIZED_ERROR
+	} else {
+		if err == nil {
+			if u, fetchErr := database.GetUser(claims.ID); fetchErr != nil {
+				err = e.USER_NOT_FOUND
+			} else {
+				user = u
+			}
+		}
+	}
+
+	return user, err
 }
 
 //Hash Passowrd To Be Stored In Database

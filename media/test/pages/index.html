@@ -18,12 +18,12 @@
                 inline: true,
                 target: '#drag-drop-area'
             })
-            .use(Uppy.Tus, { 
+            .use(Uppy.Tus, {
                 endpoint: '/files/',
                 headers: {
-                token: token,
+                    token: token,
                 }
-             })
+            })
         uppy.on('file-added', (file) => {
             console.log(file);
             uppy.setFileMeta(file.id, {

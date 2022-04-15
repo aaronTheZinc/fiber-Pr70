@@ -4,6 +4,7 @@
 type ServerAnalytics {
   usernames: [String]!
   vreels: [Vreel]
+  enterprises: [Enterprise]!
   userCount: Int!
 }
 type File {
@@ -18,6 +19,7 @@ type Files {
 }
 type User {
   id: String!
+  account_type: String!
   username: String!
   first_name: String!
   last_name: String!
@@ -33,6 +35,15 @@ type User {
   groups: [Group!]!
   vreel: Vreel!
   files: Files!
+}
+
+type Enterprise {
+  id: String
+  name: String!
+  owner: String!
+  email: String!
+  employees: [User!]!
+  vreel: Vreel! 
 }
 
 # Create Group - name, location, meet times?, public/private?
@@ -157,13 +168,21 @@ type ResetPasswordResponse {
   reset_token: String!
 }
 
+type EnterpriseEmployee {
+  employee: User!
+  vreel: Vreel!
+}
+
 type Query {
   user(id: String): User!
   username(username: String): User!
   email(email: String!): User!
+  getUserByToken(token: String!): User!
   login(input: LoginInput): LocalSession!
   slide(id: String!): Slide!
   group(id: String!, token: String!): Group!
+  enterprise(id: String!): Enterprise!
+  enterpiseEmployee(enterpriseName: String!, employeeId: String! ): EnterpriseEmployee!
   serverAnalytics: ServerAnalytics
 }
 
@@ -182,6 +201,7 @@ input NewEvent {
 
 input NewUser {
   username: String!
+  account_type: String!
   first_name: String
   last_name: String
   email: String!
@@ -227,9 +247,16 @@ input VreelFields {
   field: String!
   value: String!
 }
+input NewEnterprise {
+  name: String!
+  owner: String!
+  email: String!
+  password: String!
+}
 type Mutation {
   register(input: NewUser!): User!
   createEvent(token: String!, input: NewEvent!): Event!
+  createEnterprise(input: NewEnterprise!): Enterprise!
   createResetPasswordRequestIntent(email: String!): ResetPasswordResponse!
   resolveResetPasswordRequestIntent(
     token: String!
@@ -243,6 +270,7 @@ type Mutation {
     groupId: String!
     userId: String!
   ): MutationResponse!
+  addEmployeeToEnterprise(token: String!, newUser: NewUser!): MutationResponse!
   removeUserFromGroup(
     token: String!
     groupId: String!

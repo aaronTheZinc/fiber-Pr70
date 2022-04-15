@@ -2,6 +2,8 @@ package database
 
 import (
 	"log"
+	"os"
+	"time"
 
 	"github.com/vreel/app/graph/model"
 	"gorm.io/driver/postgres"
@@ -11,11 +13,28 @@ import (
 var db, db_init_err = databaseInit()
 
 func databaseInit() (*gorm.DB, error) {
-	return gorm.Open(postgres.New(postgres.Config{
-		DSN:                  "host=localhost user=gorm password=gorm dbname=gorm port=5432 sslmode=disable TimeZone=Asia/Shanghai", // data source name, refer https://github.com/jackc/pgx
-		PreferSimpleProtocol: true,                                                                                                  // disables implicit prepared statement usage. By default pgx automatically uses the extended protocol
+	var host string
+	hostENV := os.Getenv("DB_HOST")
+	if hostENV == "" {
+		host = "localhost"
+	} else {
+		host = hostENV
+	}
+	db, err := gorm.Open(postgres.New(postgres.Config{
+		DSN:                  "host=" + host + " user=gorm password=gorm dbname=gorm port=5432 sslmode=disable TimeZone=Asia/Shanghai", // data source name, refer https://github.com/jackc/pgx
+		PreferSimpleProtocol: true,                                                                                                     // disables implicit prepared statement usage. By default pgx automatically uses the extended protocol
 	}), &gorm.Config{})
 
+	if err != nil {
+		time.Sleep(5 * time.Second)
+		databaseInit()
+	}
+
+	return db, err
+}
+
+func IsConnected() bool {
+	return db == nil
 }
 
 func Migrate() {
@@ -25,6 +44,7 @@ func Migrate() {
 	db.AutoMigrate(model.EventModel{})
 	db.AutoMigrate(model.VreelModel{})
 	db.AutoMigrate(model.SlideModel{})
+	db.AutoMigrate(model.EnterpriseModel{})
 	// db.AutoMigrate(model.Group{})
 }
 

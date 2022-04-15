@@ -14,6 +14,20 @@ type CreateSlide struct {
 	SlideLocation int    `json:"slide_location"`
 }
 
+type Enterprise struct {
+	ID        *string `json:"id"`
+	Name      string  `json:"name"`
+	Owner     string  `json:"owner"`
+	Email     string  `json:"email"`
+	Employees []*User `json:"employees"`
+	Vreel     *Vreel  `json:"vreel"`
+}
+
+type EnterpriseEmployee struct {
+	Employee *User  `json:"employee"`
+	Vreel    *Vreel `json:"vreel"`
+}
+
 type Event struct {
 	ID          string   `json:"ID"`
 	Author      string   `json:"author"`
@@ -90,6 +104,13 @@ type MutationResponse struct {
 	Message   string `json:"message"`
 }
 
+type NewEnterprise struct {
+	Name     string `json:"name"`
+	Owner    string `json:"owner"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
 type NewEvent struct {
 	Name        string   `json:"name"`
 	Thumbnail   string   `json:"thumbnail"`
@@ -120,6 +141,7 @@ type NewSlide struct {
 
 type NewUser struct {
 	Username        string  `json:"username"`
+	AccountType     string  `json:"account_type"`
 	FirstName       *string `json:"first_name"`
 	LastName        *string `json:"last_name"`
 	Email           string  `json:"email"`
@@ -147,9 +169,10 @@ type ResolvedPasswordReset struct {
 }
 
 type ServerAnalytics struct {
-	Usernames []*string `json:"usernames"`
-	Vreels    []*Vreel  `json:"vreels"`
-	UserCount int       `json:"userCount"`
+	Usernames   []*string     `json:"usernames"`
+	Vreels      []*Vreel      `json:"vreels"`
+	Enterprises []*Enterprise `json:"enterprises"`
+	UserCount   int           `json:"userCount"`
 }
 
 type Service struct {
@@ -181,6 +204,7 @@ type TextArea struct {
 
 type User struct {
 	ID              string   `json:"id"`
+	AccountType     string   `json:"account_type"`
 	Username        string   `json:"username"`
 	FirstName       string   `json:"first_name"`
 	LastName        string   `json:"last_name"`

@@ -38,8 +38,7 @@ const LoginForm = (): JSX.Element => {
       setCookie("userAuthToken", token);
 
       console.log("data", cookies.userAuthToken);
-      
-      router.push(`/${username}`);
+      // router.push(`/${username}`);
     } catch (err) {
       console.error("ERROR WITH LOGIN:", err);
     }
