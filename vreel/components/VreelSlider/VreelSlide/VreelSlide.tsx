@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { VreelModal } from "../../Shared/VreelModal/VreelModal";
-import { Player } from 'video-react';
+import { Player } from "video-react";
+import { useAuth } from "../../../contexts/UserContext";
 
 const VreelSlide = ({
   username,
@@ -18,7 +19,7 @@ const VreelSlide = ({
   const [isFollowed, setIsFollowed] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
-
+  const auth = useAuth();
   const toggleSlideFollow = () => {
     setIsFollowed(!isFollowed);
   };
@@ -77,7 +78,13 @@ const VreelSlide = ({
         <div className="vreel-slide__btn-wrapper">
           {username ? (
             <>
-              <a className="vreel-slide__btn" href="#">
+              <a
+                className="vreel-slide__btn"
+                href="#"
+                onClick={(e) => {
+                  console.log("auth", auth.user);
+                }}
+              >
                 {username}'s Button
               </a>
               <a className="vreel-slide__btn" href="#">
@@ -141,8 +148,12 @@ const VreelSlide = ({
 
           {/* <VreelModal isContact={true} icon="/add-to-contact-icon.svg" /> */}
           <a
-            href={username ? `/api/vcard?username=${username}` : '/api/vcard?username=vreel'}
-            download={username ? `${username}.vcf` : 'vreel.vcf'}
+            href={
+              username
+                ? `/api/vcard?username=${username}`
+                : "/api/vcard?username=vreel"
+            }
+            download={username ? `${username}.vcf` : "vreel.vcf"}
           >
             <img
               data-bs-toggle="tooltip"

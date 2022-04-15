@@ -29,7 +29,7 @@ const UserQuery = gql`
   }
 `;
 
-const UsernameQuery = gql`
+export const UsernameQuery = gql`
   query User($Username: String) {
     username(username: $Username) {
       id
@@ -118,13 +118,15 @@ const GetEnterpriseEmployee = gql`
     }
   }
   `
+
 export const getEnterpriseEmployee = async (EnterpriseName: string, EmployeeId: string) => {
   const { data, errors } = await client.query({
     query: GetEnterpriseEmployee,
     variables: { EnterpriseName, EmployeeId }
   });
   return data
-}
+};
+
 export const getUserByUsername = async (username: string): Promise<User> => {
   const { data } = await client.query({
     query: UsernameQuery,
@@ -133,6 +135,7 @@ export const getUserByUsername = async (username: string): Promise<User> => {
 
   return data.username;
 };
+
 export const getUserByEmail = async (email: string): Promise<User> => {
   const { data } = await client.query({
     query: GetUserByEmailQuery,

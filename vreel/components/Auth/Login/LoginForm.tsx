@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { PrimaryButton, PrimaryInput, SecretInput } from "../../index";
-import { getUserByEmail, loginUser } from "../../../graphql/query";
+import { getUserByEmail, getUserByToken, loginUser } from "../../../graphql/query";
 import { useCookies } from "react-cookie";
 import { useRouter } from "next/router";
 
@@ -33,12 +33,12 @@ const LoginForm = (): JSX.Element => {
 
       if (error) return alert(error);
 
-      const { username } = await getUserByEmail(email);
+      const { username } = await getUserByToken(token);
 
       setCookie("userAuthToken", token);
 
       console.log("data", cookies.userAuthToken);
-      // router.push(`/${username}`);
+      router.push(`/${username}`);
     } catch (err) {
       console.error("ERROR WITH LOGIN:", err);
     }

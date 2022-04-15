@@ -4,6 +4,7 @@ import { useCookies } from "react-cookie";
 import { AiOutlineMinusCircle } from "react-icons/ai";
 import { IoMdAddCircleOutline } from "react-icons/io";
 import { Collapse } from "reactstrap";
+import { createSlide } from "../../../graphql/mutations";
 import { getUserByToken, getUserByUsername } from "../../../graphql/query";
 import { Slide, User } from "../../../types";
 import { CheckboxInput, EditInput } from "../../Shared/Input/Input";
@@ -140,7 +141,13 @@ const EditSlides = (): JSX.Element => {
           <div className="vreel-edit-slides__new-slide__wrapper">
             <div className="vreel-edit-slides__new-slide">
               <p>Slides</p>
-              <button className="vreel-edit-menu__button green">Add New</button>
+              <button className="vreel-edit-menu__button green" onClick={e => {
+               createSlide(cookies.userAuthToken, {
+                    content_type: "image",
+                    uri: "pic",
+                    slide_location: 7,
+                  }).then(data => console.log('data is', data));
+              }}>Add New</button>
             </div>
 
             {user ? (

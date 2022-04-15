@@ -57,11 +57,6 @@ const RegisterForm = (): JSX.Element => {
 
         if (token) {
           setCookie("userAuthToken", token);
-          await createSlide(token, {
-            content_type: "video",
-            uri: "https://vreel.page/users/vreel/videos/waterfall.mp4",
-            slide_location: 0,
-          });
           router.push(`/${username}`);
         }
       }
