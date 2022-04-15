@@ -43,10 +43,30 @@ type DirectiveRoot struct {
 }
 
 type ComplexityRoot struct {
+	Advanced struct {
+		Info       func(childComplexity int) int
+		LinkHeader func(childComplexity int) int
+		LinkType   func(childComplexity int) int
+	}
+
+	Cta struct {
+		LinkHeader func(childComplexity int) int
+		LinkType   func(childComplexity int) int
+		LinkURL    func(childComplexity int) int
+	}
+
 	Contact struct {
 		Header   func(childComplexity int) int
 		Hidden   func(childComplexity int) int
 		Position func(childComplexity int) int
+	}
+
+	Content struct {
+		BackgroundAudioURI func(childComplexity int) int
+		ContentType        func(childComplexity int) int
+		StartTime          func(childComplexity int) int
+		StopTime           func(childComplexity int) int
+		URI                func(childComplexity int) int
 	}
 
 	Enterprise struct {
@@ -190,11 +210,16 @@ type ComplexityRoot struct {
 	}
 
 	Slide struct {
+		Advanced      func(childComplexity int) int
 		Author        func(childComplexity int) int
 		ContentType   func(childComplexity int) int
+		Cta           func(childComplexity int) int
+		Desktop       func(childComplexity int) int
 		ID            func(childComplexity int) int
 		Metadata      func(childComplexity int) int
+		Mobile        func(childComplexity int) int
 		SlideLocation func(childComplexity int) int
+		Title         func(childComplexity int) int
 		URI           func(childComplexity int) int
 	}
 
@@ -207,6 +232,11 @@ type ComplexityRoot struct {
 		Content  func(childComplexity int) int
 		Hidden   func(childComplexity int) int
 		Position func(childComplexity int) int
+	}
+
+	Title struct {
+		Description func(childComplexity int) int
+		Header      func(childComplexity int) int
 	}
 
 	User struct {
@@ -299,6 +329,48 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	_ = ec
 	switch typeName + "." + field {
 
+	case "Advanced.info":
+		if e.complexity.Advanced.Info == nil {
+			break
+		}
+
+		return e.complexity.Advanced.Info(childComplexity), true
+
+	case "Advanced.link_header":
+		if e.complexity.Advanced.LinkHeader == nil {
+			break
+		}
+
+		return e.complexity.Advanced.LinkHeader(childComplexity), true
+
+	case "Advanced.link_type":
+		if e.complexity.Advanced.LinkType == nil {
+			break
+		}
+
+		return e.complexity.Advanced.LinkType(childComplexity), true
+
+	case "CTA.link_header":
+		if e.complexity.Cta.LinkHeader == nil {
+			break
+		}
+
+		return e.complexity.Cta.LinkHeader(childComplexity), true
+
+	case "CTA.link_type":
+		if e.complexity.Cta.LinkType == nil {
+			break
+		}
+
+		return e.complexity.Cta.LinkType(childComplexity), true
+
+	case "CTA.link_url":
+		if e.complexity.Cta.LinkURL == nil {
+			break
+		}
+
+		return e.complexity.Cta.LinkURL(childComplexity), true
+
 	case "Contact.header":
 		if e.complexity.Contact.Header == nil {
 			break
@@ -319,6 +391,41 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Contact.Position(childComplexity), true
+
+	case "Content.background_audio_uri":
+		if e.complexity.Content.BackgroundAudioURI == nil {
+			break
+		}
+
+		return e.complexity.Content.BackgroundAudioURI(childComplexity), true
+
+	case "Content.content_type":
+		if e.complexity.Content.ContentType == nil {
+			break
+		}
+
+		return e.complexity.Content.ContentType(childComplexity), true
+
+	case "Content.start_time":
+		if e.complexity.Content.StartTime == nil {
+			break
+		}
+
+		return e.complexity.Content.StartTime(childComplexity), true
+
+	case "Content.stop_time":
+		if e.complexity.Content.StopTime == nil {
+			break
+		}
+
+		return e.complexity.Content.StopTime(childComplexity), true
+
+	case "Content.uri":
+		if e.complexity.Content.URI == nil {
+			break
+		}
+
+		return e.complexity.Content.URI(childComplexity), true
 
 	case "Enterprise.email":
 		if e.complexity.Enterprise.Email == nil {
@@ -1058,6 +1165,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Service.Position(childComplexity), true
 
+	case "Slide.advanced":
+		if e.complexity.Slide.Advanced == nil {
+			break
+		}
+
+		return e.complexity.Slide.Advanced(childComplexity), true
+
 	case "Slide.author":
 		if e.complexity.Slide.Author == nil {
 			break
@@ -1071,6 +1185,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Slide.ContentType(childComplexity), true
+
+	case "Slide.cta":
+		if e.complexity.Slide.Cta == nil {
+			break
+		}
+
+		return e.complexity.Slide.Cta(childComplexity), true
+
+	case "Slide.desktop":
+		if e.complexity.Slide.Desktop == nil {
+			break
+		}
+
+		return e.complexity.Slide.Desktop(childComplexity), true
 
 	case "Slide.id":
 		if e.complexity.Slide.ID == nil {
@@ -1086,12 +1214,26 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Slide.Metadata(childComplexity), true
 
+	case "Slide.mobile":
+		if e.complexity.Slide.Mobile == nil {
+			break
+		}
+
+		return e.complexity.Slide.Mobile(childComplexity), true
+
 	case "Slide.slide_location":
 		if e.complexity.Slide.SlideLocation == nil {
 			break
 		}
 
 		return e.complexity.Slide.SlideLocation(childComplexity), true
+
+	case "Slide.title":
+		if e.complexity.Slide.Title == nil {
+			break
+		}
+
+		return e.complexity.Slide.Title(childComplexity), true
 
 	case "Slide.uri":
 		if e.complexity.Slide.URI == nil {
@@ -1134,6 +1276,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.TextArea.Position(childComplexity), true
+
+	case "Title.description":
+		if e.complexity.Title.Description == nil {
+			break
+		}
+
+		return e.complexity.Title.Description(childComplexity), true
+
+	case "Title.header":
+		if e.complexity.Title.Header == nil {
+			break
+		}
+
+		return e.complexity.Title.Header(childComplexity), true
 
 	case "User.account_type":
 		if e.complexity.User.AccountType == nil {
@@ -1510,13 +1666,39 @@ type SlideMetaData {
   created: String!
   size: String!
 }
+type Title {
+  header: String!
+  description: String!
+}
+type Content {
+  start_time: Int
+  stop_time: Int
+  background_audio_uri: String
+  content_type: String!
+  uri: String!
+}
+type CTA {
+  link_header: String!
+  link_type: String!
+  link_url: String!
+} 
+type Advanced {
+  info: String!
+  link_header: String!
+  link_type: String!
+}
 type Slide {
   id: String!
   author: String!
   content_type: String!
   uri: String!
   slide_location: Int!
+  title: Title!
   metadata: SlideMetaData!
+  mobile: Content!
+  desktop: Content!
+  cta: CTA! 
+  advanced: Advanced
 }
 
 type Contact {
@@ -2244,6 +2426,216 @@ func (ec *executionContext) field___Type_fields_args(ctx context.Context, rawArg
 
 // region    **************************** field.gotpl *****************************
 
+func (ec *executionContext) _Advanced_info(ctx context.Context, field graphql.CollectedField, obj *model.Advanced) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Advanced",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Info, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Advanced_link_header(ctx context.Context, field graphql.CollectedField, obj *model.Advanced) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Advanced",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LinkHeader, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Advanced_link_type(ctx context.Context, field graphql.CollectedField, obj *model.Advanced) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Advanced",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LinkType, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _CTA_link_header(ctx context.Context, field graphql.CollectedField, obj *model.Cta) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "CTA",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LinkHeader, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _CTA_link_type(ctx context.Context, field graphql.CollectedField, obj *model.Cta) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "CTA",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LinkType, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _CTA_link_url(ctx context.Context, field graphql.CollectedField, obj *model.Cta) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "CTA",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LinkURL, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Contact_position(ctx context.Context, field graphql.CollectedField, obj *model.Contact) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -2344,6 +2736,172 @@ func (ec *executionContext) _Contact_hidden(ctx context.Context, field graphql.C
 	res := resTmp.(*bool)
 	fc.Result = res
 	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Content_start_time(ctx context.Context, field graphql.CollectedField, obj *model.Content) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Content",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.StartTime, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Content_stop_time(ctx context.Context, field graphql.CollectedField, obj *model.Content) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Content",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.StopTime, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Content_background_audio_uri(ctx context.Context, field graphql.CollectedField, obj *model.Content) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Content",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.BackgroundAudioURI, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Content_content_type(ctx context.Context, field graphql.CollectedField, obj *model.Content) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Content",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ContentType, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Content_uri(ctx context.Context, field graphql.CollectedField, obj *model.Content) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Content",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.URI, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Enterprise_id(ctx context.Context, field graphql.CollectedField, obj *model.Enterprise) (ret graphql.Marshaler) {
@@ -5826,6 +6384,41 @@ func (ec *executionContext) _Slide_slide_location(ctx context.Context, field gra
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Slide_title(ctx context.Context, field graphql.CollectedField, obj *model.Slide) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Slide",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Title, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Title)
+	fc.Result = res
+	return ec.marshalNTitle2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐTitle(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Slide_metadata(ctx context.Context, field graphql.CollectedField, obj *model.Slide) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -5859,6 +6452,143 @@ func (ec *executionContext) _Slide_metadata(ctx context.Context, field graphql.C
 	res := resTmp.(*model.SlideMetaData)
 	fc.Result = res
 	return ec.marshalNSlideMetaData2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐSlideMetaData(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Slide_mobile(ctx context.Context, field graphql.CollectedField, obj *model.Slide) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Slide",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Mobile, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Content)
+	fc.Result = res
+	return ec.marshalNContent2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐContent(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Slide_desktop(ctx context.Context, field graphql.CollectedField, obj *model.Slide) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Slide",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Desktop, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Content)
+	fc.Result = res
+	return ec.marshalNContent2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐContent(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Slide_cta(ctx context.Context, field graphql.CollectedField, obj *model.Slide) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Slide",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Cta, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Cta)
+	fc.Result = res
+	return ec.marshalNCTA2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐCta(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Slide_advanced(ctx context.Context, field graphql.CollectedField, obj *model.Slide) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Slide",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Advanced, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.Advanced)
+	fc.Result = res
+	return ec.marshalOAdvanced2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐAdvanced(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _SlideMetaData_created(ctx context.Context, field graphql.CollectedField, obj *model.SlideMetaData) (ret graphql.Marshaler) {
@@ -6031,6 +6761,76 @@ func (ec *executionContext) _TextArea_hidden(ctx context.Context, field graphql.
 	res := resTmp.(*bool)
 	fc.Result = res
 	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Title_header(ctx context.Context, field graphql.CollectedField, obj *model.Title) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Title",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Header, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Title_description(ctx context.Context, field graphql.CollectedField, obj *model.Title) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Title",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Description, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _User_id(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
@@ -8762,6 +9562,80 @@ func (ec *executionContext) unmarshalInputVreelFields(ctx context.Context, obj i
 
 // region    **************************** object.gotpl ****************************
 
+var advancedImplementors = []string{"Advanced"}
+
+func (ec *executionContext) _Advanced(ctx context.Context, sel ast.SelectionSet, obj *model.Advanced) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, advancedImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Advanced")
+		case "info":
+			out.Values[i] = ec._Advanced_info(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "link_header":
+			out.Values[i] = ec._Advanced_link_header(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "link_type":
+			out.Values[i] = ec._Advanced_link_type(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var cTAImplementors = []string{"CTA"}
+
+func (ec *executionContext) _CTA(ctx context.Context, sel ast.SelectionSet, obj *model.Cta) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, cTAImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("CTA")
+		case "link_header":
+			out.Values[i] = ec._CTA_link_header(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "link_type":
+			out.Values[i] = ec._CTA_link_type(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "link_url":
+			out.Values[i] = ec._CTA_link_url(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var contactImplementors = []string{"Contact"}
 
 func (ec *executionContext) _Contact(ctx context.Context, sel ast.SelectionSet, obj *model.Contact) graphql.Marshaler {
@@ -8785,6 +9659,44 @@ func (ec *executionContext) _Contact(ctx context.Context, sel ast.SelectionSet, 
 			}
 		case "hidden":
 			out.Values[i] = ec._Contact_hidden(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var contentImplementors = []string{"Content"}
+
+func (ec *executionContext) _Content(ctx context.Context, sel ast.SelectionSet, obj *model.Content) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, contentImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Content")
+		case "start_time":
+			out.Values[i] = ec._Content_start_time(ctx, field, obj)
+		case "stop_time":
+			out.Values[i] = ec._Content_stop_time(ctx, field, obj)
+		case "background_audio_uri":
+			out.Values[i] = ec._Content_background_audio_uri(ctx, field, obj)
+		case "content_type":
+			out.Values[i] = ec._Content_content_type(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "uri":
+			out.Values[i] = ec._Content_uri(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -9711,11 +10623,33 @@ func (ec *executionContext) _Slide(ctx context.Context, sel ast.SelectionSet, ob
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "title":
+			out.Values[i] = ec._Slide_title(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "metadata":
 			out.Values[i] = ec._Slide_metadata(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "mobile":
+			out.Values[i] = ec._Slide_mobile(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "desktop":
+			out.Values[i] = ec._Slide_desktop(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "cta":
+			out.Values[i] = ec._Slide_cta(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "advanced":
+			out.Values[i] = ec._Slide_advanced(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -9782,6 +10716,38 @@ func (ec *executionContext) _TextArea(ctx context.Context, sel ast.SelectionSet,
 			}
 		case "hidden":
 			out.Values[i] = ec._TextArea_hidden(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var titleImplementors = []string{"Title"}
+
+func (ec *executionContext) _Title(ctx context.Context, sel ast.SelectionSet, obj *model.Title) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, titleImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Title")
+		case "header":
+			out.Values[i] = ec._Title_header(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "description":
+			out.Values[i] = ec._Title_description(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -10284,6 +11250,26 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return res
 }
 
+func (ec *executionContext) marshalNCTA2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐCta(ctx context.Context, sel ast.SelectionSet, v *model.Cta) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._CTA(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNContent2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐContent(ctx context.Context, sel ast.SelectionSet, v *model.Content) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._Content(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalNEnterprise2githubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐEnterprise(ctx context.Context, sel ast.SelectionSet, v model.Enterprise) graphql.Marshaler {
 	return ec._Enterprise(ctx, sel, &v)
 }
@@ -10694,6 +11680,16 @@ func (ec *executionContext) marshalNTextArea2ᚖgithubᚗcomᚋvreelᚋappᚋgra
 	return ec._TextArea(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNTitle2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐTitle(ctx context.Context, sel ast.SelectionSet, v *model.Title) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._Title(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalNUser2githubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v model.User) graphql.Marshaler {
 	return ec._User(ctx, sel, &v)
 }
@@ -11032,6 +12028,13 @@ func (ec *executionContext) marshalN__TypeKind2string(ctx context.Context, sel a
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) marshalOAdvanced2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐAdvanced(ctx context.Context, sel ast.SelectionSet, v *model.Advanced) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Advanced(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOBoolean2bool(ctx context.Context, v interface{}) (bool, error) {

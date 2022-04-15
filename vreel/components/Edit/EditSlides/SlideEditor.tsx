@@ -19,7 +19,7 @@ export default function SlideEditor({ slide, idx, state, setState }: SlideEditor
 
     //mutate slide values
     function updateValue(parent: string, key: string, value: any) {
-        setState(id, "value", { ...state.values, [parent]: { [key]: value } })
+        setState(id, "values", { ...state.values, [parent]: { ...state.values[parent], [key]: value } })
     }
     useEffect(() => {
         // console.log("[slide open]: ", state.isOpen)
@@ -63,7 +63,13 @@ export default function SlideEditor({ slide, idx, state, setState }: SlideEditor
                     </span>
                 </button>
                 <Collapse isOpen={state.editTitleIsOpen}>
-                    <EditInput type="text" label="Header" style={{}} />
+                    <EditInput
+                        type="text"
+                        label="Header"
+                        style={{}}
+                        setValue={(s: string) => updateValue("title", "header", s)}
+                        value={state.values?.title?.header}
+                    />
                     <EditInput
                         type="textarea"
                         label="Description"
@@ -71,6 +77,8 @@ export default function SlideEditor({ slide, idx, state, setState }: SlideEditor
                             marginBottom: "30px",
                             height: "12rem",
                         }}
+                        value={state.values?.title?.description}
+                        setValue={(s: string) => updateValue("title", "description", s)}
                     />
                 </Collapse>
 
@@ -98,18 +106,18 @@ export default function SlideEditor({ slide, idx, state, setState }: SlideEditor
                                 <p>Start Time:</p>
                                 <div>
                                     <label htmlFor="min">min</label>
-                                    <input type="text" name="min" id="min" />
+                                    <input value={state?.values?.media?.mobile?.start_time} type="text" name="min" id="min" />
                                     <label htmlFor="sec">sec</label>
-                                    <input type="text" name="sec" id="sec" />
+                                    <input value={state?.values?.media?.mobile?.start_time} type="text" name="sec" id="sec" />
                                 </div>
                             </div>
                             <div className="vreel-edit-slides__new-slide__time-wrapper">
                                 <p>Stop Time:</p>
                                 <div>
                                     <label htmlFor="min">min</label>
-                                    <input type="text" name="min" id="min" />
+                                    <input value={state?.values?.media?.mobile?.stop_time} type="text" name="min" id="min" />
                                     <label htmlFor="sec">sec</label>
-                                    <input type="text" name="sec" id="sec" />
+                                    <input value={state?.values?.media?.mobile?.stop_time} type="text" name="sec" id="sec" />
                                 </div>
                             </div>
                         </div>
@@ -135,9 +143,9 @@ export default function SlideEditor({ slide, idx, state, setState }: SlideEditor
                 <Collapse isOpen={state.editCtaIsOpen}>
 
                     <Collapse isOpen={true}>
-                        <EditInput type="text" label="Link Header" />
-                        <EditInput type="text" label="Link Type" />
-                        <EditInput type="text" label="Link URL" />
+                        <EditInput value={state?.values?.cta?.link_header} setValue={(s: string) => updateValue("cta", "link_header", s)} type="text" label="Link Header" />
+                        <EditInput value={state?.values?.cta?.link_type} setValue={(s: string) => updateValue("cta", "link_type", s)} type="text" label="Link Type" />
+                        <EditInput value={state?.values?.cta?.link_url} setValue={(s: string) => updateValue("cta", "link_url", s)} type="text" label="Link URL" />
                     </Collapse>
                 </Collapse>
                 <button
@@ -157,6 +165,8 @@ export default function SlideEditor({ slide, idx, state, setState }: SlideEditor
                         <EditInput
                             type="textarea"
                             label="Info"
+                            value={state?.values?.advanced.info}
+                            setValue={(s: string) => updateValue("advanced", "info", s)}
                             style={{
                                 marginBottom: "30px",
                                 height: "12rem",

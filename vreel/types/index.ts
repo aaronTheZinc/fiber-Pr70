@@ -1,2 +1,2 @@
 export type { User } from "./users";
-export type { Slide } from "./slides"
+export type { Slide, Content } from "./slides"

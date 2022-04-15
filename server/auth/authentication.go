@@ -102,7 +102,6 @@ func CreateNewUser(newUser model.NewUser) (model.User, error) {
 			err = e.FAILED_CREATE_VREEL
 		}
 	} else {
-		fmt.Println("Failed!!!!!")
 	}
 
 	return user, err

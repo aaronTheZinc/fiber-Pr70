@@ -1,14 +1,15 @@
 import { useRouter } from "next/router";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, createContext } from "react";
 import { useCookies } from "react-cookie";
 import { AiOutlineMinusCircle } from "react-icons/ai";
 import { IoMdAddCircleOutline } from "react-icons/io";
 import { Collapse } from "reactstrap";
 import { getUserByToken, getUserByUsername } from "../../../graphql/query";
-import { Slide, User } from "../../../types";
+import { Content, Slide, User } from "../../../types";
 import { CheckboxInput, EditInput } from "../../Shared/Input/Input";
 import { UppyModal } from "../../Shared/UppyModal/UppyModal";
 import SlideEditor from "./SlideEditor";
+
 //call to actio: cta
 //time stamp string 3:30
 export type SlidesStateType = {
@@ -25,35 +26,29 @@ export type SlidesStateType = {
       description: string,
     },
     media: {
-      mobileOptions: {
-
-      },
-      desktopOptions: {
-
-      },
-      start_time: string,
-      stop_time: string
-    }
+      desktop: Content,
+      mobile: Content
+    },
     cta: {
-      linkHeader: string,
-      linkType: string,
-      linkUrl: string
+      link_header: string,
+      link_type: string,
+      link_url: string
     },
     advanced: {
       info: string,
-      linkHeader: string,
-      linkType: string
+      link_header: string,
+      link_type: string
     }
   }
 
   position: number
 }
 
+
+
 const EditSlides = (): JSX.Element => {
   const [cookies, _, removeCookies] = useCookies(["userAuthToken"]);
   const [user, setUser] = useState<User>(null);
-  // console.log("cookies:", cookies.userAuthToken);
-
   const [editAccordionIsOpen, setEditAccordionIsOpen] = useState(false);
   const [editSlideIsOpen, setEditSlideIsOpen] = useState(false);
   const [editTitleIsOpen, setEditTitleIsOpen] = useState(false);
@@ -66,11 +61,9 @@ const EditSlides = (): JSX.Element => {
   function ChangeState(slideId: string, field: string, value: boolean) {
     const v = { ...slidesState, [slideId]: { ...slidesState[slideId], [field]: value } }
     setSlidesState(v);
-    console.log("[full state]: ", v)
   }
 
   useEffect(() => {
-    console.log("id =>", username);
     // .then((data) => setUser(data));
     (async () => {
       try {
@@ -90,9 +83,8 @@ const EditSlides = (): JSX.Element => {
     let slidesInitialState = {} as [key: SlidesStateType];
     if (user) {
       const { slides } = user?.vreel;
-
-      slides?.forEach(({ id, position }) => {
-        slidesInitialState[id] = {
+      slides?.forEach((slide) => {
+        slidesInitialState[slide.id] = {
           isOpen: false,
           editAccordionIsOpen: false,
           editSlideIsOpen: false,
@@ -100,15 +92,21 @@ const EditSlides = (): JSX.Element => {
           editMediaIsOpen: false,
           editCtaIsOpen: false,
           editAdvancedIsOpen: false,
-          position,
+          position: slide.slide_location,
           values: {
+            title: slide.title,
+            media: {
+              mobile: slide.mobile,
+              desktop: slide.desktop
+            },
+            cta: slide.cta as any,
+            advanced: slide.advanced as any
+
 
           }
         } as SlidesStateType;
 
       })
-
-      console.log("[-->]", slidesInitialState);
       setSlidesState(slidesInitialState);
     }
   }, [user]);
@@ -146,7 +144,6 @@ const EditSlides = (): JSX.Element => {
             {user ? (
               user.vreel.slides.map((slide, idx) => (
                 <>
-                  {console.log("current vals:", slidesState[slide.id])}
                   <SlideEditor
                     key={slide.id}
                     slide={slide}
