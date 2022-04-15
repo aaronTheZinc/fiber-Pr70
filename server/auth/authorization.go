@@ -168,7 +168,7 @@ func CreateEvent(token string, newEvent model.NewEvent) (model.Event, error) {
 	return event, err
 }
 
-func AuthorizeCreateSlide(token string, s model.NewSlide) (model.Slide, error) {
+func AuthorizeCreateSlide(token string) (model.Slide, error) {
 	var err error
 	var slide model.Slide
 
@@ -176,7 +176,7 @@ func AuthorizeCreateSlide(token string, s model.NewSlide) (model.Slide, error) {
 	userId := claims.ID
 
 	if isAuth && parseErr == nil {
-		if s, creationErr := database.CreateSlide(userId, s); creationErr != nil {
+		if s, creationErr := database.CreateSlide(userId); creationErr != nil {
 			err = creationErr
 		} else {
 			slide = s

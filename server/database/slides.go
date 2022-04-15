@@ -10,9 +10,9 @@ import (
 	"github.com/vreel/app/utils"
 )
 
-func CreateSlide(author string, s model.NewSlide) (model.Slide, error) {
+func CreateSlide(author string) (model.Slide, error) {
 
-	slide := s.ToDatabaseModel()
+	slide := model.CreateNewSlideModel()
 	slide.Author = author
 	slide.ID = utils.GenerateId()
 	md := model.SlideMetaData{}

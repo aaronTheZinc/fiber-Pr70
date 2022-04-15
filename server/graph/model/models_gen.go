@@ -153,12 +153,6 @@ type NewGroup struct {
 	ParentGroup string   `json:"parent_group"`
 }
 
-type NewSlide struct {
-	ContentType   string `json:"content_type"`
-	URI           string `json:"uri"`
-	SlideLocation int    `json:"slide_location"`
-}
-
 type NewUser struct {
 	Username        string  `json:"username"`
 	AccountType     string  `json:"account_type"`

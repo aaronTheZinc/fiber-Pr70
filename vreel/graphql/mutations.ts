@@ -1,6 +1,6 @@
 import { gql, useMutation, ApolloError } from "@apollo/client";
 import { client } from "./index";
-import { User } from "../types";
+import { User, SaveSlideType, DeleteSlide } from "../types";
 
 export const CREATE_USER = gql`
   mutation CreateUser($email: String!, $password: String!, $username: String!, $account_type: String!) {
@@ -14,12 +14,27 @@ export const CREATE_USER = gql`
   }
 `;
 export const CREATE_SLIDE = gql`
-  mutation CreateSlide($token: String!, $input: NewSlide!) {
-    createSlide(token: $token, input: $input) {
+  mutation CreateSlide($token: String!) {
+    createSlide(token: $token) {
+      id
       author
     }
   }
 `;
+
+export const EDIT_SLIDE = gql`
+  mutation EditSlide($token: String!, $data: String!) {
+    id
+  }
+  `
+export const DELETE_SLIDE = gql`
+  mutation EditSlide($token: String!, $slideId: String!) {
+    removeSlide(token: $token, slideId: $slideId) {
+      succeeded
+      message
+    }
+  }
+  `
 
 interface NewSlide {
   content_type: string;
@@ -27,27 +42,27 @@ interface NewSlide {
   slide_location: number;
 }
 
-export const createSlide = async (token: string, input: NewSlide) => {
-  await client
-    .mutate({
-      mutation: CREATE_SLIDE,
-      variables: {
-        token,
-        input: {
-          content_type: input.content_type,
-          uri: input.uri,
-          slide_location: input.slide_location,
-        },
-      },
-    })
-    .then(({ data }) => {
-      // console.log("slide data", data.createSlide);
-      return data.createSlide;
-    })
-    .catch((err) => {
-      console.error("ERROOORRRR with CREATE_SLIDE MUTATION", err);
-    });
-};
+// export const createSlide = async (token: string, input: NewSlide) => {
+//   await client
+//     .mutate({
+//       mutation: CREATE_SLIDE,
+//       variables: {
+//         token,
+//         input: {
+//           content_type: input.content_type,
+//           uri: input.uri,
+//           slide_location: input.slide_location,
+//         },
+//       },
+//     })
+//     .then(({ data }) => {
+//       // console.log("slide data", data.createSlide);
+//       return data.createSlide;
+//     })
+//     .catch((err) => {
+//       console.error("ERROOORRRR with CREATE_SLIDE MUTATION", err);
+//     });
+// };
 
 interface RegistrationResponse {
   error: string;
@@ -80,3 +95,32 @@ export const registerUser = async (
 
   return response;
 };
+
+export const saveSlide = async ({ id, token, slide }: SaveSlideType) => {
+  await client.mutate({
+    mutation: EDIT_SLIDE,
+    variables: {
+      token,
+      slideId: id,
+      data: JSON.stringify(slide)
+    }
+  })
+}
+export const deleteSlide = async ({ token, slideId }: DeleteSlide) => {
+  return await client.mutate({
+    mutation: DELETE_SLIDE,
+    variables: {
+      token,
+      slideId
+    }
+  })
+}
+
+export const createSlide = async (token: string) => {
+  return await client.mutate({
+    mutation: CREATE_SLIDE,
+    variables: {
+      token
+    }
+  })
+}

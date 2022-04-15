@@ -263,11 +263,7 @@ input CreateSlide {
   slide_location: Int!
 }
 
-input NewSlide {
-  content_type: String!
-  uri: String!
-  slide_location: Int!
-}
+
 
 input VreelFields {
   field: String!
@@ -289,7 +285,7 @@ type Mutation {
     password: String!
   ): ResolvedPasswordReset!
   createGroup(input: NewGroup): Group!
-  createSlide(token: String!, input: NewSlide!): Slide
+  createSlide(token: String!): Slide
   deleteGroup(id: String!, token: String!): MutationResponse!
   addUserToGroup(
     token: String!

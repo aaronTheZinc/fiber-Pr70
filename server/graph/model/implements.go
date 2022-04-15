@@ -246,27 +246,16 @@ func (c VreelModel) ToVreel(slides []*Slide) (Vreel, error) {
 	}, err
 }
 
-func (c *NewSlide) ToSlide() Slide {
-	return Slide{
-		ID:            "",
-		Author:        "",
-		ContentType:   "",
-		URI:           "",
-		SlideLocation: 0,
-		Metadata:      &SlideMetaData{},
-	}
-}
-
-func (c *NewSlide) ToDatabaseModel() SlideModel {
+func CreateNewSlideModel() SlideModel {
 	n := 0
 	title, _ := json.Marshal(Title{"header", "description"})
 	advanced, _ := json.Marshal(Advanced{"info", "link header", "link type"})
 	content, _ := json.Marshal(Content{&n, &n, nil, "picture", "https://image"})
 	cta, _ := json.Marshal(Cta{"link type", "link header", "link url"})
 	return SlideModel{
-		ContentType:   c.ContentType,
-		SlideLocation: c.SlideLocation,
-		URI:           c.URI,
+		ContentType:   "c.ContentType",
+		SlideLocation: 1,
+		URI:           "",
 		CTA:           string(cta),
 		Title:         string(title),
 		Mobile:        string(content),

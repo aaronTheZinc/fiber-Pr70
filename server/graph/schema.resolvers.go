@@ -46,8 +46,8 @@ func (r *mutationResolver) CreateGroup(ctx context.Context, input *model.NewGrou
 	return &g, err
 }
 
-func (r *mutationResolver) CreateSlide(ctx context.Context, token string, input model.NewSlide) (*model.Slide, error) {
-	resp, err := auth.AuthorizeCreateSlide(token, input)
+func (r *mutationResolver) CreateSlide(ctx context.Context, token string) (*model.Slide, error) {
+	resp, err := auth.AuthorizeCreateSlide(token)
 
 	return &resp, err
 }

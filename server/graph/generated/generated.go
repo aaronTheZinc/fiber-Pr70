@@ -156,7 +156,7 @@ type ComplexityRoot struct {
 		CreateEvent                       func(childComplexity int, token string, input model.NewEvent) int
 		CreateGroup                       func(childComplexity int, input *model.NewGroup) int
 		CreateResetPasswordRequestIntent  func(childComplexity int, email string) int
-		CreateSlide                       func(childComplexity int, token string, input model.NewSlide) int
+		CreateSlide                       func(childComplexity int, token string) int
 		DeleteGroup                       func(childComplexity int, id string, token string) int
 		Register                          func(childComplexity int, input model.NewUser) int
 		RemoveSlide                       func(childComplexity int, token string, slideID *string) int
@@ -292,7 +292,7 @@ type MutationResolver interface {
 	CreateResetPasswordRequestIntent(ctx context.Context, email string) (*model.ResetPasswordResponse, error)
 	ResolveResetPasswordRequestIntent(ctx context.Context, token string, password string) (*model.ResolvedPasswordReset, error)
 	CreateGroup(ctx context.Context, input *model.NewGroup) (*model.Group, error)
-	CreateSlide(ctx context.Context, token string, input model.NewSlide) (*model.Slide, error)
+	CreateSlide(ctx context.Context, token string) (*model.Slide, error)
 	DeleteGroup(ctx context.Context, id string, token string) (*model.MutationResponse, error)
 	AddUserToGroup(ctx context.Context, token string, groupID string, userID string) (*model.MutationResponse, error)
 	AddEmployeeToEnterprise(ctx context.Context, token string, newUser model.NewUser) (*model.MutationResponse, error)
@@ -859,7 +859,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CreateSlide(childComplexity, args["token"].(string), args["input"].(model.NewSlide)), true
+		return e.complexity.Mutation.CreateSlide(childComplexity, args["token"].(string)), true
 
 	case "Mutation.deleteGroup":
 		if e.complexity.Mutation.DeleteGroup == nil {
@@ -1851,11 +1851,7 @@ input CreateSlide {
   slide_location: Int!
 }
 
-input NewSlide {
-  content_type: String!
-  uri: String!
-  slide_location: Int!
-}
+
 
 input VreelFields {
   field: String!
@@ -1877,7 +1873,7 @@ type Mutation {
     password: String!
   ): ResolvedPasswordReset!
   createGroup(input: NewGroup): Group!
-  createSlide(token: String!, input: NewSlide!): Slide
+  createSlide(token: String!): Slide
   deleteGroup(id: String!, token: String!): MutationResponse!
   addUserToGroup(
     token: String!
@@ -2040,15 +2036,6 @@ func (ec *executionContext) field_Mutation_createSlide_args(ctx context.Context,
 		}
 	}
 	args["token"] = arg0
-	var arg1 model.NewSlide
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg1, err = ec.unmarshalNNewSlide2githubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐNewSlide(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["input"] = arg1
 	return args, nil
 }
 
@@ -4901,7 +4888,7 @@ func (ec *executionContext) _Mutation_createSlide(ctx context.Context, field gra
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreateSlide(rctx, args["token"].(string), args["input"].(model.NewSlide))
+		return ec.resolvers.Mutation().CreateSlide(rctx, args["token"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -9358,45 +9345,6 @@ func (ec *executionContext) unmarshalInputNewGroup(ctx context.Context, obj inte
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputNewSlide(ctx context.Context, obj interface{}) (model.NewSlide, error) {
-	var it model.NewSlide
-	asMap := map[string]interface{}{}
-	for k, v := range obj.(map[string]interface{}) {
-		asMap[k] = v
-	}
-
-	for k, v := range asMap {
-		switch k {
-		case "content_type":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("content_type"))
-			it.ContentType, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "uri":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("uri"))
-			it.URI, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "slide_location":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("slide_location"))
-			it.SlideLocation, err = ec.unmarshalNInt2int(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
 func (ec *executionContext) unmarshalInputNewUser(ctx context.Context, obj interface{}) (model.NewUser, error) {
 	var it model.NewUser
 	asMap := map[string]interface{}{}
@@ -11522,11 +11470,6 @@ func (ec *executionContext) unmarshalNNewEnterprise2githubᚗcomᚋvreelᚋapp�
 
 func (ec *executionContext) unmarshalNNewEvent2githubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐNewEvent(ctx context.Context, v interface{}) (model.NewEvent, error) {
 	res, err := ec.unmarshalInputNewEvent(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) unmarshalNNewSlide2githubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐNewSlide(ctx context.Context, v interface{}) (model.NewSlide, error) {
-	res, err := ec.unmarshalInputNewSlide(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 

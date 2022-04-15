@@ -2,7 +2,7 @@ enum ContentType {
     image,
     video
 }
-interface Content {
+export interface Content {
     start_time?: number;
     stop_time?: number;
     background_audio_uri?: string

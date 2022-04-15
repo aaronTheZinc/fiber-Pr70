@@ -1,4 +1,5 @@
 import { useRouter } from "next/router";
+import Image from "next/image"
 import React, { useRef } from "react";
 
 import { useCookies } from "react-cookie";

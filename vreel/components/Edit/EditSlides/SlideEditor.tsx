@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { AiOutlineMinusCircle } from "react-icons/ai";
 import { IoMdAddCircleOutline } from "react-icons/io";
 import { Collapse } from "reactstrap";
-import { Slide, User } from "../../../types";
+import { DeleteSlide, SaveSlideType, Slide, User } from "../../../types";
 import { CheckboxInput, EditInput } from "../../Shared/Input/Input";
 import { UppyModal } from "../../Shared/UppyModal/UppyModal";
 import { SlidesStateType } from "./EditSlides"
@@ -12,8 +12,11 @@ interface SlideEditorProps {
     idx: number,
     state: SlidesStateType,
     setState: (id: string, key: string, value: any) => void
+    saveSlide: (saveSlide: SaveSlideType) => void
+    deleteSlide: (id: string) => void
+
 }
-export default function SlideEditor({ slide, idx, state, setState }: SlideEditorProps) {
+export default function SlideEditor({ slide, idx, state, setState, saveSlide, deleteSlide }: SlideEditorProps) {
     const { id } = slide;
 
 
@@ -21,11 +24,6 @@ export default function SlideEditor({ slide, idx, state, setState }: SlideEditor
     function updateValue(parent: string, key: string, value: any) {
         setState(id, "values", { ...state.values, [parent]: { ...state.values[parent], [key]: value } })
     }
-    useEffect(() => {
-        // console.log("[slide open]: ", state.isOpen)
-        // console.log("[current slide state]: ", state);
-        // console.log("[slide]", state.isOpen);
-    }, [state]);
     return (
         <div
             onClick={() => { }}
@@ -172,25 +170,35 @@ export default function SlideEditor({ slide, idx, state, setState }: SlideEditor
                                 height: "12rem",
                             }}
                         />
-                        <EditInput type="text" label="Link Header" />
-                        <EditInput type="text" label="Link Type" />
-                        <div className="vreel-edit-slides__new-slide__advanced-btn-wrapper">
-                            <button className="vreel-edit-menu__button blue">
-                                {" "}
-                                + Add Credits
-                            </button>
-                            <CheckboxInput type="checkbox" label="Invert Group Filter" />
-                        </div>
+                        <EditInput
+                            value={state?.values?.advanced?.link_header}
+                            type="text"
+                            label="Link Header"
+                            setValue={(s: string) => updateValue("advanced", "link_header", s)}
+                        />
+                        <EditInput
+                            value={state?.values?.advanced?.link_type}
+                            type="text"
+                            label="Link Type"
+                            setValue={(s: string) => updateValue("advanced", "link_type", s)}
+                        />
                     </Collapse>
-                    <div className="vreel-edit-slides__new-slide__btn-wrapper">
-                        <button type="button" className="vreel-edit-menu__button red">
-                            Delete Slide
+                    <div className="vreel-edit-slides__new-slide__advanced-btn-wrapper">
+                        <button className="vreel-edit-menu__button blue">
+                            {" "}
+                            + Add Credits
                         </button>
-                        <button type="button" className="vreel-edit-menu__button green">
-                            Save Slide
-                        </button>
+                        <CheckboxInput type="checkbox" label="Invert Group Filter" />
                     </div>
                 </Collapse>
+                <div className="vreel-edit-slides__new-slide__btn-wrapper">
+                    <button onClick={() => deleteSlide(slide.id)} type="button" className="vreel-edit-menu__button red">
+                        Delete Slide
+                    </button>
+                    <button onClick={() => alert("Save Slide!")} type="button" className="vreel-edit-menu__button green">
+                        Save Slide
+                    </button>
+                </div>
             </Collapse>
         </div>
     );
