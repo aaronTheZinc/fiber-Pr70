@@ -88,6 +88,12 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, token string, fields 
 	return &resp, err
 }
 
+func (r *mutationResolver) UpdateSlide(ctx context.Context, token *string, slideID string, data string) (*model.Slide, error) {
+	slide, err := auth.AuthorizeEditSlide(*token, slideID, data)
+
+	return &slide, err
+}
+
 func (r *queryResolver) User(ctx context.Context, id *string) (*model.User, error) {
 	user, err := database.GetUser(*id)
 	return &user, err

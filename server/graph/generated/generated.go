@@ -162,6 +162,7 @@ type ComplexityRoot struct {
 		RemoveSlide                       func(childComplexity int, token string, slideID *string) int
 		RemoveUserFromGroup               func(childComplexity int, token string, groupID string, member string) int
 		ResolveResetPasswordRequestIntent func(childComplexity int, token string, password string) int
+		UpdateSlide                       func(childComplexity int, token *string, slideID string, data string) int
 		UpdateUser                        func(childComplexity int, token string, fields []*model.VreelFields) int
 		UpdateVreelField                  func(childComplexity int, token string, fields []*model.VreelFields) int
 	}
@@ -300,6 +301,7 @@ type MutationResolver interface {
 	RemoveSlide(ctx context.Context, token string, slideID *string) (*model.MutationResponse, error)
 	UpdateVreelField(ctx context.Context, token string, fields []*model.VreelFields) (*model.MutationResponse, error)
 	UpdateUser(ctx context.Context, token string, fields []*model.VreelFields) (*model.MutationResponse, error)
+	UpdateSlide(ctx context.Context, token *string, slideID string, data string) (*model.Slide, error)
 }
 type QueryResolver interface {
 	User(ctx context.Context, id *string) (*model.User, error)
@@ -920,6 +922,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.ResolveResetPasswordRequestIntent(childComplexity, args["token"].(string), args["password"].(string)), true
+
+	case "Mutation.updateSlide":
+		if e.complexity.Mutation.UpdateSlide == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateSlide_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateSlide(childComplexity, args["token"].(*string), args["slideId"].(string), args["data"].(string)), true
 
 	case "Mutation.updateUser":
 		if e.complexity.Mutation.UpdateUser == nil {
@@ -1873,7 +1887,8 @@ type Mutation {
     password: String!
   ): ResolvedPasswordReset!
   createGroup(input: NewGroup): Group!
-  createSlide(token: String!): Slide
+  createSlide(token: String!): Slide!
+
   deleteGroup(id: String!, token: String!): MutationResponse!
   addUserToGroup(
     token: String!
@@ -1889,6 +1904,7 @@ type Mutation {
   removeSlide(token: String!, slideId: String): MutationResponse!
   updateVreelField(token: String!, fields: [VreelFields]): MutationResponse!
   updateUser(token: String!, fields: [VreelFields!]): MutationResponse!
+  updateSlide(token: String, slideId: String!, data: String!): Slide!
 }
 `, BuiltIn: false},
 }
@@ -2156,6 +2172,39 @@ func (ec *executionContext) field_Mutation_resolveResetPasswordRequestIntent_arg
 		}
 	}
 	args["password"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_updateSlide_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *string
+	if tmp, ok := rawArgs["token"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("token"))
+		arg0, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["token"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["slideId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("slideId"))
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["slideId"] = arg1
+	var arg2 string
+	if tmp, ok := rawArgs["data"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("data"))
+		arg2, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["data"] = arg2
 	return args, nil
 }
 
@@ -4895,11 +4944,14 @@ func (ec *executionContext) _Mutation_createSlide(ctx context.Context, field gra
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
 	res := resTmp.(*model.Slide)
 	fc.Result = res
-	return ec.marshalOSlide2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐSlide(ctx, field.Selections, res)
+	return ec.marshalNSlide2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐSlide(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_deleteGroup(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -5194,6 +5246,48 @@ func (ec *executionContext) _Mutation_updateUser(ctx context.Context, field grap
 	res := resTmp.(*model.MutationResponse)
 	fc.Result = res
 	return ec.marshalNMutationResponse2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐMutationResponse(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_updateSlide(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_updateSlide_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpdateSlide(rctx, args["token"].(*string), args["slideId"].(string), args["data"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Slide)
+	fc.Result = res
+	return ec.marshalNSlide2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐSlide(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _MutationResponse_succeeded(ctx context.Context, field graphql.CollectedField, obj *model.MutationResponse) (ret graphql.Marshaler) {
@@ -10143,6 +10237,9 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			}
 		case "createSlide":
 			out.Values[i] = ec._Mutation_createSlide(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "deleteGroup":
 			out.Values[i] = ec._Mutation_deleteGroup(ctx, field)
 			if out.Values[i] == graphql.Null {
@@ -10175,6 +10272,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			}
 		case "updateUser":
 			out.Values[i] = ec._Mutation_updateUser(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "updateSlide":
+			out.Values[i] = ec._Mutation_updateSlide(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}

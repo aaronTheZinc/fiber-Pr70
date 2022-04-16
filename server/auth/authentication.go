@@ -75,7 +75,6 @@ func CreateNewUser(newUser model.NewUser) (model.User, error) {
 		fmt.Println("running!")
 		hashedPw, hashErr := HashPassword(newUser.Password)
 		if hashErr != nil {
-			log.Panicln("failed to hash pw")
 			return model.User{}, hashErr
 		}
 		u, oerr := database.CreateUser(newUser, utils.GenerateId(), hashedPw)

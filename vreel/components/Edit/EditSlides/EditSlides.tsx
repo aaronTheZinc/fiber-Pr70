@@ -86,10 +86,10 @@ const EditSlides = (): JSX.Element => {
       });
 
   }
-  async function SaveSlide(data: SaveSlideType) {
+  async function SaveSlide(id: string) {
     //set loading and errors
     setIsLoading(true);
-    saveSlide(data).
+    saveSlide({ id, token: cookies.userAuthToken, slide: slidesState[id].values }).
       then((response) => {
         console.log("[Slide Update]: ", response);
         setIsLoading(false);

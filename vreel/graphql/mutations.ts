@@ -23,8 +23,10 @@ export const CREATE_SLIDE = gql`
 `;
 
 export const EDIT_SLIDE = gql`
-  mutation EditSlide($token: String!, $data: String!) {
-    id
+  mutation EditSlide($token: String!, $slideId: String!, $data: String!) {
+    updateSlide(token: $token, slideId: $slideId, data: $data) {
+      id
+    }
   }
   `
 export const DELETE_SLIDE = gql`

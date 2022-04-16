@@ -285,7 +285,8 @@ type Mutation {
     password: String!
   ): ResolvedPasswordReset!
   createGroup(input: NewGroup): Group!
-  createSlide(token: String!): Slide
+  createSlide(token: String!): Slide!
+
   deleteGroup(id: String!, token: String!): MutationResponse!
   addUserToGroup(
     token: String!
@@ -301,4 +302,5 @@ type Mutation {
   removeSlide(token: String!, slideId: String): MutationResponse!
   updateVreelField(token: String!, fields: [VreelFields]): MutationResponse!
   updateUser(token: String!, fields: [VreelFields!]): MutationResponse!
+  updateSlide(token: String, slideId: String!, data: String!): Slide!
 }

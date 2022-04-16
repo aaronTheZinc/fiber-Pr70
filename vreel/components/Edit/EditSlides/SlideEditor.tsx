@@ -12,7 +12,7 @@ interface SlideEditorProps {
     idx: number,
     state: SlidesStateType,
     setState: (id: string, key: string, value: any) => void
-    saveSlide: (saveSlide: SaveSlideType) => void
+    saveSlide: (i: string) => void
     deleteSlide: (id: string) => void
 
 }
@@ -195,7 +195,7 @@ export default function SlideEditor({ slide, idx, state, setState, saveSlide, de
                     <button onClick={() => deleteSlide(slide.id)} type="button" className="vreel-edit-menu__button red">
                         Delete Slide
                     </button>
-                    <button onClick={() => alert("Save Slide!")} type="button" className="vreel-edit-menu__button green">
+                    <button onClick={() => saveSlide(slide.id)} type="button" className="vreel-edit-menu__button green">
                         Save Slide
                     </button>
                 </div>
