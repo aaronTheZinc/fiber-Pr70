@@ -64,6 +64,7 @@ const EditSlides = (): JSX.Element => {
 
   //handle slide rerender
   const [refresh, setRefresh] = useState([])
+
   function ChangeState(slideId: string, field: string, value: boolean) {
     const v = { ...slidesState, [slideId]: { ...slidesState[slideId], [field]: value } }
     setSlidesState(v);
@@ -73,7 +74,7 @@ const EditSlides = (): JSX.Element => {
   }
   async function CreateSlide() {
     setIsLoading(true);
-    createSlide(cookies.userAuthToken).
+    createSlide(cookies.userAuthToken, { slide_location: 1, uri: 'https://player.vimeo.com/external/328428416.sd.mp4?s=39df9f60fdeaeff0f4e3fbf3c1213d395792fc43&profile_id=165&oauth2_token_id=57447761', content_type: 'video' }).
       then((response) => {
         console.log("[Slide Creation]: ", response);
         setIsLoading(false);

@@ -56,12 +56,8 @@ const RegisterForm = (): JSX.Element => {
         }
 
         if (token) {
+          createSlide(token, { slide_location: 0, uri: 'https://player.vimeo.com/external/328428416.sd.mp4?s=39df9f60fdeaeff0f4e3fbf3c1213d395792fc43&profile_id=165&oauth2_token_id=57447761', content_type: 'video' })
           setCookie("userAuthToken", token);
-          await createSlide(token, {
-            content_type: "video",
-            uri: "https://vreel.page/users/vreel/videos/waterfall.mp4",
-            slide_location: 0,
-          });
           router.push(`/${username}`);
         }
       }

@@ -31,7 +31,7 @@ export const UppyModal = (): JSX.Element => {
 
   const uppy = new Uppy({
     id: "uppy",
-    autoProceed: false,
+    autoProceed: true,
     allowMultipleUploadBatches: true,
     debug: false,
   })
@@ -48,15 +48,22 @@ export const UppyModal = (): JSX.Element => {
 
   uppy.on("file-added", (file) => {
     console.log("this is the file:", file);
+
     uppy.setFileMeta(file.id, {
       test: "hello",
     });
+
   });
+
+  uppy.on('progress', (progress) => {
+    // progress: integer (total progress percentage)
+    console.log(progress)
+  })
   uppy.on("complete", (result) => {
     console.log("response ->", result);
-    // result.successful.forEach((item) => {
-    //     console.log(item.uploadURL)
-    // })
+    result.successful.forEach((item) => {
+        console.log(item.uploadURL)
+    })
     // console.log('Upload complete! We’ve uploaded these files:', result.successful)
   });
 

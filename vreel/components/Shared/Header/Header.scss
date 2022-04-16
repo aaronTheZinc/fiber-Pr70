@@ -6,16 +6,44 @@
   display: flex;
   flex-direction: row;
   align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding-top: 5px;
+  .rounded-circle svg {
+    position: relative;
+    left: -35px;
+    cursor: pointer;
+  }
   img {
-    top: 0;
-    position: fixed;
     cursor: pointer;
     &:first-of-type {
       left: 5px;
-      padding-top: 3px;
     }
     &:last-of-type {
       right: 5px;
     }
+  }
+  &__nav-items__wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    align-self: flex-start;
+    padding-right: 8px;
+  }
+  [data-initials]:before {
+    background: #131313;
+    color: white;
+    opacity: 1;
+    content: attr(data-initials);
+    display: inline-block;
+    font-weight: bold;
+    border-radius: 50%;
+    vertical-align: middle;
+    margin-right: 0.5rem;
+    width: 35px;
+    height: 35px;
+    line-height: 35px;
+    text-align: center;
+    cursor: pointer;
   }
 }

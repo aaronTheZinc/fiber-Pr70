@@ -27,7 +27,7 @@ export const VreelSlider = ({
   const [currentSlide, setCurrentSlide] = useState(null);
   const [swiper, setSwiper] = useState(null);
 
-  useEffect(() => {}, [isChanged]);
+  useEffect(() => {}, [currentSlide, swiper]);
 
   return (
     <Swiper
@@ -37,6 +37,7 @@ export const VreelSlider = ({
       navigation
       pagination={true}
       onSlideChange={(slide) => {
+        setCurrentSlide(slide.realIndex)
         console.log("slide change", slide.realIndex);
       }}
       onSwiper={(swiper) => setSwiper(swiper)}

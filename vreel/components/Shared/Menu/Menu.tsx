@@ -59,12 +59,6 @@ const Menu = (): JSX.Element => {
                 <li>
                   <a href="#">Help</a>
                 </li>
-                <li
-                  style={{ position: "fixed", bottom: "0px", right: "7px" }}
-                  onClick={() => removeCookies("userAuthToken")}
-                >
-                  <a href="#">Logout</a>
-                </li>
               </>
             ) : (
               <>
@@ -79,9 +73,6 @@ const Menu = (): JSX.Element => {
                 </li>
                 <li>
                   <a href="#">Services</a>
-                </li>
-                <li style={{ position: "fixed", bottom: "0px", right: "7px" }}>
-                  <a href="login">Login</a>
                 </li>
               </>
             )}
