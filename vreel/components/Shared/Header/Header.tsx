@@ -9,6 +9,13 @@ const Header = (): JSX.Element => {
   const router = useRouter();
   // console.log("router", router);
   const { username } = router.query;
+
+  const showConfirm = () => {
+    if(!confirm(`Are you sure you want to log out ${username[0].toUpperCase() + username.slice(1)}? `)) return
+    removeCookies('userAuthToken')
+    router.push('/')
+  }
+  
   const styles =
     router.pathname.includes("login") ||
     router.pathname.includes("register") ||
@@ -27,14 +34,28 @@ const Header = (): JSX.Element => {
           className="vreel-header__logo"
         />
         <div className="vreel-header__nav-items__wrapper">
-            <div
+          {username ? (
+            cookies.userAuthToken ? (
+              <div onClick={showConfirm} data-initials={username[0].toUpperCase()} className="rounded-circle"></div>
+            ) : (
+              <div
+                onClick={(e) => router.push("/login")}
+                className="rounded-circle"
+              >
+                <FaSignInAlt color="white" />
+              </div>
+            )
+          ) : (
+            ""
+          )}
+          {/* <div
               onClick={(e) => router.push('/login')}
               data-initials={
                "M"
               }
               className="rounded-circle"
             >
-            </div>
+            </div> */}
           <img
             onClick={(e) => {
               const menuWrapperEl = document.querySelector(

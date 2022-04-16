@@ -34,9 +34,9 @@ const VreelSlide = ({
   };
   useEffect(() => {
     slideId !== 0 ? videoEl.current.pause() : videoEl.current.play();
-    console.log("this is skide video", currentSlide, slideId);
+    console.log("this is skide video", swiper, slideId);
   }, []);
-
+  console.log("user slides is", user?.vreel?.slides);
   return (
     <section
       ref={slideEl}

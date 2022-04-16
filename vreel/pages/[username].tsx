@@ -20,7 +20,7 @@ const Username = ({ user, isMobile }) => {
       <Head>
         <title>{`${username}'s`} VReel</title>
       </Head>
-      <VreelSlider data={false} isUser={true} user={user} />
+      <VreelSlider username={username} data={false} isUser={true} user={user} />
       <Links />
       <Social isUser={true} user={user} username={username?.toString()} />
       <TextArea />
@@ -54,11 +54,6 @@ export async function getStaticPaths() {
 export async function getStaticProps({ params }) {
   try {
     const user = await getUserByUsername(params.username);
-    if (!user)
-      return {
-        notFound: true,
-      };
-
     return { props: { user } };
   } catch (error) {
     return { notFound: true };
