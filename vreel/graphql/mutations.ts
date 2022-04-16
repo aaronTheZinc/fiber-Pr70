@@ -44,27 +44,27 @@ interface NewSlide {
   slide_location: number;
 }
 
-export const createSlide = async (token: string, input: NewSlide) => {
-  await client
-    .mutate({
-      mutation: CREATE_SLIDE,
-      variables: {
-        token,
-        input: {
-          content_type: input.content_type,
-          uri: input.uri,
-          slide_location: input.slide_location,
-        },
-      },
-    })
-    .then(({ data }) => {
-      console.log("slide data", data.createSlide);
-      return data.createSlide;
-    })
-    .catch((err) => {
-      console.error("ERROOORRRR with CREATE_SLIDE MUTATION", err);
-    });
-};
+// export const createSlide = async (token: string, input: NewSlide) => {
+//   await client
+//     .mutate({
+//       mutation: CREATE_SLIDE,
+//       variables: {
+//         token,
+//         input: {
+//           content_type: input.content_type,
+//           uri: input.uri,
+//           slide_location: input.slide_location,
+//         },
+//       },
+//     })
+//     .then(({ data }) => {
+//       console.log("slide data", data.createSlide);
+//       return data.createSlide;
+//     })
+//     .catch((err) => {
+//       console.error("ERROOORRRR with CREATE_SLIDE MUTATION", err);
+//     });
+// };
 
 interface RegistrationResponse {
   error: string;
@@ -99,6 +99,7 @@ export const registerUser = async (
 };
 
 export const saveSlide = async ({ id, token, slide }: SaveSlideType) => {
+  console.log(JSON.stringify(slide))
   await client.mutate({
     mutation: EDIT_SLIDE,
     variables: {
@@ -118,11 +119,12 @@ export const deleteSlide = async ({ token, slideId }: DeleteSlide) => {
   })
 }
 
-// export const createSlide = async (token: string) => {
-//   return await client.mutate({
-//     mutation: CREATE_SLIDE,
-//     variables: {
-//       token
-//     }
-//   })
-// }
+export const createSlide = async (token: string) => {
+
+  return await client.mutate({
+    mutation: CREATE_SLIDE,
+    variables: {
+      token
+    }
+  })
+}

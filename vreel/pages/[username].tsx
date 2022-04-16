@@ -20,7 +20,7 @@ const Username = ({ user, isMobile }) => {
       <Head>
         <title>{`${username}'s`} VReel</title>
       </Head>
-      <VreelSlider username={username} data={false} isUser={true} user={user} />
+      <VreelSlider username={username?.toString()} data={false} isUser={true} user={user} />
       <Links />
       <Social isUser={true} user={user} username={username?.toString()} />
       <TextArea />

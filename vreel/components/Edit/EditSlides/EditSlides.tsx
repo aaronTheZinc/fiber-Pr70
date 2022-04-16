@@ -10,7 +10,7 @@ import { Content, Slide, User, SaveSlideType, DeleteSlide } from "../../../types
 import { CheckboxInput, EditInput } from "../../Shared/Input/Input";
 import { UppyModal } from "../../Shared/UppyModal/UppyModal";
 import SlideEditor from "./SlideEditor";
-
+import toast, { Toaster } from "react-hot-toast"
 
 
 
@@ -73,24 +73,29 @@ const EditSlides = (): JSX.Element => {
     setRefresh([0]);
   }
   async function CreateSlide() {
+    // toast("creating slide...")
     setIsLoading(true);
-    createSlide(cookies.userAuthToken, { slide_location: 1, uri: 'https://player.vimeo.com/external/328428416.sd.mp4?s=39df9f60fdeaeff0f4e3fbf3c1213d395792fc43&profile_id=165&oauth2_token_id=57447761', content_type: 'video' }).
+    createSlide(cookies.userAuthToken).
       then((response) => {
+        toast.success("New Slide Created")
         console.log("[Slide Creation]: ", response);
         setIsLoading(false);
         Refresh()
 
       })
       .catch((e) => {
-        console.log("[Slide Creation Error]: ", e)
+        toast.error('Failed To Create Slide');
+
         setIsLoading(false);
       });
 
   }
-  async function SaveSlide(id: string) {
+  async function SaveSlide(id: string, slide: Slide) {
     //set loading and errors
     setIsLoading(true);
-    saveSlide({ id, token: cookies.userAuthToken, slide: slidesState[id].values }).
+
+
+    saveSlide({ id, token: cookies.userAuthToken, slide: slide }).
       then((response) => {
         console.log("[Slide Update]: ", response);
         setIsLoading(false);
@@ -124,10 +129,23 @@ const EditSlides = (): JSX.Element => {
   }
 
   useEffect(() => {
+    setIsLoading(true);
     (async () => {
       try {
-        const user = await getUserByToken(cookies.userAuthToken)
+        const promise = getUserByToken(cookies.userAuthToken)
+        toast.promise(promise, {
+          loading: 'Loading',
+          success: (data: User) => {
+            setUser(data)
+            return 'Done!'
+          },
+          error: (err: Error) => {
+            return "Failed To Get Content"
+          }
+        });
         if (user) {
+
+          setIsLoading(false);
           setUser(user)
         }
       } catch (e) {
@@ -137,6 +155,8 @@ const EditSlides = (): JSX.Element => {
 
     })()
   }, [refresh]);
+
+
 
   useEffect(() => {
     let slidesInitialState = {} as [key: SlidesStateType];
@@ -223,6 +243,7 @@ const EditSlides = (): JSX.Element => {
           </div>
         </div>
       </Collapse>
+      <Toaster />
     </li>
   );
 };

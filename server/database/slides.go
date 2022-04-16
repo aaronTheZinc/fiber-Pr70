@@ -2,6 +2,7 @@ package database
 
 import (
 	"encoding/json"
+	"log"
 	"sync"
 	"time"
 
@@ -30,12 +31,10 @@ func CreateSlide(author string) (model.Slide, error) {
 }
 
 func UpdateSlide(id string, slide model.SlideModel) (model.Slide, error) {
-	var err error
-
-	if gErr := db.Model(model.Slide{}).Where("id = ?", id).Delete(&model.SlideModel{}).Error; gErr != nil {
-		err = gErr
-	} else {
-		db.Save(&slide)
+	log.Printf("[Updated Slide %s]: %s", id, slide)
+	err := db.Where("id = ?", id).Updates(&slide).Error
+	if err != nil {
+		log.Panic(err)
 	}
 	return slide.ToSlide(), err
 }

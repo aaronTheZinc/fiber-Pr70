@@ -300,14 +300,14 @@ func AuthorizeEditSlide(token, slideId, data string) (model.Slide, error) {
 			err = fetchErr
 		} else {
 			if s.Author == userId {
-				sl := model.SlideModel{}
+				sl := model.Slide{}
 				sl.ID = slideId
 				sl.Author = userId
 
 				if jErr := json.Unmarshal([]byte(data), &sl); jErr != nil {
 					err = e.FAILED_TO_PARSE_SLIDE
 				} else {
-					v, slideUpdateErr := database.UpdateSlide(slideId, sl)
+					v, slideUpdateErr := database.UpdateSlide(slideId, sl.ToDatabaseModel())
 					if slideUpdateErr != nil {
 						err = e.FAILED_UPDATE_SLIDE
 					}

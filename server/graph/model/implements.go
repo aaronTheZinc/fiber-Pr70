@@ -67,8 +67,8 @@ type SlideModel struct {
 	Mobile        string `json:"mobile"`
 	Desktop       string `json:"desktop"`
 	CTA           string `json:"cta"`
-	Advanced      string `json:"advaced"`
-	Metadata      string `json:"metadata"`
+	Advanced      string `json:"advanced"`
+	Metadata      string `json:"-"`
 }
 
 type EnterpriseModel struct {
@@ -212,11 +212,22 @@ func (c *EventModel) ToEvent() Event {
 }
 
 func (c *Slide) ToDatabaseModel() SlideModel {
+	t, _ := json.Marshal(c.Title)
+	a, _ := json.Marshal(c.Advanced)
+	cta, _ := json.Marshal(c.Cta)
+	m_cotent, _ := json.Marshal(c.Mobile)
+	d_content, _ := json.Marshal(c.Desktop)
 	return SlideModel{
 		ID:            c.ID,
+		Author:        c.Author,
 		ContentType:   c.ContentType,
 		URI:           c.URI,
 		SlideLocation: c.SlideLocation,
+		Title:         string(t),
+		Advanced:      string(a),
+		CTA:           string(cta),
+		Mobile:        string(m_cotent),
+		Desktop:       string(d_content),
 		// Metadata:      *c.Metadata,
 	}
 }
@@ -250,7 +261,7 @@ func CreateNewSlideModel() SlideModel {
 	n := 0
 	title, _ := json.Marshal(Title{"header", "description"})
 	advanced, _ := json.Marshal(Advanced{"info", "link header", "link type"})
-	content, _ := json.Marshal(Content{&n, &n, nil, "picture", "https://image"})
+	content, _ := json.Marshal(Content{&n, &n, nil, "video", "https://player.vimeo.com/external/328428416.sd.mp4?s=39df9f60fdeaeff0f4e3fbf3c1213d395792fc43&profile_id=165&oauth2_token_id=57447761"})
 	cta, _ := json.Marshal(Cta{"link type", "link header", "link url"})
 	return SlideModel{
 		ContentType:   "c.ContentType",
