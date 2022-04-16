@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 
@@ -168,7 +169,7 @@ func CreateEvent(token string, newEvent model.NewEvent) (model.Event, error) {
 	return event, err
 }
 
-func AuthorizeCreateSlide(token string, s model.NewSlide) (model.Slide, error) {
+func AuthorizeCreateSlide(token string) (model.Slide, error) {
 	var err error
 	var slide model.Slide
 
@@ -176,7 +177,7 @@ func AuthorizeCreateSlide(token string, s model.NewSlide) (model.Slide, error) {
 	userId := claims.ID
 
 	if isAuth && parseErr == nil {
-		if s, creationErr := database.CreateSlide(userId, s); creationErr != nil {
+		if s, creationErr := database.CreateSlide(userId); creationErr != nil {
 			err = creationErr
 		} else {
 			slide = s
@@ -285,4 +286,40 @@ func AuthorizeAddEmployeeToEnterprise(token string, newUser model.NewUser) (mode
 }
 func AuthorizeRemoveEmployeeToEnterpirse() {
 
+}
+
+func AuthorizeEditSlide(token, slideId, data string) (model.Slide, error) {
+	var err error
+	var slide model.Slide
+
+	claims, isAuth, parseErr := ParseToken(token)
+	userId := claims.ID
+
+	if isAuth && parseErr == nil {
+		if s, fetchErr := database.GetSlide(slideId); fetchErr != nil {
+			err = fetchErr
+		} else {
+			if s.Author == userId {
+				sl := model.SlideModel{}
+				sl.ID = slideId
+				sl.Author = userId
+
+				if jErr := json.Unmarshal([]byte(data), &sl); jErr != nil {
+					err = e.FAILED_TO_PARSE_SLIDE
+				} else {
+					v, slideUpdateErr := database.UpdateSlide(slideId, sl)
+					if slideUpdateErr != nil {
+						err = e.FAILED_UPDATE_SLIDE
+					}
+					slide = v
+				}
+			} else {
+				err = e.UNAUTHORIZED_ERROR
+			}
+		}
+	} else {
+		err = e.UNAUTHORIZED_ERROR
+	}
+
+	return slide, err
 }

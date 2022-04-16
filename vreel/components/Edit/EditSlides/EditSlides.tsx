@@ -1,15 +1,19 @@
 import { useRouter } from "next/router";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, createContext } from "react";
 import { useCookies } from "react-cookie";
 import { AiOutlineMinusCircle } from "react-icons/ai";
 import { IoMdAddCircleOutline } from "react-icons/io";
 import { Collapse } from "reactstrap";
-import { createSlide } from "../../../graphql/mutations";
+import { createSlide, deleteSlide, saveSlide } from "../../../graphql/mutations";
 import { getUserByToken, getUserByUsername } from "../../../graphql/query";
-import { Slide, User } from "../../../types";
+import { Content, Slide, User, SaveSlideType, DeleteSlide } from "../../../types";
 import { CheckboxInput, EditInput } from "../../Shared/Input/Input";
 import { UppyModal } from "../../Shared/UppyModal/UppyModal";
 import SlideEditor from "./SlideEditor";
+
+
+
+
 //call to actio: cta
 //time stamp string 3:30
 export type SlidesStateType = {
@@ -26,53 +30,99 @@ export type SlidesStateType = {
       description: string,
     },
     media: {
-      mobileOptions: {
-
-      },
-      desktopOptions: {
-
-      },
-      start_time: string,
-      stop_time: string
-    }
+      desktop: Content,
+      mobile: Content
+    },
     cta: {
-      linkHeader: string,
-      linkType: string,
-      linkUrl: string
+      link_header: string,
+      link_type: string,
+      link_url: string
     },
     advanced: {
       info: string,
-      linkHeader: string,
-      linkType: string
+      link_header: string,
+      link_type: string
     }
   }
 
   position: number
 }
 
+
+
 const EditSlides = (): JSX.Element => {
   const [cookies, _, removeCookies] = useCookies(["userAuthToken"]);
   const [user, setUser] = useState<User>(null);
-  // console.log("cookies:", cookies.userAuthToken);
-
   const [editAccordionIsOpen, setEditAccordionIsOpen] = useState(false);
   const [editSlideIsOpen, setEditSlideIsOpen] = useState(false);
   const [editTitleIsOpen, setEditTitleIsOpen] = useState(false);
   const [editMediaIsOpen, setEditMediaIsOpen] = useState(false);
   const [editCtaIsOpen, setEditCtaIsOpen] = useState(false);
   const [editAdvancedIsOpen, setEditAdvancedIsOpen] = useState(false);
-
+  const [isLaoding, setIsLoading] = useState<boolean>(false);
   const [slidesState, setSlidesState] = useState<any>([]);
 
+  //handle slide rerender
+  const [refresh, setRefresh] = useState([])
   function ChangeState(slideId: string, field: string, value: boolean) {
     const v = { ...slidesState, [slideId]: { ...slidesState[slideId], [field]: value } }
     setSlidesState(v);
-    console.log("[full state]: ", v)
+  }
+  function Refresh() {
+    setRefresh([0]);
+  }
+  async function CreateSlide() {
+    setIsLoading(true);
+    createSlide(cookies.userAuthToken).
+      then((response) => {
+        console.log("[Slide Creation]: ", response);
+        setIsLoading(false);
+        Refresh()
+
+      })
+      .catch((e) => {
+        console.log("[Slide Creation Error]: ", e)
+        setIsLoading(false);
+      });
+
+  }
+  async function SaveSlide(id: string) {
+    //set loading and errors
+    setIsLoading(true);
+    saveSlide({ id, token: cookies.userAuthToken, slide: slidesState[id].values }).
+      then((response) => {
+        console.log("[Slide Update]: ", response);
+        setIsLoading(false);
+        Refresh()
+
+      })
+      .catch((e) => {
+        console.log("[Slide Update Error]: ", e)
+        setIsLoading(false);
+      });
+
+
+  }
+
+  async function DeleteSlide(id: string) {
+    setIsLoading(true);
+    deleteSlide({ token: cookies.userAuthToken, slideId: id }).
+      then((response) => {
+        const newState = slidesState
+        delete newState[id]
+        setSlidesState(newState)
+        console.log("[Slide Deletion]: ", response);
+        setIsLoading(false);
+        Refresh()
+
+      })
+      .catch((e) => {
+        console.log("[Slide Deletion Error]: ", e)
+        setIsLoading(false);
+      });
   }
 
   useEffect(() => {
-    console.log("id =>", username);
-    // .then((data) => setUser(data));
     (async () => {
       try {
         const user = await getUserByToken(cookies.userAuthToken)
@@ -85,32 +135,40 @@ const EditSlides = (): JSX.Element => {
 
 
     })()
-  }, []);
+  }, [refresh]);
 
   useEffect(() => {
     let slidesInitialState = {} as [key: SlidesStateType];
     if (user) {
       const { slides } = user?.vreel;
+      slides?.forEach((slide) => {
+        //add new state if it doesnt exits. Keeps State From Refreshing When the Data Does.
+        if (!slidesInitialState[slide.id]) {
+          slidesInitialState[slide.id] = {
+            isOpen: false,
+            editAccordionIsOpen: false,
+            editSlideIsOpen: false,
+            editTitleIsOpen: false,
+            editMediaIsOpen: false,
+            editCtaIsOpen: false,
+            editAdvancedIsOpen: false,
+            position: slide.slide_location,
+            values: {
+              title: slide.title,
+              media: {
+                mobile: slide.mobile,
+                desktop: slide.desktop
+              },
+              cta: slide.cta,
+              advanced: slide.advanced as any
 
-      slides?.forEach(({ id, position }) => {
-        slidesInitialState[id] = {
-          isOpen: false,
-          editAccordionIsOpen: false,
-          editSlideIsOpen: false,
-          editTitleIsOpen: false,
-          editMediaIsOpen: false,
-          editCtaIsOpen: false,
-          editAdvancedIsOpen: false,
-          position,
-          values: {
 
-          }
-        } as SlidesStateType;
-
+            }
+          } as SlidesStateType;
+        }
       })
-
-      console.log("[-->]", slidesInitialState);
       setSlidesState(slidesInitialState);
+
     }
   }, [user]);
 
@@ -141,25 +199,20 @@ const EditSlides = (): JSX.Element => {
           <div className="vreel-edit-slides__new-slide__wrapper">
             <div className="vreel-edit-slides__new-slide">
               <p>Slides</p>
-              <button className="vreel-edit-menu__button green" onClick={e => {
-               createSlide(cookies.userAuthToken, {
-                    content_type: "image",
-                    uri: "pic",
-                    slide_location: 7,
-                  }).then(data => console.log('data is', data));
-              }}>Add New</button>
+              <button onClick={CreateSlide} className="vreel-edit-menu__button green">Add New</button>
             </div>
 
             {user ? (
               user.vreel.slides.map((slide, idx) => (
                 <>
-                  {console.log("current vals:", slidesState[slide.id])}
                   <SlideEditor
                     key={slide.id}
                     slide={slide}
                     idx={idx}
                     state={{ ...slidesState[slide.id] }}
                     setState={ChangeState}
+                    saveSlide={SaveSlide}
+                    deleteSlide={DeleteSlide}
                   />
                 </>
               ))

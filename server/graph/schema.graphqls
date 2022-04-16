@@ -78,13 +78,39 @@ type SlideMetaData {
   created: String!
   size: String!
 }
+type Title {
+  header: String!
+  description: String!
+}
+type Content {
+  start_time: Int
+  stop_time: Int
+  background_audio_uri: String
+  content_type: String!
+  uri: String!
+}
+type CTA {
+  link_header: String!
+  link_type: String!
+  link_url: String!
+} 
+type Advanced {
+  info: String!
+  link_header: String!
+  link_type: String!
+}
 type Slide {
   id: String!
   author: String!
   content_type: String!
   uri: String!
   slide_location: Int!
+  title: Title!
   metadata: SlideMetaData!
+  mobile: Content!
+  desktop: Content!
+  cta: CTA! 
+  advanced: Advanced
 }
 
 type Contact {
@@ -237,11 +263,7 @@ input CreateSlide {
   slide_location: Int!
 }
 
-input NewSlide {
-  content_type: String!
-  uri: String!
-  slide_location: Int!
-}
+
 
 input VreelFields {
   field: String!
@@ -263,7 +285,8 @@ type Mutation {
     password: String!
   ): ResolvedPasswordReset!
   createGroup(input: NewGroup): Group!
-  createSlide(token: String!, input: NewSlide!): Slide
+  createSlide(token: String!): Slide!
+
   deleteGroup(id: String!, token: String!): MutationResponse!
   addUserToGroup(
     token: String!
@@ -279,4 +302,5 @@ type Mutation {
   removeSlide(token: String!, slideId: String): MutationResponse!
   updateVreelField(token: String!, fields: [VreelFields]): MutationResponse!
   updateUser(token: String!, fields: [VreelFields!]): MutationResponse!
+  updateSlide(token: String, slideId: String!, data: String!): Slide!
 }

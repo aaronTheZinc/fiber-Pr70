@@ -75,16 +75,11 @@ func CreateNewUser(newUser model.NewUser) (model.User, error) {
 		fmt.Println("running!")
 		hashedPw, hashErr := HashPassword(newUser.Password)
 		if hashErr != nil {
-			log.Panicln("failed to hash pw")
 			return model.User{}, hashErr
 		}
 		u, oerr := database.CreateUser(newUser, utils.GenerateId(), hashedPw)
 		fmt.Printf("enterprise uid: %s", u.ID)
-		s, _ := database.CreateSlide(u.ID, model.NewSlide{
-			URI:           "https://vreel.page/users/vreel/videos/waterfall.mp4",
-			ContentType:   "video",
-			SlideLocation: 1,
-		})
+		s, _ := database.CreateSlide(u.ID)
 
 		folderErr := client.CreateNewFolder(newUser.Username)
 		if folderErr != nil {
@@ -102,7 +97,6 @@ func CreateNewUser(newUser model.NewUser) (model.User, error) {
 			err = e.FAILED_CREATE_VREEL
 		}
 	} else {
-		fmt.Println("Failed!!!!!")
 	}
 
 	return user, err

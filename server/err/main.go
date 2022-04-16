@@ -28,6 +28,8 @@ var ELEMENT_NOT_FOUND error = errors.New("element not found")
 var FAILED_USER_UPDATE error = errors.New("user failed to update")
 var INVALID_ACCOUNT_TYPE error = errors.New("invalid account type")
 var ENTERPRISE_FAILED_ADD_EMPLOYEE error = errors.New("failed to add employee to enterprise")
+var FAILED_TO_PARSE_SLIDE error = errors.New("failed to parse slide")
+var FAILED_UPDATE_SLIDE error = errors.New("failed to update slide")
 
 func VreelFieldError(field string) error {
 	return errors.New("vreel field: " + field)

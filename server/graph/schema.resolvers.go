@@ -46,8 +46,8 @@ func (r *mutationResolver) CreateGroup(ctx context.Context, input *model.NewGrou
 	return &g, err
 }
 
-func (r *mutationResolver) CreateSlide(ctx context.Context, token string, input model.NewSlide) (*model.Slide, error) {
-	resp, err := auth.AuthorizeCreateSlide(token, input)
+func (r *mutationResolver) CreateSlide(ctx context.Context, token string) (*model.Slide, error) {
+	resp, err := auth.AuthorizeCreateSlide(token)
 
 	return &resp, err
 }
@@ -86,6 +86,12 @@ func (r *mutationResolver) UpdateVreelField(ctx context.Context, token string, f
 func (r *mutationResolver) UpdateUser(ctx context.Context, token string, fields []*model.VreelFields) (*model.MutationResponse, error) {
 	resp, err := auth.AuthorizeUpdateUserFields(token, fields)
 	return &resp, err
+}
+
+func (r *mutationResolver) UpdateSlide(ctx context.Context, token *string, slideID string, data string) (*model.Slide, error) {
+	slide, err := auth.AuthorizeEditSlide(*token, slideID, data)
+
+	return &slide, err
 }
 
 func (r *queryResolver) User(ctx context.Context, id *string) (*model.User, error) {

@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { AiOutlineMinusCircle } from "react-icons/ai";
 import { IoMdAddCircleOutline } from "react-icons/io";
 import { Collapse } from "reactstrap";
-import { Slide, User } from "../../../types";
+import { DeleteSlide, SaveSlideType, Slide, User } from "../../../types";
 import { CheckboxInput, EditInput } from "../../Shared/Input/Input";
 import { UppyModal } from "../../Shared/UppyModal/UppyModal";
 import { SlidesStateType } from "./EditSlides";
@@ -13,24 +13,29 @@ interface SlideEditorProps {
   idx: number;
   state: SlidesStateType;
   setState: (id: string, key: string, value: any) => void;
+  saveSlide: (i: string) => void;
+  deleteSlide: (id: string) => void;
 }
+
 export default function SlideEditor({
   slide,
   idx,
   state,
   setState,
+  saveSlide,
+  deleteSlide,
 }: SlideEditorProps) {
   const { id } = slide;
 
   //mutate slide values
   function updateValue(parent: string, key: string, value: any) {
-    setState(id, "value", { ...state.values, [parent]: { [key]: value } });
+    console.log('value', value)
+    setState(id, "values", {
+      ...state.values,
+      [parent]: { ...state.values[parent], [key]: value },
+    });
   }
-  useEffect(() => {
-    // console.log("[slide open]: ", state.isOpen)
-    // console.log("[current slide state]: ", state);
-    // console.log("[slide]", state.isOpen);
-  }, [state]);
+
   return (
     <div
       onClick={() => {}}
@@ -55,7 +60,7 @@ export default function SlideEditor({
           label="Position"
           style={{ marginBottom: "30px" }}
           setValue={(s: string) => setState(id, "position", s)}
-          value={state?.position?.toString() || 1}
+          value={state?.position?.toString() || "..."}
         />
         <button
           className="vreel-edit-menu__accordion white"
@@ -74,7 +79,13 @@ export default function SlideEditor({
           </span>
         </button>
         <Collapse isOpen={state.editTitleIsOpen}>
-          <EditInput type="text" label="Header" style={{}} />
+          <EditInput
+            type="text"
+            label="Header"
+            style={{}}
+            setValue={(s: string) => updateValue("title", "header", s)}
+            value={state.values?.title?.header}
+          />
           <EditInput
             type="textarea"
             label="Description"
@@ -82,6 +93,8 @@ export default function SlideEditor({
               marginBottom: "30px",
               height: "12rem",
             }}
+            value={state.values?.title?.description}
+            setValue={(s: string) => updateValue("title", "description", s)}
           />
         </Collapse>
 
@@ -118,18 +131,38 @@ export default function SlideEditor({
                 <p>Start Time:</p>
                 <div>
                   <label htmlFor="min">min</label>
-                  <input type="text" name="min" id="min" />
+                  <input
+                    value={state?.values?.media?.mobile?.start_time}
+                    type="text"
+                    name="min"
+                    id="min"
+                  />
                   <label htmlFor="sec">sec</label>
-                  <input type="text" name="sec" id="sec" />
+                  <input
+                    value={state?.values?.media?.mobile?.start_time}
+                    type="text"
+                    name="sec"
+                    id="sec"
+                  />
                 </div>
               </div>
               <div className="vreel-edit-slides__new-slide__time-wrapper">
                 <p>Stop Time:</p>
                 <div>
                   <label htmlFor="min">min</label>
-                  <input type="text" name="min" id="min" />
+                  <input
+                    value={state?.values?.media?.mobile?.stop_time}
+                    type="text"
+                    name="min"
+                    id="min"
+                  />
                   <label htmlFor="sec">sec</label>
-                  <input type="text" name="sec" id="sec" />
+                  <input
+                    value={state?.values?.media?.mobile?.stop_time}
+                    type="text"
+                    name="sec"
+                    id="sec"
+                  />
                 </div>
               </div>
             </div>
@@ -157,9 +190,24 @@ export default function SlideEditor({
         </button>
         <Collapse isOpen={state.editCtaIsOpen}>
           <Collapse isOpen={true}>
-            <EditInput type="text" label="Link Header" />
-            <EditInput type="text" label="Link Type" />
-            <EditInput type="text" label="Link URL" />
+            <EditInput
+              value={state?.values?.cta?.link_header}
+              setValue={(s: string) => updateValue("cta", "link_header", s)}
+              type="text"
+              label="Link Header"
+            />
+            <EditInput
+              value={state?.values?.cta?.link_type}
+              setValue={(s: string) => updateValue("cta", "link_type", s)}
+              type="text"
+              label="Link Type"
+            />
+            <EditInput
+              value={state?.values?.cta?.link_url}
+              setValue={(s: string) => updateValue("cta", "link_url", s)}
+              type="text"
+              label="Link URL"
+            />
           </Collapse>
         </Collapse>
         <button
@@ -184,27 +232,49 @@ export default function SlideEditor({
             <EditInput
               type="textarea"
               label="Info"
+              value={state?.values?.advanced.info}
+              setValue={(s: string) => updateValue("advanced", "info", s)}
               style={{
                 marginBottom: "30px",
                 height: "12rem",
               }}
             />
-            <EditInput type="text" label="Link Header" />
-            <EditInput type="text" label="Link Type" />
-            <div className="vreel-edit-slides__new-slide__advanced-btn-wrapper">
-              <button className="vreel-edit-menu__button blue">
-                {" "}
-                + Add Credits
-              </button>
-              <CheckboxInput type="checkbox" label="Invert Group Filter" />
-            </div>
+            <EditInput
+              value={state?.values?.advanced?.link_header}
+              type="text"
+              label="Link Header"
+              setValue={(s: string) =>
+                updateValue("advanced", "link_header", s)
+              }
+            />
+            <EditInput
+              value={state?.values?.advanced?.link_type}
+              type="text"
+              label="Link Type"
+              setValue={(s: string) => updateValue("advanced", "link_type", s)}
+            />
           </Collapse>
+          <div className="vreel-edit-slides__new-slide__advanced-btn-wrapper">
+            <button className="vreel-edit-menu__button blue">
+              {" "}
+              + Add Credits
+            </button>
+            <CheckboxInput type="checkbox" label="Invert Group Filter" />
+          </div>
         </Collapse>
         <div className="vreel-edit-slides__new-slide__btn-wrapper">
-          <button type="button" className="vreel-edit-menu__button red">
+          <button
+            onClick={() => deleteSlide(slide.id)}
+            type="button"
+            className="vreel-edit-menu__button red"
+          >
             Delete Slide
           </button>
-          <button type="button" className="vreel-edit-menu__button green">
+          <button
+            onClick={() => saveSlide(slide.id)}
+            type="button"
+            className="vreel-edit-menu__button green"
+          >
             Save Slide
           </button>
         </div>

@@ -2,10 +2,30 @@
 
 package model
 
+type Advanced struct {
+	Info       string `json:"info"`
+	LinkHeader string `json:"link_header"`
+	LinkType   string `json:"link_type"`
+}
+
+type Cta struct {
+	LinkHeader string `json:"link_header"`
+	LinkType   string `json:"link_type"`
+	LinkURL    string `json:"link_url"`
+}
+
 type Contact struct {
 	Position int    `json:"position"`
 	Header   string `json:"header"`
 	Hidden   *bool  `json:"hidden"`
+}
+
+type Content struct {
+	StartTime          *int    `json:"start_time"`
+	StopTime           *int    `json:"stop_time"`
+	BackgroundAudioURI *string `json:"background_audio_uri"`
+	ContentType        string  `json:"content_type"`
+	URI                string  `json:"uri"`
 }
 
 type CreateSlide struct {
@@ -133,12 +153,6 @@ type NewGroup struct {
 	ParentGroup string   `json:"parent_group"`
 }
 
-type NewSlide struct {
-	ContentType   string `json:"content_type"`
-	URI           string `json:"uri"`
-	SlideLocation int    `json:"slide_location"`
-}
-
 type NewUser struct {
 	Username        string  `json:"username"`
 	AccountType     string  `json:"account_type"`
@@ -188,7 +202,12 @@ type Slide struct {
 	ContentType   string         `json:"content_type"`
 	URI           string         `json:"uri"`
 	SlideLocation int            `json:"slide_location"`
+	Title         *Title         `json:"title"`
 	Metadata      *SlideMetaData `json:"metadata"`
+	Mobile        *Content       `json:"mobile"`
+	Desktop       *Content       `json:"desktop"`
+	Cta           *Cta           `json:"cta"`
+	Advanced      *Advanced      `json:"advanced"`
 }
 
 type SlideMetaData struct {
@@ -200,6 +219,11 @@ type TextArea struct {
 	Position int    `json:"position"`
 	Content  string `json:"content"`
 	Hidden   *bool  `json:"hidden"`
+}
+
+type Title struct {
+	Header      string `json:"header"`
+	Description string `json:"description"`
 }
 
 type User struct {

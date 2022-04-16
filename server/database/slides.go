@@ -10,9 +10,9 @@ import (
 	"github.com/vreel/app/utils"
 )
 
-func CreateSlide(author string, s model.NewSlide) (model.Slide, error) {
+func CreateSlide(author string) (model.Slide, error) {
 
-	slide := s.ToDatabaseModel()
+	slide := model.CreateNewSlideModel()
 	slide.Author = author
 	slide.ID = utils.GenerateId()
 	md := model.SlideMetaData{}
@@ -29,8 +29,15 @@ func CreateSlide(author string, s model.NewSlide) (model.Slide, error) {
 
 }
 
-func UpdateSlide() {
+func UpdateSlide(id string, slide model.SlideModel) (model.Slide, error) {
+	var err error
 
+	if gErr := db.Model(model.Slide{}).Where("id = ?", id).Delete(&model.SlideModel{}).Error; gErr != nil {
+		err = gErr
+	} else {
+		db.Save(&slide)
+	}
+	return slide.ToSlide(), err
 }
 
 func GetSlide(id string) (model.Slide, error) {
