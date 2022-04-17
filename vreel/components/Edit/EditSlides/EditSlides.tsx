@@ -29,10 +29,9 @@ export type SlidesStateType = {
       header: string,
       description: string,
     },
-    media: {
-      desktop: Content,
-      mobile: Content
-    },
+    desktop: Content,
+    mobile: Content
+
     cta: {
       link_header: string,
       link_type: string,
@@ -42,7 +41,8 @@ export type SlidesStateType = {
       info: string,
       link_header: string,
       link_type: string
-    }
+    },
+
   }
 
   position: number
@@ -91,6 +91,7 @@ const EditSlides = (): JSX.Element => {
 
   }
   async function SaveSlide(id: string, slide: Slide) {
+    console.log("[saved slide: ]", slide)
     //set loading and errors
     setIsLoading(true);
 
@@ -163,6 +164,7 @@ const EditSlides = (): JSX.Element => {
     if (user) {
       const { slides } = user?.vreel;
       slides?.forEach((slide) => {
+        console.log("slide ->", slide)
         //add new state if it doesnt exits. Keeps State From Refreshing When the Data Does.
         if (!slidesInitialState[slide.id]) {
           slidesInitialState[slide.id] = {
@@ -176,10 +178,9 @@ const EditSlides = (): JSX.Element => {
             position: slide.slide_location,
             values: {
               title: slide.title,
-              media: {
-                mobile: slide.mobile,
-                desktop: slide.desktop
-              },
+              mobile: slide.mobile,
+              desktop: slide.desktop,
+
               cta: slide.cta,
               advanced: slide.advanced as any
 

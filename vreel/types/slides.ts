@@ -1,12 +1,11 @@
-enum ContentType {
-    image,
-    video
+
+export enum FileType {
+    video = "video",
+    image = "image"
 }
 export interface Content {
-    start_time?: number;
-    stop_time?: number;
     background_audio_uri?: string
-    content_type: ContentType
+    content_type: FileType
     uri: string
 }
 export interface Slide {

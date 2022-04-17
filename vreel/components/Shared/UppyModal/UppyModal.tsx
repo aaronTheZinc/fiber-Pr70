@@ -1,6 +1,7 @@
 import { useRouter } from "next/router";
 import React, { useRef, useEffect, useState } from "react";
 import { DashboardModal } from "@uppy/react";
+import { FileType } from "../../../types"
 import Uppy from "@uppy/core";
 import Tus from "@uppy/tus";
 import Dropbox from "@uppy/dropbox";
@@ -10,8 +11,10 @@ import Audio from "@uppy/audio";
 import ScreenCapture from "@uppy/screen-capture";
 import Compress from "@uppy/compressor";
 // import Webcam from "@uppy/webcam";
-import { useCookies } from "react-cookie";
 
+const IsImage = (extension: string) => extension.match(/.(jpg|jpeg|png|gif)$/i)
+
+import { useCookies } from "react-cookie";
 interface ModalProps {
   btnTitle: string;
   popUpText: string;
@@ -23,18 +26,27 @@ interface ModalProps {
   isSocial: boolean;
   isContact: boolean;
 }
-
-export const UppyModal = (): JSX.Element => {
+interface UppyModalProps {
+  setUpload: (url: string, fileType: string) => void
+}
+export const UppyModal = ({ setUpload }: UppyModalProps): JSX.Element => {
   const [cookies, _, removeCookies] = useCookies(["userAuthToken"]);
+  const [fileType, setFileType] = useState<string>();
   const [open, setOpen] = useState(false);
   const router = useRouter();
 
   const uppy = new Uppy({
     id: "uppy",
-    autoProceed: true,
+    autoProceed: false,
     allowMultipleUploadBatches: true,
     debug: false,
+    restrictions: {
+      maxNumberOfFiles: 1,
+      allowedFileTypes: ["image/*", "video/*"],
+    }
+    // .MP4, .M4P, .M4V
   })
+
   uppy.use(Tus, {
     endpoint: "http://localhost:7070/files/",
     headers: {
@@ -47,23 +59,23 @@ export const UppyModal = (): JSX.Element => {
   // uppy.use(Url,  { companionUrl: 'http://localhost:3020' });
 
   uppy.on("file-added", (file) => {
-    console.log("this is the file:", file);
-
-    uppy.setFileMeta(file.id, {
-      test: "hello",
-    });
-
+    setFileType(file.type?.toString().includes("image") ? "image" : "video")
   });
 
   uppy.on('progress', (progress) => {
     // progress: integer (total progress percentage)
-    console.log(progress)
+    if (progress === 100) {
+      uppy.pauseAll();
+      uppy.resumeAll();
+    }
+
   })
   uppy.on("complete", (result) => {
+    setOpen(false)
+    setUpload(result.successful[0]?.uploadURL, fileType)
     console.log("response ->", result);
-    result.successful.forEach((item) => {
-        console.log(item.uploadURL)
-    })
+
+
     // console.log('Upload complete! We’ve uploaded these files:', result.successful)
   });
 
@@ -82,7 +94,7 @@ export const UppyModal = (): JSX.Element => {
 
   const onClick = () => { };
   const handleClose = () => {
-    setOpen(!open)
+    setOpen(false)
   };
   return (
     <div>

@@ -16,6 +16,14 @@ interface SlideEditorProps {
     deleteSlide: (id: string) => void;
 }
 
+function MediaPreview({ url }: any): JSX.Element {
+    return (
+        <div>
+            <iframe src={url} title=""></iframe>
+        </div>
+    )
+}
+
 export default function SlideEditor({
     slide,
     idx,
@@ -25,24 +33,37 @@ export default function SlideEditor({
     deleteSlide,
 }: SlideEditorProps) {
     const [editedSlide, setEditedSlide] = useState<Slide>(slide);
+    const [fileUrl, setFileUrl] = useState<string>(state.values?.mobile?.uri);
 
+    const { values } = state
     useEffect(() => {
-        const { values } = state
         const edited = {
             ...slide,
             ...values
         }
+        setFileUrl(state.values?.mobile?.uri)
         setEditedSlide(edited as any)
-    }, [state.values])
+    }, [values])
+
     const { id } = slide;
 
     //mutate slide values
     function updateValue(parent: string, key: string, value: any) {
-        console.log('value', value)
+        const v = {
+            ...state.values,
+            [parent]: { ...state.values[parent], [key]: value },
+        }
+        console.log("new slide state ->" + key, v)
         setState(id, "values", {
             ...state.values,
             [parent]: { ...state.values[parent], [key]: value },
         });
+    }
+    function updateMedia(url: string, fileType: string) {
+        setFileUrl(url);
+        setState(id, "values", { ...state.values, "mobile": { uri: url, content_type: fileType } })
+
+        alert("Doneeeeee")
     }
 
     return (
@@ -133,53 +154,21 @@ export default function SlideEditor({
 
                 <Collapse isOpen={state.editMediaIsOpen}>
                     <div className="vreel-edit-slides__new-slide__media-wrapper">
-                        <p>Mobile Options:</p>
-                        <UppyModal />
-                        <div className="vreel-edit-slides__new-slide__video-times-wrapper">
-                            <div className="vreel-edit-slides__new-slide__time-wrapper">
-                                <p>Start Time:</p>
-                                <div>
-                                    <label htmlFor="min">min</label>
-                                    <input
-                                        value={state?.values?.media?.mobile?.start_time}
-                                        type="text"
-                                        name="min"
-                                        id="min"
-                                    />
-                                    <label htmlFor="sec">sec</label>
-                                    <input
-                                        value={state?.values?.media?.mobile?.start_time}
-                                        type="text"
-                                        name="sec"
-                                        id="sec"
-                                    />
-                                </div>
-                            </div>
-                            <div className="vreel-edit-slides__new-slide__time-wrapper">
-                                <p>Stop Time:</p>
-                                <div>
-                                    <label htmlFor="min">min</label>
-                                    <input
-                                        value={state?.values?.media?.mobile?.stop_time}
-                                        type="text"
-                                        name="min"
-                                        id="min"
-                                    />
-                                    <label htmlFor="sec">sec</label>
-                                    <input
-                                        value={state?.values?.media?.mobile?.stop_time}
-                                        type="text"
-                                        name="sec"
-                                        id="sec"
-                                    />
-                                </div>
-                            </div>
-                        </div>
+                        <p>Upload Your File:</p>
+                        <UppyModal setUpload={updateMedia}
+                        />
+                        {/* 
                     </div>
                     <div className="vreel-edit-slides__new-slide__media-wrapper">
                         <p>Desktop Options:</p>
                         <UppyModal />
-                        <div className="vreel-edit-slides__new-slide__video-times-wrapper"></div>
+                        <div className="vreel-edit-slides__new-slide__video-times-wrapper"></div> */}
+                    </div>
+                    <div>
+                        {
+                            fileUrl ?
+                                <a style={{ fontSize: "15px" }} href={fileUrl}>File Availible Here</a> : <></>
+                        }
                     </div>
                 </Collapse>
                 <button

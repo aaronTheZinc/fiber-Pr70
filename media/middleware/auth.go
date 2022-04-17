@@ -13,14 +13,14 @@ func enableCors(w *http.ResponseWriter) {
 }
 func AuthMiddleware(h http.Handler) http.Handler {
 	return CORS(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		log.Println("[Tus Request Method] ", r.Method)
 		if r.Method == "OPTIONS" {
 			w.WriteHeader(200)
 			fmt.Println()
 			return
 		}
 		token := r.Header.Get("token")
-		fmt.Println("token" + token)
-		if token != "" {
+		if token != "" && r.Method != "GET" {
 			ok, err := api.ClientIsAuthorized(token)
 			if err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
