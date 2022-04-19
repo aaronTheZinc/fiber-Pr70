@@ -21,10 +21,10 @@ export default function Home({ isMobile, data }) {
 }
 
 export async function getStaticProps() {
-  const res = await fetch("http://localhost:3000/api/pexels");
-  const data = await res.json();
-  console.log("videos", data);
+  // const res = await fetch("http://localhost:3000/api/pexels");
+  // const data = await res.json();
+  // console.log("videos", data);
   return {
-    props: { data },
+    props: { data: {} },
   };
 }
