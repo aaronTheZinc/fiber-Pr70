@@ -62,7 +62,7 @@ export async function getStaticProps({ params }) {
 
     return { props: { user } };
   } catch (error) {
-    console.log("[failed user query!! ]", params.username);
+    console.log("[failed user query!! ]", error);
     return { notFound: true };
   }
 }
