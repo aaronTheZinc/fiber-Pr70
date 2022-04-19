@@ -8,4 +8,6 @@ WORKDIR /app
 
 RUN go build server.go
 
+
+
 CMD ["./server"]
