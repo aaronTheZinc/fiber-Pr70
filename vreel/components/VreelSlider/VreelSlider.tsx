@@ -8,7 +8,7 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import VreelSlide from "./VreelSlide/VreelSlide";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface VreelSliderProps {
   isUser?: boolean;
@@ -28,7 +28,6 @@ export const VreelSlider = ({
   const [swiper, setSwiper] = useState(null);
 
   useEffect(() => {}, [currentSlide, swiper]);
-
   return (
     <Swiper
       modules={[Navigation, Pagination]}
@@ -37,12 +36,13 @@ export const VreelSlider = ({
       navigation
       pagination={true}
       onSlideChange={(slide) => {
-        setCurrentSlide(slide.realIndex)
+        setCurrentSlide(slide.realIndex);
         console.log("slide change", slide.realIndex);
       }}
+      loop
       onSwiper={(swiper) => setSwiper(swiper)}
     >
-      {user
+      {/* {user
         ? user.vreel.slides.map((slide, idx) => (
             <SwiperSlide key={idx}>
               <VreelSlide
@@ -68,7 +68,24 @@ export const VreelSlider = ({
                 isChanged={isChanged}
               />
             </SwiperSlide>
-          ))}
+          ))} */}
+      {[
+        "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
+        // "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
+        "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+      ].map((url, idx) => (
+        <SwiperSlide virtualIndex={idx} key={idx}>
+          <VreelSlide
+            username={false}
+            user={false}
+            slide={url}
+            swiper={swiper}
+            currentSlide={currentSlide}
+            slideId={idx}
+            isChanged={isChanged}
+          />
+        </SwiperSlide>
+      ))}
     </Swiper>
   );
 };

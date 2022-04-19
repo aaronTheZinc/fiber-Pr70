@@ -12,6 +12,7 @@ const VreelSlide = ({
   swiper,
   isChanged,
 }): JSX.Element => {
+  // const hasPlayer = useRef<boolean>(false);
   const slideEl = useRef(null);
   const audioEl = useRef(null);
   const videoEl = useRef(null);
@@ -33,8 +34,18 @@ const VreelSlide = ({
     // isChanged && audioEl.current.pause()
   };
   useEffect(() => {
-    slideId !== 0 ? videoEl.current.pause() : videoEl.current.play();
-    console.log("this is skide video", swiper, slideId);
+    if (currentSlide === slideId) {
+      videoEl.current.play();
+    } else {
+      videoEl.current.pause();
+    }
+  }, [currentSlide]);
+
+  useEffect(() => {
+    // console.log("[swiper]: ", swiper);
+    // console.log("[slide id]: ", slideId);
+    // slideId !== 0 ? videoEl.current.pause() : videoEl.current.play();
+    // console.log("this is skide video", swiper, slideId);
   }, []);
   console.log("user slides is", user?.vreel?.slides);
   return (
@@ -52,14 +63,10 @@ const VreelSlide = ({
         muted
         onEnded={(e) => {
           swiper.slideNext();
-
           console.log("ended", currentSlide, slideId);
         }}
       >
-        <source
-          src={user ? user.vreel.slides[0].uri : slide.video_files[0].link}
-          type="video/mp4"
-        ></source>
+        <source src={slide} type="video/mp4"></source>
         Your browser does not support the video tag.
       </video>
 
@@ -218,7 +225,7 @@ const VreelSlide = ({
         ref={audioEl}
         id="vreelBackgroundAudio"
         loop={true}
-        src="/background-vreel.mp3"
+        // src="/background-vreel.mp3"
       ></audio>
     </section>
   );
