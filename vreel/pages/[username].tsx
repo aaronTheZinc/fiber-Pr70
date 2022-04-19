@@ -58,6 +58,7 @@ export async function getStaticPaths() {
 
 export async function getStaticProps({ params }) {
   try {
+    console.log("[locating 🔎]", params.username);
     const user = await getUserByUsername(params.username);
 
     return { props: { user } };
