@@ -70,7 +70,7 @@ export const VreelSlider = ({
             </SwiperSlide>
           ))} */}
       {[
-        "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
+        "https://vod-progressive.akamaized.net/exp=1650352884~acl=%2Fvimeo-prod-skyfire-std-us%2F01%2F685%2F13%2F328428416%2F1287384853.mp4~hmac=52884926bedcbb94272d7369b1e1bd65e2a06ede09d14c56c9bb554075d895db/vimeo-prod-skyfire-std-us/01/685/13/328428416/1287384853.mp4?filename=Pexels+Videos+2098989.mp4",
         // "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
         "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
       ].map((url, idx) => (
