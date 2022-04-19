@@ -175,9 +175,9 @@ export const getUserByUsername = async (username: string): Promise<User> => {
   // errors?.length > 0
   //   ? console.log("[getUserByUsername Error]: ", errors)
   //   : console.log("Got Users! ✅");
-  console.log(data.username);
+  console.log(data?.username);
 
-  return data.username;
+  return data?.username;
 };
 export const getUserByEmail = async (email: string): Promise<User> => {
   const { data } = await client.query({
