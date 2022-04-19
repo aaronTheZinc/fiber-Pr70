@@ -20,15 +20,15 @@ import { useRouter } from "next/router";
 import AddToContact from "../../Elements/AddToContact/AddToContact";
 
 interface ModalProps {
-  btnTitle: string;
-  popUpText: string;
-  elClassName: string;
-  username: string;
-  icon: string;
-  origin: string;
-  isQr: boolean;
-  isSocial: boolean;
-  isContact: boolean;
+  btnTitle?: string;
+  popUpText?: string;
+  elClassName?: string;
+  username?: string;
+  icon?: string;
+  origin?: string;
+  isQr?: boolean;
+  isSocial?: boolean;
+  isContact?: boolean;
 }
 
 export const VreelModal = ({
@@ -42,7 +42,9 @@ export const VreelModal = ({
 
   const { username } = router.query;
 
-  const capitilizedUsername = username ? username[0].toUpperCase() + username.slice(1) : null
+  const capitilizedUsername = username
+    ? username[0].toUpperCase() + username.slice(1)
+    : null;
 
   useEffect(() => {}, []);
 
@@ -83,11 +85,17 @@ export const VreelModal = ({
               onClick={() => setOpen(!open)}
             ></button>
             <ModalBody>
-              <h1>Scan {capitilizedUsername && capitilizedUsername + "'s"} QR Code</h1>
+              <h1>
+                Scan {capitilizedUsername && capitilizedUsername + "'s"} QR Code
+              </h1>
               <QRCode
-                style={{ alignSelf:'center', margin: "25px 0px" }}
+                style={{ alignSelf: "center", margin: "25px 0px" }}
                 size={280}
-                value={username ? `http://localhost:3000/${username}` : 'https://vreel.page'}
+                value={
+                  username
+                    ? `http://localhost:3000/${username}`
+                    : "https://vreel.page"
+                }
               />
             </ModalBody>
           </>
@@ -164,8 +172,10 @@ export const VreelModal = ({
             ></button>
             <ModalBody>
               <h1> Heading Text</h1>
-              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+              <p>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                eiusmod tempor incididunt ut labore et dolore magna aliqua.
+              </p>
             </ModalBody>
           </>
         )}

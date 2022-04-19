@@ -61,36 +61,35 @@ const UserTokenQuery = gql`
           slide_location
           content_type
           uri
-      title {
-      header
-      description
-    }
-    mobile {
-    	start_time
-      stop_time
-      background_audio_uri
-      uri
-      content_type
-    }
-    desktop {
-      start_time
-      stop_time
-      background_audio_uri
-      uri
-      content_type
-    }
-    cta {
-      link_header 
-      link_type
-      link_url
-    }
-    advanced {
-      info
-      link_type
-      link_header
-    }
-  
-      }
+          title {
+            header
+            description
+          }
+          mobile {
+            start_time
+            stop_time
+            background_audio_uri
+            uri
+            content_type
+          }
+          desktop {
+            start_time
+            stop_time
+            background_audio_uri
+            uri
+            content_type
+          }
+          cta {
+            link_header
+            link_type
+            link_url
+          }
+          advanced {
+            info
+            link_type
+            link_header
+          }
+        }
       }
     }
   }
@@ -105,20 +104,20 @@ const GetServerAnalyticsQuery = gql`
         employees {
           id
         }
-    }
+      }
     }
   }
 `;
-export const GetEnterpisesQuery = gql` 
- query ServerAnalytics {
-  serverAnalytics {
-    usernames
+export const GetEnterpisesQuery = gql`
+  query ServerAnalytics {
+    serverAnalytics {
+      usernames
+    }
   }
-}
-  `
+`;
 const GetUserByEmailQuery = gql`
-  query Email ($Email: String!) {
-    email (email: $Email) {
+  query Email($Email: String!) {
+    email(email: $Email) {
       id
       email
       username
@@ -137,7 +136,10 @@ const GetUserByEmailQuery = gql`
 
 const GetEnterpriseEmployee = gql`
   query EnterpriseEmployee($EnterpriseName: String!, $EmployeeId: String!) {
-    enterpiseEmployee(enterpriseName:$EnterpriseName, employeeId: $EmployeeId) {
+    enterpiseEmployee(
+      enterpriseName: $EnterpriseName
+      employeeId: $EmployeeId
+    ) {
       employee {
         id
       }
@@ -146,14 +148,21 @@ const GetEnterpriseEmployee = gql`
       }
     }
   }
-  `
-export const getEnterpriseEmployee = async (EnterpriseName: string, EmployeeId: string) => {
+`;
+const GetEnterpriseQuery = gql`
+  query enterprise($id:)
+`;
+export const getEnterprise = (id: string) => {};
+export const getEnterpriseEmployee = async (
+  EnterpriseName: string,
+  EmployeeId: string
+) => {
   const { data, errors } = await client.query({
     query: GetEnterpriseEmployee,
-    variables: { EnterpriseName, EmployeeId }
+    variables: { EnterpriseName, EmployeeId },
   });
-  return data
-}
+  return data;
+};
 export const getUserByUsername = async (username: string): Promise<User> => {
   const { data } = await client.query({
     query: UsernameQuery,
@@ -173,23 +182,25 @@ export const getUserByEmail = async (email: string): Promise<User> => {
 
 interface ServerAnalytics {
   usernames: [string];
-  enterprises: [{
-    name: string;
-    employees: {
-      id: string
-    }[]
-  }]
+  enterprises: [
+    {
+      name: string;
+      employees: {
+        id: string;
+      }[];
+    }
+  ];
 }
 
 export const getServerAnalytics = async (): Promise<ServerAnalytics> => {
-  let response = {}
+  let response = {};
 
   await client
     .query({
       query: GetServerAnalyticsQuery,
     })
     .then(({ data: { serverAnalytics: data } }) => {
-      response = data
+      response = data;
     })
     .catch((e) => {
       console.error("[server analytics error]", e.message);
@@ -203,9 +214,9 @@ export const getUserByToken = async (token: string): Promise<User> => {
     query: UserTokenQuery,
     variables: { token },
   });
-  console.log(errors)
-  return data.getUserByToken
-}
+  console.log(errors);
+  return data.getUserByToken;
+};
 
 export const getUserById = async (id: string): Promise<User> => {
   const { data } = await client.query({

@@ -23,7 +23,7 @@ type WebTokenClaims struct {
 }
 
 func CreateToken(id, accountType string) (string, error) {
-	expirationTime := time.Now().Add(24 * time.Hour)
+	expirationTime := time.Now().Add(7 * (24 * time.Hour))
 	claims := &WebTokenClaims{
 		ID:          id,
 		AccountType: accountType,
