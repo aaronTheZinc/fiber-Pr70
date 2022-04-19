@@ -71,6 +71,7 @@ export default Username;
 
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   const { username } = params;
+  console.log(username);
   const user = await getUserByUsername(username?.toString());
   console.log("[user]", user);
   return {
