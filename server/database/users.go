@@ -155,9 +155,6 @@ func GetUserByEmail(email string) (model.User, error) {
 	var err error
 	var user model.UserModel
 	var r model.User
-	if db_init_err != nil {
-		return r, db_init_err
-	}
 	db.First(&user, "email = ?", email)
 	groups, _ := GetGroups(user.Groups)
 	r = user.ToUser()
