@@ -11,6 +11,8 @@ services:
       - POSTGRES_PASSWORD=gorm
     # volumes:
     #   - ./pgdata:/var/lib/postgresql/data
+  
+  
   server:
     build:
       context: ./server
