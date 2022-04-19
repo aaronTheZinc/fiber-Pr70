@@ -149,9 +149,9 @@ const GetEnterpriseEmployee = gql`
     }
   }
 `;
-const GetEnterpriseQuery = gql`
-  query enterprise($id:)
-`;
+// const GetEnterpriseQuery = gql`
+//   query enterprise($id:)
+// `;
 export const getEnterprise = (id: string) => {};
 export const getEnterpriseEmployee = async (
   EnterpriseName: string,
