@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-
-	"github.com/vreel/media/api"
 )
 
 func enableCors(w *http.ResponseWriter) {
@@ -19,20 +17,20 @@ func AuthMiddleware(h http.Handler) http.Handler {
 			fmt.Println()
 			return
 		}
-		token := r.Header.Get("token")
-		if token != "" && r.Method != "GET" {
-			ok, err := api.ClientIsAuthorized(token)
-			if err != nil {
-				w.WriteHeader(http.StatusInternalServerError)
-			} else {
-				if !ok {
-					w.WriteHeader(http.StatusUnauthorized)
-				}
-			}
-		} else {
+		// token := r.Header.Get("token")
+		// if token != "" && r.Method != "GET" {
+		// 	ok, err := api.ClientIsAuthorized(token)
+		// 	if err != nil {
+		// 		w.WriteHeader(http.StatusInternalServerError)
+		// 	} else {
+		// 		if !ok {
+		// 			w.WriteHeader(http.StatusUnauthorized)
+		// 		}
+		// 	}
+		// } else {
 
-			w.WriteHeader(http.StatusUnauthorized)
-		}
+		// 	w.WriteHeader(http.StatusUnauthorized)
+		// }
 		enableCors(&w)
 		h.ServeHTTP(w, r)
 	}))

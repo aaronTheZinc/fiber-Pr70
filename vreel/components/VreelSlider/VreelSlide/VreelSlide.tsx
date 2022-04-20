@@ -2,16 +2,16 @@ import React, { useState, useEffect, useRef } from "react";
 import { VreelModal } from "../../Shared/VreelModal/VreelModal";
 import { Player } from "video-react";
 import { useAuth } from "../../../contexts/UserContext";
-import { User, Slide } from "../../../types"
+import { User, Slide } from "../../../types";
 interface VreelSlideProps {
-  username: any,
-  user: User,
-  slideId: any,
-  slide: Slide | any
-  currentSlide: number
-  swiper: any
-  isChanged: boolean
-  isMuted: boolean
+  username: any;
+  user: User;
+  slideId: any;
+  slide: Slide | any;
+  currentSlide: number;
+  swiper: any;
+  isChanged: boolean;
+  isMuted: boolean;
   setIsMuted: (v: boolean) => void;
 }
 const VreelSlide = ({
@@ -30,11 +30,15 @@ const VreelSlide = ({
   const audioEl = useRef(null);
   const videoEl = useRef(null);
   useEffect(() => {
-    videoEl.current.defaultMuted = true;
+    try {
+      videoEl.current.defaultMuted = true;
+    } catch (e) {}
   });
 
   const [isFollowed, setIsFollowed] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
+  const [isVideo, setIsVideo] = useState(false);
+
   const auth = useAuth();
   const toggleSlideFollow = () => {
     setIsFollowed(!isFollowed);
@@ -49,11 +53,13 @@ const VreelSlide = ({
     // isChanged && audioEl.current.pause()
   };
   useEffect(() => {
-    if (currentSlide === slideId) {
-      videoEl.current.play();
-    } else {
-      videoEl.current.pause();
-    }
+    try {
+      if (currentSlide === slideId) {
+        videoEl.current.play();
+      } else {
+        videoEl.current.pause();
+      }
+    } catch (e) {}
   }, [currentSlide]);
 
   useEffect(() => {
@@ -70,33 +76,40 @@ const VreelSlide = ({
       className="vreel-slide vreel-slide__wrapper"
     >
       {/* <img src="https://images.unsplash.com/photo-1626715185400-49cccfabc10f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=627&q=80" alt="background img" className="vreel-slide__background-img" /> */}
-
-      <video
-        ref={videoEl}
-        className="vreel-slide__background-video"
-        autoPlay
-        muted={isMuted}
-        playsInline
-        onEnded={(e) => {
-          swiper.slideNext();
-          console.log("ended", currentSlide, slideId);
-        }}
-      >
-        <source src={username ? slide?.vreel.slides[0].uri : slide?.video_files[0].link} type="video/mp4"></source>
-        Your browser does not support the video tag.
-      </video>
+      {slide.mobile.content_type.includes("video") ? (
+        <video
+          ref={videoEl}
+          className="vreel-slide__background-video"
+          autoPlay
+          muted={isMuted}
+          playsInline
+          onEnded={(e) => {
+            swiper.slideNext();
+            console.log("ended", currentSlide, slideId);
+          }}
+        >
+          <source
+            src={username ? slide.mobile.uri : slide?.video_files[0].link}
+            type={"video/mp4"}
+          ></source>
+          Your browser does not support the video tag.
+        </video>
+      ) : (
+        <img src={slide.mobile.uri} className="vreel-slide__background-video" />
+      )}
 
       <div className="vreel-slide__overlay"></div>
 
       <div className="vreel-slide__text-wrapper">
         <h1 className="vreel-slide__heading-text">
           {username
-            ? `${username}'s vreel`
+            ? (slide as Slide)?.title?.header
             : "THE INTERFACE THAT VISUALLY ELEVATES YOUR BRAND™"}
         </h1>
         <p className="vreel-slide__text">
-          Upload some files in file manager and then use editor to personalize
-          your Vreel
+          {username
+            ? (slide as Slide)?.title?.description
+            : "Upload some files in file manager and then use editor to personalize your Vreel"}
         </p>
         <div className="vreel-slide__btn-wrapper">
           {username ? (
