@@ -5,7 +5,7 @@ import { useAuth } from "../../../contexts/UserContext";
 import { User, Slide } from "../../../types";
 interface VreelSlideProps {
   username: any;
-  user: User;
+  user: User | any;
   slideId: any;
   slide: Slide | any;
   currentSlide: number;
@@ -14,6 +14,7 @@ interface VreelSlideProps {
   isMuted: boolean;
   setIsMuted: (v: boolean) => void;
 }
+
 const VreelSlide = ({
   username,
   user,
@@ -76,26 +77,51 @@ const VreelSlide = ({
       className="vreel-slide vreel-slide__wrapper"
     >
       {/* <img src="https://images.unsplash.com/photo-1626715185400-49cccfabc10f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=627&q=80" alt="background img" className="vreel-slide__background-img" /> */}
-      {slide.mobile.content_type.includes("video") ? (
-        <video
-          ref={videoEl}
-          className="vreel-slide__background-video"
-          autoPlay
-          muted={isMuted}
-          playsInline
-          onEnded={(e) => {
-            swiper.slideNext();
-            console.log("ended", currentSlide, slideId);
-          }}
-        >
-          <source
-            src={username ? slide.mobile.uri : slide?.video_files[0].link}
-            type={"video/mp4"}
-          ></source>
-          Your browser does not support the video tag.
-        </video>
+      {username ? (
+        <>
+          {slide.mobile.content_type.includes("video") ? (
+            <video
+              ref={videoEl}
+              className="vreel-slide__background-video"
+              autoPlay
+              muted={isMuted}
+              playsInline
+              onEnded={(e) => {
+                swiper.slideNext();
+                console.log("ended", currentSlide, slideId);
+              }}
+            >
+              <source
+                src={username ? slide.mobile.uri : slide?.video_files[0].link}
+                type={"video/mp4"}
+              ></source>
+              Your browser does not support the video tag.
+            </video>
+          ) : (
+            <img
+              src={slide.mobile.uri}
+              className="vreel-slide__background-video"
+            />
+          )}
+        </>
       ) : (
-        <img src={slide.mobile.uri} className="vreel-slide__background-video" />
+        <>
+          <video
+            ref={videoEl}
+            className="vreel-slide__background-video"
+            autoPlay
+            muted={isMuted}
+            playsInline
+            onEnded={(e) => {
+              swiper.slideNext();
+              console.log("ended", currentSlide, slideId);
+            }}
+          >
+            <source src={slide.link} type={"video/mp4"}></source>
+            {console.log("link ->", slide.link)}
+            Your browser does not support the video tag.
+          </video>
+        </>
       )}
 
       <div className="vreel-slide__overlay"></div>

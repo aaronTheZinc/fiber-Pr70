@@ -35,6 +35,10 @@ export const UppyModal = ({ setUpload }: UppyModalProps): JSX.Element => {
   const [open, setOpen] = useState(false);
   const router = useRouter();
 
+  const envType = process.env.NEXT_PUBLIC_ENVIRONMENT;
+  const BASE_URL =
+    envType == "dev" ? "http://localhost:7070" : "http://dev1.vreel.page/media";
+  console.log("[media endpoint]", BASE_URL);
   const uppy = new Uppy({
     id: "uppy",
     autoProceed: false,
@@ -48,7 +52,7 @@ export const UppyModal = ({ setUpload }: UppyModalProps): JSX.Element => {
   });
 
   uppy.use(Tus, {
-    endpoint: "http://localhost:7070/files/",
+    endpoint: `${BASE_URL}/files/`,
     headers: {
       token: cookies.userAuthToken ? cookies.userAuthToken : null,
     },
