@@ -19,12 +19,16 @@ export default function Home({ isMobile, data }) {
     </div>
   );
 }
+const envType = process.env.NEXT_PUBLIC_ENVIRONMENT;
+
+const BASE_URL =
+  envType == "dev" ? "http://localhost:3000" : "https://dev1.vreel.page";
 
 export async function getStaticProps() {
-  // const res = await fetch("http://localhost:3000/api/pexels");
-  // const data = await res.json();
-  // console.log("videos", data);
+  const res = await fetch(`${BASE_URL}/api/pexels`);
+  const data = await res.json();
+  console.log("videos", data);
   return {
-    props: { data: {} },
+    props: { data },
   };
 }

@@ -2,7 +2,18 @@ import React, { useState, useEffect, useRef } from "react";
 import { VreelModal } from "../../Shared/VreelModal/VreelModal";
 import { Player } from "video-react";
 import { useAuth } from "../../../contexts/UserContext";
-
+import { User, Slide } from "../../../types"
+interface VreelSlideProps {
+  username: any,
+  user: User,
+  slideId: any,
+  slide: Slide | any
+  currentSlide: number
+  swiper: any
+  isChanged: boolean
+  isMuted: boolean
+  setIsMuted: (v: boolean) => void;
+}
 const VreelSlide = ({
   username,
   user,
@@ -12,8 +23,8 @@ const VreelSlide = ({
   swiper,
   isChanged,
   isMuted,
-  setMuted,
-}): JSX.Element => {
+  setIsMuted,
+}: VreelSlideProps): JSX.Element => {
   // const hasPlayer = useRef<boolean>(false);
   const slideEl = useRef(null);
   const audioEl = useRef(null);
@@ -33,7 +44,7 @@ const VreelSlide = ({
   };
 
   const toggleSlideSound = () => {
-    // setIsMuted(!isMuted);
+    setIsMuted(!isMuted);
     isMuted ? audioEl.current.play() : audioEl.current.pause();
     // isChanged && audioEl.current.pause()
   };
@@ -51,7 +62,7 @@ const VreelSlide = ({
     // slideId !== 0 ? videoEl.current.pause() : videoEl.current.play();
     // console.log("this is skide video", swiper, slideId);
   }, []);
-  console.log("user slides is", user?.vreel?.slides);
+  console.log("user slides is", slide);
   return (
     <section
       ref={slideEl}
@@ -65,12 +76,13 @@ const VreelSlide = ({
         className="vreel-slide__background-video"
         autoPlay
         muted={isMuted}
+        playsInline
         onEnded={(e) => {
           swiper.slideNext();
           console.log("ended", currentSlide, slideId);
         }}
       >
-        <source src={slide} type="video/mp4"></source>
+        <source src={username ? slide?.vreel.slides[0].uri : slide?.video_files[0].link} type="video/mp4"></source>
         Your browser does not support the video tag.
       </video>
 
@@ -124,7 +136,7 @@ const VreelSlide = ({
         <VreelModal icon="/background-credit-icon.svg" />
         {isMuted ? (
           <img
-            onClick={() => setMuted(!isMuted)}
+            onClick={() => setIsMuted(!isMuted)}
             data-bs-toggle="tooltip"
             data-bs-placement="top"
             title="Toggle Slide Sound"
@@ -134,7 +146,7 @@ const VreelSlide = ({
           />
         ) : (
           <img
-            onClick={() => setMuted(!isMuted)}
+            onClick={() => setIsMuted(!isMuted)}
             data-bs-toggle="tooltip"
             data-bs-placement="top"
             title="Toggle Slide Sound"
