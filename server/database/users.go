@@ -26,9 +26,7 @@ func GetUser(id string) (model.User, error) {
 	var err error
 	var user model.UserModel
 	var r model.User
-	if db_init_err != nil {
-		return r, db_init_err
-	}
+
 	db.First(&user, "id = ?", id)
 	groups, _ := GetGroups(user.Groups)
 	r = user.ToUser()
@@ -47,9 +45,7 @@ func GetUserByUsername(username string) (model.User, error) {
 	var err error
 	var user model.UserModel
 	var r model.User
-	if db_init_err != nil {
-		return r, db_init_err
-	}
+
 	db.First(&user, "username = ?", username)
 	groups, _ := GetGroups(user.Groups)
 	r = user.ToUser()
