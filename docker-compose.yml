@@ -21,8 +21,7 @@ services:
       - "7071:7071"
     depends_on:
       - server
-  
-  
+
   server:
     build:
       context: ./server
