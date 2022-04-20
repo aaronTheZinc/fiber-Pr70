@@ -11,15 +11,19 @@ const VreelSlide = ({
   currentSlide,
   swiper,
   isChanged,
+  isMuted,
+  setMuted,
 }): JSX.Element => {
   // const hasPlayer = useRef<boolean>(false);
   const slideEl = useRef(null);
   const audioEl = useRef(null);
   const videoEl = useRef(null);
+  useEffect(() => {
+    videoEl.current.defaultMuted = true;
+  });
 
   const [isFollowed, setIsFollowed] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
-  const [isMuted, setIsMuted] = useState(true);
   const auth = useAuth();
   const toggleSlideFollow = () => {
     setIsFollowed(!isFollowed);
@@ -29,7 +33,7 @@ const VreelSlide = ({
   };
 
   const toggleSlideSound = () => {
-    setIsMuted(!isMuted);
+    // setIsMuted(!isMuted);
     isMuted ? audioEl.current.play() : audioEl.current.pause();
     // isChanged && audioEl.current.pause()
   };
@@ -60,7 +64,7 @@ const VreelSlide = ({
         ref={videoEl}
         className="vreel-slide__background-video"
         autoPlay
-        muted
+        muted={isMuted}
         onEnded={(e) => {
           swiper.slideNext();
           console.log("ended", currentSlide, slideId);
@@ -120,7 +124,7 @@ const VreelSlide = ({
         <VreelModal icon="/background-credit-icon.svg" />
         {isMuted ? (
           <img
-            onClick={toggleSlideSound}
+            onClick={() => setMuted(!isMuted)}
             data-bs-toggle="tooltip"
             data-bs-placement="top"
             title="Toggle Slide Sound"
@@ -130,7 +134,7 @@ const VreelSlide = ({
           />
         ) : (
           <img
-            onClick={toggleSlideSound}
+            onClick={() => setMuted(!isMuted)}
             data-bs-toggle="tooltip"
             data-bs-placement="top"
             title="Toggle Slide Sound"

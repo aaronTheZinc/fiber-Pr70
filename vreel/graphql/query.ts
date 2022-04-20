@@ -164,12 +164,20 @@ export const getEnterpriseEmployee = async (
   return data;
 };
 export const getUserByUsername = async (username: string): Promise<User> => {
-  const { data } = await client.query({
+  const { data, errors, error } = await client.query({
     query: UsernameQuery,
     variables: { Username: username },
   });
 
-  return data.username;
+  if (error) {
+    console.warn("[gql error] ", error);
+  }
+  // errors?.length > 0
+  //   ? console.log("[getUserByUsername Error]: ", errors)
+  //   : console.log("Got Users! ✅");
+  console.log(data?.username);
+
+  return data?.username;
 };
 export const getUserByEmail = async (email: string): Promise<User> => {
   const { data } = await client.query({
