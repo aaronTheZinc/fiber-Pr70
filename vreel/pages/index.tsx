@@ -4,6 +4,7 @@ import Services from "../components/Elements/Services/Services";
 import Social from "../components/Elements/Social/Social";
 import TextArea from "../components/Elements/TextArea/TextArea";
 import { VreelSlider } from "../components/VreelSlider/VreelSlider";
+import { createClient } from "pexels";
 
 export default function Home({ isMobile, data }) {
   return (
@@ -25,10 +26,17 @@ const BASE_URL =
   envType == "dev" ? "http://localhost:3000" : "https://dev1.vreel.page";
 
 export async function getStaticProps() {
-  const res = await fetch(`${BASE_URL}/api/pexels`);
-  const data = await res.json();
-  console.log("videos", data);
+  // const res = await fetch(`${BASE_URL}/api/pexels`);
+  // const data = await res.json();
+  // console.log("videos", data);
+  const client = createClient(process.env.NEXT_PUBLIC_PEXELS_API_KEY);
+
+  const videos = await client.videos.search({
+    query: "waterfalls",
+    per_page: 4,
+  });
+
   return {
-    props: { data },
+    props: { data: videos },
   };
 }

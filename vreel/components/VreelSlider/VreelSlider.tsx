@@ -1,5 +1,6 @@
 import { Navigation, Pagination } from "swiper";
 import type { User } from "../../types";
+import { StaticMainPageContent } from "../../data";
 // Import Swiper React components
 import { Swiper, SwiperSlide } from "swiper/react";
 
@@ -67,7 +68,7 @@ export const VreelSlider = ({
               <VreelSlide
                 username={false}
                 user={false}
-                slide={video}
+                slide={video.video_files[0]}
                 swiper={swiper}
                 currentSlide={currentSlide}
                 slideId={idx}
