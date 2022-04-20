@@ -34,15 +34,15 @@ services:
       - db
     environment:
       - DB_HOST=db
-  # web:
-  #   build:
-  #     context: ./vreel
-  #     dockerfile: dockerfile
-  #   ports:
-  #     - "3000:3000"
-  #   depends_on:
-  #     - server
-  #   restart: always
+  web:
+    build:
+      context: ./vreel
+      dockerfile: dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - server
+    restart: always
   cache:
     image: redis:6.2-alpine
     restart: always
