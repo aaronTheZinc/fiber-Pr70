@@ -11,7 +11,7 @@ import { getServerAnalytics, getUserByUsername } from "../graphql/query";
 const Username = ({ user, isMobile }) => {
   const router = useRouter();
   const { username } = router.query;
-
+  console.log(user);
   return (
     <div
       style={{

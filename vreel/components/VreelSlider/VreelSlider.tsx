@@ -45,22 +45,23 @@ export const VreelSlider = ({
       loop
       onSwiper={(swiper) => setSwiper(swiper)}
     >
-      {user ? 
-          user.vreel.slides.map((slide, idx) => (
+      {user
+        ? user.vreel.slides.map((slide, idx) => (
             <SwiperSlide key={idx}>
+              {console.log("[props]: ", idx, slide)}
               <VreelSlide
                 slide={slide}
                 swiper={swiper}
                 currentSlide={currentSlide}
                 isChanged={isChanged}
-                slideId={slide.id}
+                slideId={idx}
                 user={user}
                 username={username}
                 isMuted={isMuted}
                 setIsMuted={setIsMuted}
               />
             </SwiperSlide>
-          )) 
+          ))
         : data?.map((video, idx) => (
             <SwiperSlide key={idx}>
               <VreelSlide
