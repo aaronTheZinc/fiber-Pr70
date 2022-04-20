@@ -1,3 +1,4 @@
+import type { Slide } from "./slides"
 export interface User {
   first_name: string;
   last_name: string;
@@ -9,4 +10,7 @@ export interface User {
   job_title: string;
   password: string;
   password_confirm: string;
+  vreel: {
+    slides: Slide[]
+  }
 }

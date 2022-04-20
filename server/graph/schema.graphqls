@@ -1,12 +1,30 @@
 # GraphQL schema example
 #
 # https://gqlgen.com/getting-started/
-
+type ServerAnalytics {
+  usernames: [String]!
+  vreels: [Vreel]
+  enterprises: [Enterprise]!
+  userCount: Int!
+}
+type File {
+  file_name: String!
+  file_type: String!
+  uri: String!
+  file_size: Int!
+}
+type Files {
+  file_count: Int!
+  files: [File!]!
+}
 type User {
   id: String!
+  account_type: String!
   username: String!
   first_name: String!
   last_name: String!
+  prefix: String!
+  suffix: String!
   email: String!
   phone_number: String!
   password: String!
@@ -15,8 +33,19 @@ type User {
   website: String!
   job_title: String!
   groups: [Group!]!
-
+  vreel: Vreel!
+  files: Files!
 }
+
+type Enterprise {
+  id: String
+  name: String!
+  owner: String!
+  email: String!
+  employees: [User!]!
+  vreel: Vreel! 
+}
+
 # Create Group - name, location, meet times?, public/private?
 type Group {
   id: String!
@@ -26,9 +55,14 @@ type Group {
   meet_times: [String!]
   private: Boolean!
   parent_group: String!
-  child_groups: [String!]
+  child_groups: [Group!]
+  members: [String!]
+  events: [Event!]
+  vreel: Vreel!
 }
 type Event {
+  ID: String!
+  author: String!
   name: String!
   thumbnail: String!
   start_time: String!
@@ -36,8 +70,117 @@ type Event {
   description: String!
   location: String!
   group_id: String!
+  repeat: String!
+  link: String!
+  groups: [String!]
+}
+type SlideMetaData {
+  created: String!
+  size: String!
+}
+type Title {
+  header: String!
+  description: String!
+}
+type Content {
+  start_time: Int
+  stop_time: Int
+  background_audio_uri: String
+  content_type: String!
+  uri: String!
+}
+type CTA {
+  link_header: String!
+  link_type: String!
+  link_url: String!
+} 
+type Advanced {
+  info: String!
+  link_header: String!
+  link_type: String!
+}
+type Slide {
+  id: String!
+  author: String!
+  content_type: String!
+  uri: String!
+  slide_location: Int!
+  title: Title!
+  metadata: SlideMetaData!
+  mobile: Content!
+  desktop: Content!
+  cta: CTA! 
+  advanced: Advanced
 }
 
+type Contact {
+  position: Int!
+  header: String!
+  hidden: Boolean
+}
+
+type Service {
+  position: Int!
+  header: String!
+  info: TextArea!
+  hidden: Boolean
+}
+
+type Link {
+  position: Int!
+  header: String!
+  url: String!
+  link_type: String!
+  category: String!
+}
+
+type Links {
+  position: Int!
+  links: [Link]
+  hidden: Boolean
+}
+
+type TextArea {
+  position: Int!
+  content: String!
+  hidden: Boolean
+}
+
+type Videos {
+  position: Int!
+  uri: String!
+  tag: String!
+  hidden: Boolean
+}
+
+type Gallery {
+  position: Int!
+  uris: [String!]
+  tag: String!
+  hidden: Boolean
+}
+
+type VreelElements {
+  text_area: TextArea
+  videos: Videos
+  gallery: Gallery
+  services: Service
+  links: Links
+  contact: Contact
+}
+type Vreel {
+  author: String!
+  page_title: String!
+  button_uri: String
+  slides: [Slide]!
+  elements: VreelElements!
+  slide_count: Int
+}
+
+type MutationResponse {
+  succeeded: Boolean!
+  message: String!
+}
 type LocalSession {
   token: String!
 }
@@ -51,23 +194,49 @@ type ResetPasswordResponse {
   reset_token: String!
 }
 
+type EnterpriseEmployee {
+  employee: User!
+  vreel: Vreel!
+}
+
 type Query {
   user(id: String): User!
   username(username: String): User!
+  email(email: String!): User!
+  getUserByToken(token: String!): User!
   login(input: LoginInput): LocalSession!
+  slide(id: String!): Slide!
+  group(id: String!, token: String!): Group!
+  enterprise(id: String!): Enterprise!
+  enterpiseEmployee(enterpriseName: String!, employeeId: String! ): EnterpriseEmployee!
+  serverAnalytics: ServerAnalytics
+}
+
+input NewEvent {
+  name: String!
+  thumbnail: String!
+  start_time: String!
+  end_time: String!
+  description: String!
+  location: String!
+  group_id: String!
+  repeat: String!
+  link: String!
+  groups: [String!]
 }
 
 input NewUser {
   username: String!
-  first_name: String!
-  last_name: String!
+  account_type: String!
+  first_name: String
+  last_name: String
   email: String!
-  phone_number: String!
+  phone_number: String
   password: String!
-  business_address: String!
-  billing_address: String!
-  website: String!
-  job_title: String!
+  business_address: String
+  billing_address: String
+  website: String
+  job_title: String
 }
 
 input ResetPasswordInput {
@@ -88,10 +257,50 @@ input NewGroup {
   parent_group: String!
 }
 
+input CreateSlide {
+  content_type: String!
+  uri: String!
+  slide_location: Int!
+}
+
+
+
+input VreelFields {
+  field: String!
+  value: String!
+}
+input NewEnterprise {
+  name: String!
+  owner: String!
+  email: String!
+  password: String!
+}
 type Mutation {
   register(input: NewUser!): User!
+  createEvent(token: String!, input: NewEvent!): Event!
+  createEnterprise(input: NewEnterprise!): Enterprise!
   createResetPasswordRequestIntent(email: String!): ResetPasswordResponse!
-  resolveResetPasswordRequestIntent(token: String!, password: String!): ResolvedPasswordReset!
+  resolveResetPasswordRequestIntent(
+    token: String!
+    password: String!
+  ): ResolvedPasswordReset!
   createGroup(input: NewGroup): Group!
-  group(id: String!): Group!
+  createSlide(token: String!): Slide!
+
+  deleteGroup(id: String!, token: String!): MutationResponse!
+  addUserToGroup(
+    token: String!
+    groupId: String!
+    userId: String!
+  ): MutationResponse!
+  addEmployeeToEnterprise(token: String!, newUser: NewUser!): MutationResponse!
+  removeUserFromGroup(
+    token: String!
+    groupId: String!
+    member: String!
+  ): MutationResponse!
+  removeSlide(token: String!, slideId: String): MutationResponse!
+  updateVreelField(token: String!, fields: [VreelFields]): MutationResponse!
+  updateUser(token: String!, fields: [VreelFields!]): MutationResponse!
+  updateSlide(token: String, slideId: String!, data: String!): Slide!
 }

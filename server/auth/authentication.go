@@ -4,11 +4,14 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
 	"strconv"
 	"time"
 
+	"github.com/vreel/app/api/client"
 	"github.com/vreel/app/cache"
 	"github.com/vreel/app/database"
+	e "github.com/vreel/app/err"
 	"github.com/vreel/app/graph/model"
 	"github.com/vreel/app/utils"
 	"golang.org/x/crypto/bcrypt"
@@ -19,23 +22,84 @@ type PasswordResetCacheModel struct {
 	Requester string `json:"requester"`
 }
 
+func CreateNewEnterprise(ent model.NewEnterprise) (model.Enterprise, error) {
+	var enterprise model.Enterprise
+	var err error
+
+	if u, creationErr := CreateNewUser(model.NewUser{
+		Username:    ent.Name,
+		Email:       ent.Email,
+		Password:    ent.Password,
+		AccountType: "enterprise",
+	}); creationErr != nil {
+		err = creationErr
+	} else {
+		log.Println("successfully created!")
+		if r, creationErr := database.CreateEnterprise(u.ID, ent); creationErr != nil {
+			err = e.FAILED_ENTERPRISE_CREATE
+		} else {
+			if createVreelErr := database.CreateNewVreel(*r.ID); createVreelErr != nil {
+				err = e.FAILED_CREATE_VREEL
+			} else {
+				enterprise = r
+			}
+		}
+	}
+
+	return enterprise, err
+}
+
 // Create User & Validate Existence Of Conflicting Accounts
 func CreateNewUser(newUser model.NewUser) (model.User, error) {
 	var user model.User
+	var err error
 	isRegisted, registrationCheckError := database.UserIsRegistered(newUser.Email)
+	usernameIsRegistered, usernameCheckError := database.UsernameIsTaken(newUser.Username)
+
 	if registrationCheckError != nil {
-		return user, registrationCheckError
+		err = registrationCheckError
 	}
-	if !isRegisted {
+
+	if isRegisted {
+		err = e.EMAIL_IN_USE
+	}
+
+	if usernameIsRegistered {
+		err = e.USERNAME_IN_USE
+	}
+
+	if usernameCheckError != nil {
+		err = usernameCheckError
+	}
+	if !isRegisted && !usernameIsRegistered {
+		fmt.Println("running!")
 		hashedPw, hashErr := HashPassword(newUser.Password)
 		if hashErr != nil {
 			return model.User{}, hashErr
 		}
-		user, err := database.CreateUser(newUser, utils.GenerateUID(), hashedPw)
-		return user, err
+		u, oerr := database.CreateUser(newUser, utils.GenerateId(), hashedPw)
+		fmt.Printf("enterprise uid: %s", u.ID)
+		s, _ := database.CreateSlide(u.ID)
+
+		folderErr := client.CreateNewFolder(newUser.Username)
+		if folderErr != nil {
+			fmt.Println(folderErr.Error())
+		}
+		cErr := database.CreateNewVreel(u.ID)
+		if cErr == nil {
+			database.VreelAddSlide(s.ID, u.ID)
+		}
+		user = u
+		if oerr != nil {
+			err = e.FAILED_CREATE_USER
+		}
+		if cErr != nil {
+			err = e.FAILED_CREATE_VREEL
+		}
 	} else {
-		return user, errors.New("email in use")
 	}
+
+	return user, err
 
 }
 
@@ -55,7 +119,7 @@ func Login(email string, password string) (model.LocalSession, error) {
 			fmt.Println(err.Error())
 			return localSession, errors.New("incorrect password")
 		} else {
-			tkn, _ := CreateToken(user.ID)
+			tkn, _ := CreateToken(user.ID, user.AccountType)
 			localSession = model.LocalSession{
 				Token: tkn,
 			}
@@ -143,6 +207,31 @@ func UpdatePassword(token string, password string) (model.ResolvedPasswordReset,
 
 	}
 
+}
+
+func CreatePhoneVerificationIntent() {
+
+}
+
+func ResolvePhoneVerificationInput() {
+
+}
+func GetUserByToken(token string) (model.User, error) {
+	var err error
+	var user model.User
+	if claims, _, pasrseErr := ParseToken(token); pasrseErr != nil {
+		err = e.UNAUTHORIZED_ERROR
+	} else {
+		if err == nil {
+			if u, fetchErr := database.GetUser(claims.ID); fetchErr != nil {
+				err = e.USER_NOT_FOUND
+			} else {
+				user = u
+			}
+		}
+	}
+
+	return user, err
 }
 
 //Hash Passowrd To Be Stored In Database

@@ -1,0 +1,108 @@
+.vreel-edit-slides {
+  &__bg-audio__wrapper,
+  &__new-slide,
+  &__new-slide__toggle-btn {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 25px 15px;
+    p {
+      font-family: "Poppins";
+      font-weight: 600;
+      font-size: 30px;
+      line-height: 21px;
+      letter-spacing: 1px;
+      margin: 0;
+      @media only screen and (max-width: 768px) {
+        font-size: 15px;
+      }
+    }
+  }
+  &__new-slide__wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 12px;
+  }
+  &__new-slide__slide-wrapper {
+    border: #ff7a00 2px dashed;
+    padding: 5px 15px 15px;
+  }
+  &__new-slide__slide-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    font-family: "Poppins";
+    font-weight: 600;
+    font-size: 25px;
+    line-height: 21px;
+    color: #ff7a00;
+    @media only screen and (max-width: 768px) {
+      font-size: 15px;
+    }
+  }
+  &__new-slide__toggle-btn {
+    padding: 15px 5px;
+    svg {
+      font-size: x-large;
+      &:hover {
+        cursor: pointer;
+      }
+    }
+  }
+  &__new-slide__advanced-btn-wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top: 20px;
+    button {
+      width: 150px;
+    }
+  }
+  &__new-slide__media-wrapper {
+    p {
+      margin-top: 12px;
+      @media only screen and (max-width: 768px) {
+        text-align: center;
+      }
+     
+    }
+  }
+  
+  &__new-slide__time-wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 12px;
+    label {
+      margin-right: 12px;
+      font-size: 15px;
+    }
+    input {
+      width: 85px;
+      margin-right: 12px;
+      background: #e5e5e5;
+      border: none;
+      border-radius: 5px;
+      padding-left: 25px;
+      @media only screen and (max-width: 768px) {
+        width: 40px;
+      }
+    }
+    p {
+      font-size: 15px;
+    }
+    #sec {
+      margin-right: 0;
+    }
+  }
+  &__new-slide__btn-wrapper {
+    margin-top: 15px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}

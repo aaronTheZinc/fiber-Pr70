@@ -2,14 +2,14 @@ import React, { useEffect, useState } from "react";
 import { ApolloProvider } from "@apollo/client";
 import { client } from "../graphql";
 import registerUser from "../utils/registerUser";
-import RegisterForm from "../components/Register/RegisterForm";
+import RegisterForm from "../components/Auth/Register/RegisterForm";
 
 function RegisterPage(): JSX.Element {
 
   useEffect(() => {}, []);
 
   return (
-    <div className="container">
+    <div className="container py-2">
       <RegisterForm />
     </div>
   );

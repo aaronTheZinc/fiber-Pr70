@@ -1,4 +1,10 @@
 @use './reset';
 @use '../components/components.scss';
 @use './bootstrap/scss/bootstrap';
+@use "~video-react/styles/scss/video-react";
 
+body {
+    &.modal-open{
+        padding: 0 !important;
+    }
+}
