@@ -37,7 +37,7 @@ export const UppyModal = ({ setUpload }: UppyModalProps): JSX.Element => {
 
   const envType = process.env.NEXT_PUBLIC_ENVIRONMENT;
   const BASE_URL =
-    envType == "dev" ? "http://localhost:7070" : "http://dev1.vreel.page/media";
+    envType == "dev" ? "http://localhost:7070" : "https://dev1.vreel.page/media";
   console.log("[media endpoint]", BASE_URL);
   const uppy = new Uppy({
     id: "uppy",
@@ -64,7 +64,6 @@ export const UppyModal = ({ setUpload }: UppyModalProps): JSX.Element => {
 
   uppy.on("file-added", (file) => {
     setFileType(file.type);
-    alert(fileType);
   });
 
   uppy.on("progress", (progress) => {
@@ -94,7 +93,7 @@ export const UppyModal = ({ setUpload }: UppyModalProps): JSX.Element => {
     }, 5000);
   }, []);
 
-  const onClick = () => {};
+  const onClick = () => { };
   const handleClose = () => {
     setOpen(false);
   };
