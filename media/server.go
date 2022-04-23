@@ -33,6 +33,7 @@ func main() {
 	store := filestore.FileStore{
 		Path: "./uploads",
 	}
+
 	composer := tusd.NewStoreComposer()
 	store.UseIn(composer)
 	handler, err := tusd.NewHandler(tusd.Config{
