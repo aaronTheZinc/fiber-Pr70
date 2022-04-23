@@ -19,9 +19,12 @@
                 target: '#drag-drop-area'
             })
             .use(Uppy.Tus, {
-                endpoint: '/files/',
+                endpoint: 'https://media1.vreel.page/files/',
                 headers: {
                     token: token,
+                    'Access-Control-Allow-Origin': 'http://localhost:7070',
+                    "Access-Control-Allow-Headers": "*",
+                    // "Access-Control-Request-Headers": "*"
                 }
             })
         uppy.on('file-added', (file) => {
