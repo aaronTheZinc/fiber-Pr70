@@ -31,16 +31,18 @@ func AuthMiddleware(h http.Handler) http.Handler {
 
 		// 	w.WriteHeader(http.StatusUnauthorized)
 		// }
-		enableCors(&w)
+		// enableCors(&w)
 		h.ServeHTTP(w, r)
 	}))
 }
 func CORS(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Add("Access-Control-Allow-Origin", "*")
-		w.Header().Add("Access-Control-Allow-Credentials", "true")
-		w.Header().Add("Access-Control-Allow-Headers", "*")
-		w.Header().Add("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, HEAD, PATCH")
+		// w.Header().Add("Access-Control-Allow-Origin", "*")
+		// w.Header().Add("Access-Control-Allow-Credentials", "true")
+		// w.Header().Add("Access-Control-Allow-Headers", "*")
+		// w.Header().Add("Access-Control-Request-Headers", "*")
+
+		// w.Header().Add("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, HEAD, PATCH")
 
 		if r.Method == "OPTIONS" {
 			w.WriteHeader(200)

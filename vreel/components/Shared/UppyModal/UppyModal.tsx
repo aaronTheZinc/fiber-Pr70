@@ -36,8 +36,8 @@ export const UppyModal = ({ setUpload }: UppyModalProps): JSX.Element => {
   const router = useRouter();
 
   const envType = process.env.NEXT_PUBLIC_ENVIRONMENT;
-  const BASE_URL =
-    envType == "dev" ? "http://localhost:7070" : "https://dev1.vreel.page/media";
+  const BASE_URL = envType == "dev" ? "http://localhost:7070" : "https://dev1.vreel.page";
+
   console.log("[media endpoint]", BASE_URL);
   const uppy = new Uppy({
     id: "uppy",
@@ -46,7 +46,7 @@ export const UppyModal = ({ setUpload }: UppyModalProps): JSX.Element => {
     debug: false,
     restrictions: {
       maxNumberOfFiles: 1,
-      allowedFileTypes: ["image/*", "video/*"],
+      // allowedFileTypes: ["image/*", "video/*"],
     },
     // .MP4, .M4P, .M4V
   });

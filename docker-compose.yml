@@ -12,15 +12,17 @@ services:
     volumes:
       - ./pgdata:/var/lib/postgresql/data
 
-  # media:
-  #   build:
-  #     context: ./media
-  #     dockerfile: dockerfile
-  #   ports:
-  #     - "7070:7070"
-  #     - "7071:7071"
-  #   depends_on:
-  #     - server
+ 
+  media:
+    build:
+      context: ./media
+      dockerfile: dockerfile
+    ports:
+      - "7070:7070"
+      - "7071:7071"
+    depends_on:
+      - server
+
 
   server:
     build:
