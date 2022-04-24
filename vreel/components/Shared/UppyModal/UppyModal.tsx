@@ -37,7 +37,7 @@ export const UppyModal = ({ setUpload }: UppyModalProps): JSX.Element => {
 
   const envType = process.env.NEXT_PUBLIC_ENVIRONMENT;
   const BASE_URL =
-    envType == "dev" ? "http://localhost:7070" : "http://dev1.vreel.page";
+    envType == "dev" ? "http://localhost:7070" : "https://dev1.vreel.page";
   console.log("[media endpoint]", BASE_URL);
   const uppy = new Uppy({
     id: "uppy",

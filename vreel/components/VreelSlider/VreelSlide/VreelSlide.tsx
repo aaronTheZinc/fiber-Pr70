@@ -39,7 +39,7 @@ const VreelSlide = ({
   const [isFollowed, setIsFollowed] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
   const [isVideo, setIsVideo] = useState(false);
-
+  const [timeout, setTimeoutId] = useState<NodeJS.Timeout>(null);
   const auth = useAuth();
   const toggleSlideFollow = () => {
     setIsFollowed(!isFollowed);
@@ -57,6 +57,11 @@ const VreelSlide = ({
     try {
       if (currentSlide === slideId) {
         videoEl.current.play();
+        if (!isVideo) {
+          setTimeoutId(setTimeout(() => swiper.nextSlide(), 5000));
+        } else {
+          clearTimeout(timeout);
+        }
       } else {
         videoEl.current.pause();
       }
