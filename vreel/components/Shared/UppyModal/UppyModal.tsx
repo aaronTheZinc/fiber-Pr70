@@ -39,21 +39,19 @@ export const UppyModal = ({ setUpload }: UppyModalProps): JSX.Element => {
   const BASE_URL =
     envType == "dev" ? "http://localhost:7070" : "http://media1.vreel.page";
   console.log("[media endpoint]", BASE_URL);
-  const uppy = useRef(
-    new Uppy({
-      id: "uppy",
-      autoProceed: false,
-      allowMultipleUploadBatches: true,
-      debug: false,
-      restrictions: {
-        maxNumberOfFiles: 1,
-        allowedFileTypes: ["image/*", "video/*"],
-      },
-      // .MP4, .M4P, .M4V
-    })
-  );
+  const uppy = new Uppy({
+    id: "uppy",
+    autoProceed: false,
+    allowMultipleUploadBatches: true,
+    debug: false,
+    restrictions: {
+      maxNumberOfFiles: 1,
+      // allowedFileTypes: ["image/*", "video/*"],
+    },
+    // .MP4, .M4P, .M4V
+  });
 
-  uppy.current.use(Tus, {
+  uppy.use(Tus, {
     endpoint: `${BASE_URL}/files/`,
     headers: {
       token: cookies.userAuthToken ? cookies.userAuthToken : null,
@@ -64,19 +62,19 @@ export const UppyModal = ({ setUpload }: UppyModalProps): JSX.Element => {
   // uppy.use(Instagram,  { companionUrl: 'http://localhost:3020' });
   // uppy.use(Url,  { companionUrl: 'http://localhost:3020' });
 
-  uppy.current.on("file-added", (file) => {
+  uppy.on("file-added", (file) => {
     setFileType(file.type);
-    alert(fileType);
+    // alert(fileType);
   });
 
-  uppy.current.on("progress", (progress) => {
+  uppy.on("progress", (progress) => {
     // progress: integer (total progress percentage)
     if (progress === 100) {
-      uppy.current.pauseAll();
-      uppy.current.resumeAll();
+      uppy.pauseAll();
+      uppy.resumeAll();
     }
   });
-  uppy.current.on("complete", (result) => {
+  uppy.on("complete", (result) => {
     setOpen(false);
     setUpload(result.successful[0]?.uploadURL, fileType);
     console.log("response ->", result);
@@ -92,7 +90,7 @@ export const UppyModal = ({ setUpload }: UppyModalProps): JSX.Element => {
 
   useEffect(() => {
     setInterval(() => {
-      uppy.current.retryAll();
+      uppy.retryAll();
     }, 5000);
   }, []);
 
@@ -111,7 +109,7 @@ export const UppyModal = ({ setUpload }: UppyModalProps): JSX.Element => {
         Upload some music
       </button>
       <DashboardModal
-        uppy={uppy.current}
+        uppy={uppy}
         closeModalOnClickOutside
         open={open}
         onRequestClose={handleClose}
