@@ -13,8 +13,7 @@ const Social = ({ isUser, username, user }: SocialProps): JSX.Element => {
       {isUser ? (
         <>
           <h1>
-            {username && username[0].toUpperCase() + username.slice(1) + "'s"}{" "}
-            Social Links
+            {username && username[0] + username.slice(1) + "'s"} Social Links
           </h1>
           <ul
             style={{ gap: "30px", marginTop: "25px" }}

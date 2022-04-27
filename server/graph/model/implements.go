@@ -20,6 +20,8 @@ type UserModel struct {
 	Website         string         `json:"website"`
 	JobTitle        string         `json:"job_title"`
 	Groups          pq.StringArray `gorm:"type:text[]"`
+	Following       pq.StringArray `gorm:"type:text[]"`
+	Liked           pq.StringArray `gorm:"type:text[]"`
 }
 type GroupModel struct {
 	ID          string         `json:"id"`
@@ -49,12 +51,14 @@ type EventModel struct {
 }
 
 type VreelModel struct {
-	ID        string         `json:"id"`
-	Author    string         `json:"author"`
-	PageTitle string         `json:"page_title"`
-	ButtonURI *string        `json:"button_uri"`
-	Slides    pq.StringArray `gorm:"type:text[]"`
-	Elements  string         `json:"elements"`
+	ID              string         `json:"id"`
+	Author          string         `json:"author"`
+	PageTitle       string         `json:"page_title"`
+	ButtonURI       *string        `json:"button_uri"`
+	Slides          pq.StringArray `gorm:"type:text[]"`
+	Elements        string         `json:"elements"`
+	LastEdited      int            `json:"last_edited"`
+	LastSlideEdited string         `json:"last_slide_edited"`
 }
 
 type SlideModel struct {
@@ -113,6 +117,8 @@ func (c *NewUser) ToDatabaseModel() UserModel {
 		Website:         "",
 		JobTitle:        "",
 		Groups:          []string{},
+		Following:       []string{},
+		Liked:           []string{},
 	}
 
 }
@@ -124,7 +130,15 @@ func (c *NewUser) ToDatabaseModel() UserModel {
 // }
 
 func (c *UserModel) ToUser() User {
+	liked := []*string{}
+	following := []*string{}
 
+	for _, v := range c.Liked {
+		liked = append(liked, &v)
+	}
+	for _, v := range c.Following {
+		following = append(following, &v)
+	}
 	return User{
 		ID:              c.ID,
 		Username:        c.Username,
@@ -138,6 +152,8 @@ func (c *UserModel) ToUser() User {
 		Website:         c.Website,
 		JobTitle:        c.JobTitle,
 		AccountType:     c.AccountType,
+		Following:       following,
+		Liked:           liked,
 	}
 }
 
@@ -249,13 +265,40 @@ func (c VreelModel) ToVreel(slides []*Slide) (Vreel, error) {
 		err = gErr
 	}
 	return Vreel{
-		Author:    c.Author,
-		Elements:  &e,
-		PageTitle: c.PageTitle,
-		ButtonURI: c.ButtonURI,
-		Slides:    slides,
+		Author:          c.Author,
+		Elements:        &e,
+		PageTitle:       c.PageTitle,
+		ButtonURI:       c.ButtonURI,
+		Slides:          slides,
+		LastSlideEdited: &c.LastSlideEdited,
+		LastEdited:      &c.LastEdited,
 	}, err
 }
+
+// func (c Vreel) ToVreelModel(slides []*Slide) (Vreel, error) {
+// 	var err error
+// 	var e VreelElements
+
+// 	// for _, sl := range c.Slides {
+// 	// 	t, e := database.GetSlide(sl)
+// 	// 	if e != nil {
+// 	// 		err = e
+// 	// 	}
+// 	// 	s = append(s, &t)
+// 	// }
+// 	gErr := json.Unmarshal([]byte(c.Elements), &e)
+
+// 	if gErr != nil {
+// 		err = gErr
+// 	}
+// 	return Vreel{
+// 		Author:    c.Author,
+// 		Elements:  &e,
+// 		PageTitle: c.PageTitle,
+// 		ButtonURI: c.ButtonURI,
+// 		Slides:    slides,
+// 	}, err
+// }
 
 func CreateNewSlideModel() SlideModel {
 	n := 0

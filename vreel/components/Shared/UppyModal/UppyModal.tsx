@@ -29,6 +29,7 @@ interface ModalProps {
 interface UppyModalProps {
   setUpload: (url: string, fileType: string) => void;
 }
+
 export const UppyModal = ({ setUpload }: UppyModalProps): JSX.Element => {
   const [cookies, _, removeCookies] = useCookies(["userAuthToken"]);
   const [fileType, setFileType] = useState<string>();
@@ -57,36 +58,15 @@ export const UppyModal = ({ setUpload }: UppyModalProps): JSX.Element => {
       token: cookies.userAuthToken ? cookies.userAuthToken : null,
     },
   });
+
   // uppy.use(ScreenCapture)
   // uppy.use(Dropbox, { companionUrl: 'http://localhost:3020' })
   // uppy.use(Instagram,  { companionUrl: 'http://localhost:3020' });
   // uppy.use(Url,  { companionUrl: 'http://localhost:3020' });
 
-  uppy.on("file-added", (file) => {
-    setFileType(file.type);
-    // alert(fileType);
-  });
-
-  uppy.on("progress", (progress) => {
-    // progress: integer (total progress percentage)
-    if (progress === 100) {
-      uppy.pauseAll();
-      uppy.resumeAll();
-    }
-  });
-  uppy.on("complete", (result) => {
-    setOpen(false);
-    setUpload(result.successful[0]?.uploadURL, fileType);
-    console.log("response ->", result);
-
-    // console.log('Upload complete! We’ve uploaded these files:', result.successful)
-  });
-
   const { username } = router.query;
 
-  const capitilizedUsername = username
-    ? username[0].toUpperCase() + username.slice(1)
-    : null;
+  const capitilizedUsername = username ? username[0] + username.slice(1) : null;
 
   useEffect(() => {
     setInterval(() => {

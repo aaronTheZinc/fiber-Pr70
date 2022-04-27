@@ -58,7 +58,6 @@ const VreelSlide = ({
       if (currentSlide === slideId) {
         videoEl.current.play();
         if (!isVideo) {
-          setTimeoutId(setTimeout(() => swiper.nextSlide(), 5000));
         } else {
           clearTimeout(timeout);
         }
@@ -184,7 +183,7 @@ const VreelSlide = ({
             data-bs-toggle="tooltip"
             data-bs-placement="top"
             title="Toggle Slide Sound"
-            src="/slide-sound-mute-icon.svg"
+            src="/slide-sound-mute-icon.png"
             alt="slide-sound-mute-icon"
             className="vreel-slide__icon vreel-slide__icon-sound"
           />
@@ -194,7 +193,7 @@ const VreelSlide = ({
             data-bs-toggle="tooltip"
             data-bs-placement="top"
             title="Toggle Slide Sound"
-            src="/slide-sound-icon.svg"
+            src="/slide-sound-icon.png"
             alt="slide-sound-icon"
             className="vreel-slide__icon vreel-slide__icon-sound"
           />
@@ -207,7 +206,7 @@ const VreelSlide = ({
               data-bs-toggle="tooltip"
               data-bs-placement="top"
               title="Call Me at 773-445-3322"
-              src="/call-icon.svg"
+              src="/call-icon.png"
               alt="call-icon"
               className="vreel-slide__icon"
             />
@@ -226,7 +225,7 @@ const VreelSlide = ({
               data-bs-toggle="tooltip"
               data-bs-placement="top"
               title="Download My Vcard"
-              src="/add-to-contact-icon.svg"
+              src="/add-to-contact-icon.png"
               alt="add-to-contact-icon"
               className="vreel-slide__icon"
             />
@@ -247,7 +246,7 @@ const VreelSlide = ({
               data-bs-toggle="tooltip"
               data-bs-placement="top"
               title="Add this Slide to your Feed"
-              src="/follow-icon.svg"
+              src="/follow-icon.png"
               alt="follow-icon"
               className="vreel-slide__icon"
             />

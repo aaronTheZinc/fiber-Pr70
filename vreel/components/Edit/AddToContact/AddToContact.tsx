@@ -13,7 +13,7 @@ const AddToContact = (): JSX.Element => {
   const [userFormData, setUserFormData] = useState<FormDataType>({
     email: "",
     name: "",
-    phone: ""
+    phone: "",
   });
   const [email, setEmail] = useState<string>("");
   const [name, setName] = useState<string>("");
@@ -21,7 +21,7 @@ const AddToContact = (): JSX.Element => {
 
   const router = useRouter();
 
-  const { username } = router.query
+  const { username } = router.query;
   const submitForm = async (e) => {
     try {
       e.preventDefault();
@@ -29,7 +29,7 @@ const AddToContact = (): JSX.Element => {
       const { email, name, phone } = userFormData;
 
       const response = await addToContact(email, name, phone);
-      
+
       console.log(response);
 
       // console.log("data", data);
@@ -40,12 +40,18 @@ const AddToContact = (): JSX.Element => {
 
   return (
     <div
-      style={{ height: "100%", background: '#000', padding: '30px 0px 40px' }}
+      style={{ height: "100%", background: "#000", padding: "30px 0px 40px" }}
       className="d-flex flex-column justify-content-center align-items-center vreel-add-to-contact-form"
     >
       <img src="/vreel-logo.png" alt="Vreel Logo" width="100" height="100" />
-      <h1>Join {username ? `${username[0].toUpperCase() + username.slice(1) + "'s"}` : 'Our'} Contact List</h1>
-      <form onSubmit={submitForm} className="vreel-add-to-contact-form__wrapper">
+      <h1>
+        Join {username ? `${username[0] + username.slice(1) + "'s"}` : "Our"}{" "}
+        Contact List
+      </h1>
+      <form
+        onSubmit={submitForm}
+        className="vreel-add-to-contact-form__wrapper"
+      >
         <PrimaryInput
           setValue={setName}
           placeHolder="Name"
@@ -62,7 +68,7 @@ const AddToContact = (): JSX.Element => {
           setValue={setPhone}
           placeHolder="Phone (123-456-7890)"
           value={phone}
-          pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" 
+          pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
           type="tel"
         />
 
@@ -74,12 +80,11 @@ const AddToContact = (): JSX.Element => {
           <PrimaryButton
             type="submit"
             action={() => {
-              if (!email)
-                return alert("Email is Required");
+              if (!email) return alert("Email is Required");
               setUserFormData({
                 email,
                 name,
-                phone
+                phone,
               });
             }}
             title="Add To Contact List"
