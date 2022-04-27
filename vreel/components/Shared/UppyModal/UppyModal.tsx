@@ -37,8 +37,10 @@ export const UppyModal = ({ setUpload }: UppyModalProps): JSX.Element => {
   const router = useRouter();
 
   const envType = process.env.NEXT_PUBLIC_ENVIRONMENT;
+  
   const BASE_URL =
     envType == "dev" ? "http://localhost:7070" : "https://dev1.vreel.page";
+
   console.log("[media endpoint]", BASE_URL);
   const uppy = new Uppy({
     id: "uppy",
@@ -64,6 +66,26 @@ export const UppyModal = ({ setUpload }: UppyModalProps): JSX.Element => {
   // uppy.use(Instagram,  { companionUrl: 'http://localhost:3020' });
   // uppy.use(Url,  { companionUrl: 'http://localhost:3020' });
 
+
+  uppy.on("file-added", (file) => {
+    setFileType(file.type);
+  });
+
+  uppy.on("progress", (progress) => {
+    // progress: integer (total progress percentage)
+    if (progress === 100) {
+      uppy.pauseAll();
+      uppy.resumeAll();
+    }
+  });
+  uppy.on("complete", (result) => {
+    setOpen(false);
+    setUpload(result.successful[0]?.uploadURL, fileType);
+    console.log("response ->", result);
+
+    // console.log('Upload complete! We’ve uploaded these files:', result.successful)
+  });
+
   const { username } = router.query;
 
   const capitilizedUsername = username ? username[0] + username.slice(1) : null;
@@ -74,7 +96,7 @@ export const UppyModal = ({ setUpload }: UppyModalProps): JSX.Element => {
     }, 5000);
   }, []);
 
-  const onClick = () => {};
+  const onClick = () => { };
   const handleClose = () => {
     setOpen(false);
   };
