@@ -2,7 +2,6 @@ package database
 
 import (
 	"errors"
-	"fmt"
 	"log"
 
 	e "github.com/vreel/app/err"
@@ -96,7 +95,6 @@ func VreelAddSlide(slideId, userId string) error {
 func VreelRemoveSlide(vreelId, slideId string) error {
 	var err error
 	v := model.VreelModel{}
-	fmt.Printf("brooo %s ---- %s", vreelId, slideId)
 	if findErr := db.Where("id = ?", vreelId).First(&v).Error; findErr != nil {
 		err = e.VREEL_NOT_FOUND
 	} else {
@@ -108,6 +106,14 @@ func VreelRemoveSlide(vreelId, slideId string) error {
 	}
 
 	return err
+}
+
+//returns id to most recently edite / created slide
+func GetLatestVreelSlideId(id string) (model.Vreel, error) {
+	vreel := model.VreelModel{}
+	err := db.Model(model.VreelModel{}).Where("id = ?", id).Select("recent_slide", "time_edited").Find(&vreel).Error
+	v, _ := vreel.ToVreel([]*model.Slide{})
+	return v, err
 }
 
 //create a function called CreateVreel that accepts a title as a string and saves to gorm database

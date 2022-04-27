@@ -42,9 +42,7 @@ export const VreelModal = ({
 
   const { username } = router.query;
 
-  const capitilizedUsername = username
-    ? username[0].toUpperCase() + username.slice(1)
-    : null;
+  const capitilizedUsername = username ? username[0] + username.slice(1) : null;
 
   useEffect(() => {}, []);
 

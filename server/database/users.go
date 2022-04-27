@@ -36,6 +36,7 @@ func GetUser(id string) (model.User, error) {
 	} else {
 		r.Vreel = &v
 	}
+	//add query for fetching news feed
 
 	return r, err
 }

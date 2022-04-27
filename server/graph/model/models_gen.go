@@ -227,23 +227,26 @@ type Title struct {
 }
 
 type User struct {
-	ID              string   `json:"id"`
-	AccountType     string   `json:"account_type"`
-	Username        string   `json:"username"`
-	FirstName       string   `json:"first_name"`
-	LastName        string   `json:"last_name"`
-	Prefix          string   `json:"prefix"`
-	Suffix          string   `json:"suffix"`
-	Email           string   `json:"email"`
-	PhoneNumber     string   `json:"phone_number"`
-	Password        string   `json:"password"`
-	BusinessAddress string   `json:"business_address"`
-	BillingAddress  string   `json:"billing_address"`
-	Website         string   `json:"website"`
-	JobTitle        string   `json:"job_title"`
-	Groups          []*Group `json:"groups"`
-	Vreel           *Vreel   `json:"vreel"`
-	Files           *Files   `json:"files"`
+	ID              string    `json:"id"`
+	AccountType     string    `json:"account_type"`
+	Liked           []*string `json:"liked"`
+	Following       []*string `json:"following"`
+	Username        string    `json:"username"`
+	FirstName       string    `json:"first_name"`
+	LastName        string    `json:"last_name"`
+	Prefix          string    `json:"prefix"`
+	Suffix          string    `json:"suffix"`
+	Email           string    `json:"email"`
+	PhoneNumber     string    `json:"phone_number"`
+	Password        string    `json:"password"`
+	BusinessAddress string    `json:"business_address"`
+	BillingAddress  string    `json:"billing_address"`
+	Website         string    `json:"website"`
+	JobTitle        string    `json:"job_title"`
+	Groups          []*Group  `json:"groups"`
+	Vreel           *Vreel    `json:"vreel"`
+	Files           *Files    `json:"files"`
+	News            []*Slide  `json:"news"`
 }
 
 type Videos struct {
@@ -254,12 +257,14 @@ type Videos struct {
 }
 
 type Vreel struct {
-	Author     string         `json:"author"`
-	PageTitle  string         `json:"page_title"`
-	ButtonURI  *string        `json:"button_uri"`
-	Slides     []*Slide       `json:"slides"`
-	Elements   *VreelElements `json:"elements"`
-	SlideCount *int           `json:"slide_count"`
+	Author          string         `json:"author"`
+	PageTitle       string         `json:"page_title"`
+	ButtonURI       *string        `json:"button_uri"`
+	Slides          []*Slide       `json:"slides"`
+	Elements        *VreelElements `json:"elements"`
+	SlideCount      *int           `json:"slide_count"`
+	LastSlideEdited *string        `json:"LastSlideEdited"`
+	LastEdited      *int           `json:"LastEdited"`
 }
 
 type VreelElements struct {
