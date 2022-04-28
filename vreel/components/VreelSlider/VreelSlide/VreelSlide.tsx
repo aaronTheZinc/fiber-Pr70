@@ -114,6 +114,7 @@ const VreelSlide = ({
             ref={videoEl}
             className="vreel-slide__background-video"
             autoPlay
+
             muted={isMuted}
             playsInline
             onEnded={(e) => {

@@ -69,7 +69,7 @@ export default async function handler(req: Request, res: Response) {
 
       res.send(vCard.getFormattedString());
     } catch (e) {
-      res.json(e);
+      res.status(500).json(e);
     }
   }
 }
