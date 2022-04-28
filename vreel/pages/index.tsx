@@ -31,12 +31,12 @@ export async function getStaticProps() {
   // console.log("videos", data);
   const client = createClient(process.env.NEXT_PUBLIC_PEXELS_API_KEY);
 
-  // const videos = await client.videos.search({
-  //   query: "waterfalls",
-  //   per_page: 4,
-  // });
+  const videos = await client.videos.search({
+    query: "waterfalls",
+    per_page: 4,
+  });
 
   return {
-    props: { data: null },
+    props: { data: videos },
   };
 }
