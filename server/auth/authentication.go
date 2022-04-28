@@ -194,7 +194,7 @@ func UpdatePassword(token string, password string) (model.ResolvedPasswordReset,
 				err = set_err
 				resolvedPasswordReset = model.ResolvedPasswordReset{
 					Succeeded: false,
-					Message:   "failed to update passwor.",
+					Message:   "failed to update password.",
 				}
 				return resolvedPasswordReset, err
 			}

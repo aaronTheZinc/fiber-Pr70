@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/joho/godotenv"
@@ -50,8 +51,9 @@ func main() {
 	// http://localhost:8080/files
 	http.Handle("/files/", middleware.AuthMiddleware(http.StripPrefix("/files/", handler)))
 	http.HandleFunc("/ui", UIHandler)
-
+	log.Println("Media Server Started!")
 	err = http.ListenAndServe(":7070", nil)
+
 	if err != nil {
 		panic(fmt.Errorf("Unable to listen: %s", err))
 	}

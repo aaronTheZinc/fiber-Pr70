@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 )
 
 func enableCors(w *http.ResponseWriter) {
@@ -36,7 +37,18 @@ func AuthMiddleware(h http.Handler) http.Handler {
 	}))
 }
 func CORS(h http.Handler) http.Handler {
+	var env string = os.Getenv("ENV")
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if env == "dev" && env != "" {
+
+			w.Header().Add("Access-Control-Allow-Origin", "*")
+			w.Header().Add("Access-Control-Allow-Credentials", "true")
+			w.Header().Add("Access-Control-Allow-Headers", "*")
+			w.Header().Add("Access-Control-Request-Headers", "*")
+
+			w.Header().Add("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, HEAD, PATCH")
+
+		}
 		// w.Header().Add("Access-Control-Allow-Origin", "*")
 		// w.Header().Add("Access-Control-Allow-Credentials", "true")
 		// w.Header().Add("Access-Control-Allow-Headers", "*")

@@ -33,7 +33,7 @@ const VreelSlide = ({
   useEffect(() => {
     try {
       videoEl.current.defaultMuted = true;
-    } catch (e) {}
+    } catch (e) { }
   });
 
   const [isFollowed, setIsFollowed] = useState(false);
@@ -64,7 +64,7 @@ const VreelSlide = ({
       } else {
         videoEl.current.pause();
       }
-    } catch (e) {}
+    } catch (e) { }
   }, [currentSlide]);
 
   useEffect(() => {
@@ -146,12 +146,11 @@ const VreelSlide = ({
             <>
               <a
                 className="vreel-slide__btn"
-                href="#"
                 onClick={(e) => {
-                  console.log("auth", auth.user);
+                  window.open((slide as Slide)?.cta?.link_url, "_replace")
                 }}
               >
-                {username}'s Button
+                {(slide as Slide)?.cta?.link_header}
               </a>
               <a className="vreel-slide__btn" href="#">
                 {username} choose a url
@@ -284,7 +283,7 @@ const VreelSlide = ({
         ref={audioEl}
         id="vreelBackgroundAudio"
         loop={true}
-        // src="/background-vreel.mp3"
+      // src="/background-vreel.mp3"
       ></audio>
     </section>
   );

@@ -173,6 +173,7 @@ type VreelElements {
 }
 type Vreel {
   author: String!
+  logo_uri: String
   page_title: String!
   button_uri: String
   slides: [Slide]!

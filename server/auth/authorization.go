@@ -325,60 +325,60 @@ func AuthorizeEditSlide(token, slideId, data string) (model.Slide, error) {
 }
 
 // add and log like
-func AuthorizeSlideLike(slideId string, token string) (model.MutationResponse, error) {
-	var err error
-	var r model.MutationResponse
+// func AuthorizeSlideLike(slideId string, token string) (model.MutationResponse, error) {
+// 	var err error
+// 	var r model.MutationResponse
 
-	claims, isAuth, parseErr := ParseToken(token)
-	userId := claims.ID
+// 	claims, isAuth, parseErr := ParseToken(token)
+// 	userId := claims.ID
 
-	if isAuth && parseErr == nil {
-	} else {
-		err = e.UNAUTHORIZED_ERROR
-	}
+// 	if isAuth && parseErr == nil {
+// 	} else {
+// 		err = e.UNAUTHORIZED_ERROR
+// 	}
 
-	return r, err
-}
+// 	return r, err
+// }
 
-func AuthorizeSlideRemoveLike(slideId, token string) (model.MutationResponse, error) {
-	var err error
-	var r model.MutationResponse
+// func AuthorizeSlideRemoveLike(slideId, token string) (model.MutationResponse, error) {
+// 	var err error
+// 	var r model.MutationResponse
 
-	claims, isAuth, parseErr := ParseToken(token)
+// 	claims, isAuth, parseErr := ParseToken(token)
 
-	if isAuth && parseErr == nil {
+// 	if isAuth && parseErr == nil {
 
-	} else {
-		err = e.UNAUTHORIZED_ERROR
-	}
-	return r, err
-}
-func AuthorizeFollowVreel(vreelId, token string) (model.MutationResponse, error) {
-	var err error
-	var r model.MutationResponse
+// 	} else {
+// 		err = e.UNAUTHORIZED_ERROR
+// 	}
+// 	return r, err
+// }
+// func AuthorizeFollowVreel(vreelId, token string) (model.MutationResponse, error) {
+// 	var err error
+// 	var r model.MutationResponse
 
-	claims, isAuth, parseErr := ParseToken(token)
-	userId := claims.ID
+// 	claims, isAuth, parseErr := ParseToken(token)
+// 	userId := claims.ID
 
-	if isAuth && parseErr == nil {
+// 	if isAuth && parseErr == nil {
 
-	} else {
-		err = e.UNAUTHORIZED_ERROR
-	}
-	return r, err
-}
+// 	} else {
+// 		err = e.UNAUTHORIZED_ERROR
+// 	}
+// 	return r, err
+// }
 
-func AuthorizeUnfollowVreel(vreelId, token string) (model.MutationResponse, error) {
-	var err error
-	var r model.MutationResponse
+// func AuthorizeUnfollowVreel(vreelId, token string) (model.MutationResponse, error) {
+// 	var err error
+// 	var r model.MutationResponse
 
-	claims, isAuth, parseErr := ParseToken(token)
-	userId := claims.ID
+// 	claims, isAuth, parseErr := ParseToken(token)
+// 	userId := claims.ID
 
-	if isAuth && parseErr == nil {
+// 	if isAuth && parseErr == nil {
 
-	} else {
-		err = e.UNAUTHORIZED_ERROR
-	}
-	return r, err
-}
+// 	} else {
+// 		err = e.UNAUTHORIZED_ERROR
+// 	}
+// 	return r, err
+// }
