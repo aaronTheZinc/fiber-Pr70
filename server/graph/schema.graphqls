@@ -180,7 +180,7 @@ type Vreel {
   elements: VreelElements!
   slide_count: Int
   LastSlideEdited: String
-  LastEdited: Int
+  TimeLastEdited: Int
 }
 
 type MutationResponse {

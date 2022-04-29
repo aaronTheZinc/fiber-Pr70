@@ -258,13 +258,14 @@ type Videos struct {
 
 type Vreel struct {
 	Author          string         `json:"author"`
+	LogoURI         *string        `json:"logo_uri"`
 	PageTitle       string         `json:"page_title"`
 	ButtonURI       *string        `json:"button_uri"`
 	Slides          []*Slide       `json:"slides"`
 	Elements        *VreelElements `json:"elements"`
 	SlideCount      *int           `json:"slide_count"`
 	LastSlideEdited *string        `json:"LastSlideEdited"`
-	LastEdited      *int           `json:"LastEdited"`
+	TimeLastEdited  *int           `json:"TimeLastEdited"`
 }
 
 type VreelElements struct {

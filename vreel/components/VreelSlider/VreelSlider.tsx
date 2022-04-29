@@ -64,7 +64,7 @@ export const VreelSlider = ({
             />
           </SwiperSlide>
         ))
-        : [{ link: "/waterfall.mp4" }, { link: "/waterfall.mp4" }]?.map((video, idx) => (
+        : [{ link: "/waterfall.mp4" }, { link: "/waterfall2.mp4" }]?.map((video, idx) => (
           <SwiperSlide key={idx}>
             <VreelSlide
               username={false}

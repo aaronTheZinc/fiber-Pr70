@@ -109,11 +109,11 @@ func VreelRemoveSlide(vreelId, slideId string) error {
 }
 
 //returns id to most recently edite / created slide
-func GetLatestVreelSlideId(id string) (model.Vreel, error) {
+func GetLatestVreelSlideId(id string) (string, int, error) {
 	vreel := model.VreelModel{}
 	err := db.Model(model.VreelModel{}).Where("id = ?", id).Select("recent_slide", "time_edited").Find(&vreel).Error
 	v, _ := vreel.ToVreel([]*model.Slide{})
-	return v, err
+	return *v.LastSlideEdited, vreel.TimeLastEdited, err
 }
 
 //create a function called CreateVreel that accepts a title as a string and saves to gorm database

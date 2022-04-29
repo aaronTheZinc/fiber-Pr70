@@ -274,11 +274,12 @@ type ComplexityRoot struct {
 		Author          func(childComplexity int) int
 		ButtonURI       func(childComplexity int) int
 		Elements        func(childComplexity int) int
-		LastEdited      func(childComplexity int) int
 		LastSlideEdited func(childComplexity int) int
+		LogoURI         func(childComplexity int) int
 		PageTitle       func(childComplexity int) int
 		SlideCount      func(childComplexity int) int
 		Slides          func(childComplexity int) int
+		TimeLastEdited  func(childComplexity int) int
 	}
 
 	VreelElements struct {
@@ -1499,19 +1500,19 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Vreel.Elements(childComplexity), true
 
-	case "Vreel.LastEdited":
-		if e.complexity.Vreel.LastEdited == nil {
-			break
-		}
-
-		return e.complexity.Vreel.LastEdited(childComplexity), true
-
 	case "Vreel.LastSlideEdited":
 		if e.complexity.Vreel.LastSlideEdited == nil {
 			break
 		}
 
 		return e.complexity.Vreel.LastSlideEdited(childComplexity), true
+
+	case "Vreel.logo_uri":
+		if e.complexity.Vreel.LogoURI == nil {
+			break
+		}
+
+		return e.complexity.Vreel.LogoURI(childComplexity), true
 
 	case "Vreel.page_title":
 		if e.complexity.Vreel.PageTitle == nil {
@@ -1533,6 +1534,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Vreel.Slides(childComplexity), true
+
+	case "Vreel.TimeLastEdited":
+		if e.complexity.Vreel.TimeLastEdited == nil {
+			break
+		}
+
+		return e.complexity.Vreel.TimeLastEdited(childComplexity), true
 
 	case "VreelElements.contact":
 		if e.complexity.VreelElements.Contact == nil {
@@ -1815,13 +1823,14 @@ type VreelElements {
 }
 type Vreel {
   author: String!
+  logo_uri: String
   page_title: String!
   button_uri: String
   slides: [Slide]!
   elements: VreelElements!
   slide_count: Int
   LastSlideEdited: String
-  LastEdited: Int
+  TimeLastEdited: Int
 }
 
 type MutationResponse {
@@ -7823,6 +7832,38 @@ func (ec *executionContext) _Vreel_author(ctx context.Context, field graphql.Col
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Vreel_logo_uri(ctx context.Context, field graphql.CollectedField, obj *model.Vreel) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Vreel",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LogoURI, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Vreel_page_title(ctx context.Context, field graphql.CollectedField, obj *model.Vreel) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -8024,7 +8065,7 @@ func (ec *executionContext) _Vreel_LastSlideEdited(ctx context.Context, field gr
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Vreel_LastEdited(ctx context.Context, field graphql.CollectedField, obj *model.Vreel) (ret graphql.Marshaler) {
+func (ec *executionContext) _Vreel_TimeLastEdited(ctx context.Context, field graphql.CollectedField, obj *model.Vreel) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -8042,7 +8083,7 @@ func (ec *executionContext) _Vreel_LastEdited(ctx context.Context, field graphql
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.LastEdited, nil
+		return obj.TimeLastEdited, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -11183,6 +11224,8 @@ func (ec *executionContext) _Vreel(ctx context.Context, sel ast.SelectionSet, ob
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "logo_uri":
+			out.Values[i] = ec._Vreel_logo_uri(ctx, field, obj)
 		case "page_title":
 			out.Values[i] = ec._Vreel_page_title(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -11204,8 +11247,8 @@ func (ec *executionContext) _Vreel(ctx context.Context, sel ast.SelectionSet, ob
 			out.Values[i] = ec._Vreel_slide_count(ctx, field, obj)
 		case "LastSlideEdited":
 			out.Values[i] = ec._Vreel_LastSlideEdited(ctx, field, obj)
-		case "LastEdited":
-			out.Values[i] = ec._Vreel_LastEdited(ctx, field, obj)
+		case "TimeLastEdited":
+			out.Values[i] = ec._Vreel_TimeLastEdited(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}

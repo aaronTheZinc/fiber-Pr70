@@ -57,7 +57,7 @@ type VreelModel struct {
 	ButtonURI       *string        `json:"button_uri"`
 	Slides          pq.StringArray `gorm:"type:text[]"`
 	Elements        string         `json:"elements"`
-	LastEdited      int            `json:"last_edited"`
+	TimeLastEdited  int            `json:"time_last_edited"`
 	LastSlideEdited string         `json:"last_slide_edited"`
 }
 
@@ -271,7 +271,7 @@ func (c VreelModel) ToVreel(slides []*Slide) (Vreel, error) {
 		ButtonURI:       c.ButtonURI,
 		Slides:          slides,
 		LastSlideEdited: &c.LastSlideEdited,
-		LastEdited:      &c.LastEdited,
+		TimeLastEdited:  &c.TimeLastEdited,
 	}, err
 }
 

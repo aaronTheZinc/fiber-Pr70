@@ -1,17 +1,52 @@
 package news
 
 import (
+	"log"
 	"sync"
 
 	"github.com/vreel/app/database"
 	"github.com/vreel/app/graph/model"
 )
 
+//used to structure slide and last edited time
+type SlideFragment struct {
+	Slide      model.Slide
+	LastEdited int
+}
+
+type SlideFragments struct {
+	Fragments []SlideFragment
+}
+
+//Sort Fragments and return Model.Slie (bubble sort)
+func (f SlideFragments) Sort() []*model.Slide {
+	isDone := false
+	fragments := f.Fragments
+	slides := []*model.Slide{}
+	for !isDone {
+		isDone = true
+		var i = 0
+		for i < len(fragments)-1 {
+			if fragments[i].LastEdited > fragments[i+1].LastEdited {
+				fragments[i], fragments[i+1] = fragments[i+1], fragments[i]
+				isDone = false
+			}
+			i++
+		}
+	}
+	for _, v := range fragments {
+		o := &v.Slide
+		slides = append(slides, o)
+	}
+
+	return slides
+
+}
+
 func CreateNewsFeed(userId string) ([]*model.Slide, error) {
 	var err error
-	var newsSlide []*model.Slide
 	//contains last edited slide and time edited
-	vreels := []model.Vreel{}
+	fragments := SlideFragments{}
 	if user, fetchErr := database.GetUser(userId); fetchErr == nil {
 		followedVreels := user.Following
 		wg := sync.WaitGroup{}
@@ -20,8 +55,15 @@ func CreateNewsFeed(userId string) ([]*model.Slide, error) {
 			wg.Add(1)
 			go func() {
 				defer wg.Done()
-				if vreel, f := database.GetLatestVreelSlideId(o); f == nil {
-					vreels = append(vreels, vreel)
+				if slideId, lastEditedTime, f := database.GetLatestVreelSlideId(o); f == nil {
+					if slide, g := database.GetSlide(slideId); g == nil {
+						fragments.Fragments = append(fragments.Fragments, SlideFragment{slide, lastEditedTime})
+
+					} else {
+						log.Printf("[Failed To Retrieve Slide]: %s ", slideId)
+						return
+					}
+
 				} else {
 					err = f
 				}
@@ -32,26 +74,6 @@ func CreateNewsFeed(userId string) ([]*model.Slide, error) {
 	} else {
 		err = fetchErr
 	}
-	// database.GetSlides()
-	return newsSlide, err
+	// database.Getfragments()
+	return fragments.Sort(), err
 }
-
-//bubble sort
-// func SequenceSlides(model.Vreel) []model.Slide {
-// 	var n = []int{1, 39, 2, 9, 7, 54, 11}
-
-// 	var isDone = false
-
-// 	for !isDone {
-// 		isDone = true
-// 		var i = 0
-// 		for i < len(n)-1 {
-// 			if n[i] > n[i+1] {
-// 				n[i], n[i+1] = n[i+1], n[i]
-// 				isDone = false
-// 			}
-// 			i++
-// 		}
-// 	}
-
-// }
