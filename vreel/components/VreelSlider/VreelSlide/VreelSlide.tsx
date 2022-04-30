@@ -175,7 +175,7 @@ const VreelSlide = ({
         alt="down arrow"
         className="vreel-slide__down-arrow"
       />
-      <div className="vreel-slide__left-icons__wrapper">
+      <div style={{ marginBottom: "1pc" }} className="vreel-slide__left-icons__wrapper">
         <VreelModal icon="/background-credit-icon.svg" />
         {isMuted ? (
           <img
@@ -253,7 +253,7 @@ const VreelSlide = ({
           )}
         </div>
 
-        <div className="bottom">
+        <div style={{ marginBottom: "1pc" }} className="bottom">
           <VreelModal isSocial={true} icon="/share-icon.svg" />
           {isLiked ? (
             <img

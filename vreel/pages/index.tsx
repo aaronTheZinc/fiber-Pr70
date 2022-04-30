@@ -29,14 +29,14 @@ export async function getStaticProps() {
   // const res = await fetch(`${BASE_URL}/api/pexels`);
   // const data = await res.json();
   // console.log("videos", data);
-  const client = createClient(process.env.NEXT_PUBLIC_PEXELS_API_KEY);
+  // const client = createClient(process.env.NEXT_PUBLIC_PEXELS_API_KEY);
 
-  const videos = await client.videos.search({
-    query: "waterfalls",
-    per_page: 4,
-  });
+  // const videos = await client.videos.search({
+  //   query: "waterfalls",
+  //   per_page: 4,
+  // });
 
   return {
-    props: { data: videos },
+    props: { data: [] },
   };
 }
