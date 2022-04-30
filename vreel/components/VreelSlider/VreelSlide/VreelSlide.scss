@@ -7,6 +7,7 @@
     justify-content: flex-end;
     padding-bottom: 60px;
   }
+
   &__background-img {
     position: absolute;
     height: 100%;
@@ -18,7 +19,8 @@
     transform: translate(-50%, -50%);
     z-index: 1;
   }
-  &__background-video{
+
+  &__background-video {
     display: block;
     position: absolute;
     height: 100%;
@@ -29,15 +31,17 @@
     transform: translate(-50%, -50%);
     z-index: 1;
   }
+
   &__background-video__yt {
     position: relative;
     padding-bottom: 56.25%;
     /* 16:9 */
     padding-top: 25px;
     height: 0;
-    &-inner {
-    }
+
+    &-inner {}
   }
+
   &__background-video__yt iframe {
     position: absolute;
     top: 0;
@@ -51,6 +55,7 @@
     //   width: 177.78vh;
     // }
   }
+
   &__overlay {
     position: absolute;
     top: 0;
@@ -60,6 +65,7 @@
     background: rgba(0, 0, 0, 0.25);
     z-index: 1;
   }
+
   &__text-wrapper {
     position: relative;
     z-index: 2;
@@ -70,10 +76,12 @@
     margin: 0 auto;
     text-align: center;
     max-width: 90vw;
+
     @media only screen and (max-width: 768px) {
       max-width: 300px;
     }
   }
+
   &__heading-text {
     font-family: Poppins;
     font-weight: 600;
@@ -81,26 +89,31 @@
     line-height: 35px;
     padding-bottom: 12px;
     text-transform: uppercase;
+
     @media only screen and (max-width: 768px) {
       font-size: 1.6rem;
     }
   }
+
   &__text {
     font-family: Poppins;
     font-weight: 600;
     font-size: 18px;
     line-height: 21px;
     text-transform: uppercase;
+
     @media only screen and (max-width: 768px) {
       font-size: .7rem;
     }
   }
+
   &__btn-wrapper {
     display: flex;
     flex-direction: row;
     max-width: 80%;
     gap: 12px;
   }
+
   &__btn {
     font-family: Poppins;
     display: flex;
@@ -119,27 +132,33 @@
     text-decoration: none;
     color: #000;
     transition: all 0.2s ease-in-out;
+
     @media only screen and (max-width: 768px) {
       font-size: 10px;
     }
+
     &:hover {
       background: rgba(255, 255, 255, 0.4);
       cursor: pointer;
       color: inherit;
     }
   }
+
   &__down-arrow {
     position: absolute;
     bottom: -20px;
-    height: 35px;
-    width: 200px;
+    height: 30px;
+    width: 100px;
     margin: 0 auto;
     z-index: 1;
     left: 50%;
+    margin-bottom: 1pc;
     transform: translate(-50%, -50%);
   }
+
   &__icon {
     width: 30px;
+
     &-sound {
       :hover {
         cursor: pointer;
@@ -157,21 +176,26 @@
     flex-direction: column;
     gap: 15px;
   }
+
   &__right-icons__wrapper {
     position: absolute;
     cursor: pointer;
     z-index: 1;
     top: 45px;
     right: 5px;
+
     .top,
     .bottom {
       display: flex;
       flex-direction: column;
       gap: 15px;
     }
+
     .bottom {
       position: fixed;
       bottom: 0;
     }
   }
+
+
 }
