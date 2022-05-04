@@ -36,6 +36,7 @@ const Header = (): JSX.Element => {
           onClick={() => router.push("/")}
           src="/logo.svg"
           alt="vreel logo"
+          style={{ margin: "2pc" }}
           className="vreel-header__logo"
         />
         <div className="vreel-header__nav-items__wrapper">

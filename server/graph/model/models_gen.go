@@ -8,6 +8,18 @@ type Advanced struct {
 	LinkType   string `json:"link_type"`
 }
 
+type Analytics struct {
+	ID             string `json:"id"`
+	Followers      int    `json:"followers"`
+	AddToContacts  int    `json:"add_to_contacts"`
+	Calls          int    `json:"calls"`
+	Views          int    `json:"views"`
+	Clicks         int    `json:"clicks"`
+	ConversionRate int    `json:"conversion_rate"`
+	Shares         int    `json:"shares"`
+	QrViews        int    `json:"qr_views"`
+}
+
 type Cta struct {
 	LinkHeader string `json:"link_header"`
 	LinkType   string `json:"link_type"`

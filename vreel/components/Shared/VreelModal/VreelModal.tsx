@@ -29,6 +29,7 @@ interface ModalProps {
   isQr?: boolean;
   isSocial?: boolean;
   isContact?: boolean;
+  title?: string;
 }
 
 export const VreelModal = ({
@@ -36,6 +37,7 @@ export const VreelModal = ({
   icon,
   isSocial,
   isContact,
+  title,
 }: ModalProps): JSX.Element => {
   const [open, setOpen] = useState(false);
   const router = useRouter();
@@ -57,6 +59,9 @@ export const VreelModal = ({
           className="vreel-slide__icon"
         />
       )}
+      {/* <div style={{ marginRight: "200vw" }}>
+        <label className="subIconLabel">{title}</label>
+      </div> */}
       <Modal
         className="vreel-modal vreel-modal__wrapper"
         isOpen={open}

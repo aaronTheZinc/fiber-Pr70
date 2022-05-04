@@ -74,6 +74,26 @@ type SlideModel struct {
 	Advanced      string `json:"advanced"`
 	Metadata      string `json:"-"`
 }
+type AnalyticsChunkModel struct {
+}
+
+type AnalyticsFragmentModel struct {
+	ID        string `json:"id"`
+	Author    string `json:"author"`
+	Target    string `json:"target"`
+	Action    string `json:"action"`
+	TimeStamp int64  `json:"time_stamp"`
+}
+
+type AnalyticsModel struct {
+	Likes pq.StringArray `gorm:"type:text[]"`
+}
+
+// type Analytics struct {
+// 	Today AnalyticsChunkModel
+// 	LastWeek AnalyticsChunkModel
+// 	ThisYear AnalyticsChunkModel
+// }
 
 type EnterpriseModel struct {
 	ID        string         `json:"id"`

@@ -325,20 +325,27 @@ func AuthorizeEditSlide(token, slideId, data string) (model.Slide, error) {
 }
 
 // add and log like
-// func AuthorizeSlideLike(slideId string, token string) (model.MutationResponse, error) {
-// 	var err error
-// 	var r model.MutationResponse
+func AuthorizeSlideLike(slideId string, token string) (model.MutationResponse, error) {
+	var err error
+	var r model.MutationResponse
 
-// 	claims, isAuth, parseErr := ParseToken(token)
-// 	userId := claims.ID
+	claims, isAuth, parseErr := ParseToken(token)
+	userId := claims.ID
 
-// 	if isAuth && parseErr == nil {
-// 	} else {
-// 		err = e.UNAUTHORIZED_ERROR
-// 	}
+	if isAuth && parseErr == nil {
+		if _, slideFetchErr := database.GetSlide(slideId); slideFetchErr != nil {
+			if _, likeCreationErr := database.CreateLike(userId, slideId); likeCreationErr != nil {
 
-// 	return r, err
-// }
+			}
+		} else {
+			err = slideFetchErr
+		}
+	} else {
+		err = e.UNAUTHORIZED_ERROR
+	}
+
+	return r, err
+}
 
 // func AuthorizeSlideRemoveLike(slideId, token string) (model.MutationResponse, error) {
 // 	var err error

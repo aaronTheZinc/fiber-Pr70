@@ -49,6 +49,18 @@ type ComplexityRoot struct {
 		LinkType   func(childComplexity int) int
 	}
 
+	Analytics struct {
+		AddToContacts  func(childComplexity int) int
+		Calls          func(childComplexity int) int
+		Clicks         func(childComplexity int) int
+		ConversionRate func(childComplexity int) int
+		Followers      func(childComplexity int) int
+		ID             func(childComplexity int) int
+		QrViews        func(childComplexity int) int
+		Shares         func(childComplexity int) int
+		Views          func(childComplexity int) int
+	}
+
 	Cta struct {
 		LinkHeader func(childComplexity int) int
 		LinkType   func(childComplexity int) int
@@ -152,6 +164,7 @@ type ComplexityRoot struct {
 	Mutation struct {
 		AddEmployeeToEnterprise           func(childComplexity int, token string, newUser model.NewUser) int
 		AddUserToGroup                    func(childComplexity int, token string, groupID string, userID string) int
+		AnalyticsUpdate                   func(childComplexity int, token string, action string, target string) int
 		CreateEnterprise                  func(childComplexity int, input model.NewEnterprise) int
 		CreateEvent                       func(childComplexity int, token string, input model.NewEvent) int
 		CreateGroup                       func(childComplexity int, input *model.NewGroup) int
@@ -308,6 +321,7 @@ type MutationResolver interface {
 	UpdateVreelField(ctx context.Context, token string, fields []*model.VreelFields) (*model.MutationResponse, error)
 	UpdateUser(ctx context.Context, token string, fields []*model.VreelFields) (*model.MutationResponse, error)
 	UpdateSlide(ctx context.Context, token *string, slideID string, data string) (*model.Slide, error)
+	AnalyticsUpdate(ctx context.Context, token string, action string, target string) (*model.MutationResponse, error)
 }
 type QueryResolver interface {
 	User(ctx context.Context, id *string) (*model.User, error)
@@ -357,6 +371,69 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Advanced.LinkType(childComplexity), true
+
+	case "Analytics.add_to_contacts":
+		if e.complexity.Analytics.AddToContacts == nil {
+			break
+		}
+
+		return e.complexity.Analytics.AddToContacts(childComplexity), true
+
+	case "Analytics.calls":
+		if e.complexity.Analytics.Calls == nil {
+			break
+		}
+
+		return e.complexity.Analytics.Calls(childComplexity), true
+
+	case "Analytics.clicks":
+		if e.complexity.Analytics.Clicks == nil {
+			break
+		}
+
+		return e.complexity.Analytics.Clicks(childComplexity), true
+
+	case "Analytics.conversion_rate":
+		if e.complexity.Analytics.ConversionRate == nil {
+			break
+		}
+
+		return e.complexity.Analytics.ConversionRate(childComplexity), true
+
+	case "Analytics.followers":
+		if e.complexity.Analytics.Followers == nil {
+			break
+		}
+
+		return e.complexity.Analytics.Followers(childComplexity), true
+
+	case "Analytics.id":
+		if e.complexity.Analytics.ID == nil {
+			break
+		}
+
+		return e.complexity.Analytics.ID(childComplexity), true
+
+	case "Analytics.qr_views":
+		if e.complexity.Analytics.QrViews == nil {
+			break
+		}
+
+		return e.complexity.Analytics.QrViews(childComplexity), true
+
+	case "Analytics.shares":
+		if e.complexity.Analytics.Shares == nil {
+			break
+		}
+
+		return e.complexity.Analytics.Shares(childComplexity), true
+
+	case "Analytics.views":
+		if e.complexity.Analytics.Views == nil {
+			break
+		}
+
+		return e.complexity.Analytics.Views(childComplexity), true
 
 	case "CTA.link_header":
 		if e.complexity.Cta.LinkHeader == nil {
@@ -808,6 +885,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.AddUserToGroup(childComplexity, args["token"].(string), args["groupId"].(string), args["userId"].(string)), true
+
+	case "Mutation.analyticsUpdate":
+		if e.complexity.Mutation.AnalyticsUpdate == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_analyticsUpdate_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.AnalyticsUpdate(childComplexity, args["token"].(string), args["action"].(string), args["target"].(string)), true
 
 	case "Mutation.createEnterprise":
 		if e.complexity.Mutation.CreateEnterprise == nil {
@@ -1667,6 +1756,17 @@ type Files {
   file_count: Int!
   files: [File!]!
 }
+type Analytics {
+  id: String!
+  followers: Int!
+  add_to_contacts: Int!
+  calls: Int!
+  views: Int!
+  clicks: Int!
+  conversion_rate: Int!
+  shares: Int!
+  qr_views: Int!
+}
 type User {
   id: String!
   account_type: String!
@@ -1960,6 +2060,11 @@ type Mutation {
   updateVreelField(token: String!, fields: [VreelFields]): MutationResponse!
   updateUser(token: String!, fields: [VreelFields!]): MutationResponse!
   updateSlide(token: String, slideId: String!, data: String!): Slide!
+  analyticsUpdate(
+    token: String!
+    action: String!
+    target: String!
+  ): MutationResponse!
 }
 `, BuiltIn: false},
 }
@@ -2023,6 +2128,39 @@ func (ec *executionContext) field_Mutation_addUserToGroup_args(ctx context.Conte
 		}
 	}
 	args["userId"] = arg2
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_analyticsUpdate_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["token"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("token"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["token"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["action"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("action"))
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["action"] = arg1
+	var arg2 string
+	if tmp, ok := rawArgs["target"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("target"))
+		arg2, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["target"] = arg2
 	return args, nil
 }
 
@@ -2620,6 +2758,321 @@ func (ec *executionContext) _Advanced_link_type(ctx context.Context, field graph
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Analytics_id(ctx context.Context, field graphql.CollectedField, obj *model.Analytics) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Analytics",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Analytics_followers(ctx context.Context, field graphql.CollectedField, obj *model.Analytics) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Analytics",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Followers, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Analytics_add_to_contacts(ctx context.Context, field graphql.CollectedField, obj *model.Analytics) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Analytics",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AddToContacts, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Analytics_calls(ctx context.Context, field graphql.CollectedField, obj *model.Analytics) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Analytics",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Calls, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Analytics_views(ctx context.Context, field graphql.CollectedField, obj *model.Analytics) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Analytics",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Views, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Analytics_clicks(ctx context.Context, field graphql.CollectedField, obj *model.Analytics) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Analytics",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Clicks, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Analytics_conversion_rate(ctx context.Context, field graphql.CollectedField, obj *model.Analytics) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Analytics",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ConversionRate, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Analytics_shares(ctx context.Context, field graphql.CollectedField, obj *model.Analytics) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Analytics",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Shares, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Analytics_qr_views(ctx context.Context, field graphql.CollectedField, obj *model.Analytics) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Analytics",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.QrViews, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _CTA_link_header(ctx context.Context, field graphql.CollectedField, obj *model.Cta) (ret graphql.Marshaler) {
@@ -5343,6 +5796,48 @@ func (ec *executionContext) _Mutation_updateSlide(ctx context.Context, field gra
 	res := resTmp.(*model.Slide)
 	fc.Result = res
 	return ec.marshalNSlide2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐSlide(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_analyticsUpdate(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_analyticsUpdate_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().AnalyticsUpdate(rctx, args["token"].(string), args["action"].(string), args["target"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.MutationResponse)
+	fc.Result = res
+	return ec.marshalNMutationResponse2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐMutationResponse(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _MutationResponse_succeeded(ctx context.Context, field graphql.CollectedField, obj *model.MutationResponse) (ret graphql.Marshaler) {
@@ -9888,6 +10383,73 @@ func (ec *executionContext) _Advanced(ctx context.Context, sel ast.SelectionSet,
 	return out
 }
 
+var analyticsImplementors = []string{"Analytics"}
+
+func (ec *executionContext) _Analytics(ctx context.Context, sel ast.SelectionSet, obj *model.Analytics) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, analyticsImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Analytics")
+		case "id":
+			out.Values[i] = ec._Analytics_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "followers":
+			out.Values[i] = ec._Analytics_followers(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "add_to_contacts":
+			out.Values[i] = ec._Analytics_add_to_contacts(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "calls":
+			out.Values[i] = ec._Analytics_calls(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "views":
+			out.Values[i] = ec._Analytics_views(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "clicks":
+			out.Values[i] = ec._Analytics_clicks(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "conversion_rate":
+			out.Values[i] = ec._Analytics_conversion_rate(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "shares":
+			out.Values[i] = ec._Analytics_shares(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "qr_views":
+			out.Values[i] = ec._Analytics_qr_views(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var cTAImplementors = []string{"CTA"}
 
 func (ec *executionContext) _CTA(ctx context.Context, sel ast.SelectionSet, obj *model.Cta) graphql.Marshaler {
@@ -10524,6 +11086,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			}
 		case "updateSlide":
 			out.Values[i] = ec._Mutation_updateSlide(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "analyticsUpdate":
+			out.Values[i] = ec._Mutation_analyticsUpdate(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}

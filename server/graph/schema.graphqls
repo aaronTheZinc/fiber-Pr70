@@ -17,6 +17,17 @@ type Files {
   file_count: Int!
   files: [File!]!
 }
+type Analytics {
+  id: String!
+  followers: Int!
+  add_to_contacts: Int!
+  calls: Int!
+  views: Int!
+  clicks: Int!
+  conversion_rate: Int!
+  shares: Int!
+  qr_views: Int!
+}
 type User {
   id: String!
   account_type: String!
@@ -310,4 +321,9 @@ type Mutation {
   updateVreelField(token: String!, fields: [VreelFields]): MutationResponse!
   updateUser(token: String!, fields: [VreelFields!]): MutationResponse!
   updateSlide(token: String, slideId: String!, data: String!): Slide!
+  analyticsUpdate(
+    token: String!
+    action: String!
+    target: String!
+  ): MutationResponse!
 }

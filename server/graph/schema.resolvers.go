@@ -94,6 +94,10 @@ func (r *mutationResolver) UpdateSlide(ctx context.Context, token *string, slide
 	return &slide, err
 }
 
+func (r *mutationResolver) AnalyticsUpdate(ctx context.Context, token string, action string, target string) (*model.MutationResponse, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
 func (r *queryResolver) User(ctx context.Context, id *string) (*model.User, error) {
 	user, err := database.GetUser(*id)
 	return &user, err

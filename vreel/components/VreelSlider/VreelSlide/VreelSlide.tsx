@@ -33,7 +33,7 @@ const VreelSlide = ({
   useEffect(() => {
     try {
       videoEl.current.defaultMuted = true;
-    } catch (e) { }
+    } catch (e) {}
   });
 
   const [isFollowed, setIsFollowed] = useState(false);
@@ -64,7 +64,7 @@ const VreelSlide = ({
       } else {
         videoEl.current.pause();
       }
-    } catch (e) { }
+    } catch (e) {}
   }, [currentSlide]);
 
   useEffect(() => {
@@ -114,7 +114,6 @@ const VreelSlide = ({
             ref={videoEl}
             className="vreel-slide__background-video"
             autoPlay
-
             muted={isMuted}
             playsInline
             onEnded={(e) => {
@@ -148,7 +147,7 @@ const VreelSlide = ({
               <a
                 className="vreel-slide__btn"
                 onClick={(e) => {
-                  window.open((slide as Slide)?.cta?.link_url, "_replace")
+                  window.open((slide as Slide)?.cta?.link_url, "_replace");
                 }}
               >
                 {(slide as Slide)?.cta?.link_header}
@@ -175,7 +174,10 @@ const VreelSlide = ({
         alt="down arrow"
         className="vreel-slide__down-arrow"
       />
-      <div style={{ marginBottom: "1pc" }} className="vreel-slide__left-icons__wrapper">
+      <div
+        style={{ marginBottom: "1pc" }}
+        className="vreel-slide__left-icons__wrapper"
+      >
         <VreelModal icon="/background-credit-icon.svg" />
         {isMuted ? (
           <img
@@ -230,53 +232,65 @@ const VreelSlide = ({
               className="vreel-slide__icon"
             />
           </a>
-          {isFollowed ? (
-            <img
-              onClick={toggleSlideFollow}
-              data-bs-toggle="tooltip"
-              data-bs-placement="top"
-              title="Remove this Slide from your Feed"
-              src="/followed-icon.svg"
-              alt="followed-icon"
-              className="vreel-slide__icon"
-            />
-          ) : (
-            <img
-              onClick={toggleSlideFollow}
-              data-bs-toggle="tooltip"
-              data-bs-placement="top"
-              title="Add this Slide to your Feed"
-              src="/follow-icon.png"
-              alt="follow-icon"
-              className="vreel-slide__icon"
-            />
-          )}
+          <div>
+            {isFollowed ? (
+              <img
+                onClick={toggleSlideFollow}
+                data-bs-toggle="tooltip"
+                data-bs-placement="top"
+                title="Remove this Slide from your Feed"
+                src="/followed-icon.svg"
+                alt="followed-icon"
+                className="vreel-slide__icon"
+              />
+            ) : (
+              <img
+                onClick={toggleSlideFollow}
+                data-bs-toggle="tooltip"
+                data-bs-placement="top"
+                title="Add this Slide to your Feed"
+                src="/follow-icon.png"
+                alt="follow-icon"
+                className="vreel-slide__icon"
+              />
+            )}
+          </div>
+          {/* <div style={{ alignItems: "center" }}>
+            <label style={{ marginRight: "0.7pc" }} className="subIconLabel">
+              Follow
+            </label>
+          </div> */}
         </div>
 
         <div style={{ marginBottom: "1pc" }} className="bottom">
-          <VreelModal isSocial={true} icon="/share-icon.svg" />
-          {isLiked ? (
-            <img
-              onClick={toggleSlideLike}
-              data-bs-toggle="tooltip"
-              data-bs-placement="top"
-              title="Like My Vreel"
-              src="/liked-icon.svg"
-              alt="liked-icon"
-              className="vreel-slide__icon"
-            />
-          ) : (
-            <img
-              onClick={toggleSlideLike}
-              data-bs-toggle="tooltip"
-              data-bs-placement="top"
-              title="Like My Vreel"
-              src="/like-icon.svg"
-              alt="like-icon"
-              className="vreel-slide__icon"
-            />
-          )}
-          <VreelModal icon="/slide-credit-icon.svg" />
+          <VreelModal title="Share" isSocial={true} icon="/share-icon.svg" />
+          <div>
+            {isLiked ? (
+              <img
+                onClick={toggleSlideLike}
+                data-bs-toggle="tooltip"
+                data-bs-placement="top"
+                title="Like My Vreel"
+                src="/liked-icon.svg"
+                alt="liked-icon"
+                className="vreel-slide__icon"
+              />
+            ) : (
+              <img
+                onClick={toggleSlideLike}
+                data-bs-toggle="tooltip"
+                data-bs-placement="top"
+                title="Like My Vreel"
+                src="/like-icon.svg"
+                alt="like-icon"
+                className="vreel-slide__icon"
+              />
+            )}
+            <div>
+              <label className="subIconLabel">Like</label>
+            </div>
+          </div>
+          <VreelModal title="Info" icon="/slide-credit-icon.svg" />
           <VreelModal isQr={true} icon="/qr-icon.svg" />
         </div>
       </aside>
@@ -284,7 +298,7 @@ const VreelSlide = ({
         ref={audioEl}
         id="vreelBackgroundAudio"
         loop={true}
-      // src="/background-vreel.mp3"
+        // src="/background-vreel.mp3"
       ></audio>
     </section>
   );
