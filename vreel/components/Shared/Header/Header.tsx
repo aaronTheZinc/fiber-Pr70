@@ -75,7 +75,7 @@ const Header = (): JSX.Element => {
             }}
             src="/menu-bars.svg"
             alt="vreel menu"
-            style={{ width: "30px" }}
+            style={{ width: "35px", marginTop: "2pc" }}
           />
         </div>
       </header>

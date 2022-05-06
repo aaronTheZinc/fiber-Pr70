@@ -31,7 +31,10 @@ interface ModalProps {
   isContact?: boolean;
   title?: string;
 }
-
+const qrCodeStyle = {
+  height: "45px",
+  // marginRight: "100px"
+}
 export const VreelModal = ({
   isQr,
   icon,
@@ -46,9 +49,9 @@ export const VreelModal = ({
 
   const capitilizedUsername = username ? username[0] + username.slice(1) : null;
 
-  useEffect(() => {}, []);
+  useEffect(() => { }, []);
 
-  const onClick = () => {};
+  const onClick = () => { };
   return (
     <div>
       {icon && (
@@ -57,6 +60,7 @@ export const VreelModal = ({
           src={icon}
           alt="slide-icon"
           className="vreel-slide__icon"
+          style={icon === "/qr-icon.svg" ? qrCodeStyle : null}
         />
       )}
       {/* <div style={{ marginRight: "200vw" }}>

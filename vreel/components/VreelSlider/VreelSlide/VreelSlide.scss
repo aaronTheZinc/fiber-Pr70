@@ -103,6 +103,7 @@ $medium: 750px;
 
     @media only screen and (max-width: 768px) {
       font-size: 1.2rem;
+      padding-bottom: 6px;
     }
   }
 
@@ -163,8 +164,8 @@ $medium: 750px;
   &__down-arrow {
     position: absolute;
     bottom: -20px;
-    height: 30px;
-    width: 100px;
+    height: 21px;
+    width: 80px;
     margin: 0 auto;
     z-index: 1;
     left: 50%;
@@ -191,6 +192,7 @@ $medium: 750px;
     display: flex;
     flex-direction: column;
     gap: 15px;
+    margin-left: 0.4pc;
   }
 
   &__right-icons__wrapper {
@@ -211,6 +213,10 @@ $medium: 750px;
     .bottom {
       position: fixed;
       bottom: 0;
+    }
+
+    .top {
+      margin-top: 4pc;
     }
   }
 
