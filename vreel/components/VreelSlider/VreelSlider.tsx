@@ -35,7 +35,7 @@ export const VreelSlider = ({
   return (
     <Swiper
       modules={[Navigation, Pagination]}
-      style={{ height: "100vh" }}
+      // style={{ height: "100vh" }}
       slidesPerView={1}
       navigation
       pagination={true}
