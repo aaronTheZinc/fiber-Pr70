@@ -23,11 +23,11 @@ const Header = (): JSX.Element => {
 
   const styles =
     router.pathname.includes("login") ||
-    router.pathname.includes("register") ||
-    router.pathname.includes("forgot-password")
+      router.pathname.includes("register") ||
+      router.pathname.includes("forgot-password")
       ? {
-          display: "none",
-        }
+        display: "none",
+      }
       : {};
   return (
     <>
@@ -75,6 +75,7 @@ const Header = (): JSX.Element => {
             }}
             src="/menu-bars.svg"
             alt="vreel menu"
+            style={{ width: "30px" }}
           />
         </div>
       </header>
