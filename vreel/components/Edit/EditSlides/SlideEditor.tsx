@@ -61,6 +61,7 @@ export default function SlideEditor({
     }
     function updateMedia(url: string, fileType: string) {
         setFileUrl(url);
+        console.log('url', url)
         setState(id, "values", { ...state.values, "mobile": { uri: url, content_type: fileType } })
 
         alert("Doneeeeee")

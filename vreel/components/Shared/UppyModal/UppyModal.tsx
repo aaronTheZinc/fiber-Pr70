@@ -81,6 +81,7 @@ export const UppyModal = ({ setUpload }: UppyModalProps): JSX.Element => {
   uppy.on("complete", (result) => {
     setOpen(false);
     setUpload(result.successful[0]?.uploadURL, fileType);
+    console.log("setUpload", setUpload)
     console.log("response ->", result);
 
     // console.log('Upload complete! We’ve uploaded these files:', result.successful)

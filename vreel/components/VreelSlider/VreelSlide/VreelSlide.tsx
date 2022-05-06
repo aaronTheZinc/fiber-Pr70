@@ -134,12 +134,12 @@ const VreelSlide = ({
         <h1 className="vreel-slide__heading-text">
           {username
             ? (slide as Slide)?.title?.header
-            : "THE INTERFACE THAT VISUALLY ELEVATES YOUR BRAND™"}
+            : "VREEL™\nTHE INTERFACE THAT VISUALLY ELEVATES YOUR BRAND™"}
         </h1>
         <p className="vreel-slide__text">
           {username
             ? (slide as Slide)?.title?.description
-            : "Upload some files in file manager and then use editor to personalize your Vreel"}
+            : "Upload some files in file manager and then use editor to personalize your Vreel \n \n We make you look better! Our Web 3.0 storytelling interface visually elevates your brand."}
         </p>
         <div className="vreel-slide__btn-wrapper">
           {username ? (
