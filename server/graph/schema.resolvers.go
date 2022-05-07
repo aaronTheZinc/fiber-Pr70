@@ -94,7 +94,25 @@ func (r *mutationResolver) UpdateSlide(ctx context.Context, token *string, slide
 	return &slide, err
 }
 
-func (r *mutationResolver) AnalyticsUpdate(ctx context.Context, token string, action string, target string) (*model.MutationResponse, error) {
+func (r *mutationResolver) LikeSlide(ctx context.Context, input model.AnalyticsMutation) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeSlideLike(input.Target, input.Token)
+
+	return &resp, err
+}
+
+func (r *mutationResolver) UnLikeSlide(ctx context.Context, input model.AnalyticsMutation) (*model.MutationResponse, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *mutationResolver) Follow(ctx context.Context, input model.AnalyticsMutation) (*model.MutationResponse, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *mutationResolver) UnFollow(ctx context.Context, input model.AnalyticsMutation) (*model.MutationResponse, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *mutationResolver) LogPageLoad(ctx context.Context, vreelID string) (*model.MutationResponse, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
@@ -154,6 +172,10 @@ func (r *queryResolver) ServerAnalytics(ctx context.Context) (*model.ServerAnaly
 	return &a, err
 }
 
+func (r *queryResolver) Analytics(ctx context.Context, id string) (*model.Analytics, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
 // Mutation returns generated.MutationResolver implementation.
 func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResolver{r} }
 
@@ -162,3 +184,13 @@ func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
 
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
+
+// !!! WARNING !!!
+// The code below was going to be deleted when updating resolvers. It has been copied here so you have
+// one last chance to move it out of harms way if you want. There are two reasons this happens:
+//  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
+//    it when you're done.
+//  - You have helper methods in this file. Move them out to keep these resolver files clean.
+func (r *mutationResolver) AnalyticsUpdate(ctx context.Context, token string, action string, target string) (*model.MutationResponse, error) {
+	panic(fmt.Errorf("not implemented"))
+}

@@ -20,6 +20,10 @@ func GetLikesFromMinimumTime(target string, minimumTime int64) (int, error) {
 	return int(count), err
 }
 
+func CheckIfHasBeenLiked(author, target string) (bool, error) {
+	db.Where("target = ?", target).Where("author = ?", author).find
+}
+
 func CreateLike(author, target string) (model.AnalyticsFragmentModel, error) {
 	like := model.AnalyticsFragmentModel{
 

@@ -56,6 +56,7 @@ type ComplexityRoot struct {
 		ConversionRate func(childComplexity int) int
 		Followers      func(childComplexity int) int
 		ID             func(childComplexity int) int
+		Likes          func(childComplexity int) int
 		QrViews        func(childComplexity int) int
 		Shares         func(childComplexity int) int
 		Views          func(childComplexity int) int
@@ -164,17 +165,21 @@ type ComplexityRoot struct {
 	Mutation struct {
 		AddEmployeeToEnterprise           func(childComplexity int, token string, newUser model.NewUser) int
 		AddUserToGroup                    func(childComplexity int, token string, groupID string, userID string) int
-		AnalyticsUpdate                   func(childComplexity int, token string, action string, target string) int
 		CreateEnterprise                  func(childComplexity int, input model.NewEnterprise) int
 		CreateEvent                       func(childComplexity int, token string, input model.NewEvent) int
 		CreateGroup                       func(childComplexity int, input *model.NewGroup) int
 		CreateResetPasswordRequestIntent  func(childComplexity int, email string) int
 		CreateSlide                       func(childComplexity int, token string) int
 		DeleteGroup                       func(childComplexity int, id string, token string) int
+		Follow                            func(childComplexity int, input model.AnalyticsMutation) int
+		LikeSlide                         func(childComplexity int, input model.AnalyticsMutation) int
+		LogPageLoad                       func(childComplexity int, vreelID string) int
 		Register                          func(childComplexity int, input model.NewUser) int
 		RemoveSlide                       func(childComplexity int, token string, slideID *string) int
 		RemoveUserFromGroup               func(childComplexity int, token string, groupID string, member string) int
 		ResolveResetPasswordRequestIntent func(childComplexity int, token string, password string) int
+		UnFollow                          func(childComplexity int, input model.AnalyticsMutation) int
+		UnLikeSlide                       func(childComplexity int, input model.AnalyticsMutation) int
 		UpdateSlide                       func(childComplexity int, token *string, slideID string, data string) int
 		UpdateUser                        func(childComplexity int, token string, fields []*model.VreelFields) int
 		UpdateVreelField                  func(childComplexity int, token string, fields []*model.VreelFields) int
@@ -186,6 +191,7 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
+		Analytics         func(childComplexity int, id string) int
 		Email             func(childComplexity int, email string) int
 		EnterpiseEmployee func(childComplexity int, enterpriseName string, employeeID string) int
 		Enterprise        func(childComplexity int, id string) int
@@ -321,7 +327,11 @@ type MutationResolver interface {
 	UpdateVreelField(ctx context.Context, token string, fields []*model.VreelFields) (*model.MutationResponse, error)
 	UpdateUser(ctx context.Context, token string, fields []*model.VreelFields) (*model.MutationResponse, error)
 	UpdateSlide(ctx context.Context, token *string, slideID string, data string) (*model.Slide, error)
-	AnalyticsUpdate(ctx context.Context, token string, action string, target string) (*model.MutationResponse, error)
+	LikeSlide(ctx context.Context, input model.AnalyticsMutation) (*model.MutationResponse, error)
+	UnLikeSlide(ctx context.Context, input model.AnalyticsMutation) (*model.MutationResponse, error)
+	Follow(ctx context.Context, input model.AnalyticsMutation) (*model.MutationResponse, error)
+	UnFollow(ctx context.Context, input model.AnalyticsMutation) (*model.MutationResponse, error)
+	LogPageLoad(ctx context.Context, vreelID string) (*model.MutationResponse, error)
 }
 type QueryResolver interface {
 	User(ctx context.Context, id *string) (*model.User, error)
@@ -334,6 +344,7 @@ type QueryResolver interface {
 	Enterprise(ctx context.Context, id string) (*model.Enterprise, error)
 	EnterpiseEmployee(ctx context.Context, enterpriseName string, employeeID string) (*model.EnterpriseEmployee, error)
 	ServerAnalytics(ctx context.Context) (*model.ServerAnalytics, error)
+	Analytics(ctx context.Context, id string) (*model.Analytics, error)
 }
 
 type executableSchema struct {
@@ -413,6 +424,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Analytics.ID(childComplexity), true
+
+	case "Analytics.likes":
+		if e.complexity.Analytics.Likes == nil {
+			break
+		}
+
+		return e.complexity.Analytics.Likes(childComplexity), true
 
 	case "Analytics.qr_views":
 		if e.complexity.Analytics.QrViews == nil {
@@ -886,18 +904,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.AddUserToGroup(childComplexity, args["token"].(string), args["groupId"].(string), args["userId"].(string)), true
 
-	case "Mutation.analyticsUpdate":
-		if e.complexity.Mutation.AnalyticsUpdate == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_analyticsUpdate_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.AnalyticsUpdate(childComplexity, args["token"].(string), args["action"].(string), args["target"].(string)), true
-
 	case "Mutation.createEnterprise":
 		if e.complexity.Mutation.CreateEnterprise == nil {
 			break
@@ -970,6 +976,42 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.DeleteGroup(childComplexity, args["id"].(string), args["token"].(string)), true
 
+	case "Mutation.follow":
+		if e.complexity.Mutation.Follow == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_follow_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.Follow(childComplexity, args["input"].(model.AnalyticsMutation)), true
+
+	case "Mutation.likeSlide":
+		if e.complexity.Mutation.LikeSlide == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_likeSlide_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.LikeSlide(childComplexity, args["input"].(model.AnalyticsMutation)), true
+
+	case "Mutation.logPageLoad":
+		if e.complexity.Mutation.LogPageLoad == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_logPageLoad_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.LogPageLoad(childComplexity, args["vreelId"].(string)), true
+
 	case "Mutation.register":
 		if e.complexity.Mutation.Register == nil {
 			break
@@ -1017,6 +1059,30 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.ResolveResetPasswordRequestIntent(childComplexity, args["token"].(string), args["password"].(string)), true
+
+	case "Mutation.unFollow":
+		if e.complexity.Mutation.UnFollow == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_unFollow_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UnFollow(childComplexity, args["input"].(model.AnalyticsMutation)), true
+
+	case "Mutation.unLikeSlide":
+		if e.complexity.Mutation.UnLikeSlide == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_unLikeSlide_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UnLikeSlide(childComplexity, args["input"].(model.AnalyticsMutation)), true
 
 	case "Mutation.updateSlide":
 		if e.complexity.Mutation.UpdateSlide == nil {
@@ -1067,6 +1133,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.MutationResponse.Succeeded(childComplexity), true
+
+	case "Query.analytics":
+		if e.complexity.Query.Analytics == nil {
+			break
+		}
+
+		args, err := ec.field_Query_analytics_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Analytics(childComplexity, args["id"].(string)), true
 
 	case "Query.email":
 		if e.complexity.Query.Email == nil {
@@ -1759,6 +1837,7 @@ type Files {
 type Analytics {
   id: String!
   followers: Int!
+  likes: Int!
   add_to_contacts: Int!
   calls: Int!
   views: Int!
@@ -1969,6 +2048,7 @@ type Query {
     employeeId: String!
   ): EnterpriseEmployee!
   serverAnalytics: ServerAnalytics
+  analytics(id: String!): Analytics!
 }
 
 input NewEvent {
@@ -2032,6 +2112,10 @@ input NewEnterprise {
   email: String!
   password: String!
 }
+input AnalyticsMutation {
+  target: String!, 
+  token: String!
+}
 type Mutation {
   register(input: NewUser!): User!
   createEvent(token: String!, input: NewEvent!): Event!
@@ -2060,11 +2144,11 @@ type Mutation {
   updateVreelField(token: String!, fields: [VreelFields]): MutationResponse!
   updateUser(token: String!, fields: [VreelFields!]): MutationResponse!
   updateSlide(token: String, slideId: String!, data: String!): Slide!
-  analyticsUpdate(
-    token: String!
-    action: String!
-    target: String!
-  ): MutationResponse!
+  likeSlide(input: AnalyticsMutation! ): MutationResponse!
+  unLikeSlide(input: AnalyticsMutation!): MutationResponse!
+  follow(input: AnalyticsMutation!): MutationResponse!
+  unFollow(input: AnalyticsMutation!): MutationResponse!
+  logPageLoad(vreelId: String!): MutationResponse!
 }
 `, BuiltIn: false},
 }
@@ -2128,39 +2212,6 @@ func (ec *executionContext) field_Mutation_addUserToGroup_args(ctx context.Conte
 		}
 	}
 	args["userId"] = arg2
-	return args, nil
-}
-
-func (ec *executionContext) field_Mutation_analyticsUpdate_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["token"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("token"))
-		arg0, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["token"] = arg0
-	var arg1 string
-	if tmp, ok := rawArgs["action"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("action"))
-		arg1, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["action"] = arg1
-	var arg2 string
-	if tmp, ok := rawArgs["target"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("target"))
-		arg2, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["target"] = arg2
 	return args, nil
 }
 
@@ -2272,6 +2323,51 @@ func (ec *executionContext) field_Mutation_deleteGroup_args(ctx context.Context,
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_follow_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.AnalyticsMutation
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNAnalyticsMutation2githubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐAnalyticsMutation(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_likeSlide_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.AnalyticsMutation
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNAnalyticsMutation2githubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐAnalyticsMutation(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_logPageLoad_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["vreelId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("vreelId"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["vreelId"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_register_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -2368,6 +2464,36 @@ func (ec *executionContext) field_Mutation_resolveResetPasswordRequestIntent_arg
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_unFollow_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.AnalyticsMutation
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNAnalyticsMutation2githubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐAnalyticsMutation(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_unLikeSlide_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.AnalyticsMutation
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNAnalyticsMutation2githubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐAnalyticsMutation(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_updateSlide_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -2461,6 +2587,21 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 		}
 	}
 	args["name"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_analytics_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
 	return args, nil
 }
 
@@ -2814,6 +2955,41 @@ func (ec *executionContext) _Analytics_followers(ctx context.Context, field grap
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return obj.Followers, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Analytics_likes(ctx context.Context, field graphql.CollectedField, obj *model.Analytics) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Analytics",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Likes, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -5798,7 +5974,7 @@ func (ec *executionContext) _Mutation_updateSlide(ctx context.Context, field gra
 	return ec.marshalNSlide2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐSlide(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Mutation_analyticsUpdate(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Mutation_likeSlide(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -5815,7 +5991,7 @@ func (ec *executionContext) _Mutation_analyticsUpdate(ctx context.Context, field
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_analyticsUpdate_args(ctx, rawArgs)
+	args, err := ec.field_Mutation_likeSlide_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
@@ -5823,7 +5999,175 @@ func (ec *executionContext) _Mutation_analyticsUpdate(ctx context.Context, field
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().AnalyticsUpdate(rctx, args["token"].(string), args["action"].(string), args["target"].(string))
+		return ec.resolvers.Mutation().LikeSlide(rctx, args["input"].(model.AnalyticsMutation))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.MutationResponse)
+	fc.Result = res
+	return ec.marshalNMutationResponse2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐMutationResponse(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_unLikeSlide(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_unLikeSlide_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UnLikeSlide(rctx, args["input"].(model.AnalyticsMutation))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.MutationResponse)
+	fc.Result = res
+	return ec.marshalNMutationResponse2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐMutationResponse(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_follow(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_follow_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().Follow(rctx, args["input"].(model.AnalyticsMutation))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.MutationResponse)
+	fc.Result = res
+	return ec.marshalNMutationResponse2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐMutationResponse(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_unFollow(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_unFollow_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UnFollow(rctx, args["input"].(model.AnalyticsMutation))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.MutationResponse)
+	fc.Result = res
+	return ec.marshalNMutationResponse2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐMutationResponse(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_logPageLoad(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_logPageLoad_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().LogPageLoad(rctx, args["vreelId"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -6318,6 +6662,48 @@ func (ec *executionContext) _Query_serverAnalytics(ctx context.Context, field gr
 	res := resTmp.(*model.ServerAnalytics)
 	fc.Result = res
 	return ec.marshalOServerAnalytics2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐServerAnalytics(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_analytics(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_analytics_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Analytics(rctx, args["id"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Analytics)
+	fc.Result = res
+	return ec.marshalNAnalytics2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐAnalytics(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -9906,6 +10292,37 @@ func (ec *executionContext) ___Type_ofType(ctx context.Context, field graphql.Co
 
 // region    **************************** input.gotpl *****************************
 
+func (ec *executionContext) unmarshalInputAnalyticsMutation(ctx context.Context, obj interface{}) (model.AnalyticsMutation, error) {
+	var it model.AnalyticsMutation
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "target":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("target"))
+			it.Target, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "token":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("token"))
+			it.Token, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputCreateSlide(ctx context.Context, obj interface{}) (model.CreateSlide, error) {
 	var it model.CreateSlide
 	asMap := map[string]interface{}{}
@@ -10401,6 +10818,11 @@ func (ec *executionContext) _Analytics(ctx context.Context, sel ast.SelectionSet
 			}
 		case "followers":
 			out.Values[i] = ec._Analytics_followers(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "likes":
+			out.Values[i] = ec._Analytics_likes(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -11089,8 +11511,28 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "analyticsUpdate":
-			out.Values[i] = ec._Mutation_analyticsUpdate(ctx, field)
+		case "likeSlide":
+			out.Values[i] = ec._Mutation_likeSlide(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "unLikeSlide":
+			out.Values[i] = ec._Mutation_unLikeSlide(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "follow":
+			out.Values[i] = ec._Mutation_follow(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "unFollow":
+			out.Values[i] = ec._Mutation_unFollow(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "logPageLoad":
+			out.Values[i] = ec._Mutation_logPageLoad(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -11287,6 +11729,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_serverAnalytics(ctx, field)
+				return res
+			})
+		case "analytics":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_analytics(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
 				return res
 			})
 		case "__type":
@@ -12110,6 +12566,25 @@ func (ec *executionContext) ___Type(ctx context.Context, sel ast.SelectionSet, o
 // endregion **************************** object.gotpl ****************************
 
 // region    ***************************** type.gotpl *****************************
+
+func (ec *executionContext) marshalNAnalytics2githubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐAnalytics(ctx context.Context, sel ast.SelectionSet, v model.Analytics) graphql.Marshaler {
+	return ec._Analytics(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNAnalytics2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐAnalytics(ctx context.Context, sel ast.SelectionSet, v *model.Analytics) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._Analytics(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNAnalyticsMutation2githubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐAnalyticsMutation(ctx context.Context, v interface{}) (model.AnalyticsMutation, error) {
+	res, err := ec.unmarshalInputAnalyticsMutation(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
 
 func (ec *executionContext) unmarshalNBoolean2bool(ctx context.Context, v interface{}) (bool, error) {
 	res, err := graphql.UnmarshalBoolean(v)

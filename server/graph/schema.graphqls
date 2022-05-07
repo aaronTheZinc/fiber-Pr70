@@ -20,6 +20,7 @@ type Files {
 type Analytics {
   id: String!
   followers: Int!
+  likes: Int!
   add_to_contacts: Int!
   calls: Int!
   views: Int!
@@ -230,6 +231,7 @@ type Query {
     employeeId: String!
   ): EnterpriseEmployee!
   serverAnalytics: ServerAnalytics
+  analytics(id: String!): Analytics!
 }
 
 input NewEvent {
@@ -293,6 +295,10 @@ input NewEnterprise {
   email: String!
   password: String!
 }
+input AnalyticsMutation {
+  target: String!, 
+  token: String!
+}
 type Mutation {
   register(input: NewUser!): User!
   createEvent(token: String!, input: NewEvent!): Event!
@@ -321,9 +327,9 @@ type Mutation {
   updateVreelField(token: String!, fields: [VreelFields]): MutationResponse!
   updateUser(token: String!, fields: [VreelFields!]): MutationResponse!
   updateSlide(token: String, slideId: String!, data: String!): Slide!
-  analyticsUpdate(
-    token: String!
-    action: String!
-    target: String!
-  ): MutationResponse!
+  likeSlide(input: AnalyticsMutation! ): MutationResponse!
+  unLikeSlide(input: AnalyticsMutation!): MutationResponse!
+  follow(input: AnalyticsMutation!): MutationResponse!
+  unFollow(input: AnalyticsMutation!): MutationResponse!
+  logPageLoad(vreelId: String!): MutationResponse!
 }

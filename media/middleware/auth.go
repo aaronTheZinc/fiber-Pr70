@@ -39,8 +39,8 @@ func AuthMiddleware(h http.Handler) http.Handler {
 func CORS(h http.Handler) http.Handler {
 	var env string = os.Getenv("ENV")
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if env == "dev" && env != "" {
-
+		if env == "dev" || env != "" {
+			log.Println("adding cors")
 			w.Header().Add("Access-Control-Allow-Origin", "*")
 			w.Header().Add("Access-Control-Allow-Credentials", "true")
 			w.Header().Add("Access-Control-Allow-Headers", "*")

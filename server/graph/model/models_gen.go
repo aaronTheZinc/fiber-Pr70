@@ -11,6 +11,7 @@ type Advanced struct {
 type Analytics struct {
 	ID             string `json:"id"`
 	Followers      int    `json:"followers"`
+	Likes          int    `json:"likes"`
 	AddToContacts  int    `json:"add_to_contacts"`
 	Calls          int    `json:"calls"`
 	Views          int    `json:"views"`
@@ -18,6 +19,11 @@ type Analytics struct {
 	ConversionRate int    `json:"conversion_rate"`
 	Shares         int    `json:"shares"`
 	QrViews        int    `json:"qr_views"`
+}
+
+type AnalyticsMutation struct {
+	Target string `json:"target"`
+	Token  string `json:"token"`
 }
 
 type Cta struct {
