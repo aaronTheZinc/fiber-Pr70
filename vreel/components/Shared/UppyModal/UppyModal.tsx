@@ -12,9 +12,24 @@ import ScreenCapture from "@uppy/screen-capture";
 import Compress from "@uppy/compressor";
 // import Webcam from "@uppy/webcam";
 
+/**
+ * a function that checks to make sure that the uploaded file is a jpg, jpeg, png, or a gif
+ */
 const IsImage = (extension: string) => extension.match(/.(jpg|jpeg|png|gif)$/i);
 
+/**
+ * 
+ * a funciion that checks to make sure that the selected file is an mp3 file
+ */
+const isMusic = (extension: string) => {
+  return extension === "mp3"
+  /* let regex = new RegExp(/.(mp3)$/i)
+  return regex.test(extension) */
+} 
+
 import { useCookies } from "react-cookie";
+
+
 interface ModalProps {
   btnTitle: string;
   popUpText: string;
@@ -26,11 +41,13 @@ interface ModalProps {
   isSocial: boolean;
   isContact: boolean;
 }
+
 interface UppyModalProps {
   setUpload: (url: string, fileType: string) => void;
+  basicFileType: string;
 }
 
-export const UppyModal = ({ setUpload }: UppyModalProps): JSX.Element => {
+export const UppyModal = ({ setUpload, basicFileType }: UppyModalProps, string): JSX.Element => {
   const [cookies, _, removeCookies] = useCookies(["userAuthToken"]);
   const [fileType, setFileType] = useState<string>();
   const [open, setOpen] = useState(false);
@@ -68,8 +85,22 @@ export const UppyModal = ({ setUpload }: UppyModalProps): JSX.Element => {
 
 
   uppy.on("file-added", (file) => {
-    setFileType(file.type);
+
+    // Makes sure that the selected file is an mp3 only is the basicFileType is music-related. If not, then the file gets removed
+    if((basicFileType === "music" || basicFileType === "background audio") && isMusic(file.extension) === false){
+      uppy.removeFile(file.id, "removed-by-user")
+    } else {
+      setFileType(file.type);
+    }
   });
+
+  // alerts the user that the selected file cannot go through because of it's extension
+  uppy.on('file-removed', (file, reason) => {
+  
+    if (reason === 'removed-by-user' && (basicFileType === "music" || basicFileType === "background audio")) {
+      alert(`sorry but ${file.name} has been rejected because it is not an mp3 file`)
+    }
+  })
 
   uppy.on("progress", (progress) => {
     // progress: integer (total progress percentage)
@@ -109,7 +140,7 @@ export const UppyModal = ({ setUpload }: UppyModalProps): JSX.Element => {
         className="vreel-edit-menu__button blue"
         onClick={() => setOpen(!open)}
       >
-        Upload some music
+        Upload some {basicFileType}
       </button>
       <DashboardModal
         uppy={uppy}

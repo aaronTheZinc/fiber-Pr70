@@ -197,18 +197,21 @@ const EditSlides = (): JSX.Element => {
   const router = useRouter();
   const { username } = router.query;
   return (
-    <li className="vreel-edit-slides">
+    <li 
+    className="vreel-edit-slides"
+    >
       <button
         className="vreel-edit-menu__accordion"
         type="button"
         onClick={() => setEditAccordionIsOpen(!editAccordionIsOpen)}
+        style={{borderRadius: editAccordionIsOpen ? "20px 20px 0 0" : "20px", boxShadow: editAccordionIsOpen ? "none" : "0px 1.79739px 43.1373px rgba(0, 0, 0, 0.08)"}}
       >
         <span>
           <p>Slides</p>
           {editAccordionIsOpen ? (
-            <AiOutlineMinusCircle />
+            <AiOutlineMinusCircle color="white" />
           ) : (
-            <IoMdAddCircleOutline />
+            <IoMdAddCircleOutline color="#FF7A00" />
           )}
         </span>
       </button>
@@ -221,7 +224,7 @@ const EditSlides = (): JSX.Element => {
           <div className="vreel-edit-slides__new-slide__wrapper">
             <div className="vreel-edit-slides__new-slide">
               <p>Slides</p>
-              <button onClick={CreateSlide} className="vreel-edit-menu__button green">Add New</button>
+              <button onClick={CreateSlide} className="vreel-edit-menu__button green">Add Slide</button>
             </div>
 
             {user ? (
