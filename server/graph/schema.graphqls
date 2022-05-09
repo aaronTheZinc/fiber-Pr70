@@ -29,6 +29,15 @@ type Analytics {
   shares: Int!
   qr_views: Int!
 }
+
+type AnalyticFragment {
+  id: String!
+  author: String!
+  target: String!
+  action: String!
+  time_stamp: Int!
+}
+
 type User {
   id: String!
   account_type: String!
@@ -232,6 +241,7 @@ type Query {
   ): EnterpriseEmployee!
   serverAnalytics: ServerAnalytics
   analytics(id: String!): Analytics!
+  analyticsFragment(id: String!): AnalyticFragment!
 }
 
 input NewEvent {
@@ -296,7 +306,7 @@ input NewEnterprise {
   password: String!
 }
 input AnalyticsMutation {
-  target: String!, 
+  target: String!
   token: String!
 }
 type Mutation {
@@ -327,7 +337,7 @@ type Mutation {
   updateVreelField(token: String!, fields: [VreelFields]): MutationResponse!
   updateUser(token: String!, fields: [VreelFields!]): MutationResponse!
   updateSlide(token: String, slideId: String!, data: String!): Slide!
-  likeSlide(input: AnalyticsMutation! ): MutationResponse!
+  likeSlide(input: AnalyticsMutation!): MutationResponse!
   unLikeSlide(input: AnalyticsMutation!): MutationResponse!
   follow(input: AnalyticsMutation!): MutationResponse!
   unFollow(input: AnalyticsMutation!): MutationResponse!

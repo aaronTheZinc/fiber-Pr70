@@ -101,7 +101,9 @@ func (r *mutationResolver) LikeSlide(ctx context.Context, input model.AnalyticsM
 }
 
 func (r *mutationResolver) UnLikeSlide(ctx context.Context, input model.AnalyticsMutation) (*model.MutationResponse, error) {
-	panic(fmt.Errorf("not implemented"))
+	resp, err := auth.AuthorizeSlideRemoveLike(input.Target, input.Token)
+
+	return &resp, err
 }
 
 func (r *mutationResolver) Follow(ctx context.Context, input model.AnalyticsMutation) (*model.MutationResponse, error) {
@@ -173,7 +175,13 @@ func (r *queryResolver) ServerAnalytics(ctx context.Context) (*model.ServerAnaly
 }
 
 func (r *queryResolver) Analytics(ctx context.Context, id string) (*model.Analytics, error) {
-	panic(fmt.Errorf("not implemented"))
+	a, err := analytics.GetAnalytics(id)
+	return &a, err
+}
+
+func (r *queryResolver) AnalyticsFragment(ctx context.Context, id string) (*model.AnalyticFragment, error) {
+	f, err := database.GetAnalyticsFragment(id)
+	return &f, err
 }
 
 // Mutation returns generated.MutationResolver implementation.

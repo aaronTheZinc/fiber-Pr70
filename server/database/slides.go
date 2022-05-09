@@ -78,3 +78,10 @@ func DeleteSlide(id string) error {
 
 	return err
 }
+
+func SlideExists(id string) (bool, error) {
+	var count int64
+	var slides []model.SlideModel
+	err := db.Where("id = ? ", id).Find(&slides).Count(&count).Error
+	return count > 0, err
+}

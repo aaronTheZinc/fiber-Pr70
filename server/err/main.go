@@ -30,6 +30,9 @@ var INVALID_ACCOUNT_TYPE error = errors.New("invalid account type")
 var ENTERPRISE_FAILED_ADD_EMPLOYEE error = errors.New("failed to add employee to enterprise")
 var FAILED_TO_PARSE_SLIDE error = errors.New("failed to parse slide")
 var FAILED_UPDATE_SLIDE error = errors.New("failed to update slide")
+var FAILED_LIKE_CREATE error = errors.New("failed to create like")
+var ANALYTICS_FRAGMENT_NOT_FOUND = errors.New("analytics fragment not found")
+var FAILED_REMOVE_LIKE = errors.New("failed to remove like")
 
 func VreelFieldError(field string) error {
 	return errors.New("vreel field: " + field)

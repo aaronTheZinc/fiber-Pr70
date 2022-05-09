@@ -333,12 +333,19 @@ func AuthorizeSlideLike(slideId string, token string) (model.MutationResponse, e
 	userId := claims.ID
 
 	if isAuth && parseErr == nil {
-		if _, slideFetchErr := database.GetSlide(slideId); slideFetchErr != nil {
-			if _, likeCreationErr := database.CreateLike(userId, slideId); likeCreationErr != nil {
+		if exists, slideFetchErr := database.SlideExists(slideId); exists && slideFetchErr == nil {
+			if hasBeenLiked, _ := database.HasBeenLikedByAuthor(userId, slideId); !hasBeenLiked {
+				if f, likeCreationErr := database.CreateLike(userId, slideId); likeCreationErr != nil {
+					err = likeCreationErr
+				} else {
+					r.Message = "Liked Fragment Id: " + f.ID
+				}
 
+			} else {
+				r.Message = "Has Been Liked By Author."
 			}
 		} else {
-			err = slideFetchErr
+			err = e.SLIDE_NOT_FOUND
 		}
 	} else {
 		err = e.UNAUTHORIZED_ERROR
@@ -347,19 +354,23 @@ func AuthorizeSlideLike(slideId string, token string) (model.MutationResponse, e
 	return r, err
 }
 
-// func AuthorizeSlideRemoveLike(slideId, token string) (model.MutationResponse, error) {
-// 	var err error
-// 	var r model.MutationResponse
+func AuthorizeSlideRemoveLike(slideId, token string) (model.MutationResponse, error) {
+	var err error
+	var r model.MutationResponse
 
-// 	claims, isAuth, parseErr := ParseToken(token)
+	claims, isAuth, parseErr := ParseToken(token)
 
-// 	if isAuth && parseErr == nil {
+	userId := claims.ID
+	if isAuth && parseErr == nil {
+		if removeLikeErr := database.RemoveLike(userId, slideId); removeLikeErr != nil {
+			err = e.FAILED_REMOVE_LIKE
+		}
+	} else {
+		err = e.UNAUTHORIZED_ERROR
+	}
+	return r, err
+}
 
-// 	} else {
-// 		err = e.UNAUTHORIZED_ERROR
-// 	}
-// 	return r, err
-// }
 // func AuthorizeFollowVreel(vreelId, token string) (model.MutationResponse, error) {
 // 	var err error
 // 	var r model.MutationResponse

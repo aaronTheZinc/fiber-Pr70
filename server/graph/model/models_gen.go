@@ -8,6 +8,14 @@ type Advanced struct {
 	LinkType   string `json:"link_type"`
 }
 
+type AnalyticFragment struct {
+	ID        string `json:"id"`
+	Author    string `json:"author"`
+	Target    string `json:"target"`
+	Action    string `json:"action"`
+	TimeStamp int    `json:"time_stamp"`
+}
+
 type Analytics struct {
 	ID             string `json:"id"`
 	Followers      int    `json:"followers"`

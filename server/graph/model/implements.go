@@ -95,6 +95,16 @@ type AnalyticsModel struct {
 // 	ThisYear AnalyticsChunkModel
 // }
 
+func (c *AnalyticsFragmentModel) ToAnalyticsFragment() AnalyticFragment {
+	return AnalyticFragment{
+		ID:        c.ID,
+		Author:    c.Author,
+		Target:    c.Target,
+		Action:    c.Action,
+		TimeStamp: int(c.TimeStamp),
+	}
+}
+
 type EnterpriseModel struct {
 	ID        string         `json:"id"`
 	Name      string         `json:"name"`

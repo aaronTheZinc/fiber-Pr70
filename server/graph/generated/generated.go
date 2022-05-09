@@ -49,6 +49,14 @@ type ComplexityRoot struct {
 		LinkType   func(childComplexity int) int
 	}
 
+	AnalyticFragment struct {
+		Action    func(childComplexity int) int
+		Author    func(childComplexity int) int
+		ID        func(childComplexity int) int
+		Target    func(childComplexity int) int
+		TimeStamp func(childComplexity int) int
+	}
+
 	Analytics struct {
 		AddToContacts  func(childComplexity int) int
 		Calls          func(childComplexity int) int
@@ -192,6 +200,7 @@ type ComplexityRoot struct {
 
 	Query struct {
 		Analytics         func(childComplexity int, id string) int
+		AnalyticsFragment func(childComplexity int, id string) int
 		Email             func(childComplexity int, email string) int
 		EnterpiseEmployee func(childComplexity int, enterpriseName string, employeeID string) int
 		Enterprise        func(childComplexity int, id string) int
@@ -345,6 +354,7 @@ type QueryResolver interface {
 	EnterpiseEmployee(ctx context.Context, enterpriseName string, employeeID string) (*model.EnterpriseEmployee, error)
 	ServerAnalytics(ctx context.Context) (*model.ServerAnalytics, error)
 	Analytics(ctx context.Context, id string) (*model.Analytics, error)
+	AnalyticsFragment(ctx context.Context, id string) (*model.AnalyticFragment, error)
 }
 
 type executableSchema struct {
@@ -382,6 +392,41 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Advanced.LinkType(childComplexity), true
+
+	case "AnalyticFragment.action":
+		if e.complexity.AnalyticFragment.Action == nil {
+			break
+		}
+
+		return e.complexity.AnalyticFragment.Action(childComplexity), true
+
+	case "AnalyticFragment.author":
+		if e.complexity.AnalyticFragment.Author == nil {
+			break
+		}
+
+		return e.complexity.AnalyticFragment.Author(childComplexity), true
+
+	case "AnalyticFragment.id":
+		if e.complexity.AnalyticFragment.ID == nil {
+			break
+		}
+
+		return e.complexity.AnalyticFragment.ID(childComplexity), true
+
+	case "AnalyticFragment.target":
+		if e.complexity.AnalyticFragment.Target == nil {
+			break
+		}
+
+		return e.complexity.AnalyticFragment.Target(childComplexity), true
+
+	case "AnalyticFragment.time_stamp":
+		if e.complexity.AnalyticFragment.TimeStamp == nil {
+			break
+		}
+
+		return e.complexity.AnalyticFragment.TimeStamp(childComplexity), true
 
 	case "Analytics.add_to_contacts":
 		if e.complexity.Analytics.AddToContacts == nil {
@@ -1146,6 +1191,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Analytics(childComplexity, args["id"].(string)), true
 
+	case "Query.analyticsFragment":
+		if e.complexity.Query.AnalyticsFragment == nil {
+			break
+		}
+
+		args, err := ec.field_Query_analyticsFragment_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.AnalyticsFragment(childComplexity, args["id"].(string)), true
+
 	case "Query.email":
 		if e.complexity.Query.Email == nil {
 			break
@@ -1846,6 +1903,15 @@ type Analytics {
   shares: Int!
   qr_views: Int!
 }
+
+type AnalyticFragment {
+  id: String!
+  author: String!
+  target: String!
+  action: String!
+  time_stamp: Int!
+}
+
 type User {
   id: String!
   account_type: String!
@@ -2049,6 +2115,7 @@ type Query {
   ): EnterpriseEmployee!
   serverAnalytics: ServerAnalytics
   analytics(id: String!): Analytics!
+  analyticsFragment(id: String!): AnalyticFragment!
 }
 
 input NewEvent {
@@ -2113,7 +2180,7 @@ input NewEnterprise {
   password: String!
 }
 input AnalyticsMutation {
-  target: String!, 
+  target: String!
   token: String!
 }
 type Mutation {
@@ -2144,7 +2211,7 @@ type Mutation {
   updateVreelField(token: String!, fields: [VreelFields]): MutationResponse!
   updateUser(token: String!, fields: [VreelFields!]): MutationResponse!
   updateSlide(token: String, slideId: String!, data: String!): Slide!
-  likeSlide(input: AnalyticsMutation! ): MutationResponse!
+  likeSlide(input: AnalyticsMutation!): MutationResponse!
   unLikeSlide(input: AnalyticsMutation!): MutationResponse!
   follow(input: AnalyticsMutation!): MutationResponse!
   unFollow(input: AnalyticsMutation!): MutationResponse!
@@ -2590,6 +2657,21 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 	return args, nil
 }
 
+func (ec *executionContext) field_Query_analyticsFragment_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Query_analytics_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -2899,6 +2981,181 @@ func (ec *executionContext) _Advanced_link_type(ctx context.Context, field graph
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _AnalyticFragment_id(ctx context.Context, field graphql.CollectedField, obj *model.AnalyticFragment) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "AnalyticFragment",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _AnalyticFragment_author(ctx context.Context, field graphql.CollectedField, obj *model.AnalyticFragment) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "AnalyticFragment",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Author, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _AnalyticFragment_target(ctx context.Context, field graphql.CollectedField, obj *model.AnalyticFragment) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "AnalyticFragment",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Target, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _AnalyticFragment_action(ctx context.Context, field graphql.CollectedField, obj *model.AnalyticFragment) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "AnalyticFragment",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Action, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _AnalyticFragment_time_stamp(ctx context.Context, field graphql.CollectedField, obj *model.AnalyticFragment) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "AnalyticFragment",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TimeStamp, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Analytics_id(ctx context.Context, field graphql.CollectedField, obj *model.Analytics) (ret graphql.Marshaler) {
@@ -6704,6 +6961,48 @@ func (ec *executionContext) _Query_analytics(ctx context.Context, field graphql.
 	res := resTmp.(*model.Analytics)
 	fc.Result = res
 	return ec.marshalNAnalytics2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐAnalytics(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_analyticsFragment(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_analyticsFragment_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().AnalyticsFragment(rctx, args["id"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.AnalyticFragment)
+	fc.Result = res
+	return ec.marshalNAnalyticFragment2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐAnalyticFragment(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -10800,6 +11099,53 @@ func (ec *executionContext) _Advanced(ctx context.Context, sel ast.SelectionSet,
 	return out
 }
 
+var analyticFragmentImplementors = []string{"AnalyticFragment"}
+
+func (ec *executionContext) _AnalyticFragment(ctx context.Context, sel ast.SelectionSet, obj *model.AnalyticFragment) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, analyticFragmentImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("AnalyticFragment")
+		case "id":
+			out.Values[i] = ec._AnalyticFragment_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "author":
+			out.Values[i] = ec._AnalyticFragment_author(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "target":
+			out.Values[i] = ec._AnalyticFragment_target(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "action":
+			out.Values[i] = ec._AnalyticFragment_action(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "time_stamp":
+			out.Values[i] = ec._AnalyticFragment_time_stamp(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var analyticsImplementors = []string{"Analytics"}
 
 func (ec *executionContext) _Analytics(ctx context.Context, sel ast.SelectionSet, obj *model.Analytics) graphql.Marshaler {
@@ -11745,6 +12091,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}
 				return res
 			})
+		case "analyticsFragment":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_analyticsFragment(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
 		case "__type":
 			out.Values[i] = ec._Query___type(ctx, field)
 		case "__schema":
@@ -12566,6 +12926,20 @@ func (ec *executionContext) ___Type(ctx context.Context, sel ast.SelectionSet, o
 // endregion **************************** object.gotpl ****************************
 
 // region    ***************************** type.gotpl *****************************
+
+func (ec *executionContext) marshalNAnalyticFragment2githubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐAnalyticFragment(ctx context.Context, sel ast.SelectionSet, v model.AnalyticFragment) graphql.Marshaler {
+	return ec._AnalyticFragment(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNAnalyticFragment2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐAnalyticFragment(ctx context.Context, sel ast.SelectionSet, v *model.AnalyticFragment) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._AnalyticFragment(ctx, sel, v)
+}
 
 func (ec *executionContext) marshalNAnalytics2githubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐAnalytics(ctx context.Context, sel ast.SelectionSet, v model.Analytics) graphql.Marshaler {
 	return ec._Analytics(ctx, sel, &v)
