@@ -22,7 +22,8 @@ export type SlidesStateType = {
   editSlideIsOpen: boolean,
   editTitleIsOpen: boolean,
   editMediaIsOpen: boolean,
-  editCtaIsOpen: boolean,
+  editCta1IsOpen: boolean,
+  editCta2IsOpen: boolean,
   editAdvancedIsOpen: boolean,
   values: {
     title: {
@@ -32,7 +33,12 @@ export type SlidesStateType = {
     desktop: Content,
     mobile: Content
 
-    cta: {
+    cta1: {
+      link_header: string,
+      link_type: string,
+      link_url: string
+    },
+    cta2: {
       link_header: string,
       link_type: string,
       link_url: string
@@ -173,7 +179,8 @@ const EditSlides = (): JSX.Element => {
             editSlideIsOpen: false,
             editTitleIsOpen: false,
             editMediaIsOpen: false,
-            editCtaIsOpen: false,
+            editCta1IsOpen: false,
+            editCta2IsOpen: false,
             editAdvancedIsOpen: false,
             position: slide.slide_location,
             values: {
@@ -181,7 +188,8 @@ const EditSlides = (): JSX.Element => {
               mobile: slide.mobile,
               desktop: slide.desktop,
 
-              cta: slide.cta,
+              cta1: slide.cta1,
+              cta2: slide.cta2,
               advanced: slide.advanced as any
 
 
@@ -197,18 +205,21 @@ const EditSlides = (): JSX.Element => {
   const router = useRouter();
   const { username } = router.query;
   return (
-    <li className="vreel-edit-slides">
+    <li 
+    className="vreel-edit-slides"
+    >
       <button
         className="vreel-edit-menu__accordion"
         type="button"
         onClick={() => setEditAccordionIsOpen(!editAccordionIsOpen)}
+        style={{borderRadius: editAccordionIsOpen ? "20px 20px 0 0" : "20px", boxShadow: editAccordionIsOpen ? "none" : "0px 1.79739px 43.1373px rgba(0, 0, 0, 0.08)"}}
       >
         <span>
           <p>Slides</p>
           {editAccordionIsOpen ? (
-            <AiOutlineMinusCircle />
+            <AiOutlineMinusCircle color="white" />
           ) : (
-            <IoMdAddCircleOutline />
+            <IoMdAddCircleOutline color="#FF7A00" />
           )}
         </span>
       </button>
@@ -221,7 +232,7 @@ const EditSlides = (): JSX.Element => {
           <div className="vreel-edit-slides__new-slide__wrapper">
             <div className="vreel-edit-slides__new-slide">
               <p>Slides</p>
-              <button onClick={CreateSlide} className="vreel-edit-menu__button green">Add New</button>
+              <button onClick={CreateSlide} className="vreel-edit-menu__button green">Add Slide</button>
             </div>
 
             {user ? (

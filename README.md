@@ -19,7 +19,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 *run the commands above before running the following commands
 cd .. back into root directory
 cd server/
-docker compose up
+docker compose up or sudo docker-compose up
 go run server.go
 ```
 

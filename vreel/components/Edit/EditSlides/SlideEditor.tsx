@@ -1,10 +1,12 @@
 import { useRouter } from "next/router";
 import React, { useEffect, useRef, useState } from "react";
+import { Row, Col } from "reactstrap";
 import { AiOutlineMinusCircle } from "react-icons/ai";
 import { IoMdAddCircleOutline } from "react-icons/io";
+import {TiDevicePhone, TiDeviceDesktop} from 'react-icons/ti'
 import { Collapse } from "reactstrap";
 import { DeleteSlide, SaveSlideType, Slide, User } from "../../../types";
-import { CheckboxInput, EditInput } from "../../Shared/Input/Input";
+import { CheckboxInput, EditInput, LinkButtons } from "../../Shared/Input/Input";
 import { UppyModal } from "../../Shared/UppyModal/UppyModal";
 import { SlidesStateType } from "./EditSlides";
 interface SlideEditorProps {
@@ -34,6 +36,7 @@ export default function SlideEditor({
 }: SlideEditorProps) {
     const [editedSlide, setEditedSlide] = useState<Slide>(slide);
     const [fileUrl, setFileUrl] = useState<string>(state.values?.mobile?.uri);
+    const [uppyIsOpen, setUppyIsOpen] = useState<boolean>(false)
 
     const { values } = state
     useEffect(() => {
@@ -59,7 +62,10 @@ export default function SlideEditor({
             [parent]: { ...state.values[parent], [key]: value },
         });
     }
+
+    // device can be either mobile or desktop
     function updateMedia(url: string, fileType: string) {
+        setUppyIsOpen(false)
         setFileUrl(url);
         setState(id, "values", { ...state.values, "mobile": { uri: url, content_type: fileType } })
 
@@ -98,6 +104,15 @@ export default function SlideEditor({
                     onClick={() =>
                         setState(id, "editTitleIsOpen", !state.editTitleIsOpen)
                     }
+                    style={state.editTitleIsOpen ? {
+                        border: "1px solid #fff",
+                        borderBottom: "none",
+                        borderRadius: "15px 15px 0 0",
+                    } : {
+                        border: "1px solid #fff",
+                        borderBottom: "1px solid #fff",
+                        borderRadius: "15px"
+                    }}
                 >
                     <span>
                         <p>Title</p>
@@ -108,7 +123,17 @@ export default function SlideEditor({
                         )}
                     </span>
                 </button>
-                <Collapse isOpen={state.editTitleIsOpen}>
+                <Collapse isOpen={state.editTitleIsOpen} style={
+                    {
+                        border: "1px solid #fff",
+                        borderTop: "none",
+                        borderRadius: "0 0 15px 15px",
+                        position: "relative",
+                        bottom: "15px",
+                        padding: "15px"
+                    }
+                }
+                >
                     <EditInput
                         type="text"
                         label="Header"
@@ -130,12 +155,22 @@ export default function SlideEditor({
 
                 <div>
                     <button
-                        style={{ marginTop: "1pc" }}
                         className="vreel-edit-menu__accordion white"
                         type="button"
                         onClick={() =>
                             setState(id, "editMediaIsOpen", !state.editMediaIsOpen)
                         }
+                        style={state.editMediaIsOpen ? {
+                            border: "1px solid #fff",
+                            borderBottom: "none",
+                            borderRadius: "15px 15px 0 0",
+                            marginTop: "1pc",
+                        } : {
+                            border: "1px solid #fff",
+                            borderBottom: "1px solid #fff",
+                            borderRadius: "15px",
+                            marginTop: "1pc",
+                        }}
                     >
                         <span>
                             <p>Media</p>
@@ -152,11 +187,34 @@ export default function SlideEditor({
                     </button>
                 </div>
 
-                <Collapse isOpen={state.editMediaIsOpen}>
+                <Collapse 
+                    isOpen={state.editMediaIsOpen}
+                    style={{
+                        border: "1px solid #fff",
+                        borderTop: "none",
+                        borderRadius: "0 0 15px 15px",
+                        position: "relative",
+                        bottom: "15px",
+                        padding: "15px"
+                    }}
+                >
+
+                    <Row className="vreel-edit-slides__new-slide__device-row">
+                        <button className="vreel-edit-slides__new-slide__device-button" onClick={() => setUppyIsOpen(true)}>
+                            <UppyModal setUpload={updateMedia} basicFileType="music" isOpen={uppyIsOpen} toggleModal={(b => setUppyIsOpen(b))} />
+                            <TiDevicePhone size={32} color="white" />
+                            <p>Upload Mobile File</p>
+                        </button>
+                        <button className="vreel-edit-slides__new-slide__device-button" onClick={() => setUppyIsOpen(true)}>
+                            <UppyModal setUpload={updateMedia} basicFileType="music" isOpen={uppyIsOpen} toggleModal={(b => setUppyIsOpen(b))} />
+                            <TiDeviceDesktop size={32} color="white" />
+                            <p>Upload Desktop File</p>
+                        </button>
+                    </Row>
                     <div className="vreel-edit-slides__new-slide__media-wrapper">
                         <p>Upload Your File:</p>
-                        <UppyModal setUpload={updateMedia}
-                        />
+                        {/* <UppyModal setUpload={updateMedia} basicFileType="music"
+                        /> */}
                         {/* 
                     </div>
                     <div className="vreel-edit-slides__new-slide__media-wrapper">
@@ -172,37 +230,57 @@ export default function SlideEditor({
                     </div>
                 </Collapse>
                 <button
-                    style={{ marginTop: "1pc" }}
                     className="vreel-edit-menu__accordion white"
                     type="button"
-                    onClick={() => setState(id, "editCtaIsOpen", !state.editCtaIsOpen)}
+                    onClick={() => setState(id, "editCta1IsOpen", !state.editCta1IsOpen)}
+                    style={state.editCta1IsOpen ? {
+                        border: "1px solid #fff",
+                        borderBottom: "none",
+                        borderRadius: "15px 15px 0 0",
+                        marginTop: "1pc",
+                    } : {
+                        border: "1px solid #fff",
+                        borderBottom: "1px solid #fff",
+                        borderRadius: "15px",
+                        marginTop: "1pc",
+                    }}
                 >
                     <span>
-                        <p>Call To Action</p>
-                        {state.editCtaIsOpen ? (
+                        <p>Call To Action Button #1</p>
+                        {state.editCta1IsOpen ? (
                             <AiOutlineMinusCircle />
                         ) : (
                             <IoMdAddCircleOutline />
                         )}
                     </span>
                 </button>
-                <Collapse isOpen={state.editCtaIsOpen}>
+                <Collapse 
+                    isOpen={state.editCta1IsOpen}
+                    style={{
+                        border: "1px solid #fff",
+                        borderTop: "none",
+                        borderRadius: "0 0 15px 15px",
+                        position: "relative",
+                        bottom: "15px",
+                        padding: "15px"
+                    }}
+                >
                     <Collapse isOpen={true}>
                         <EditInput
-                            value={state?.values?.cta?.link_header}
-                            setValue={(s: string) => updateValue("cta", "link_header", s)}
+                            value={state?.values?.cta1?.link_header}
+                            setValue={(s: string) => updateValue("cta1", "link_header", s)}
                             type="text"
                             label="Link Header"
                         />
-                        <EditInput
-                            value={state?.values?.cta?.link_type}
-                            setValue={(s: string) => updateValue("cta", "link_type", s)}
+                        <LinkButtons
+                            value={state?.values?.cta1?.link_type}
+                            setValue={(s: string) => updateValue("cta1", "link_type", s)}
                             type="text"
                             label="Link Type"
                         />
                         <EditInput
-                            value={state?.values?.cta?.link_url}
-                            setValue={(s: string) => updateValue("cta", "link_url", s)}
+                            value={state?.values?.cta1?.link_url}
+                            setValue={(s: string) => updateValue("cta1", "link_url", s)}
                             type="text"
                             label="Link URL"
                         />
@@ -211,10 +289,77 @@ export default function SlideEditor({
                 <button
                     className="vreel-edit-menu__accordion white"
                     type="button"
-                    style={{ marginTop: "1pc" }}
+                    onClick={() => setState(id, "editCta2IsOpen", !state.editCta2IsOpen)}
+                    style={state.editCta2IsOpen ? {
+                        border: "1px solid #fff",
+                        borderBottom: "none",
+                        borderRadius: "15px 15px 0 0",
+                        marginTop: "1pc",
+                    } : {
+                        border: "1px solid #fff",
+                        borderBottom: "1px solid #fff",
+                        borderRadius: "15px",
+                        marginTop: "1pc",
+                    }}
+                >
+                    <span>
+                        <p>Call To Action Button #2</p>
+                        {state.editCta2IsOpen ? (
+                            <AiOutlineMinusCircle />
+                        ) : (
+                            <IoMdAddCircleOutline />
+                        )}
+                    </span>
+                </button>
+                <Collapse 
+                    isOpen={state.editCta2IsOpen}
+                    style={{
+                        border: "1px solid #fff",
+                        borderTop: "none",
+                        borderRadius: "0 0 15px 15px",
+                        position: "relative",
+                        bottom: "15px",
+                        padding: "15px"
+                    }}
+                >
+                    <Collapse isOpen={true}>
+                        <EditInput
+                            value={state?.values?.cta2?.link_header}
+                            setValue={(s: string) => updateValue("cta2", "link_header", s)}
+                            type="text"
+                            label="Link Header"
+                        />
+                        <LinkButtons
+                            value={state?.values?.cta2?.link_type}
+                            setValue={(s: string) => updateValue("cta2", "link_type", s)}
+                            type="text"
+                            label="Link Type"
+                        />
+                        <EditInput
+                            value={state?.values?.cta2?.link_url}
+                            setValue={(s: string) => updateValue("cta2", "link_url", s)}
+                            type="text"
+                            label="Link URL"
+                        />
+                    </Collapse>
+                </Collapse>
+                <button
+                    className="vreel-edit-menu__accordion white"
+                    type="button"
                     onClick={() =>
                         setState(id, "editAdvancedIsOpen", !state.editAdvancedIsOpen)
                     }
+                    style={state.editAdvancedIsOpen ? {
+                        border: "1px solid #fff",
+                        borderBottom: "none",
+                        borderRadius: "15px 15px 0 0",
+                        marginTop: "1pc",
+                    } : {
+                        border: "1px solid #fff",
+                        borderBottom: "1px solid #fff",
+                        borderRadius: "15px",
+                        marginTop: "1pc",
+                    }}
                 >
                     <span>
                         <p>Advanced</p>
@@ -225,7 +370,17 @@ export default function SlideEditor({
                         )}
                     </span>
                 </button>
-                <Collapse isOpen={state.editAdvancedIsOpen}>
+                <Collapse 
+                    isOpen={state.editAdvancedIsOpen}
+                    style={{
+                        border: "1px solid #fff",
+                        borderTop: "none",
+                        borderRadius: "0 0 15px 15px",
+                        position: "relative",
+                        bottom: "15px",
+                        padding: "15px"
+                    }}
+                >
                     <Collapse isOpen={true}>
                         <EditInput
                             type="textarea"
