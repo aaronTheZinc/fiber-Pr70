@@ -33,7 +33,7 @@ const VreelSlide = ({
   useEffect(() => {
     try {
       videoEl.current.defaultMuted = true;
-    } catch (e) {}
+    } catch (e) { }
   });
 
   const [isFollowed, setIsFollowed] = useState(false);
@@ -64,7 +64,7 @@ const VreelSlide = ({
       } else {
         videoEl.current.pause();
       }
-    } catch (e) {}
+    } catch (e) { }
   }, [currentSlide]);
 
   useEffect(() => {
@@ -134,12 +134,12 @@ const VreelSlide = ({
         <h1 className="vreel-slide__heading-text">
           {username
             ? (slide as Slide)?.title?.header
-            : "THE INTERFACE THAT VISUALLY ELEVATES YOUR BRAND™"}
+            : "VREEL™\nTHE INTERFACE THAT VISUALLY ELEVATES YOUR BRAND™"}
         </h1>
         <p className="vreel-slide__text">
           {username
             ? (slide as Slide)?.title?.description
-            : "Upload some files in file manager and then use editor to personalize your Vreel"}
+            : "Upload some files in file manager and then use editor to personalize your Vreel \n \n We make you look better! Our Web 3.0 storytelling interface visually elevates your brand."}
         </p>
         <div className="vreel-slide__btn-wrapper">
           {username ? (
@@ -208,7 +208,7 @@ const VreelSlide = ({
               data-bs-toggle="tooltip"
               data-bs-placement="top"
               title="Call Me at 773-445-3322"
-              src="/call-icon.png"
+              src="/call-icon.svg"
               alt="call-icon"
               className="vreel-slide__icon"
             />
@@ -227,7 +227,7 @@ const VreelSlide = ({
               data-bs-toggle="tooltip"
               data-bs-placement="top"
               title="Download My Vcard"
-              src="/add-to-contact-icon.png"
+              src="/add-to-contact-icon.svg"
               alt="add-to-contact-icon"
               className="vreel-slide__icon"
             />
@@ -249,7 +249,7 @@ const VreelSlide = ({
                 data-bs-toggle="tooltip"
                 data-bs-placement="top"
                 title="Add this Slide to your Feed"
-                src="/follow-icon.png"
+                src="/follow-icon.svg"
                 alt="follow-icon"
                 className="vreel-slide__icon"
               />
@@ -263,7 +263,8 @@ const VreelSlide = ({
         </div>
 
         <div style={{ marginBottom: "1pc" }} className="bottom">
-          <VreelModal title="Share" isSocial={true} icon="/share-icon.svg" />
+
+          <VreelModal title="Info" icon="/slide-credit-icon.svg" />
           <div>
             {isLiked ? (
               <img
@@ -286,11 +287,9 @@ const VreelSlide = ({
                 className="vreel-slide__icon"
               />
             )}
-            <div>
-              <label className="subIconLabel">Like</label>
-            </div>
+
           </div>
-          <VreelModal title="Info" icon="/slide-credit-icon.svg" />
+          <VreelModal title="Share" isSocial={true} icon="/share-icon.svg" />
           <VreelModal isQr={true} icon="/qr-icon.svg" />
         </div>
       </aside>
@@ -298,7 +297,7 @@ const VreelSlide = ({
         ref={audioEl}
         id="vreelBackgroundAudio"
         loop={true}
-        // src="/background-vreel.mp3"
+      // src="/background-vreel.mp3"
       ></audio>
     </section>
   );

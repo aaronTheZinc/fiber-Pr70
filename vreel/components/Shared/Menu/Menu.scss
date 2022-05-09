@@ -18,6 +18,8 @@
     }
   }
   &__wrapper {
+    left: 0 !important;
+    right: initial;
     font-family: Anton;
     font-size: 50px;
     line-height: 75px;

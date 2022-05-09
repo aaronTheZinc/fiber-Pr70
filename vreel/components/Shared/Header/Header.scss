@@ -9,20 +9,26 @@
   justify-content: space-between;
   width: 100%;
   padding-top: 5px;
+
   .rounded-circle svg {
     position: relative;
     left: -35px;
     cursor: pointer;
   }
+
   img {
     cursor: pointer;
+    padding-right: 0.4pc;
+
     &:first-of-type {
       left: 5px;
     }
+
     &:last-of-type {
       right: 5px;
     }
   }
+
   &__nav-items__wrapper {
     display: flex;
     flex-direction: row;
@@ -30,6 +36,7 @@
     align-self: flex-start;
     padding-right: 8px;
   }
+
   [data-initials]:before {
     background: #131313;
     color: white;
