@@ -2,10 +2,41 @@
   &:not(:first-child) {
     margin-top: 36px;
   }
+  &__linkRow {
+    width: 100% !important;
+    margin: auto !important
+  }
+  &__linkButton {
+    background: white;
+    border: 0.982877px solid #8D8D8D;
+    border-radius: 10px;
+    font-size: 2.5vw;
+    padding: 15px 5px;
+    margin: 10px auto auto 0px !important;
+    @media only screen and (max-width: 768px) {
+      padding: 5px;
+    }
+  }
+  &__linkButton:nth-of-type(n + 6) {
+    margin-bottom: 10px
+  }
+  &__linkButton:hover {
+    background: #fab06a
+  }
+
+  &__linkButton:active {
+    background: #FF7A00
+  }
+  &__linkButton>* {
+    vertical-align: middle;
+    margin: 1px;
+  }
   &__wrapper {
     &.edit {
       margin-top: 0;
     }
+
+
     label {
       display: flex;
       flex-direction: row;

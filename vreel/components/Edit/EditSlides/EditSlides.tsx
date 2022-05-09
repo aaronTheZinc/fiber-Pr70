@@ -22,7 +22,8 @@ export type SlidesStateType = {
   editSlideIsOpen: boolean,
   editTitleIsOpen: boolean,
   editMediaIsOpen: boolean,
-  editCtaIsOpen: boolean,
+  editCta1IsOpen: boolean,
+  editCta2IsOpen: boolean,
   editAdvancedIsOpen: boolean,
   values: {
     title: {
@@ -32,7 +33,12 @@ export type SlidesStateType = {
     desktop: Content,
     mobile: Content
 
-    cta: {
+    cta1: {
+      link_header: string,
+      link_type: string,
+      link_url: string
+    },
+    cta2: {
       link_header: string,
       link_type: string,
       link_url: string
@@ -173,7 +179,8 @@ const EditSlides = (): JSX.Element => {
             editSlideIsOpen: false,
             editTitleIsOpen: false,
             editMediaIsOpen: false,
-            editCtaIsOpen: false,
+            editCta1IsOpen: false,
+            editCta2IsOpen: false,
             editAdvancedIsOpen: false,
             position: slide.slide_location,
             values: {
@@ -181,7 +188,8 @@ const EditSlides = (): JSX.Element => {
               mobile: slide.mobile,
               desktop: slide.desktop,
 
-              cta: slide.cta,
+              cta1: slide.cta1,
+              cta2: slide.cta2,
               advanced: slide.advanced as any
 
 

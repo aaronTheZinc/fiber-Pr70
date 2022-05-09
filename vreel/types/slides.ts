@@ -18,7 +18,12 @@ export interface Slide {
         header: string;
         description: string;
     }
-    cta: {
+    cta1: {
+        link_header: string;
+        link_type: string;
+        link_url: string
+    }
+    cta2: {
         link_header: string;
         link_type: string;
         link_url: string
