@@ -301,7 +301,7 @@ input VreelFields {
 }
 input NewEnterprise {
   name: String!
-  owner: String!
+  # owner: String!
   email: String!
   password: String!
 }

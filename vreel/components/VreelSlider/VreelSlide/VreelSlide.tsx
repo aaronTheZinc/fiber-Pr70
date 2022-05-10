@@ -54,6 +54,10 @@ const VreelSlide = ({
     // isChanged && audioEl.current.pause()
   };
   useEffect(() => {
+    setIsVideo(slide.mobile.content_type.includes("video"));
+    console.log()
+  }, [])
+  useEffect(() => {
     try {
       if (currentSlide === slideId) {
         videoEl.current.play();
@@ -83,7 +87,7 @@ const VreelSlide = ({
       {/* <img src="https://images.unsplash.com/photo-1626715185400-49cccfabc10f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=627&q=80" alt="background img" className="vreel-slide__background-img" /> */}
       {username ? (
         <>
-          {slide.mobile.content_type.includes("video") ? (
+          {isVideo ? (
             <video
               ref={videoEl}
               className="vreel-slide__background-video"
@@ -178,28 +182,35 @@ const VreelSlide = ({
         style={{ marginBottom: "1pc" }}
         className="vreel-slide__left-icons__wrapper"
       >
-        <VreelModal icon="/background-credit-icon.svg" />
-        {isMuted ? (
-          <img
-            onClick={() => setIsMuted(!isMuted)}
-            data-bs-toggle="tooltip"
-            data-bs-placement="top"
-            title="Toggle Slide Sound"
-            src="/slide-sound-mute-icon.png"
-            alt="slide-sound-mute-icon"
-            className="vreel-slide__icon vreel-slide__icon-sound"
-          />
-        ) : (
-          <img
-            onClick={() => setIsMuted(!isMuted)}
-            data-bs-toggle="tooltip"
-            data-bs-placement="top"
-            title="Toggle Slide Sound"
-            src="/slide-sound-icon.png"
-            alt="slide-sound-icon"
-            className="vreel-slide__icon vreel-slide__icon-sound"
-          />
-        )}
+        {isVideo ?
+          (<>
+            <VreelModal icon="/background-credit-icon.svg" />
+
+            {isMuted ? (
+              < img
+                onClick={() => setIsMuted(!isMuted)}
+                data-bs-toggle="tooltip"
+                data-bs-placement="top"
+                title="Toggle Slide Sound"
+                src="/slide-sound-mute-icon.png"
+                alt="slide-sound-mute-icon"
+                className="vreel-slide__icon vreel-slide__icon-sound"
+              />
+            ) : (
+              <img
+                onClick={() => setIsMuted(!isMuted)}
+                data-bs-toggle="tooltip"
+                data-bs-placement="top"
+                title="Toggle Slide Sound"
+                src="/slide-sound-icon.png"
+                alt="slide-sound-icon"
+                className="vreel-slide__icon vreel-slide__icon-sound"
+              />
+            )}
+          </>) : (
+            <></>
+          )
+        }
       </div>
       <aside className="vreel-slide__right-icons__wrapper">
         <div className="top">

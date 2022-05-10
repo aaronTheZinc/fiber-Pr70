@@ -2175,7 +2175,7 @@ input VreelFields {
 }
 input NewEnterprise {
   name: String!
-  owner: String!
+  # owner: String!
   email: String!
   password: String!
 }
@@ -10706,14 +10706,6 @@ func (ec *executionContext) unmarshalInputNewEnterprise(ctx context.Context, obj
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
 			it.Name, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "owner":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("owner"))
-			it.Owner, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}

@@ -334,7 +334,7 @@ func CreateNewSlideModel() SlideModel {
 	n := 0
 	title, _ := json.Marshal(Title{"", ""})
 	advanced, _ := json.Marshal(Advanced{"", "", ""})
-	content, _ := json.Marshal(Content{&n, &n, nil, "video", "https://player.vimeo.com/external/328428416.sd.mp4?s=39df9f60fdeaeff0f4e3fbf3c1213d395792fc43&profile_id=165&oauth2_token_id=57447761"})
+	content, _ := json.Marshal(Content{&n, &n, nil, "video", "/waterfall.mp4"})
 	cta, _ := json.Marshal(Cta{"", "", ""})
 	return SlideModel{
 		ContentType:   "",

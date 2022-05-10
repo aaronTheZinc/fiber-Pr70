@@ -152,7 +152,6 @@ type MutationResponse struct {
 
 type NewEnterprise struct {
 	Name     string `json:"name"`
-	Owner    string `json:"owner"`
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }

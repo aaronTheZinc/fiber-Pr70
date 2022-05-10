@@ -25,7 +25,7 @@ const isMusic = (extension: string) => {
   return extension === "mp3"
   /* let regex = new RegExp(/.(mp3)$/i)
   return regex.test(extension) */
-} 
+}
 
 import { useCookies } from "react-cookie";
 
@@ -61,7 +61,7 @@ export const UppyModal = ({ setUpload, basicFileType, isOpen, toggleModal }: Upp
   console.log("isOpen", isOpen)
 
   const envType = process.env.NEXT_PUBLIC_ENVIRONMENT;
-  
+
   const BASE_URL =
     envType == "dev" ? "http://localhost:7070" : "https://dev1.vreel.page";
 
@@ -94,13 +94,13 @@ export const UppyModal = ({ setUpload, basicFileType, isOpen, toggleModal }: Upp
   uppy.on("file-added", (file) => {
 
     // Makes sure that the selected file is an mp3 only is the basicFileType is music-related. If not, then the file gets removed
-    if((basicFileType === "music" || basicFileType === "background audio") && isMusic(file.extension) === false){
-      console.log("rejected")
-      uppy.removeFile(file.id, "removed-by-user")
-    } else {
-      console.log("went through", file.type)
-      setFileType(file.type);
-    }
+    // if((basicFileType === "music" || basicFileType === "background audio") && isMusic(file.extension) === false){
+    //   console.log("rejected")
+    //   uppy.removeFile(file.id, "removed-by-user")
+    // } else {
+    //   console.log("went through", file.type)
+    setFileType(file.type);
+    // }
   });
 
   uppy.on("error", (error) => {
@@ -109,7 +109,7 @@ export const UppyModal = ({ setUpload, basicFileType, isOpen, toggleModal }: Upp
 
   // alerts the user that the selected file cannot go through because of it's extension
   uppy.on('file-removed', (file, reason) => {
-  
+
     if (reason === 'removed-by-user' && (basicFileType === "music" || basicFileType === "background audio")) {
       alert(`sorry but ${file.name} has been rejected because it is not an mp3 file`)
     }
