@@ -192,6 +192,7 @@ const VreelSlide = ({
 
             {isMuted ? (
               < img
+                style={{ height: "65px" }}
                 onClick={() => setIsMuted(!isMuted)}
                 data-bs-toggle="tooltip"
                 data-bs-placement="top"
@@ -202,6 +203,7 @@ const VreelSlide = ({
               />
             ) : (
               <img
+                style={{ height: "65px" }}
                 onClick={() => setIsMuted(!isMuted)}
                 data-bs-toggle="tooltip"
                 data-bs-placement="top"
