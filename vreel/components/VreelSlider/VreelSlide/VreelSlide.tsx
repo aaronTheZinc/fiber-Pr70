@@ -54,7 +54,11 @@ const VreelSlide = ({
     // isChanged && audioEl.current.pause()
   };
   useEffect(() => {
-    setIsVideo(slide.mobile.content_type.includes("video"));
+    if (username) {
+      setIsVideo(slide?.mobile?.content_type?.includes("video"));
+    } else {
+      setIsVideo(true);
+    }
     console.log()
   }, [])
   useEffect(() => {
