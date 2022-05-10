@@ -133,7 +133,8 @@ type Slide {
   metadata: SlideMetaData!
   mobile: Content!
   desktop: Content!
-  cta: CTA!
+  cta1: CTA!
+  cta2: CTA!
   advanced: Advanced
 }
 
@@ -264,7 +265,7 @@ input NewUser {
   last_name: String
   email: String!
   phone_number: String
-  password: String!
+  password: String
   business_address: String
   billing_address: String
   website: String

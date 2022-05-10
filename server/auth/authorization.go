@@ -256,6 +256,7 @@ func AuthorizeAddEmployeeToEnterprise(token string, newUser model.NewUser) (mode
 		} else {
 			if user.AccountType == "enterprise" {
 				newUser.AccountType = "employee"
+				newUser.Username = utils.GenerateId()
 				u, creationErr := CreateNewUser(newUser)
 				if creationErr != nil {
 					err = creationErr

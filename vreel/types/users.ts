@@ -1,4 +1,4 @@
-import type { Slide } from "./slides"
+import type { Slide } from "./slides";
 export interface User {
   first_name: string;
   last_name: string;
@@ -11,6 +11,16 @@ export interface User {
   password: string;
   password_confirm: string;
   vreel: {
-    slides: Slide[]
-  }
+    slides: Slide[];
+  };
+}
+export interface Enterprise {
+  id: string;
+  name: string;
+  owner: string;
+  email: string;
+  employees: User[];
+  vreel: {
+    slides: Slide[];
+  };
 }

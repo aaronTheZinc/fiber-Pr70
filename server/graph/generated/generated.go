@@ -242,7 +242,8 @@ type ComplexityRoot struct {
 		Advanced      func(childComplexity int) int
 		Author        func(childComplexity int) int
 		ContentType   func(childComplexity int) int
-		Cta           func(childComplexity int) int
+		Cta1          func(childComplexity int) int
+		Cta2          func(childComplexity int) int
 		Desktop       func(childComplexity int) int
 		ID            func(childComplexity int) int
 		Metadata      func(childComplexity int) int
@@ -1430,12 +1431,19 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Slide.ContentType(childComplexity), true
 
-	case "Slide.cta":
-		if e.complexity.Slide.Cta == nil {
+	case "Slide.cta1":
+		if e.complexity.Slide.Cta1 == nil {
 			break
 		}
 
-		return e.complexity.Slide.Cta(childComplexity), true
+		return e.complexity.Slide.Cta1(childComplexity), true
+
+	case "Slide.cta2":
+		if e.complexity.Slide.Cta2 == nil {
+			break
+		}
+
+		return e.complexity.Slide.Cta2(childComplexity), true
 
 	case "Slide.desktop":
 		if e.complexity.Slide.Desktop == nil {
@@ -2007,7 +2015,8 @@ type Slide {
   metadata: SlideMetaData!
   mobile: Content!
   desktop: Content!
-  cta: CTA!
+  cta1: CTA!
+  cta2: CTA!
   advanced: Advanced
 }
 
@@ -7840,7 +7849,7 @@ func (ec *executionContext) _Slide_desktop(ctx context.Context, field graphql.Co
 	return ec.marshalNContent2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐContent(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Slide_cta(ctx context.Context, field graphql.CollectedField, obj *model.Slide) (ret graphql.Marshaler) {
+func (ec *executionContext) _Slide_cta1(ctx context.Context, field graphql.CollectedField, obj *model.Slide) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -7858,7 +7867,42 @@ func (ec *executionContext) _Slide_cta(ctx context.Context, field graphql.Collec
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Cta, nil
+		return obj.Cta1, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Cta)
+	fc.Result = res
+	return ec.marshalNCTA2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐCta(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Slide_cta2(ctx context.Context, field graphql.CollectedField, obj *model.Slide) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Slide",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Cta2, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -12315,8 +12359,13 @@ func (ec *executionContext) _Slide(ctx context.Context, sel ast.SelectionSet, ob
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "cta":
-			out.Values[i] = ec._Slide_cta(ctx, field, obj)
+		case "cta1":
+			out.Values[i] = ec._Slide_cta1(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "cta2":
+			out.Values[i] = ec._Slide_cta2(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}

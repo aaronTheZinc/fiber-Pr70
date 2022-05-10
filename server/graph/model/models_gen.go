@@ -231,7 +231,8 @@ type Slide struct {
 	Metadata      *SlideMetaData `json:"metadata"`
 	Mobile        *Content       `json:"mobile"`
 	Desktop       *Content       `json:"desktop"`
-	Cta           *Cta           `json:"cta"`
+	Cta1          *Cta           `json:"cta1"`
+	Cta2          *Cta           `json:"cta2"`
 	Advanced      *Advanced      `json:"advanced"`
 }
 

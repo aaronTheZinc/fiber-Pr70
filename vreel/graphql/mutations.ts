@@ -23,6 +23,19 @@ export const CREATE_USER = gql`
     }
   }
 `;
+export const CREATE_ENTERPRISE = gql`
+  mutation CreateEnterprise(
+    $email: String!
+    $password: String!
+    $name: String!
+  ) {
+    createEnterprise(
+      input: { email: $email, password: $password, name: $name }
+    ) {
+      id
+    }
+  }
+`;
 export const CREATE_SLIDE = gql`
   mutation CreateSlide($token: String!) {
     createSlide(token: $token) {
@@ -50,6 +63,32 @@ export const DELETE_SLIDE = gql`
 export const LIKE_SLIDE = gql`
   mutation ($target: String!, $token: String!) {
     likeSlide(input: { target: $target, token: $token }) {
+      message
+    }
+  }
+`;
+
+export const CREATE_EMPLOYEE = gql`
+  mutation employees(
+    $token: String!
+    $firstName: String!
+    $lastName: String!
+    $email: String!
+    $password: String!
+    $username: String!
+    $accountType: String!
+  ) {
+    addEmployeeToEnterprise(
+      token: $token
+      newUser: {
+        first_name: $firstName
+        last_name: $lastName
+        email: $email
+        account_type: $accountType
+        username: $username
+        password: $password
+      }
+    ) {
       message
     }
   }
@@ -113,6 +152,22 @@ export const registerUser = async (
   // console.log('res', response);
 
   return response;
+};
+
+export const createEnterprise = async (variables): Promise<User> => {
+  const { data } = await client.mutate({
+    mutation: CREATE_ENTERPRISE,
+    variables,
+  });
+  return data as User;
+};
+
+export const addEmployee = async (variables): Promise<User> => {
+  const { data, errors } = await client.mutate({
+    mutation: CREATE_EMPLOYEE,
+    variables,
+  });
+  return data as User;
 };
 
 export const saveSlide = async ({ id, token, slide }: SaveSlideType) => {

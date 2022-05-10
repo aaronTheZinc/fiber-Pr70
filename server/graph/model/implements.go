@@ -70,7 +70,8 @@ type SlideModel struct {
 	Title         string `json:"title"`
 	Mobile        string `json:"mobile"`
 	Desktop       string `json:"desktop"`
-	CTA           string `json:"cta"`
+	CTA1          string `json:"cta1"`
+	CTA2          string `json:"cta2"`
 	Advanced      string `json:"advanced"`
 	Metadata      string `json:"-"`
 }
@@ -260,7 +261,8 @@ func (c *EventModel) ToEvent() Event {
 func (c *Slide) ToDatabaseModel() SlideModel {
 	t, _ := json.Marshal(c.Title)
 	a, _ := json.Marshal(c.Advanced)
-	cta, _ := json.Marshal(c.Cta)
+	cta1, _ := json.Marshal(c.Cta1)
+	cta2, _ := json.Marshal(c.Cta2)
 	m_cotent, _ := json.Marshal(c.Mobile)
 	d_content, _ := json.Marshal(c.Desktop)
 	return SlideModel{
@@ -271,7 +273,8 @@ func (c *Slide) ToDatabaseModel() SlideModel {
 		SlideLocation: c.SlideLocation,
 		Title:         string(t),
 		Advanced:      string(a),
-		CTA:           string(cta),
+		CTA1:          string(cta1),
+		CTA2:          string(cta2),
 		Mobile:        string(m_cotent),
 		Desktop:       string(d_content),
 		// Metadata:      *c.Metadata,
@@ -340,7 +343,8 @@ func CreateNewSlideModel() SlideModel {
 		ContentType:   "",
 		SlideLocation: 1,
 		URI:           "",
-		CTA:           string(cta),
+		CTA1:          string(cta),
+		CTA2:          string(cta),
 		Title:         string(title),
 		Mobile:        string(content),
 		Desktop:       string(content),
@@ -353,12 +357,14 @@ func (c *SlideModel) ToSlide() Slide {
 	title := Title{}
 	mobile := Content{}
 	desktop := Content{}
-	cta := Cta{}
+	cta1 := Cta{}
+	cta2 := Cta{}
 	advanced := Advanced{}
 	json.Unmarshal([]byte(c.Title), &title)
 	json.Unmarshal([]byte(c.Mobile), &mobile)
 	json.Unmarshal([]byte(c.Desktop), &desktop)
-	json.Unmarshal([]byte(c.CTA), &cta)
+	json.Unmarshal([]byte(c.CTA1), &cta1)
+	json.Unmarshal([]byte(c.CTA2), &cta2)
 	json.Unmarshal([]byte(c.Advanced), &advanced)
 
 	return Slide{
@@ -371,7 +377,8 @@ func (c *SlideModel) ToSlide() Slide {
 		Title:         &title,
 		Mobile:        &mobile,
 		Desktop:       &desktop,
-		Cta:           &cta,
+		Cta1:          &cta1,
+		Cta2:          &cta1,
 		Metadata:      &m,
 	}
 }

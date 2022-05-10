@@ -1,6 +1,7 @@
 import { gql, ApolloError } from "@apollo/client";
 import { client } from "./index";
 import { User } from "../types";
+import { Enterprise } from "../types/users";
 
 export const LoginQuery = gql`
   query Login($email: String!, $password: String!) {
@@ -60,7 +61,12 @@ const UsernameQuery = gql`
             uri
             content_type
           }
-          cta {
+          cta1 {
+            link_header
+            link_type
+            link_url
+          }
+          cta2 {
             link_header
             link_type
             link_url
@@ -106,6 +112,11 @@ const UserTokenQuery = gql`
             background_audio_uri
             uri
             content_type
+          }
+          cta1 {
+            link_header
+            link_type
+            link_url
           }
           cta {
             link_header
@@ -201,6 +212,16 @@ const GetNewsFeedQuery = gql`
     }
   }
 `;
+const GetEnterpriseQuery = gql`
+  mutation enterprise($id: String!) {
+    enterprise(id: $id) {
+      id
+      employees
+      name
+      owner
+    }
+  }
+`;
 const GetEnterpriseEmployee = gql`
   query EnterpriseEmployee($EnterpriseName: String!, $EmployeeId: String!) {
     enterpiseEmployee(
@@ -216,10 +237,18 @@ const GetEnterpriseEmployee = gql`
     }
   }
 `;
+
 // const GetEnterpriseQuery = gql`
 //   query enterprise($id:)
 // `;
-export const getEnterprise = (id: string) => {};
+export const getEnterprise = async (id: string): Promise<Enterprise> => {
+  const { data, error } = await client.query({
+    query: GetEnterpisesQuery,
+    variables: { id },
+  });
+
+  return data.enterprise as Enterprise;
+};
 export const getEnterpriseEmployee = async (
   EnterpriseName: string,
   EmployeeId: string
@@ -237,11 +266,10 @@ export const getUserByUsername = async (username: string): Promise<User> => {
   });
 
   if (error) {
-    console.warn("[gql error] ", error);
+    console.warn("[gql error] ", error.message);
   }
-  // errors?.length > 0
-  //   ? console.log("[getUserByUsername Error]: ", errors)
-  //   : console.log("Got Users! ✅");
+
+  console.log(errors);
   console.log(data?.username);
 
   return data?.username;
