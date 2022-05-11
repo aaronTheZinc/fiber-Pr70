@@ -31,6 +31,25 @@ func GetEnterprise(id string) (model.Enterprise, error) {
 	return response, err
 }
 
+func GetEnterpiseByOwner(owner string) (model.Enterprise, error) {
+	log.Println(owner)
+	var err error
+	var enterprise_m model.EnterpriseModel
+	var enterprise model.Enterprise
+
+	if getErr := db.Where("owner = ?", owner).First(&enterprise_m).Error; getErr == nil {
+		log.Println("here ->", enterprise_m.ID, owner)
+		if e, err_ := GetEnterprise(enterprise_m.ID); err_ == nil {
+			enterprise = e
+		} else {
+
+			err = err_
+		}
+	}
+
+	return enterprise, err
+}
+
 func GetEnterpriseIdByName(name string) (string, error) {
 	var enterprise model.EnterpriseModel
 	err := db.Where("name = ? ", name).First(&enterprise).Error

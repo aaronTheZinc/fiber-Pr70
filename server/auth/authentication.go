@@ -29,7 +29,7 @@ func CreateNewEnterprise(ent model.NewEnterprise) (model.Enterprise, error) {
 	if u, creationErr := CreateNewUser(model.NewUser{
 		Username:    ent.Name,
 		Email:       ent.Email,
-		Password:    ent.Password,
+		Password:    &ent.Password,
 		AccountType: "enterprise",
 	}); creationErr != nil {
 		err = creationErr
@@ -73,7 +73,7 @@ func CreateNewUser(newUser model.NewUser) (model.User, error) {
 	}
 	if !isRegisted && !usernameIsRegistered {
 		fmt.Println("running!")
-		hashedPw, hashErr := HashPassword(newUser.Password)
+		hashedPw, hashErr := HashPassword(*newUser.Password)
 		if hashErr != nil {
 			return model.User{}, hashErr
 		}
@@ -232,6 +232,25 @@ func GetUserByToken(token string) (model.User, error) {
 	}
 
 	return user, err
+}
+
+func GetEnterpriseByToken(token string) (model.Enterprise, error) {
+	var enterprise model.Enterprise
+	var err error
+	if claims, _, pasrseErr := ParseToken(token); pasrseErr != nil {
+		err = e.UNAUTHORIZED_ERROR
+	} else {
+		if err == nil {
+			if ent, fetchErr := database.GetEnterpiseByOwner(claims.ID); fetchErr != nil {
+				err = e.ENTERPRISE_NOT_FOUND
+			} else {
+				enterprise = ent
+			}
+		}
+	}
+
+	return enterprise, err
+
 }
 
 //Hash Passowrd To Be Stored In Database

@@ -204,6 +204,7 @@ type ComplexityRoot struct {
 		Email             func(childComplexity int, email string) int
 		EnterpiseEmployee func(childComplexity int, enterpriseName string, employeeID string) int
 		Enterprise        func(childComplexity int, id string) int
+		EnterpriseByToken func(childComplexity int, token string) int
 		GetUserByToken    func(childComplexity int, token string) int
 		Group             func(childComplexity int, id string, token string) int
 		Login             func(childComplexity int, input *model.LoginInput) int
@@ -352,6 +353,7 @@ type QueryResolver interface {
 	Slide(ctx context.Context, id string) (*model.Slide, error)
 	Group(ctx context.Context, id string, token string) (*model.Group, error)
 	Enterprise(ctx context.Context, id string) (*model.Enterprise, error)
+	EnterpriseByToken(ctx context.Context, token string) (*model.Enterprise, error)
 	EnterpiseEmployee(ctx context.Context, enterpriseName string, employeeID string) (*model.EnterpriseEmployee, error)
 	ServerAnalytics(ctx context.Context) (*model.ServerAnalytics, error)
 	Analytics(ctx context.Context, id string) (*model.Analytics, error)
@@ -1240,6 +1242,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Enterprise(childComplexity, args["id"].(string)), true
 
+	case "Query.enterpriseByToken":
+		if e.complexity.Query.EnterpriseByToken == nil {
+			break
+		}
+
+		args, err := ec.field_Query_enterpriseByToken_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.EnterpriseByToken(childComplexity, args["token"].(string)), true
+
 	case "Query.getUserByToken":
 		if e.complexity.Query.GetUserByToken == nil {
 			break
@@ -2118,6 +2132,7 @@ type Query {
   slide(id: String!): Slide!
   group(id: String!, token: String!): Group!
   enterprise(id: String!): Enterprise!
+  enterpriseByToken(token: String!): Enterprise!
   enterpiseEmployee(
     enterpriseName: String!
     employeeId: String!
@@ -2147,7 +2162,7 @@ input NewUser {
   last_name: String
   email: String!
   phone_number: String
-  password: String!
+  password: String
   business_address: String
   billing_address: String
   website: String
@@ -2732,6 +2747,21 @@ func (ec *executionContext) field_Query_enterpiseEmployee_args(ctx context.Conte
 		}
 	}
 	args["employeeId"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_enterpriseByToken_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["token"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("token"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["token"] = arg0
 	return args, nil
 }
 
@@ -6840,6 +6870,48 @@ func (ec *executionContext) _Query_enterprise(ctx context.Context, field graphql
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return ec.resolvers.Query().Enterprise(rctx, args["id"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Enterprise)
+	fc.Result = res
+	return ec.marshalNEnterprise2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐEnterprise(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_enterpriseByToken(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_enterpriseByToken_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().EnterpriseByToken(rctx, args["token"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -10994,7 +11066,7 @@ func (ec *executionContext) unmarshalInputNewUser(ctx context.Context, obj inter
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("password"))
-			it.Password, err = ec.unmarshalNString2string(ctx, v)
+			it.Password, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -12083,6 +12155,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_enterprise(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "enterpriseByToken":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_enterpriseByToken(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}

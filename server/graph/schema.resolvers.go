@@ -162,6 +162,12 @@ func (r *queryResolver) Enterprise(ctx context.Context, id string) (*model.Enter
 	return &enterprise, err
 }
 
+func (r *queryResolver) EnterpriseByToken(ctx context.Context, token string) (*model.Enterprise, error) {
+	enterprise, err := auth.GetEnterpriseByToken(token)
+
+	return &enterprise, err
+}
+
 func (r *queryResolver) EnterpiseEmployee(ctx context.Context, enterpriseName string, employeeID string) (*model.EnterpriseEmployee, error) {
 	employee, err := database.GetEenterpriseEmployee(enterpriseName, employeeID)
 

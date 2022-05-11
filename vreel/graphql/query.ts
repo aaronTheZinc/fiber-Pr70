@@ -238,6 +238,22 @@ const GetEnterpriseEmployee = gql`
   }
 `;
 
+const GetEnterpiseByTokenQuery = gql`
+  query enterprise($token: String!) {
+    enterpriseByToken(token: $token) {
+      id
+      employees {
+        id
+        first_name
+        last_name
+        email
+        prefix
+        suffix
+      }
+    }
+  }
+`;
+
 // const GetEnterpriseQuery = gql`
 //   query enterprise($id:)
 // `;
@@ -249,6 +265,20 @@ export const getEnterprise = async (id: string): Promise<Enterprise> => {
 
   return data.enterprise as Enterprise;
 };
+
+export const getEnterpriseByToken = async (
+  token: string
+): Promise<Enterprise> => {
+  const { data } = await client.query({
+    query: GetEnterpiseByTokenQuery,
+    variables: {
+      token,
+    },
+  });
+
+  return data.enterprise as Enterprise;
+};
+
 export const getEnterpriseEmployee = async (
   EnterpriseName: string,
   EmployeeId: string

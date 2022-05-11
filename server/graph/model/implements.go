@@ -140,7 +140,7 @@ func (c *NewUser) ToDatabaseModel() UserModel {
 		FirstName:       "",
 		LastName:        "",
 		Email:           c.Email,
-		Password:        c.Password,
+		Password:        *c.Password,
 		AccountType:     c.AccountType,
 		PhoneNumber:     "",
 		BusinessAddress: "",
