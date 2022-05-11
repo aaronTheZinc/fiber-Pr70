@@ -118,7 +118,7 @@ const UserTokenQuery = gql`
             link_type
             link_url
           }
-          cta {
+          cta2 {
             link_header
             link_type
             link_url
@@ -198,7 +198,12 @@ const GetNewsFeedQuery = gql`
           uri
           content_type
         }
-        cta {
+        cta1 {
+          link_header
+          link_type
+          link_url
+        }
+        cta2 {
           link_header
           link_type
           link_url
