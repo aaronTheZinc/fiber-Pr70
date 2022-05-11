@@ -2,6 +2,8 @@ package server
 
 import (
 	"context"
+	"fmt"
+	"log"
 
 	"github.com/tus/tusd/pkg/handler"
 )
@@ -20,6 +22,10 @@ func GetFileInfo(id string) (handler.FileInfo, error) {
 
 	}
 
+	log.Printf("info %s ", fmt.Sprintf("%v", info))
+	if err != nil {
+		log.Println("failed to get file info!", err.Error())
+	}
 	return info, err
 }
 

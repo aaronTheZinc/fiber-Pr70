@@ -10,6 +10,7 @@ import (
 var store = filestore.FileStore{
 	Path: "./uploads",
 }
+
 var composer = tusd.NewStoreComposer()
 
 func StartFileSever() *tusd.Handler {

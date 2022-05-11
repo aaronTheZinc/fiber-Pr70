@@ -17,12 +17,16 @@ func HandleCompletedUpload(handler *tusd.Handler) {
 		uploadId := event.Upload.ID
 
 		f, _ := server.GetFileInfo(uploadId)
+
 		log.Printf("%s", f.MetaData)
 		tkn := event.HTTPRequest.Header.Get("token")
 		if u, err := api.GetClientInfo(tkn); err == nil {
 			file := models.File{
-				Author: u.Id,
-				FileId: uploadId,
+				Author:   u.Id,
+				FileId:   uploadId,
+				FileName: f.MetaData["filename"],
+				FileType: f.MetaData["filetype"],
+				FileSize: f.Size,
 			}
 			database.CreateFile(file)
 		}

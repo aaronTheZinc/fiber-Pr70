@@ -6,6 +6,6 @@ import (
 
 func Start() {
 	app := fiber.New()
-
+	FilesHandler(app)
 	app.Listen(":7071")
 }

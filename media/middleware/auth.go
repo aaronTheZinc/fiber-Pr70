@@ -40,9 +40,10 @@ func AuthMiddleware(h http.Handler) http.Handler {
 }
 func CORS(h http.Handler) http.Handler {
 	var env string = os.Getenv("ENV")
+	log.Println(env)
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if env == "dev" || env != "" {
-			log.Println("adding cors")
+			log.Println("[Adding Cors]")
 			w.Header().Add("Access-Control-Allow-Origin", "*")
 			w.Header().Add("Access-Control-Allow-Credentials", "true")
 			w.Header().Add("Access-Control-Allow-Headers", "*")
@@ -50,14 +51,9 @@ func CORS(h http.Handler) http.Handler {
 
 			w.Header().Add("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, HEAD, PATCH")
 
+		} else {
+			log.Println("not adding cors")
 		}
-		// w.Header().Add("Access-Control-Allow-Origin", "*")
-		// w.Header().Add("Access-Control-Allow-Credentials", "true")
-		// w.Header().Add("Access-Control-Allow-Headers", "*")
-		// w.Header().Add("Access-Control-Request-Headers", "*")
-
-		// w.Header().Add("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, HEAD, PATCH")
-
 		if r.Method == "OPTIONS" {
 			w.WriteHeader(200)
 			log.Println("[Preflight Request]")
