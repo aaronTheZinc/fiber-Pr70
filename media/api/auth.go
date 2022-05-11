@@ -31,3 +31,21 @@ func ClientIsAuthorized(token string) (bool, error) {
 	}
 	return ok, err
 }
+
+func GetClientInfo(token string) (models.AuthResponse, error) {
+	var ServerEndPoint = os.Getenv("SERVER_ENDPOINT")
+	var auth models.AuthResponse
+	var err error
+
+	resp, err := http.Get(ServerEndPoint + "/auth" + "/authorize?token=" + token)
+	if body, e := ioutil.ReadAll(resp.Body); err != nil {
+		err = e
+	} else {
+
+		if err := json.Unmarshal(body, &auth); err != nil {
+			err = e
+		}
+
+	}
+	return auth, err
+}

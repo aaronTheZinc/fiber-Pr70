@@ -13,6 +13,6 @@ type AuthResponse struct {
 type File struct {
 	Author   string `json:"author"`
 	FileName string `json:"file_name"`
-	URI      string `json:"uri"`
+	FileId   string `json:"uri"`
 	FileType string `json:"file_type"`
 }
