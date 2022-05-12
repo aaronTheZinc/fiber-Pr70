@@ -94,14 +94,15 @@ export const CREATE_EMPLOYEE = gql`
   }
 `;
 
-export const EDIT_EMPLOYEE = gql`
-  mutation employee($token: String!, $fields: [{ $field: String!, $value: String!  }] ) {
+const EDIT_EMPLOYEE = gql`
+  mutation employee($token: String!, $fields: [Object!]! ) {
     updateEmployee(token: $token, fields: $fields){
       message
       succeeded
   }
   }
   `
+
 interface NewSlide {
   content_type: string;
   uri: string;
