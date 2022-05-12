@@ -188,6 +188,7 @@ type ComplexityRoot struct {
 		ResolveResetPasswordRequestIntent func(childComplexity int, token string, password string) int
 		UnFollow                          func(childComplexity int, input model.AnalyticsMutation) int
 		UnLikeSlide                       func(childComplexity int, input model.AnalyticsMutation) int
+		UpdateEmployee                    func(childComplexity int, token string, employee string, fields []*model.VreelFields) int
 		UpdateSlide                       func(childComplexity int, token *string, slideID string, data string) int
 		UpdateUser                        func(childComplexity int, token string, fields []*model.VreelFields) int
 		UpdateVreelField                  func(childComplexity int, token string, fields []*model.VreelFields) int
@@ -274,23 +275,30 @@ type ComplexityRoot struct {
 		AccountType     func(childComplexity int) int
 		BillingAddress  func(childComplexity int) int
 		BusinessAddress func(childComplexity int) int
+		CellPhone       func(childComplexity int) int
+		CompanyName     func(childComplexity int) int
 		Email           func(childComplexity int) int
 		Files           func(childComplexity int) int
 		FirstName       func(childComplexity int) int
 		Following       func(childComplexity int) int
 		Groups          func(childComplexity int) int
+		HomePhone       func(childComplexity int) int
 		ID              func(childComplexity int) int
 		JobTitle        func(childComplexity int) int
+		LandingPage     func(childComplexity int) int
 		LastName        func(childComplexity int) int
 		Liked           func(childComplexity int) int
+		MiddleInitial   func(childComplexity int) int
 		News            func(childComplexity int) int
 		Password        func(childComplexity int) int
-		PhoneNumber     func(childComplexity int) int
 		Prefix          func(childComplexity int) int
+		ProfilePicture  func(childComplexity int) int
 		Suffix          func(childComplexity int) int
+		Title           func(childComplexity int) int
 		Username        func(childComplexity int) int
 		Vreel           func(childComplexity int) int
 		Website         func(childComplexity int) int
+		WorkPhone       func(childComplexity int) int
 	}
 
 	Videos struct {
@@ -333,6 +341,7 @@ type MutationResolver interface {
 	DeleteGroup(ctx context.Context, id string, token string) (*model.MutationResponse, error)
 	AddUserToGroup(ctx context.Context, token string, groupID string, userID string) (*model.MutationResponse, error)
 	AddEmployeeToEnterprise(ctx context.Context, token string, newUser model.NewUser) (*model.MutationResponse, error)
+	UpdateEmployee(ctx context.Context, token string, employee string, fields []*model.VreelFields) (*model.MutationResponse, error)
 	RemoveUserFromGroup(ctx context.Context, token string, groupID string, member string) (*model.MutationResponse, error)
 	RemoveSlide(ctx context.Context, token string, slideID *string) (*model.MutationResponse, error)
 	UpdateVreelField(ctx context.Context, token string, fields []*model.VreelFields) (*model.MutationResponse, error)
@@ -1132,6 +1141,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.UnLikeSlide(childComplexity, args["input"].(model.AnalyticsMutation)), true
 
+	case "Mutation.updateEmployee":
+		if e.complexity.Mutation.UpdateEmployee == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateEmployee_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateEmployee(childComplexity, args["token"].(string), args["employee"].(string), args["fields"].([]*model.VreelFields)), true
+
 	case "Mutation.updateSlide":
 		if e.complexity.Mutation.UpdateSlide == nil {
 			break
@@ -1578,6 +1599,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.User.BusinessAddress(childComplexity), true
 
+	case "User.cell_phone":
+		if e.complexity.User.CellPhone == nil {
+			break
+		}
+
+		return e.complexity.User.CellPhone(childComplexity), true
+
+	case "User.companyName":
+		if e.complexity.User.CompanyName == nil {
+			break
+		}
+
+		return e.complexity.User.CompanyName(childComplexity), true
+
 	case "User.email":
 		if e.complexity.User.Email == nil {
 			break
@@ -1613,6 +1648,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.User.Groups(childComplexity), true
 
+	case "User.home_phone":
+		if e.complexity.User.HomePhone == nil {
+			break
+		}
+
+		return e.complexity.User.HomePhone(childComplexity), true
+
 	case "User.id":
 		if e.complexity.User.ID == nil {
 			break
@@ -1626,6 +1668,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.User.JobTitle(childComplexity), true
+
+	case "User.landing_page":
+		if e.complexity.User.LandingPage == nil {
+			break
+		}
+
+		return e.complexity.User.LandingPage(childComplexity), true
 
 	case "User.last_name":
 		if e.complexity.User.LastName == nil {
@@ -1641,6 +1690,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.User.Liked(childComplexity), true
 
+	case "User.middle_initial":
+		if e.complexity.User.MiddleInitial == nil {
+			break
+		}
+
+		return e.complexity.User.MiddleInitial(childComplexity), true
+
 	case "User.news":
 		if e.complexity.User.News == nil {
 			break
@@ -1655,13 +1711,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.User.Password(childComplexity), true
 
-	case "User.phone_number":
-		if e.complexity.User.PhoneNumber == nil {
-			break
-		}
-
-		return e.complexity.User.PhoneNumber(childComplexity), true
-
 	case "User.prefix":
 		if e.complexity.User.Prefix == nil {
 			break
@@ -1669,12 +1718,26 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.User.Prefix(childComplexity), true
 
+	case "User.profilePicture":
+		if e.complexity.User.ProfilePicture == nil {
+			break
+		}
+
+		return e.complexity.User.ProfilePicture(childComplexity), true
+
 	case "User.suffix":
 		if e.complexity.User.Suffix == nil {
 			break
 		}
 
 		return e.complexity.User.Suffix(childComplexity), true
+
+	case "User.title":
+		if e.complexity.User.Title == nil {
+			break
+		}
+
+		return e.complexity.User.Title(childComplexity), true
 
 	case "User.username":
 		if e.complexity.User.Username == nil {
@@ -1696,6 +1759,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.User.Website(childComplexity), true
+
+	case "User.work_phone":
+		if e.complexity.User.WorkPhone == nil {
+			break
+		}
+
+		return e.complexity.User.WorkPhone(childComplexity), true
 
 	case "Videos.hidden":
 		if e.complexity.Videos.Hidden == nil {
@@ -1938,18 +2008,25 @@ type User {
   id: String!
   account_type: String!
   liked: [String]
+  companyName: String!
+  title: String!
+  profilePicture: String!
   following: [String]
   username: String!
   first_name: String!
   last_name: String!
+  middle_initial: String!
   prefix: String!
   suffix: String!
   email: String!
-  phone_number: String!
+  home_phone: String!
+  cell_phone: String!
+  work_phone: String!
   password: String!
   business_address: String!
   billing_address: String!
   website: String!
+  landing_page: String!
   job_title: String!
   groups: [Group!]!
   vreel: Vreel!
@@ -2226,6 +2303,7 @@ type Mutation {
     userId: String!
   ): MutationResponse!
   addEmployeeToEnterprise(token: String!, newUser: NewUser!): MutationResponse!
+  updateEmployee(token: String!, employee: String! fields: [VreelFields!]): MutationResponse!
   removeUserFromGroup(
     token: String!
     groupId: String!
@@ -2582,6 +2660,39 @@ func (ec *executionContext) field_Mutation_unLikeSlide_args(ctx context.Context,
 		}
 	}
 	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_updateEmployee_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["token"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("token"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["token"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["employee"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("employee"))
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["employee"] = arg1
+	var arg2 []*model.VreelFields
+	if tmp, ok := rawArgs["fields"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("fields"))
+		arg2, err = ec.unmarshalOVreelFields2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐVreelFieldsᚄ(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["fields"] = arg2
 	return args, nil
 }
 
@@ -6060,6 +6171,48 @@ func (ec *executionContext) _Mutation_addEmployeeToEnterprise(ctx context.Contex
 	return ec.marshalNMutationResponse2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐMutationResponse(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Mutation_updateEmployee(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_updateEmployee_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpdateEmployee(rctx, args["token"].(string), args["employee"].(string), args["fields"].([]*model.VreelFields))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.MutationResponse)
+	fc.Result = res
+	return ec.marshalNMutationResponse2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐMutationResponse(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Mutation_removeUserFromGroup(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -8367,6 +8520,111 @@ func (ec *executionContext) _User_liked(ctx context.Context, field graphql.Colle
 	return ec.marshalOString2ᚕᚖstring(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _User_companyName(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CompanyName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _User_title(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Title, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _User_profilePicture(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ProfilePicture, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _User_following(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -8504,6 +8762,41 @@ func (ec *executionContext) _User_last_name(ctx context.Context, field graphql.C
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _User_middle_initial(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.MiddleInitial, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _User_prefix(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -8609,7 +8902,7 @@ func (ec *executionContext) _User_email(ctx context.Context, field graphql.Colle
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _User_phone_number(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+func (ec *executionContext) _User_home_phone(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -8627,7 +8920,77 @@ func (ec *executionContext) _User_phone_number(ctx context.Context, field graphq
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.PhoneNumber, nil
+		return obj.HomePhone, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _User_cell_phone(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CellPhone, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _User_work_phone(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.WorkPhone, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -8768,6 +9131,41 @@ func (ec *executionContext) _User_website(ctx context.Context, field graphql.Col
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return obj.Website, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _User_landing_page(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LandingPage, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -11940,6 +12338,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "updateEmployee":
+			out.Values[i] = ec._Mutation_updateEmployee(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "removeUserFromGroup":
 			out.Values[i] = ec._Mutation_removeUserFromGroup(ctx, field)
 			if out.Values[i] == graphql.Null {
@@ -12589,6 +12992,21 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			}
 		case "liked":
 			out.Values[i] = ec._User_liked(ctx, field, obj)
+		case "companyName":
+			out.Values[i] = ec._User_companyName(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "title":
+			out.Values[i] = ec._User_title(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "profilePicture":
+			out.Values[i] = ec._User_profilePicture(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "following":
 			out.Values[i] = ec._User_following(ctx, field, obj)
 		case "username":
@@ -12603,6 +13021,11 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			}
 		case "last_name":
 			out.Values[i] = ec._User_last_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "middle_initial":
+			out.Values[i] = ec._User_middle_initial(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -12621,8 +13044,18 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "phone_number":
-			out.Values[i] = ec._User_phone_number(ctx, field, obj)
+		case "home_phone":
+			out.Values[i] = ec._User_home_phone(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "cell_phone":
+			out.Values[i] = ec._User_cell_phone(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "work_phone":
+			out.Values[i] = ec._User_work_phone(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -12643,6 +13076,11 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			}
 		case "website":
 			out.Values[i] = ec._User_website(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "landing_page":
+			out.Values[i] = ec._User_landing_page(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}

@@ -20,8 +20,6 @@ services:
       - POSTGRES_DB=gorm
       - POSTGRES_USER=gorm
       - POSTGRES_PASSWORD=gorm
-    volumes:
-      - ./pgdata:/var/lib/postgresql/data
 
   # media:
   #   build:

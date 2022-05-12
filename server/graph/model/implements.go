@@ -9,11 +9,16 @@ import (
 type UserModel struct {
 	ID              string         `gorm:"primaryKey"`
 	Username        string         `json:"username"`
-	AccountType     string         `json:"ac"`
+	AccountType     string         `json:"accont_type"`
+	MiddleInitial   string         `json:"middle_initial"`
+	CompanyName     string         `json:"company_name"`
+	ProfilePicture  string         `json:"profile_picture"`
 	FirstName       string         `json:"first_name"`
 	LastName        string         `json:"last_name"`
 	Email           string         `json:"email"`
-	PhoneNumber     string         `json:"phone_number"`
+	HomePhone       string         `json:"home_phone"`
+	CellPhone       string         `json:"cell_number"`
+	WorkPhone       string         `json:"work_number"`
 	Password        string         `json:"password"`
 	BusinessAddress string         `json:"business_address"`
 	BillingAddress  string         `json:"billing_address"`
@@ -22,6 +27,7 @@ type UserModel struct {
 	Groups          pq.StringArray `gorm:"type:text[]"`
 	Following       pq.StringArray `gorm:"type:text[]"`
 	Liked           pq.StringArray `gorm:"type:text[]"`
+	LandingPage     string         `json:"landing_page"`
 }
 type GroupModel struct {
 	ID          string         `json:"id"`
@@ -142,11 +148,15 @@ func (c *NewUser) ToDatabaseModel() UserModel {
 		Email:           c.Email,
 		Password:        *c.Password,
 		AccountType:     c.AccountType,
-		PhoneNumber:     "",
+		HomePhone:       "",
+		WorkPhone:       "",
+		CellPhone:       "",
 		BusinessAddress: "",
 		BillingAddress:  "",
 		Website:         "",
 		JobTitle:        "",
+		LandingPage:     "",
+		MiddleInitial:   "",
 		Groups:          []string{},
 		Following:       []string{},
 		Liked:           []string{},
@@ -173,11 +183,14 @@ func (c *UserModel) ToUser() User {
 	return User{
 		ID:              c.ID,
 		Username:        c.Username,
+		ProfilePicture:  c.ProfilePicture,
 		FirstName:       c.FirstName,
 		LastName:        c.LastName,
 		Email:           c.Email,
 		Password:        c.Password,
-		PhoneNumber:     c.PhoneNumber,
+		HomePhone:       c.HomePhone,
+		WorkPhone:       c.WorkPhone,
+		CellPhone:       c.CellPhone,
 		BusinessAddress: c.BusinessAddress,
 		BillingAddress:  c.BillingAddress,
 		Website:         c.Website,
@@ -185,6 +198,8 @@ func (c *UserModel) ToUser() User {
 		AccountType:     c.AccountType,
 		Following:       following,
 		Liked:           liked,
+		MiddleInitial:   c.MiddleInitial,
+		LandingPage:     c.LandingPage,
 	}
 }
 

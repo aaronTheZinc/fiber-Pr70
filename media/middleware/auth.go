@@ -9,15 +9,19 @@ import (
 	"github.com/vreel/media/api"
 )
 
-func enableCors(w *http.ResponseWriter) {
-	(*w).Header().Set("Access-Control-Allow-Origin", "*")
-}
+// func enableCors(w *http.ResponseWriter) {
+// 	(*w).Header().Set("Access-Control-Allow-Origin", "*")
+// }
 func AuthMiddleware(h http.Handler) http.Handler {
 	return CORS(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		log.Println("[Tus Request Method] ", r.Method)
 		if r.Method == "OPTIONS" {
 			w.WriteHeader(200)
 			fmt.Println()
+			return
+		}
+		if r.Method == "GET" {
+			h.ServeHTTP(w, r)
 			return
 		}
 		token := r.Header.Get("token")
@@ -30,11 +34,10 @@ func AuthMiddleware(h http.Handler) http.Handler {
 					w.WriteHeader(http.StatusUnauthorized)
 				}
 			}
-		} else {
 
+		} else {
 			w.WriteHeader(http.StatusUnauthorized)
 		}
-		enableCors(&w)
 		h.ServeHTTP(w, r)
 	}))
 }

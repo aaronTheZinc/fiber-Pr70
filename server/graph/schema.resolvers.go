@@ -69,6 +69,12 @@ func (r *mutationResolver) AddEmployeeToEnterprise(ctx context.Context, token st
 	return &resp, err
 }
 
+func (r *mutationResolver) UpdateEmployee(ctx context.Context, token string, employee string, fields []*model.VreelFields) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeUpdateEmployeeFields(token, employee, fields)
+
+	return &resp, err
+}
+
 func (r *mutationResolver) RemoveUserFromGroup(ctx context.Context, token string, groupID string, member string) (*model.MutationResponse, error) {
 	resp, err := auth.AuthorizeRemoveUserFromGroup(token, groupID, member)
 	return &resp, err

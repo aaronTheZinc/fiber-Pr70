@@ -1,5 +1,17 @@
 package client
 
+import (
+	"encoding/json"
+	"errors"
+	"fmt"
+	"io/ioutil"
+	"log"
+	"net/http"
+	"os"
+
+	"github.com/vreel/app/graph/model"
+)
+
 type NewFolderRequest struct {
 	FolderName string `json:"folder_name"`
 }
@@ -9,51 +21,39 @@ type NewFolderResponse struct {
 	Error     string `json:"error"`
 }
 
-func CreateNewFolder(fn string) error {
-	// var err error
-	// var MediaServerEndpoint string = os.Getenv("MEDIA_SERVER_ENDPOINT")
-	// ep := MediaServerEndpoint + "/files" + "/new_folder"
-	// fmt.Println(ep)
-	// fr := NewFolderRequest{
-	// 	FolderName: fn,
-	// }
+type UserFileResponse struct {
+	Files []model.File `json:"files"`
+}
 
-	// //Convert User to byte using Json.Marshal
-	// //Ignoring error.
-	// body, _ := json.Marshal(fr)
+func GetUsersFiles(id string) (model.Files, error) {
+	var err error
+	var files_r UserFileResponse
+	var files model.Files
+	endpoint := os.Getenv("MEDIA_SERVER_ENDPOINT") + "/files" + "?id=" + id
+	fmt.Println(endpoint)
+	if resp, getErr := http.Get(endpoint); getErr == nil {
+		if body, e := ioutil.ReadAll(resp.Body); err != nil {
+			err = e
+			log.Print("[failed to get] ", e.Error())
+		} else {
+			log.Println(string(body))
+			if unmarshalErr := json.Unmarshal(body, &files_r); unmarshalErr != nil {
+				err = errors.New("[failed to parse]" + unmarshalErr.Error())
 
-	// //Pass new buffer for request with URL to post.
-	// //This will make a post request and will share the JSON data
-	// if resp, err := http.Post(ep, "application/json", bytes.NewBuffer(body)); err != nil {
+			} else {
+				fmt.Println("files-" + fmt.Sprintf("%v", files_r))
+				for _, file := range files_r.Files {
+					f := file
+					f.URI = os.Getenv("MEDIA_SERVER_FILE_ENDPOINT") + "/" + file.URI
+					files.Files = append(files.Files, &f)
+				}
+				files.FileCount = len(files_r.Files)
+			}
 
-	// } else {
-	// 	if resp.StatusCode == http.StatusCreated {
-	// 		body, err := ioutil.ReadAll(resp.Body)
-	// 		if err != nil {
-	// 			//Failed to read response.
-	// 			// panic(err)
-	// 		}
+		}
+	} else {
+		log.Println("[failed to get]: ", endpoint)
+	}
 
-	// 		//Convert bytes to String and print
-	// 		jsonStr := string(body)
-	// 		fmt.Println("Response: ", jsonStr)
-
-	// 	} else {
-	// 		//The status is not Created. print the error.
-	// 		fmt.Println("Get failed with error: ", resp.Status)
-	// 	}
-	// }
-
-	// // An error is returned if something goes wrong
-	// // if err != nil {
-	// // 	panic(err)
-	// // }
-	// //Need to close the response stream, once response is read.
-	// //Hence defer close. It will automatically take care of it.
-	// // defer resp.Body.Close()
-
-	// //Check response code, if New user is created then read response.
-
-	return nil
-
+	return files, err
 }

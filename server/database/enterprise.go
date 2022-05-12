@@ -208,3 +208,17 @@ func GetEenterpriseEmployee(enterpriseName, employeeId string) (model.Enterprise
 	}
 	return employee, err
 }
+
+//needs to be oprimized
+func EnterpriseOwnsEmployee(enterprise, employee string) (bool, error) {
+	var err error
+	var does bool
+	ent := model.EnterpriseModel{}
+	if gErr := db.Select("employees").Where("id = ?", enterprise).First(&ent).Error; gErr == nil {
+		does = utils.ItemExistsInStringSlice(employee, ent.Employees)
+	} else {
+		log.Println(gErr.Error())
+		err = e.ENTERPRISE_NOT_FOUND
+	}
+	return does, err
+}

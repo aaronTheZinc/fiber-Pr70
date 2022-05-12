@@ -83,6 +83,7 @@ export const UppyModal = ({ setUpload, basicFileType, isOpen, toggleModal }: Upp
     headers: {
       token: cookies.userAuthToken ? cookies.userAuthToken : null,
     },
+    removeFingerprintOnSuccess: true
   });
 
   // uppy.use(ScreenCapture)

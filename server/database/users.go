@@ -7,6 +7,7 @@ import (
 	"sync"
 
 	"github.com/lib/pq"
+	"github.com/vreel/app/api/client"
 	e "github.com/vreel/app/err"
 	"github.com/vreel/app/graph/model"
 	"github.com/vreel/app/utils"
@@ -23,6 +24,7 @@ func CreateUser(newUser model.NewUser, id string, hashedPassword string) (model.
 
 //Retrieve User by ID
 func GetUser(id string) (model.User, error) {
+	wg := sync.WaitGroup{}
 	var err error
 	var user model.UserModel
 	var r model.User
@@ -31,11 +33,22 @@ func GetUser(id string) (model.User, error) {
 	groups, _ := GetGroups(user.Groups)
 	r = user.ToUser()
 	r.Groups = groups
-	if v, e := GetVreel(id); e != nil {
-		err = e
-	} else {
-		r.Vreel = &v
-	}
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		if v, e := GetVreel(id); e != nil {
+			err = e
+		} else {
+			r.Vreel = &v
+		}
+	}()
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		files, _ := client.GetUsersFiles(id)
+		r.Files = &files
+	}()
+	wg.Wait()
 	//add query for fetching news feed
 
 	return r, err
@@ -43,6 +56,7 @@ func GetUser(id string) (model.User, error) {
 
 //Retrieve User by Username
 func GetUserByUsername(username string) (model.User, error) {
+	wg := sync.WaitGroup{}
 	var err error
 	var user model.UserModel
 	var r model.User
@@ -51,12 +65,23 @@ func GetUserByUsername(username string) (model.User, error) {
 	groups, _ := GetGroups(user.Groups)
 	r = user.ToUser()
 	r.Groups = groups
-	if v, e := GetVreel(user.ID); e != nil {
-		err = e
-	} else {
-		r.Vreel = &v
-	}
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		if v, e := GetVreel(user.ID); e != nil {
+			err = e
+		} else {
+			r.Vreel = &v
+		}
+	}()
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		files, _ := client.GetUsersFiles(user.ID)
+		r.Files = &files
+	}()
 
+	wg.Wait()
 	return r, err
 }
 
@@ -149,6 +174,7 @@ func UserDeleteGroup(userId, groupId string) error {
 
 }
 func GetUserByEmail(email string) (model.User, error) {
+	wg := sync.WaitGroup{}
 	var err error
 	var user model.UserModel
 	var r model.User
@@ -156,12 +182,22 @@ func GetUserByEmail(email string) (model.User, error) {
 	groups, _ := GetGroups(user.Groups)
 	r = user.ToUser()
 	r.Groups = groups
-	if v, e := GetVreel(user.ID); e != nil {
-		err = e
-	} else {
-		r.Vreel = &v
-	}
-
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		if v, e := GetVreel(user.ID); e != nil {
+			err = e
+		} else {
+			r.Vreel = &v
+		}
+	}()
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		files, _ := client.GetUsersFiles(user.ID)
+		r.Files = &files
+	}()
+	wg.Wait()
 	return r, err
 }
 
@@ -173,7 +209,9 @@ func GetAllUsernames() ([]model.UserModel, error) {
 }
 
 func UpdateUserFields(id string, fields []*model.VreelFields) error {
-	userFields := []string{"first_name", "last_name", "email", "prefix", "suffix"}
+	userFields := []string{"first_name", "last_name", "email", "prefix",
+		"suffix", "work_phone", "cell_phone", "home_phone", "job_title", "profile_picture",
+		"landing_page", "middle_initial"}
 	var wg sync.WaitGroup
 	var err error
 	// fmt.Printf("input: %s", fields)
@@ -181,12 +219,10 @@ func UpdateUserFields(id string, fields []*model.VreelFields) error {
 		var o model.VreelFields = *f
 		wg.Add(1)
 		go func() {
-			defer fmt.Println("completed!!!!")
 			defer wg.Done()
 			if utils.ItemExistsInStringSlice(o.Field, userFields) {
 				fmt.Printf("field: %s, value: %s", o.Field, o.Value)
 				err := db.Model(&model.UserModel{}).Where("id = ?", id).Update(o.Field, o.Value).Error
-				fmt.Println("Made it here!")
 				if err != nil {
 					log.Printf(err.Error())
 					err = e.VreelFieldError(o.Field)

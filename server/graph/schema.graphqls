@@ -42,18 +42,25 @@ type User {
   id: String!
   account_type: String!
   liked: [String]
+  companyName: String!
+  title: String!
+  profilePicture: String!
   following: [String]
   username: String!
   first_name: String!
   last_name: String!
+  middle_initial: String!
   prefix: String!
   suffix: String!
   email: String!
-  phone_number: String!
+  home_phone: String!
+  cell_phone: String!
+  work_phone: String!
   password: String!
   business_address: String!
   billing_address: String!
   website: String!
+  landing_page: String!
   job_title: String!
   groups: [Group!]!
   vreel: Vreel!
@@ -330,6 +337,7 @@ type Mutation {
     userId: String!
   ): MutationResponse!
   addEmployeeToEnterprise(token: String!, newUser: NewUser!): MutationResponse!
+  updateEmployee(token: String!, employee: String! fields: [VreelFields!]): MutationResponse!
   removeUserFromGroup(
     token: String!
     groupId: String!

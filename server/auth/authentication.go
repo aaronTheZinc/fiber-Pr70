@@ -8,7 +8,6 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/vreel/app/api/client"
 	"github.com/vreel/app/cache"
 	"github.com/vreel/app/database"
 	e "github.com/vreel/app/err"
@@ -80,11 +79,6 @@ func CreateNewUser(newUser model.NewUser) (model.User, error) {
 		u, oerr := database.CreateUser(newUser, utils.GenerateId(), hashedPw)
 		fmt.Printf("enterprise uid: %s", u.ID)
 		s, _ := database.CreateSlide(u.ID)
-
-		folderErr := client.CreateNewFolder(newUser.Username)
-		if folderErr != nil {
-			fmt.Println(folderErr.Error())
-		}
 		cErr := database.CreateNewVreel(u.ID)
 		if cErr == nil {
 			database.VreelAddSlide(s.ID, u.ID)

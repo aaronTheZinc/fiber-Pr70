@@ -256,18 +256,25 @@ type User struct {
 	ID              string    `json:"id"`
 	AccountType     string    `json:"account_type"`
 	Liked           []*string `json:"liked"`
+	CompanyName     string    `json:"companyName"`
+	Title           string    `json:"title"`
+	ProfilePicture  string    `json:"profilePicture"`
 	Following       []*string `json:"following"`
 	Username        string    `json:"username"`
 	FirstName       string    `json:"first_name"`
 	LastName        string    `json:"last_name"`
+	MiddleInitial   string    `json:"middle_initial"`
 	Prefix          string    `json:"prefix"`
 	Suffix          string    `json:"suffix"`
 	Email           string    `json:"email"`
-	PhoneNumber     string    `json:"phone_number"`
+	HomePhone       string    `json:"home_phone"`
+	CellPhone       string    `json:"cell_phone"`
+	WorkPhone       string    `json:"work_phone"`
 	Password        string    `json:"password"`
 	BusinessAddress string    `json:"business_address"`
 	BillingAddress  string    `json:"billing_address"`
 	Website         string    `json:"website"`
+	LandingPage     string    `json:"landing_page"`
 	JobTitle        string    `json:"job_title"`
 	Groups          []*Group  `json:"groups"`
 	Vreel           *Vreel    `json:"vreel"`

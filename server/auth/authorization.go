@@ -285,6 +285,36 @@ func AuthorizeAddEmployeeToEnterprise(token string, newUser model.NewUser) (mode
 	}
 	return r, err
 }
+
+func AuthorizeUpdateEmployeeFields(token, employeeId string, fields []*model.VreelFields) (model.MutationResponse, error) {
+	var err error
+	var r model.MutationResponse
+
+	claims, isAuth, parseErr := ParseToken(token)
+	userId := claims.ID
+
+	if isAuth && parseErr == nil {
+		if ent, enterpriseGetErr := database.GetEnterpiseByOwner(userId); enterpriseGetErr == nil {
+			if includesEmployee, _ := database.EnterpriseOwnsEmployee(*ent.ID, employeeId); includesEmployee {
+				updateErr := database.UpdateUserFields(employeeId, fields)
+
+				if updateErr != nil {
+					err = updateErr
+					fmt.Println("failed to update the content thats all!")
+				}
+			} else {
+				fmt.Println("doest include employee!")
+				err = e.UNAUTHORIZED_ERROR
+			}
+
+		}
+	} else {
+		err = e.UNAUTHORIZED_ERROR
+	}
+
+	return r, err
+}
+
 func AuthorizeRemoveEmployeeToEnterpirse() {
 
 }

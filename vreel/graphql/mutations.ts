@@ -94,6 +94,14 @@ export const CREATE_EMPLOYEE = gql`
   }
 `;
 
+export const EDIT_EMPLOYEE = gql`
+  mutation employee($token: String!, $fields: [{ $field: String!, $value: String!  }] ) {
+    updateEmployee(token: $token, fields: $fields){
+      message
+      succeeded
+  }
+  }
+  `
 interface NewSlide {
   content_type: string;
   uri: string;
@@ -125,6 +133,11 @@ interface NewSlide {
 interface RegistrationResponse {
   error: string;
   user: User;
+}
+
+interface VreelField {
+  field: string,
+  value: string
 }
 export const registerUser = async (
   username: string,
@@ -169,6 +182,16 @@ export const addEmployee = async (variables): Promise<User> => {
   });
   return data as User;
 };
+
+export const editEmployee = async (token: string, fields: VreelField[]) => {
+  const { data } = await client.mutate({
+    mutation: EDIT_EMPLOYEE,
+    variables: { token, fields }
+
+  });
+
+  return data
+}
 
 export const saveSlide = async ({ id, token, slide }: SaveSlideType) => {
   console.log(JSON.stringify(slide));
