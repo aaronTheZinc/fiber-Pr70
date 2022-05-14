@@ -33,7 +33,7 @@ const VreelSlide = ({
   useEffect(() => {
     try {
       videoEl.current.defaultMuted = true;
-    } catch (e) { }
+    } catch (e) {}
   });
 
   const [isFollowed, setIsFollowed] = useState(false);
@@ -59,8 +59,8 @@ const VreelSlide = ({
     } else {
       setIsVideo(true);
     }
-    console.log()
-  }, [])
+    console.log();
+  }, []);
   useEffect(() => {
     try {
       if (currentSlide === slideId) {
@@ -72,7 +72,7 @@ const VreelSlide = ({
       } else {
         videoEl.current.pause();
       }
-    } catch (e) { }
+    } catch (e) {}
   }, [currentSlide]);
 
   useEffect(() => {
@@ -144,11 +144,6 @@ const VreelSlide = ({
             ? (slide as Slide)?.title?.header
             : "VREEL™\nTHE INTERFACE THAT VISUALLY ELEVATES YOUR BRAND™"}
         </h1>
-        <p className="vreel-slide__text">
-          {username
-            ? (slide as Slide)?.title?.description
-            : "Upload some files in file manager and then use editor to personalize your Vreel \n \n We make you look better! Our Web 3.0 storytelling interface visually elevates your brand."}
-        </p>
         <div className="vreel-slide__btn-wrapper">
           {username ? (
             <>
@@ -186,12 +181,12 @@ const VreelSlide = ({
         style={{ marginBottom: "1pc" }}
         className="vreel-slide__left-icons__wrapper"
       >
-        {isVideo ?
-          (<>
+        {isVideo ? (
+          <>
             <VreelModal icon="/background-credit-icon.svg" />
 
             {isMuted ? (
-              < img
+              <img
                 style={{ height: "65px" }}
                 onClick={() => setIsMuted(!isMuted)}
                 data-bs-toggle="tooltip"
@@ -213,10 +208,10 @@ const VreelSlide = ({
                 className="vreel-slide__icon vreel-slide__icon-sound"
               />
             )}
-          </>) : (
-            <></>
-          )
-        }
+          </>
+        ) : (
+          <></>
+        )}
       </div>
       <aside className="vreel-slide__right-icons__wrapper">
         <div className="top">
@@ -280,7 +275,6 @@ const VreelSlide = ({
         </div>
 
         <div style={{ marginBottom: "1pc" }} className="bottom">
-
           <VreelModal title="Info" icon="/slide-credit-icon.svg" />
           <div>
             {isLiked ? (
@@ -304,7 +298,6 @@ const VreelSlide = ({
                 className="vreel-slide__icon"
               />
             )}
-
           </div>
           <VreelModal title="Share" isSocial={true} icon="/share-icon.svg" />
           <VreelModal isQr={true} icon="/qr-icon.svg" />
@@ -314,7 +307,7 @@ const VreelSlide = ({
         ref={audioEl}
         id="vreelBackgroundAudio"
         loop={true}
-      // src="/background-vreel.mp3"
+        // src="/background-vreel.mp3"
       ></audio>
     </section>
   );
