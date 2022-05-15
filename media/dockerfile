@@ -6,7 +6,7 @@ RUN mkdir /app
 ADD . /app
 WORKDIR /app
 # RUN mkdir uploads
-RUN go build server.go -o media
+RUN go build media.go -o media
 
 
 

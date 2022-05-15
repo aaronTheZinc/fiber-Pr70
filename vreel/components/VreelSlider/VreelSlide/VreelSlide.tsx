@@ -150,13 +150,18 @@ const VreelSlide = ({
               <a
                 className="vreel-slide__btn"
                 onClick={(e) => {
-                  window.open((slide as Slide)?.cta?.link_url, "_replace");
+                  window.open((slide as Slide)?.cta1?.link_url, "_replace");
                 }}
               >
-                {(slide as Slide)?.cta?.link_header}
+                {(slide as Slide)?.cta1?.link_header}
               </a>
-              <a className="vreel-slide__btn" href="#">
-                {username} choose a url
+              <a
+                className="vreel-slide__btn"
+                onClick={(e) => {
+                  window.open((slide as Slide)?.cta2?.link_url, "_replace");
+                }}
+              >
+                {(slide as Slide)?.cta2?.link_header}
               </a>
             </>
           ) : (
