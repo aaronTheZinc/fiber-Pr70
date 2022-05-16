@@ -3,6 +3,7 @@ package database
 import (
 	"errors"
 	"log"
+	"time"
 
 	e "github.com/vreel/app/err"
 	"github.com/vreel/app/graph/model"
@@ -82,7 +83,7 @@ func VreelAddSlide(slideId, userId string) error {
 		slides := vreel.Slides
 
 		slides = append(slides, slideId)
-		updateErr := db.Model(model.VreelModel{}).Where("id = ?", userId).Update("slides", slides).Error
+		updateErr := db.Model(model.VreelModel{}).Where("id = ?", userId).Update("slides", slides).Update("last_slide_edited", slideId).Update("time_last_edited", time.Now().Unix()).Error
 
 		if updateErr != nil {
 			err = updateErr
@@ -100,7 +101,7 @@ func VreelRemoveSlide(vreelId, slideId string) error {
 	} else {
 		slides := v.Slides
 		slides = utils.RemoveStringFromSlice(slides, slideId)
-		if updateErr := db.Model(model.VreelModel{}).Where("id = ?", vreelId).Update("slides", slides).Error; updateErr != nil {
+		if updateErr := db.Model(model.VreelModel{}).Where("id = ?", vreelId).Update("slides", slides).Update("last_slide_edited", slides[len(slides)-1]).Update("time_last_edited", time.Now().Unix()).Error; updateErr != nil {
 			err = e.FAILED_VREEL_UPDATE
 		}
 	}
@@ -111,7 +112,7 @@ func VreelRemoveSlide(vreelId, slideId string) error {
 //returns id to most recently edite / created slide
 func GetLatestVreelSlideId(id string) (string, int, error) {
 	vreel := model.VreelModel{}
-	err := db.Model(model.VreelModel{}).Where("id = ?", id).Select("recent_slide", "time_edited").Find(&vreel).Error
+	err := db.Model(model.VreelModel{}).Where("id = ?", id).Select("last_slide_edited", "time_last_edited").Find(&vreel).Error
 	v, _ := vreel.ToVreel([]*model.Slide{})
 	return *v.LastSlideEdited, vreel.TimeLastEdited, err
 }

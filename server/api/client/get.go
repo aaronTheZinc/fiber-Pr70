@@ -36,7 +36,7 @@ func GetUsersFiles(id string) (model.Files, error) {
 			err = e
 			log.Print("[failed to get] ", e.Error())
 		} else {
-			log.Println(string(body))
+
 			if unmarshalErr := json.Unmarshal(body, &files_r); unmarshalErr != nil {
 				err = errors.New("[failed to parse]" + unmarshalErr.Error())
 

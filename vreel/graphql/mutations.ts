@@ -68,6 +68,15 @@ export const LIKE_SLIDE = gql`
   }
 `;
 
+export const FOLLOW_SLIDE = gql`
+  mutation follow($token: String!, $vreelId: String!) {
+    follow(input: { token: $token, target: $vreelId }) {
+      succeeded
+      message
+    }
+  }
+`;
+
 export const CREATE_EMPLOYEE = gql`
   mutation employees(
     $token: String!
@@ -95,13 +104,13 @@ export const CREATE_EMPLOYEE = gql`
 `;
 
 const EDIT_EMPLOYEE = gql`
-  mutation employee($token: String!, $fields: [Object!]! ) {
-    updateEmployee(token: $token, fields: $fields){
+  mutation employee($token: String!, $fields: [Object!]!) {
+    updateEmployee(token: $token, fields: $fields) {
       message
       succeeded
+    }
   }
-  }
-  `
+`;
 
 interface NewSlide {
   content_type: string;
@@ -137,8 +146,8 @@ interface RegistrationResponse {
 }
 
 interface VreelField {
-  field: string,
-  value: string
+  field: string;
+  value: string;
 }
 export const registerUser = async (
   username: string,
@@ -187,12 +196,11 @@ export const addEmployee = async (variables): Promise<User> => {
 export const editEmployee = async (token: string, fields: VreelField[]) => {
   const { data } = await client.mutate({
     mutation: EDIT_EMPLOYEE,
-    variables: { token, fields }
-
+    variables: { token, fields },
   });
 
-  return data
-}
+  return data;
+};
 
 export const saveSlide = async ({ id, token, slide }: SaveSlideType) => {
   console.log(JSON.stringify(slide));
@@ -228,5 +236,12 @@ export const likeSlide = async (token: string, slideId: string) => {
   return await client.mutate({
     mutation: LIKE_SLIDE,
     variables: { token, slideId },
+  });
+};
+
+export const followSlide = async (token: string, vreelId: string) => {
+  return await client.mutate({
+    mutation: FOLLOW_SLIDE,
+    variables: { token, vreelId },
   });
 };

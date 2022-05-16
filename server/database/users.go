@@ -48,6 +48,12 @@ func GetUser(id string) (model.User, error) {
 		files, _ := client.GetUsersFiles(id)
 		r.Files = &files
 	}()
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		news, _ := CreateNewsFeed(id, user.Following)
+		r.News = news
+	}()
 	wg.Wait()
 	//add query for fetching news feed
 
@@ -79,6 +85,12 @@ func GetUserByUsername(username string) (model.User, error) {
 		defer wg.Done()
 		files, _ := client.GetUsersFiles(user.ID)
 		r.Files = &files
+	}()
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		news, _ := CreateNewsFeed(user.ID, user.Following)
+		r.News = news
 	}()
 
 	wg.Wait()
@@ -197,6 +209,12 @@ func GetUserByEmail(email string) (model.User, error) {
 		files, _ := client.GetUsersFiles(user.ID)
 		r.Files = &files
 	}()
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		news, _ := CreateNewsFeed(user.ID, user.Following)
+		r.News = news
+	}()
 	wg.Wait()
 	return r, err
 }
@@ -235,6 +253,27 @@ func UpdateUserFields(id string, fields []*model.VreelFields) error {
 	}
 
 	wg.Wait()
+
+	return err
+}
+
+func AddFollowingToUser(userId, vreelId string) error {
+	var user model.UserModel
+
+	var err error
+	if getErr := db.Where("id = ?", userId).Select("following").First(&user).Error; getErr == nil {
+		var following pq.StringArray
+
+		following = user.Following
+		if !utils.ItemExistsInStringSlice(vreelId, following) {
+			following = append(following, vreelId)
+			updateErr := db.Model(model.UserModel{}).Where("id = ?", userId).Update("following", following).Error
+			log.Println(following)
+			if updateErr != nil {
+				err = errors.New("failed to add follow fragment")
+			}
+		}
+	}
 
 	return err
 }

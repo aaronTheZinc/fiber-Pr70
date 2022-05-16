@@ -175,10 +175,12 @@ func (c *UserModel) ToUser() User {
 	following := []*string{}
 
 	for _, v := range c.Liked {
-		liked = append(liked, &v)
+		o := v
+		liked = append(liked, &o)
 	}
 	for _, v := range c.Following {
-		following = append(following, &v)
+		o := v
+		following = append(following, &o)
 	}
 	return User{
 		ID:              c.ID,

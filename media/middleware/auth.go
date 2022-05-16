@@ -13,6 +13,7 @@ import (
 // 	(*w).Header().Set("Access-Control-Allow-Origin", "*")
 // }
 func AuthMiddleware(h http.Handler) http.Handler {
+
 	return CORS(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		log.Println("[Tus Request Method] ", r.Method)
 		if r.Method == "OPTIONS" {
@@ -43,14 +44,14 @@ func AuthMiddleware(h http.Handler) http.Handler {
 }
 func CORS(h http.Handler) http.Handler {
 	var env string = os.Getenv("ENV")
-	log.Println(env)
+	log.Println("env ->", env)
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if env == "dev" || env != "" {
 			log.Println("[Adding Cors]")
 			w.Header().Add("Access-Control-Allow-Origin", "*")
 			w.Header().Add("Access-Control-Allow-Credentials", "true")
 			w.Header().Add("Access-Control-Allow-Headers", "*")
-			w.Header().Add("Access-Control-Request-Headers", "*")
+			// w.Header().Add("Access-Control-Request-Headers", "*")
 
 			w.Header().Add("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, HEAD, PATCH")
 

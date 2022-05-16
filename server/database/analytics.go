@@ -34,7 +34,7 @@ func HasBeenLikedByAuthor(author, target string) (bool, error) {
 	var count int64
 	frag := model.AnalyticsFragmentModel{}
 
-	err := db.Where("target = ? AND author = ?", target, author).Find(&frag).Count(&count).Error
+	err := db.Where("target = ? AND author = ? AND action = ?", target, author, "like").Find(&frag).Count(&count).Error
 	return count > 0, err
 }
 
@@ -55,4 +55,27 @@ func CreateLike(author, target string) (model.AnalyticsFragmentModel, error) {
 
 func RemoveLike(author, target string) error {
 	return db.Where("author = ? AND target = ? AND action = ?", author, target, "like").Delete(&model.AnalyticsFragmentModel{}).Error
+}
+
+func CreateFollow(author, target string) (model.AnalyticsFragmentModel, error) {
+	var err error
+	follow := model.AnalyticsFragmentModel{
+		ID:        utils.GenerateId(),
+		Author:    author,
+		Target:    target,
+		Action:    "follow",
+		TimeStamp: time.Now().Unix(),
+	}
+	if creationErr := db.Create(&follow).Error; creationErr != nil {
+		err = e.FAILED_LIKE_CREATE
+	}
+	return follow, err
+}
+
+func HasBeenFollowedByAuthor(author, target string) (bool, error) {
+	var count int64
+	frag := model.AnalyticsFragmentModel{}
+
+	err := db.Where("target = ? AND author = ? AND action = ?", target, author, "follow").Find(&frag).Count(&count).Error
+	return count > 0, err
 }

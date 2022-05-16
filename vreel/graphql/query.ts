@@ -259,6 +259,52 @@ const GetEnterpiseByTokenQuery = gql`
   }
 `;
 
+const GetNewsFeedByToken = gql`
+  query news($token: String!) {
+    getUserByToken(token: $token) {
+      news {
+        id
+        slide_location
+        content_type
+        uri
+        title {
+          header
+          description
+        }
+        mobile {
+          start_time
+          stop_time
+          background_audio_uri
+          uri
+          content_type
+        }
+        desktop {
+          start_time
+          stop_time
+          background_audio_uri
+          uri
+          content_type
+        }
+        cta1 {
+          link_header
+          link_type
+          link_url
+        }
+        cta2 {
+          link_header
+          link_type
+          link_url
+        }
+        advanced {
+          info
+          link_type
+          link_header
+        }
+      }
+    }
+  }
+`;
+
 // const GetEnterpriseQuery = gql`
 //   query enterprise($id:)
 // `;
@@ -391,4 +437,12 @@ export const loginUser = async (
     });
 
   return response;
+};
+export const getNewsFeedByToken = async (token: string) => {
+  const { data } = await client.query({
+    query: GetNewsFeedByToken,
+    variables: { token },
+  });
+  console.log("[news]", data.getUserByToken);
+  return data.getUserByToken;
 };

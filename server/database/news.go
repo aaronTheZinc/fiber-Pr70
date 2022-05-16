@@ -1,10 +1,9 @@
-package news
+package database
 
 import (
 	"log"
 	"sync"
 
-	"github.com/vreel/app/database"
 	"github.com/vreel/app/graph/model"
 )
 
@@ -35,45 +34,45 @@ func (f SlideFragments) Sort() []*model.Slide {
 		}
 	}
 	for _, v := range fragments {
-		o := &v.Slide
-		slides = append(slides, o)
+		o := v.Slide
+		slides = append(slides, &o)
 	}
 
 	return slides
 
 }
 
-func CreateNewsFeed(userId string) ([]*model.Slide, error) {
+func CreateNewsFeed(userId string, followedVreels []string) ([]*model.Slide, error) {
 	var err error
 	//contains last edited slide and time edited
+	log.Println("followed vreels ->", followedVreels)
 	fragments := SlideFragments{}
-	if user, fetchErr := database.GetUser(userId); fetchErr == nil {
-		followedVreels := user.Following
-		wg := sync.WaitGroup{}
-		for _, vreelId := range followedVreels {
-			o := *vreelId
-			wg.Add(1)
-			go func() {
-				defer wg.Done()
-				if slideId, lastEditedTime, f := database.GetLatestVreelSlideId(o); f == nil {
-					if slide, g := database.GetSlide(slideId); g == nil {
-						fragments.Fragments = append(fragments.Fragments, SlideFragment{slide, lastEditedTime})
+	wg := sync.WaitGroup{}
+	for _, vreelId := range followedVreels {
+		o := vreelId
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
 
-					} else {
-						log.Printf("[Failed To Retrieve Slide]: %s ", slideId)
-						return
-					}
+			if slideId, lastEditedTime, f := GetLatestVreelSlideId(o); f == nil {
+				if slide, g := GetSlide(slideId); g == nil {
+					fragments.Fragments = append(fragments.Fragments, SlideFragment{slide, lastEditedTime})
 
 				} else {
-					err = f
+					log.Printf("[Failed To Retrieve Slide]: %s ", slideId)
+					return
 				}
 
-			}()
-		}
-		wg.Wait()
-	} else {
-		err = fetchErr
+			} else {
+				err = f
+
+			}
+
+		}()
 	}
+	wg.Wait()
+	// } else {
+	// 	err = fetchErr
 	// database.Getfragments()
 	return fragments.Sort(), err
 }

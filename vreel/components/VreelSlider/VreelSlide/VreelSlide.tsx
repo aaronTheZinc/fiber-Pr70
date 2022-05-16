@@ -3,12 +3,15 @@ import { VreelModal } from "../../Shared/VreelModal/VreelModal";
 import { Player } from "video-react";
 import { useAuth } from "../../../contexts/UserContext";
 import { User, Slide } from "../../../types";
+import { followSlide } from "../../../graphql/mutations";
+import { useCookies } from "react-cookie";
 interface VreelSlideProps {
   username: any;
   user: User | any;
   slideId: any;
   slide: Slide | any;
   currentSlide: number;
+  vreelId: string;
   swiper: any;
   isChanged: boolean;
   isMuted: boolean;
@@ -25,6 +28,7 @@ const VreelSlide = ({
   isChanged,
   isMuted,
   setIsMuted,
+  vreelId,
 }: VreelSlideProps): JSX.Element => {
   // const hasPlayer = useRef<boolean>(false);
   const slideEl = useRef(null);
@@ -35,24 +39,24 @@ const VreelSlide = ({
       videoEl.current.defaultMuted = true;
     } catch (e) {}
   });
-
+  const [{ userAuthToken }, _] = useCookies(["userAuthToken"]);
   const [isFollowed, setIsFollowed] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
   const [isVideo, setIsVideo] = useState(false);
   const [timeout, setTimeoutId] = useState<NodeJS.Timeout>(null);
   const auth = useAuth();
-  const toggleSlideFollow = () => {
+  const toggleSlideFollow = async () => {
+    if (!isFollowed) {
+      const r = await followSlide(userAuthToken, vreelId);
+      console.log("following vreel ->", vreelId);
+      console.log(r);
+    }
     setIsFollowed(!isFollowed);
   };
   const toggleSlideLike = () => {
     setIsLiked(!isLiked);
   };
 
-  const toggleSlideSound = () => {
-    setIsMuted(!isMuted);
-    isMuted ? audioEl.current.play() : audioEl.current.pause();
-    // isChanged && audioEl.current.pause()
-  };
   useEffect(() => {
     if (username) {
       setIsVideo(slide?.mobile?.content_type?.includes("video"));
@@ -81,7 +85,6 @@ const VreelSlide = ({
     // slideId !== 0 ? videoEl.current.pause() : videoEl.current.play();
     // console.log("this is skide video", swiper, slideId);
   }, []);
-  console.log("user slides is", slide);
   return (
     <section
       ref={slideEl}

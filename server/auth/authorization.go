@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
 
 	"github.com/vreel/app/database"
 	e "github.com/vreel/app/err"
@@ -402,20 +403,34 @@ func AuthorizeSlideRemoveLike(slideId, token string) (model.MutationResponse, er
 	return r, err
 }
 
-// func AuthorizeFollowVreel(vreelId, token string) (model.MutationResponse, error) {
-// 	var err error
-// 	var r model.MutationResponse
+func AuthorizeFollowVreel(vreelId, token string) (model.MutationResponse, error) {
+	var err error
+	var r model.MutationResponse
 
-// 	claims, isAuth, parseErr := ParseToken(token)
-// 	userId := claims.ID
+	claims, isAuth, parseErr := ParseToken(token)
+	userId := claims.ID
+	log.Println("-->", userId)
+	if isAuth && parseErr == nil {
+		if isLiked, isLikedErr := database.HasBeenFollowedByAuthor(userId, vreelId); !isLiked && isLikedErr == nil {
+			_, likeCreationErr := database.CreateFollow(userId, vreelId)
+			database.AddFollowingToUser(userId, vreelId)
+			if likeCreationErr != nil {
+				err = likeCreationErr
+			}
+		} else if isLikedErr != nil {
+			err = isLikedErr
+		} else {
+			r = model.MutationResponse{
+				Message:   "Already Followed By Author",
+				Succeeded: false,
+			}
+		}
 
-// 	if isAuth && parseErr == nil {
-
-// 	} else {
-// 		err = e.UNAUTHORIZED_ERROR
-// 	}
-// 	return r, err
-// }
+	} else {
+		err = e.UNAUTHORIZED_ERROR
+	}
+	return r, err
+}
 
 // func AuthorizeUnfollowVreel(vreelId, token string) (model.MutationResponse, error) {
 // 	var err error

@@ -113,7 +113,8 @@ func (r *mutationResolver) UnLikeSlide(ctx context.Context, input model.Analytic
 }
 
 func (r *mutationResolver) Follow(ctx context.Context, input model.AnalyticsMutation) (*model.MutationResponse, error) {
-	panic(fmt.Errorf("not implemented"))
+	resp, err := auth.AuthorizeFollowVreel(input.Target, input.Token)
+	return &resp, err
 }
 
 func (r *mutationResolver) UnFollow(ctx context.Context, input model.AnalyticsMutation) (*model.MutationResponse, error) {
