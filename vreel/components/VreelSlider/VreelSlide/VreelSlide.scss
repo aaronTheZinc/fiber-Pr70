@@ -1,0 +1,238 @@
+$small: 300px;
+$medium: 750px;
+
+.vreel-slide {
+  &__wrapper {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding-bottom: 60px;
+    max-height: 100vh;
+    min-height: 100vh;
+
+    @media only screen and (max-width: 768px) {
+      max-height: 88vh;
+      min-height: 88vh;
+    }
+  }
+
+  &__background-img {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    top: 50%;
+    left: 50%;
+    object-fit: cover;
+    object-position: top;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+  }
+
+  &__background-video {
+    display: block;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    top: 50%;
+    left: 50%;
+    object-fit: cover;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+  }
+
+  &__background-video__yt {
+    position: relative;
+    padding-bottom: 56.25%;
+    /* 16:9 */
+    padding-top: 25px;
+    height: 0;
+
+    &-inner {}
+  }
+
+  &__background-video__yt iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    // @media (min-aspect-ratio: 16/9) {
+    //   height: 56.25vw;
+    // }
+    // @media (max-aspect-ratio: 16/9) {
+    //   width: 177.78vh;
+    // }
+  }
+
+  &__overlay {
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.25);
+    z-index: 1;
+  }
+
+  &__text-wrapper {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    text-align: center;
+    max-width: 90vw;
+
+    @media only screen and (max-width: 768px) {
+      max-width: 300px;
+    }
+  }
+
+  &__heading-text {
+    white-space: pre-line;
+    font-family: Poppins;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 21px;
+    line-height: 32px;
+    padding-bottom: 12px;
+    text-transform: uppercase;
+
+    @media only screen and (max-width: 768px) {
+      font-size: 1.2rem;
+      padding-bottom: 6px;
+    }
+  }
+
+
+  // @media screen and (max-width: $medium) {
+  //   //do Smth
+  // }
+
+  &__text {
+    font-family: Poppins;
+    font-weight: 400;
+    font-size: 19px;
+    line-height: 28px;
+    text-transform: uppercase;
+    white-space: pre-line;
+    font-style: normal;
+    text-align: center;
+
+    @media only screen and (max-width: 768px) {
+      font-size: .7rem;
+    }
+  }
+
+  &__btn-wrapper {
+    display: flex;
+    flex-direction: row;
+    max-width: 80%;
+    gap: 12px;
+  }
+
+  &__btn {
+    font-family: Poppins;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 120px;
+    height: 41px;
+    background: #fff;
+    border: 2px solid #ffffff;
+    border-radius: 5px;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 24px;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: #000;
+    transition: all 0.2s ease-in-out;
+
+    @media only screen and (max-width: 768px) {
+      font-size: 10px;
+    }
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.4);
+      cursor: pointer;
+      color: inherit;
+    }
+  }
+
+  &__down-arrow {
+    position: absolute;
+    bottom: -20px;
+    height: 21px;
+    width: 80px;
+    margin: 0 auto;
+    z-index: 1;
+    left: 50%;
+    margin-bottom: 1pc;
+    transform: translate(-50%, -50%);
+  }
+
+  &__icon {
+    width: 30px;
+    // height: 65px;
+
+    &-sound {
+      :hover {
+        cursor: pointer;
+      }
+    }
+  }
+
+  &__left-icons__wrapper {
+    position: absolute;
+    cursor: pointer;
+    z-index: 1;
+    bottom: 0;
+    left: 5px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-left: 0.4pc;
+  }
+
+  &__right-icons__wrapper {
+    position: absolute;
+    cursor: pointer;
+    z-index: 1;
+    top: 45px;
+    right: 5px;
+
+    .top,
+    .bottom {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-right: 0.4pc;
+    }
+
+    .bottom {
+      position: fixed;
+      bottom: 0;
+    }
+
+    .top {
+      margin-top: 4pc;
+    }
+  }
+
+  .subIconLabel {
+    font-size: 15px;
+    padding-top: 3px;
+    text-align: center;
+    // color: red;
+    font-weight: bold;
+  }
+
+
+}

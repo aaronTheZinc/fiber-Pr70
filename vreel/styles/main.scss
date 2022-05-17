@@ -1,4 +1,27 @@
 @use './reset';
 @use '../components/components.scss';
 @use './bootstrap/scss/bootstrap';
+@use "~video-react/styles/scss/video-react";
 
+
+$poppins-font: 'Poppins';
+
+body {
+    &.modal-open{
+        padding: 0 !important;
+    }
+}
+
+/* .vreel-slide__text {
+    white-space: pre-line;
+    font-family: $poppins-font;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 19px;
+    line-height: 28px;
+    text-align: center;
+} */
+
+.vreel-slide__btn {
+    font-family: $poppins-font;
+}

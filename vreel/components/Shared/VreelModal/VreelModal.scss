@@ -1,0 +1,60 @@
+.vreel-modal {
+      max-width: 100% !important;
+      margin: 0 !important;
+  &__close-btn.btn-close {
+    align-self: flex-end;
+    margin: 1rem;
+    cursor: pointer;
+    position: relative;
+    top: 0px;
+    z-index: 0;
+    background-color: #fff;
+    padding: 10px;
+    font-size: small;
+  }
+  .modal {
+    top: 0 !important;
+    right: 0 !important;
+    height: 100vh !important;
+  }
+  .subIconLabel {
+    font-size: 10px;
+    padding-top: 3px;
+    text-align: center;
+    // color: red;
+    font-weight: bold;
+    padding-right: 500px;
+  }
+
+  .modal-content {
+    background-color: rgba(0, 0, 0, 0.7);
+    height: 100vh;
+    .btn-close {
+      align-self: flex-end;
+      margin: 1rem;
+      cursor: pointer;
+      position: relative;
+      top: 0px;
+      z-index: 0;
+      background-color: #fff;
+      padding: 10px;
+      font-size: larger;
+    }
+    .modal-body {
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      h1 {
+        font-size: 2.5rem;
+        text-align: center;
+      }
+    }
+  }
+  &__wrapper {
+    .react-share__ShareButton {
+      margin: 12px 6px;
+    }
+  }
+  &__overlay {
+  }
+}

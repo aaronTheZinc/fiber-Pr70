@@ -1,0 +1,47 @@
+.vreel-menu {
+
+  transition: display 0.3s ease-in;
+  position: fixed;
+  right: 0;
+  display: none;
+  flex-direction: column;
+  align-items: end;
+  width: 100%;
+  height: 100%;
+  background: #000;
+  z-index: 1000;
+  padding-right: 15px;
+  background: rgba(0, 0, 0, 0.7);
+  &__close-btn {
+    &:hover {
+      cursor: pointer;
+    }
+  }
+  &__wrapper {
+    left: 0 !important;
+    right: initial;
+    font-family: Anton;
+    font-size: 50px;
+    line-height: 75px;
+    font-weight: 100;
+    text-align: right;
+    letter-spacing: 0.08em;
+    font-feature-settings: "kern" off;
+
+    a {
+      transition: all 0.3s ease-in;
+      text-decoration: none;
+      color: #fff;
+      &:hover {
+        color: #FF7A00;
+        &::before{
+          content: '•';
+          position: absolute;
+          margin-left: -30px;
+          height: 10px;
+          width: 10px;
+        }
+      }
+    }
+  }
+}

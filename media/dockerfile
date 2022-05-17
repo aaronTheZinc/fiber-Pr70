@@ -1,0 +1,13 @@
+FROM golang
+
+RUN mkdir /app
+
+
+ADD . /app
+WORKDIR /app
+# RUN mkdir uploads
+RUN go build media.go
+
+
+
+CMD ["./media"]
