@@ -32,10 +32,10 @@ const Username = ({ user, isMobile }: UsernamePageProps) => {
         isUser={true}
         user={user}
       />
-      <Links />
+      {/* <Links />
       <Social isUser={true} user={user} username={username?.toString()} />
       <TextArea />
-      <Services isMobile={isMobile} />
+      <Services isMobile={isMobile} /> */}
     </div>
   );
 };

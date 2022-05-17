@@ -1,7 +1,7 @@
 import { NextApiRequest as Request, NextApiResponse as Response } from "next";
 import { getUserByUsername } from "../../graphql/query";
 import * as fs from "fs";
-import path from 'path'
+import path from "path";
 // import GenerateVcard from "../../utils/vcard";
 import vCardsJS from "vcards-js";
 const kevImg = require("../../public/kev.jpeg");
@@ -9,9 +9,9 @@ const kevImg = require("../../public/kev.jpeg");
 //create a new vCard
 var vCard = vCardsJS();
 
-// const EncodedAudio = (): Buffer => { 
+// const EncodedAudio = (): Buffer => {
 //   const dir = path.resolve(".../../public/background-vreel.mp3");
-//   const wavUrl = fs 
+//   const wavUrl = fs
 //     .readFileSync(dir)
 //     .toString();
 //   const buffer = Buffer.from(
@@ -24,6 +24,7 @@ var vCard = vCardsJS();
 // };
 
 export default async function handler(req: Request, res: Response) {
+  console.log("HIT ENDPOINT");
   const { username } = req.query;
   console.log("vCard", vCard);
   if (!username) {
@@ -39,6 +40,7 @@ export default async function handler(req: Request, res: Response) {
   } else {
     try {
       const user = await getUserByUsername(username.toString());
+      console.log(user);
       // const vcard = GenerateVcard(user)
       vCard.firstName = "Kevin";
       vCard.middleName = "J";

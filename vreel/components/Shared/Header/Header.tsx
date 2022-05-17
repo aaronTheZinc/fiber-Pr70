@@ -23,28 +23,39 @@ const Header = (): JSX.Element => {
 
   const styles =
     router.pathname.includes("login") ||
-      router.pathname.includes("register") ||
-      router.pathname.includes("forgot-password")
+    router.pathname.includes("register") ||
+    router.pathname.includes("forgot-password")
       ? {
-        display: "none",
-      }
+          display: "none",
+        }
       : {};
   return (
     <>
       <header style={styles} className="vreel-header vreel-header__wrapper">
-        <img
-          onClick={() => router.push("/")}
-          src="/logo.svg"
-          alt="vreel logo"
-          style={{ margin: "2pc" }}
-          className="vreel-header__logo"
-        />
-        <div className="vreel-header__nav-items__wrapper">
+        <div style={{ padding: "1pc" }}>
+          <img
+            onClick={() => router.push("/")}
+            src="/logo.svg"
+            alt="vreel logo"
+            style={{ padding: "0pc" }}
+            className="vreel-header__logo"
+          />
+        </div>
+        {username && cookies.userAuthToken ? (
+          <div
+            onClick={showConfirm}
+            data-initials={username[0].toUpperCase()}
+            className="rounded-circle"
+          ></div>
+        ) : (
+          <></>
+        )}
+        {/* <div className="vreel-header__nav-items__wrapper">
           {username ? (
             cookies.userAuthToken ? (
               <div
                 onClick={showConfirm}
-                data-initials={username[0]}
+                data-initials={username[0].toUpperCase()}
                 className="rounded-circle"
               ></div>
             ) : (
@@ -57,8 +68,8 @@ const Header = (): JSX.Element => {
             )
           ) : (
             ""
-          )}
-          {/* <div
+          )} */}
+        {/* <div
               onClick={(e) => router.push('/login')}
               data-initials={
                "M"
@@ -66,18 +77,18 @@ const Header = (): JSX.Element => {
               className="rounded-circle"
             >
             </div> */}
-          <img
+        {/* <img
             onClick={(e) => {
               const menuWrapperEl = document.querySelector(
                 ".vreel-menu.vreel-menu__wrapper"
               );
-              menuWrapperEl.style.display = "flex";
+              (menuWrapperEl as any).style.display = "flex";
             }}
             src="/menu-bars.svg"
             alt="vreel menu"
             style={{ width: "35px", marginTop: "2pc" }}
-          />
-        </div>
+          /> */}
+        {/* </div>  */}
       </header>
     </>
   );

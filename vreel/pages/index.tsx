@@ -13,10 +13,10 @@ export default function Home({ isMobile, data }) {
         <title>VReel Homepage</title>
       </Head>
       <VreelSlider isUser={false} data={data.videos} />
-      <Links />
+      {/* <Links />
       <Social />
       <Services isMobile={isMobile} />
-      <TextArea />
+      <TextArea /> */}
     </div>
   );
 }
