@@ -31,7 +31,8 @@ func CreateSlide(author string) (model.Slide, error) {
 }
 
 func UpdateSlide(id string, slide model.SlideModel) (model.Slide, error) {
-	log.Printf("[Updated Slide %s]: %s", id, slide)
+	// log.Printf("[Updated Slide %s]: %s", id, slide)
+	log.Println(slide)
 	err := db.Where("id = ?", id).Updates(&slide).Error
 	if err != nil {
 		log.Panic(err)
