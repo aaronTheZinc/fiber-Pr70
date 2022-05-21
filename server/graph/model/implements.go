@@ -395,7 +395,7 @@ func (c *SlideModel) ToSlide() Slide {
 		Mobile:        &mobile,
 		Desktop:       &desktop,
 		Cta1:          &cta1,
-		Cta2:          &cta1,
+		Cta2:          &cta2,
 		Metadata:      &m,
 	}
 }

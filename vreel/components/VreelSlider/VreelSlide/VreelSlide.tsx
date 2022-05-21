@@ -58,6 +58,7 @@ const VreelSlide = ({
   };
 
   useEffect(() => {
+    console.log("bug -> slide", slide);
     if (username) {
       setIsVideo(slide?.mobile?.content_type?.includes("video"));
     } else {
