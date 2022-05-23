@@ -15,3 +15,8 @@ func CreateFile(file models.File) error {
 	}
 	return err
 }
+
+func EditFileName(author, fileId, newName string) error {
+	return db.Where("file_id = ? AND author = ?", fileId, author).Update("file_name", newName).Error
+
+}

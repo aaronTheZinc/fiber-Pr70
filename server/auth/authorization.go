@@ -6,11 +6,30 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/vreel/app/api/client"
 	"github.com/vreel/app/database"
 	e "github.com/vreel/app/err"
 	"github.com/vreel/app/graph/model"
 	"github.com/vreel/app/utils"
 )
+
+//insecure
+func AuthorizeEditFileName(token, fileId, newName string) (model.MutationResponse, error) {
+	var err error
+	var resp model.MutationResponse
+	claims, isAuth, parseErr := ParseToken(token)
+	userId := claims.ID
+	if isAuth && parseErr == nil {
+		err = client.EditFileName(userId, fileId, newName)
+		if err == nil {
+			resp = model.MutationResponse{
+				Message:   "[edited]: " + fileId,
+				Succeeded: true,
+			}
+		}
+	}
+	return resp, err
+}
 
 func AuthorizeAddGroupToUser(newGroup model.NewGroup) (model.Group, error) {
 	var group model.Group

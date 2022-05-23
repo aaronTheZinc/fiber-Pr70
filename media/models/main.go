@@ -10,6 +10,12 @@ type AuthResponse struct {
 	Time       string `json:"time"`
 }
 
+type EditFileNameRequest struct {
+	UserId      string `json:"user_id"`
+	FileId      string `json:"file_id"`
+	NewFileName string `json:"new_file_name"`
+}
+
 type File struct {
 	Author   string `json:"author"`
 	FileName string `json:"file_name"`

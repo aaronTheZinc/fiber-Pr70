@@ -352,4 +352,6 @@ type Mutation {
   follow(input: AnalyticsMutation!): MutationResponse!
   unFollow(input: AnalyticsMutation!): MutationResponse!
   logPageLoad(vreelId: String!): MutationResponse!
+  editFileName(token: String!, fileName: String!, newName: String!, fileId: String!): MutationResponse!
+  deleteFile(token: String!, fileId: String!): MutationResponse!
 }

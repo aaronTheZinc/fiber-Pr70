@@ -1,6 +1,7 @@
 package client
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -23,6 +24,11 @@ type NewFolderResponse struct {
 
 type UserFileResponse struct {
 	Files []model.File `json:"files"`
+}
+
+type FileEditResponse struct {
+	FileId    string `json:"file_id"`
+	Succeeded bool   `json:"succeeded"`
 }
 
 func GetUsersFiles(id string) (model.Files, error) {
@@ -56,4 +62,27 @@ func GetUsersFiles(id string) (model.Files, error) {
 	}
 
 	return files, err
+}
+
+func EditFileName(userId, fileId, newName string) error {
+	var err error
+	endpoint := os.Getenv("MEDIA_SERVER_ENDPOINT") + "/files/filename/edit"
+	values := map[string]string{"name": "John Doe", "occupation": "gardener"}
+	body, _ := json.Marshal(values)
+	if resp, postErr := http.Post(endpoint, "application/json", bytes.NewBuffer(body)); postErr == nil {
+		body, e := ioutil.ReadAll(resp.Body)
+		if e != nil {
+			err = e
+			return err
+		}
+		r := FileEditResponse{}
+		json.Unmarshal([]byte(body), &r)
+		if !r.Succeeded {
+			err = errors.New("[failed] updating file: " + r.FileId)
+			return err
+		}
+	} else {
+		err = postErr
+	}
+	return err
 }

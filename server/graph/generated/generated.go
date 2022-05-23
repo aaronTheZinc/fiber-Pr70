@@ -178,7 +178,9 @@ type ComplexityRoot struct {
 		CreateGroup                       func(childComplexity int, input *model.NewGroup) int
 		CreateResetPasswordRequestIntent  func(childComplexity int, email string) int
 		CreateSlide                       func(childComplexity int, token string) int
+		DeleteFile                        func(childComplexity int, token string, fileID string) int
 		DeleteGroup                       func(childComplexity int, id string, token string) int
+		EditFileName                      func(childComplexity int, token string, fileName string, newName string, fileID string) int
 		Follow                            func(childComplexity int, input model.AnalyticsMutation) int
 		LikeSlide                         func(childComplexity int, input model.AnalyticsMutation) int
 		LogPageLoad                       func(childComplexity int, vreelID string) int
@@ -352,6 +354,8 @@ type MutationResolver interface {
 	Follow(ctx context.Context, input model.AnalyticsMutation) (*model.MutationResponse, error)
 	UnFollow(ctx context.Context, input model.AnalyticsMutation) (*model.MutationResponse, error)
 	LogPageLoad(ctx context.Context, vreelID string) (*model.MutationResponse, error)
+	EditFileName(ctx context.Context, token string, fileName string, newName string, fileID string) (*model.MutationResponse, error)
+	DeleteFile(ctx context.Context, token string, fileID string) (*model.MutationResponse, error)
 }
 type QueryResolver interface {
 	User(ctx context.Context, id *string) (*model.User, error)
@@ -1021,6 +1025,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.CreateSlide(childComplexity, args["token"].(string)), true
 
+	case "Mutation.deleteFile":
+		if e.complexity.Mutation.DeleteFile == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_deleteFile_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DeleteFile(childComplexity, args["token"].(string), args["fileId"].(string)), true
+
 	case "Mutation.deleteGroup":
 		if e.complexity.Mutation.DeleteGroup == nil {
 			break
@@ -1032,6 +1048,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.DeleteGroup(childComplexity, args["id"].(string), args["token"].(string)), true
+
+	case "Mutation.editFileName":
+		if e.complexity.Mutation.EditFileName == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_editFileName_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.EditFileName(childComplexity, args["token"].(string), args["fileName"].(string), args["newName"].(string), args["fileId"].(string)), true
 
 	case "Mutation.follow":
 		if e.complexity.Mutation.Follow == nil {
@@ -2318,6 +2346,8 @@ type Mutation {
   follow(input: AnalyticsMutation!): MutationResponse!
   unFollow(input: AnalyticsMutation!): MutationResponse!
   logPageLoad(vreelId: String!): MutationResponse!
+  editFileName(token: String!, fileName: String!, newName: String!, fileId: String!): MutationResponse!
+  deleteFile(token: String!, fileId: String!): MutationResponse!
 }
 `, BuiltIn: false},
 }
@@ -2468,6 +2498,30 @@ func (ec *executionContext) field_Mutation_createSlide_args(ctx context.Context,
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_deleteFile_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["token"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("token"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["token"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["fileId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("fileId"))
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["fileId"] = arg1
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_deleteGroup_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -2489,6 +2543,48 @@ func (ec *executionContext) field_Mutation_deleteGroup_args(ctx context.Context,
 		}
 	}
 	args["token"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_editFileName_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["token"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("token"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["token"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["fileName"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("fileName"))
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["fileName"] = arg1
+	var arg2 string
+	if tmp, ok := rawArgs["newName"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("newName"))
+		arg2, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["newName"] = arg2
+	var arg3 string
+	if tmp, ok := rawArgs["fileId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("fileId"))
+		arg3, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["fileId"] = arg3
 	return args, nil
 }
 
@@ -6617,6 +6713,90 @@ func (ec *executionContext) _Mutation_logPageLoad(ctx context.Context, field gra
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return ec.resolvers.Mutation().LogPageLoad(rctx, args["vreelId"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.MutationResponse)
+	fc.Result = res
+	return ec.marshalNMutationResponse2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐMutationResponse(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_editFileName(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_editFileName_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().EditFileName(rctx, args["token"].(string), args["fileName"].(string), args["newName"].(string), args["fileId"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.MutationResponse)
+	fc.Result = res
+	return ec.marshalNMutationResponse2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐMutationResponse(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_deleteFile(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_deleteFile_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().DeleteFile(rctx, args["token"].(string), args["fileId"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -12390,6 +12570,16 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			}
 		case "logPageLoad":
 			out.Values[i] = ec._Mutation_logPageLoad(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "editFileName":
+			out.Values[i] = ec._Mutation_editFileName(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "deleteFile":
+			out.Values[i] = ec._Mutation_deleteFile(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}

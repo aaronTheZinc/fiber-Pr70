@@ -125,6 +125,15 @@ func (r *mutationResolver) LogPageLoad(ctx context.Context, vreelID string) (*mo
 	panic(fmt.Errorf("not implemented"))
 }
 
+func (r *mutationResolver) EditFileName(ctx context.Context, token string, fileName string, newName string, fileID string) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeEditFileName(token, fileID, newName)
+	return &resp, err
+}
+
+func (r *mutationResolver) DeleteFile(ctx context.Context, token string, fileID string) (*model.MutationResponse, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
 func (r *queryResolver) User(ctx context.Context, id *string) (*model.User, error) {
 	user, err := database.GetUser(*id)
 	return &user, err
