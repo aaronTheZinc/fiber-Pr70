@@ -29,22 +29,62 @@ func GetFilesHandler(c *fiber.Ctx) error {
 
 //edit file information
 func EditFileNameHandler(c *fiber.Ctx) error {
+	response := models.FileEditResponse{}
+	response.Succeeded = false
+
 	b := models.EditFileNameRequest{}
+
 	if parseErr := c.BodyParser(&b); parseErr != nil {
-		return c.SendString(parseErr.Error())
+		response.Error = "failed to parse request."
 	}
+
 	if b.UserId == "" {
-		return c.SendString("[failed]: user id is required.")
+		response.Error = "no user id provided."
 	}
 
 	if err := database.EditFileName(b.UserId, b.FileId, b.NewFileName); err != nil {
-		return c.SendString(err.Error())
+		response.Error = err.Error()
+	} else {
+		response.Succeeded = true
 	}
-	return c.SendString("[completed] changed file name to: " + b.NewFileName)
+	v, _ := json.Marshal(&response)
+	return c.Send(v)
 }
+
+func FileDeletionHandler(c *fiber.Ctx) error {
+	response := models.FileEditResponse{}
+	response.Succeeded = false
+	b := models.FileDeletionRequest{}
+
+	if parseErr := c.BodyParser(&b); parseErr != nil {
+		response.Error = "failed to parse request."
+		v, _ := json.Marshal(&response)
+		return c.Send(v)
+	}
+
+	if b.UserId == "" || b.FileId == "" {
+		response.Error = "missing required fields"
+		v, _ := json.Marshal(&response)
+		return c.Send(v)
+	}
+
+	if err := database.DeleteFile(b.UserId, b.FileId); err != nil {
+		response.Error = err.Error()
+		v, _ := json.Marshal(&response)
+		return c.Send(v)
+	}
+	response.Succeeded = true
+
+	v, _ := json.Marshal(&response)
+
+	return c.Send(v)
+
+}
+
 func FilesHandler(app *fiber.App) {
 	g := app.Group("/files")
 
 	g.Get("/", GetFilesHandler)
 	g.Post("/filename/edit", EditFileNameHandler)
+	g.Post("/delete", FileDeletionHandler)
 }

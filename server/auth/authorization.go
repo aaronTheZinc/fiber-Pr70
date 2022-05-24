@@ -31,6 +31,24 @@ func AuthorizeEditFileName(token, fileId, newName string) (model.MutationRespons
 	return resp, err
 }
 
+func AuthorizeDeleteFile(token, fileId string) (model.MutationResponse, error) {
+	var err error
+	var resp model.MutationResponse
+	claims, isAuth, parseErr := ParseToken(token)
+	userId := claims.ID
+	if isAuth && parseErr == nil {
+		deleteErr := client.DeleteFile(userId, fileId)
+		if deleteErr != nil {
+			err = deleteErr
+		}
+		resp = model.MutationResponse{Message: "succeeded", Succeeded: true}
+	} else {
+		err = e.UNAUTHORIZED_ERROR
+	}
+
+	return resp, err
+}
+
 func AuthorizeAddGroupToUser(newGroup model.NewGroup) (model.Group, error) {
 	var group model.Group
 	var err error
