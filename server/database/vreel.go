@@ -37,6 +37,7 @@ func CreateNewVreel(author string) error {
 }
 
 func GetVreel(id string) (model.Vreel, error) {
+	log.Println("id ->", id)
 	var vreel model.VreelModel
 	var r model.Vreel
 	var err error

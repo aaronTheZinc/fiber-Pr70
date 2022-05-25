@@ -236,9 +236,6 @@ const GetEnterpriseEmployee = gql`
       employee {
         id
       }
-      vreel {
-        author
-      }
     }
   }
 `;

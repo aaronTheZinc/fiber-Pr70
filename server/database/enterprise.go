@@ -1,6 +1,7 @@
 package database
 
 import (
+	"fmt"
 	"log"
 	"sync"
 
@@ -179,9 +180,11 @@ func GetEenterpriseEmployee(enterpriseName, employeeId string) (model.Enterprise
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
+			log.Println("@[enterprise id]", entId)
 			if v, fetchErr := GetVreel(entId); fetchErr != nil {
 				err = fetchErr
 			} else {
+				log.Println(fmt.Sprintf("%v", len(v.Slides)))
 				vreel = v
 			}
 		}()
