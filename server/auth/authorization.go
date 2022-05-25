@@ -13,6 +13,24 @@ import (
 	"github.com/vreel/app/utils"
 )
 
+func AuthorizeAddLinkToVreel(token string, link model.Link) (model.MutationResponse, error) {
+	var err error
+	var resp model.MutationResponse
+	claims, isAuth, parseErr := ParseToken(token)
+	userId := claims.ID
+
+	if isAuth && parseErr == nil {
+		linkAddErr := database.AddLinkToVreel(userId, link)
+		if linkAddErr != nil {
+			err = errors.New("fialed to add link")
+		}
+	} else {
+		return resp, e.UNAUTHORIZED_ERROR
+	}
+
+	return resp, err
+}
+
 //insecure
 func AuthorizeEditFileName(token, fileId, newName string) (model.MutationResponse, error) {
 	var err error
@@ -31,6 +49,7 @@ func AuthorizeEditFileName(token, fileId, newName string) (model.MutationRespons
 	return resp, err
 }
 
+//may be insecure
 func AuthorizeDeleteFile(token, fileId string) (model.MutationResponse, error) {
 	var err error
 	var resp model.MutationResponse

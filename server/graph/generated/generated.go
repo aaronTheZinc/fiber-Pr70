@@ -154,11 +154,10 @@ type ComplexityRoot struct {
 	}
 
 	Link struct {
-		Category func(childComplexity int) int
-		Header   func(childComplexity int) int
-		LinkType func(childComplexity int) int
-		Position func(childComplexity int) int
-		URL      func(childComplexity int) int
+		Category  func(childComplexity int) int
+		Position  func(childComplexity int) int
+		Thumbnail func(childComplexity int) int
+		URL       func(childComplexity int) int
 	}
 
 	Links struct {
@@ -174,6 +173,7 @@ type ComplexityRoot struct {
 	Mutation struct {
 		AddEmployeeToEnterprise           func(childComplexity int, token string, newUser model.NewUser) int
 		AddUserToGroup                    func(childComplexity int, token string, groupID string, userID string) int
+		AddVreelLink                      func(childComplexity int, token string, link model.LinkInput) int
 		CreateEnterprise                  func(childComplexity int, input model.NewEnterprise) int
 		CreateEvent                       func(childComplexity int, token string, input model.NewEvent) int
 		CreateGroup                       func(childComplexity int, input *model.NewGroup) int
@@ -357,6 +357,7 @@ type MutationResolver interface {
 	LogPageLoad(ctx context.Context, vreelID string) (*model.MutationResponse, error)
 	EditFileName(ctx context.Context, token string, newName string, fileID string) (*model.MutationResponse, error)
 	DeleteFile(ctx context.Context, token string, fileID string) (*model.MutationResponse, error)
+	AddVreelLink(ctx context.Context, token string, link model.LinkInput) (*model.MutationResponse, error)
 }
 type QueryResolver interface {
 	User(ctx context.Context, id *string) (*model.User, error)
@@ -893,26 +894,19 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Link.Category(childComplexity), true
 
-	case "Link.header":
-		if e.complexity.Link.Header == nil {
-			break
-		}
-
-		return e.complexity.Link.Header(childComplexity), true
-
-	case "Link.link_type":
-		if e.complexity.Link.LinkType == nil {
-			break
-		}
-
-		return e.complexity.Link.LinkType(childComplexity), true
-
 	case "Link.position":
 		if e.complexity.Link.Position == nil {
 			break
 		}
 
 		return e.complexity.Link.Position(childComplexity), true
+
+	case "Link.thumbnail":
+		if e.complexity.Link.Thumbnail == nil {
+			break
+		}
+
+		return e.complexity.Link.Thumbnail(childComplexity), true
 
 	case "Link.url":
 		if e.complexity.Link.URL == nil {
@@ -972,6 +966,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.AddUserToGroup(childComplexity, args["token"].(string), args["groupId"].(string), args["userId"].(string)), true
+
+	case "Mutation.addVreelLink":
+		if e.complexity.Mutation.AddVreelLink == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_addVreelLink_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.AddVreelLink(childComplexity, args["token"].(string), args["link"].(model.LinkInput)), true
 
 	case "Mutation.createEnterprise":
 		if e.complexity.Mutation.CreateEnterprise == nil {
@@ -2163,9 +2169,8 @@ type Service {
 
 type Link {
   position: Int!
-  header: String!
+  thumbnail: String!
   url: String!
-  link_type: String!
   category: String!
 }
 
@@ -2321,6 +2326,12 @@ input AnalyticsMutation {
   target: String!
   token: String!
 }
+input LinkInput {
+  thumbnail: String!
+  uri: String!
+  position: Int!
+  category: String!
+}
 type Mutation {
   register(input: NewUser!): User!
   createEvent(token: String!, input: NewEvent!): Event!
@@ -2365,6 +2376,7 @@ type Mutation {
     fileId: String!
   ): MutationResponse!
   deleteFile(token: String!, fileId: String!): MutationResponse!
+  addVreelLink(token: String!, link: LinkInput!): MutationResponse!
 }
 `, BuiltIn: false},
 }
@@ -2428,6 +2440,30 @@ func (ec *executionContext) field_Mutation_addUserToGroup_args(ctx context.Conte
 		}
 	}
 	args["userId"] = arg2
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_addVreelLink_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["token"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("token"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["token"] = arg0
+	var arg1 model.LinkInput
+	if tmp, ok := rawArgs["link"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("link"))
+		arg1, err = ec.unmarshalNLinkInput2githubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐLinkInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["link"] = arg1
 	return args, nil
 }
 
@@ -5616,7 +5652,7 @@ func (ec *executionContext) _Link_position(ctx context.Context, field graphql.Co
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Link_header(ctx context.Context, field graphql.CollectedField, obj *model.Link) (ret graphql.Marshaler) {
+func (ec *executionContext) _Link_thumbnail(ctx context.Context, field graphql.CollectedField, obj *model.Link) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -5634,7 +5670,7 @@ func (ec *executionContext) _Link_header(ctx context.Context, field graphql.Coll
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Header, nil
+		return obj.Thumbnail, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -5670,41 +5706,6 @@ func (ec *executionContext) _Link_url(ctx context.Context, field graphql.Collect
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return obj.URL, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Link_link_type(ctx context.Context, field graphql.CollectedField, obj *model.Link) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Link",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.LinkType, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -6840,6 +6841,48 @@ func (ec *executionContext) _Mutation_deleteFile(ctx context.Context, field grap
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return ec.resolvers.Mutation().DeleteFile(rctx, args["token"].(string), args["fileId"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.MutationResponse)
+	fc.Result = res
+	return ec.marshalNMutationResponse2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐMutationResponse(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_addVreelLink(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_addVreelLink_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().AddVreelLink(rctx, args["token"].(string), args["link"].(model.LinkInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -11398,6 +11441,53 @@ func (ec *executionContext) unmarshalInputCreateSlide(ctx context.Context, obj i
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputLinkInput(ctx context.Context, obj interface{}) (model.LinkInput, error) {
+	var it model.LinkInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "thumbnail":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("thumbnail"))
+			it.Thumbnail, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "uri":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("uri"))
+			it.URI, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "position":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("position"))
+			it.Position, err = ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "category":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("category"))
+			it.Category, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputLoginInput(ctx context.Context, obj interface{}) (model.LoginInput, error) {
 	var it model.LoginInput
 	asMap := map[string]interface{}{}
@@ -12412,18 +12502,13 @@ func (ec *executionContext) _Link(ctx context.Context, sel ast.SelectionSet, obj
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "header":
-			out.Values[i] = ec._Link_header(ctx, field, obj)
+		case "thumbnail":
+			out.Values[i] = ec._Link_thumbnail(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
 		case "url":
 			out.Values[i] = ec._Link_url(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "link_type":
-			out.Values[i] = ec._Link_link_type(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -12628,6 +12713,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			}
 		case "deleteFile":
 			out.Values[i] = ec._Mutation_deleteFile(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "addVreelLink":
+			out.Values[i] = ec._Mutation_addVreelLink(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -14013,6 +14103,11 @@ func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.Selecti
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) unmarshalNLinkInput2githubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐLinkInput(ctx context.Context, v interface{}) (model.LinkInput, error) {
+	res, err := ec.unmarshalInputLinkInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalNLocalSession2githubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐLocalSession(ctx context.Context, sel ast.SelectionSet, v model.LocalSession) graphql.Marshaler {

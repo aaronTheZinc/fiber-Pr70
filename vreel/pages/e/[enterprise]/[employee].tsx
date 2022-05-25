@@ -10,6 +10,9 @@ import {
 export default function Employee({ employee, enterpriseName }): JSX.Element {
   const router = useRouter();
 
+  useEffect(() => {
+    console.log("employee ->", employee.enterpiseEmployee);
+  }, []);
   return (
     <div
       style={{
@@ -18,9 +21,9 @@ export default function Employee({ employee, enterpriseName }): JSX.Element {
     >
       <VreelSlider
         username={enterpriseName}
-        data={false}
+        data={true}
         isUser={true}
-        user={employee.employee}
+        user={employee.enterpiseEmployee}
       />
       {/* <Links />
       <Social isUser={true} user={user} username={username?.toString()} />
@@ -48,6 +51,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     return {
       props: {
         employee,
+        enterpriseName: enterprise,
       },
     };
   } catch (e) {

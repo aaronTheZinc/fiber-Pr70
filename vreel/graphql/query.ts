@@ -236,6 +236,57 @@ const GetEnterpriseEmployee = gql`
       employee {
         id
       }
+      vreel {
+        elements {
+          links {
+            links {
+              thumbnail
+              url
+              position
+              category
+            }
+          }
+        }
+        slides {
+          id
+          slide_location
+          content_type
+          uri
+          title {
+            header
+            description
+          }
+          mobile {
+            start_time
+            stop_time
+            background_audio_uri
+            uri
+            content_type
+          }
+          desktop {
+            start_time
+            stop_time
+            background_audio_uri
+            uri
+            content_type
+          }
+          cta1 {
+            link_header
+            link_type
+            link_url
+          }
+          cta2 {
+            link_header
+            link_type
+            link_url
+          }
+          advanced {
+            info
+            link_type
+            link_header
+          }
+        }
+      }
     }
   }
 `;

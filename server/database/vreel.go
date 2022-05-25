@@ -1,6 +1,7 @@
 package database
 
 import (
+	"encoding/json"
 	"errors"
 	"log"
 	"time"
@@ -119,3 +120,33 @@ func GetLatestVreelSlideId(id string) (string, int, error) {
 }
 
 //create a function called CreateVreel that accepts a title as a string and saves to gorm database
+
+func AddLinkToVreel(vreelId string, newLink model.Link) error {
+	var vreel model.VreelModel
+	var elements model.VreelElements
+	var links model.Links
+
+	fetchErr := db.Where("id = ?", vreelId).First(&vreel).Error
+
+	if fetchErr != nil {
+		return e.VREEL_NOT_FOUND
+	}
+
+	parseErr := json.Unmarshal([]byte(vreel.Elements), &elements)
+
+	if parseErr != nil {
+		return errors.New("failed to parse")
+	}
+	links = *elements.Links
+	links.Links = append(links.Links, &newLink)
+
+	elements.Links = &links
+	u, marshalErr := json.Marshal(&elements)
+	if marshalErr == nil {
+		log.Println("Hit!")
+		return db.Model(model.VreelModel{}).Where("id = ?", vreelId).Update("elements", string(u)).Error
+	} else {
+		return marshalErr
+	}
+
+}

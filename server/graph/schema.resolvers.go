@@ -136,6 +136,12 @@ func (r *mutationResolver) DeleteFile(ctx context.Context, token string, fileID 
 	return &resp, err
 }
 
+func (r *mutationResolver) AddVreelLink(ctx context.Context, token string, link model.LinkInput) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeAddLinkToVreel(token, link.ToLink())
+
+	return &resp, err
+}
+
 func (r *queryResolver) User(ctx context.Context, id *string) (*model.User, error) {
 	user, err := database.GetUser(*id)
 	return &user, err

@@ -400,4 +400,13 @@ func (c *SlideModel) ToSlide() Slide {
 	}
 }
 
+func (c *LinkInput) ToLink() Link {
+	return Link{
+		Thumbnail: c.Thumbnail,
+		Category:  c.Category,
+		Position:  c.Position,
+		URL:       c.URI,
+	}
+}
+
 // }

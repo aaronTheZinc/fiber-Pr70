@@ -57,6 +57,21 @@ func GetEnterpriseIdByName(name string) (string, error) {
 	return enterprise.ID, err
 }
 
+func GetEnterpriseOwnerById(id string) (string, error) {
+	enterprise := model.EnterpriseModel{}
+
+	err := db.Where("id = ?", id).Select("owner").First(&enterprise).Error
+
+	return enterprise.Owner, err
+}
+
+func GetEnterpriseOwnerByName(name string) (string, error) {
+	enterprise := model.EnterpriseModel{}
+
+	err := db.Where("name = ?", name).Select("owner").First(&enterprise).Error
+
+	return enterprise.Owner, err
+}
 func GetEnterpriseByName(name string) (model.Enterprise, error) {
 	var enterprise model.EnterpriseModel
 	var response model.Enterprise
@@ -173,7 +188,7 @@ func GetEenterpriseEmployee(enterpriseName, employeeId string) (model.Enterprise
 
 	wg := sync.WaitGroup{}
 
-	if entId, fetchErr := GetEnterpriseIdByName(enterpriseName); fetchErr != nil {
+	if entId, fetchErr := GetEnterpriseOwnerByName(enterpriseName); fetchErr != nil {
 		err = e.ENTERPRISE_NOT_FOUND
 	} else {
 		//get vreel
@@ -181,6 +196,7 @@ func GetEenterpriseEmployee(enterpriseName, employeeId string) (model.Enterprise
 		go func() {
 			defer wg.Done()
 			log.Println("@[enterprise id]", entId)
+
 			if v, fetchErr := GetVreel(entId); fetchErr != nil {
 				err = fetchErr
 			} else {
