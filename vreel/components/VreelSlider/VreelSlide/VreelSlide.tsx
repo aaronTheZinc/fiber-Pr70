@@ -6,10 +6,16 @@ import { User, Slide } from "../../../types";
 import { followSlide } from "../../../graphql/mutations";
 import { useCookies } from "react-cookie";
 import QRCode from "qrcode.react";
-const BASE_URL =
-  process.env.ENVIRONMENT === "dev"
-    ? "http://localhost:300"
-    : "https://dev1.vreel.page";
+let BASE_URL = "";
+const current_env = process.env.ENVIRONMENT;
+if (current_env === "dev") {
+  BASE_URL = "http://localhost:3000";
+} else if (current_env === "staging") {
+  BASE_URL = "https://staging.vreel.page";
+} else {
+  BASE_URL = "https://dev1.vreel.page";
+}
+
 interface VreelSlideProps {
   username: any;
   user: User | any;

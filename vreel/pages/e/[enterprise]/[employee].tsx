@@ -1,6 +1,7 @@
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
+import Links from "../../../components/Edit/Links/Links";
 import { VreelSlider } from "../../../components/VreelSlider/VreelSlider";
 import {
   getEnterpriseEmployee,
@@ -11,7 +12,10 @@ export default function Employee({ employee, enterpriseName }): JSX.Element {
   const router = useRouter();
 
   useEffect(() => {
-    console.log("employee ->", employee.enterpiseEmployee);
+    console.log(
+      "employee ->",
+      employee.enterpiseEmployee.vreel.elements.links.links
+    );
   }, []);
   return (
     <div
@@ -25,6 +29,7 @@ export default function Employee({ employee, enterpriseName }): JSX.Element {
         isUser={true}
         user={employee.enterpiseEmployee}
       />
+      <Links links={employee.enterpiseEmployee.vreel.elements.links.links} />
       {/* <Links />
       <Social isUser={true} user={user} username={username?.toString()} />
       <TextArea />
