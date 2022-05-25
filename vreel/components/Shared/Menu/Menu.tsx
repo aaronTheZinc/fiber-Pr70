@@ -26,9 +26,9 @@ const Menu = (): JSX.Element => {
         className="vreel-menu__close-btn"
       />
       <ul className="vreel-menu-items__wrapper">
-        {username ? (
+        {username || true ? (
           <>
-            {cookies.userAuthToken ? (
+            {cookies.userAuthToken || true ? (
               <>
                 <li>
                   <a href="#">My VReel</a>
@@ -79,18 +79,18 @@ const Menu = (): JSX.Element => {
           </>
         ) : (
           <>
-          <li>
-            <a href="#">Links</a>
-          </li>
-          <li>
-            <a href="#">Social</a>
-          </li>
-          <li>
-            <a href="#">About</a>
-          </li>
-          <li>
-            <a href="#">Services</a>
-          </li>
+            <li>
+              <a href="#">Links</a>
+            </li>
+            <li>
+              <a href="#">Social</a>
+            </li>
+            <li>
+              <a href="#">About</a>
+            </li>
+            <li>
+              <a href="#">Services</a>
+            </li>
           </>
         )}
       </ul>

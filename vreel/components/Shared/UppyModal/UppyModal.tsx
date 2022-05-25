@@ -18,17 +18,16 @@ import Compress from "@uppy/compressor";
 const IsImage = (extension: string) => extension.match(/.(jpg|jpeg|png|gif)$/i);
 
 /**
- * 
+ *
  * a funciion that checks to make sure that the selected file is an mp3 file
  */
 const isMusic = (extension: string) => {
-  return extension === "mp3"
+  return extension === "mp3";
   /* let regex = new RegExp(/.(mp3)$/i)
   return regex.test(extension) */
-}
+};
 
 import { useCookies } from "react-cookie";
-
 
 interface ModalProps {
   btnTitle: string;
@@ -49,16 +48,20 @@ interface UppyModalProps {
   setUpload: (url: string, fileType: string) => void;
   basicFileType: string;
   isOpen: boolean;
-  toggleModal: (b: boolean) => void
+  toggleModal: (b: boolean) => void;
 }
 
-export const UppyModal = ({ setUpload, basicFileType, isOpen, toggleModal }: UppyModalProps): JSX.Element => {
+export const UppyModal = ({
+  setUpload,
+  basicFileType,
+  isOpen,
+  toggleModal,
+}: UppyModalProps): JSX.Element => {
   const [cookies, _, removeCookies] = useCookies(["userAuthToken"]);
-  const [fileType, setFileType] = useState<string>();
   const [open, setOpen] = useState(true);
   const router = useRouter();
 
-  console.log("isOpen", isOpen)
+  console.log("isOpen", isOpen);
 
   const envType = process.env.NEXT_PUBLIC_ENVIRONMENT;
 
@@ -83,7 +86,7 @@ export const UppyModal = ({ setUpload, basicFileType, isOpen, toggleModal }: Upp
     headers: {
       token: cookies.userAuthToken ? cookies.userAuthToken : null,
     },
-    removeFingerprintOnSuccess: true
+    removeFingerprintOnSuccess: true,
   });
 
   // uppy.use(ScreenCapture)
@@ -91,9 +94,7 @@ export const UppyModal = ({ setUpload, basicFileType, isOpen, toggleModal }: Upp
   // uppy.use(Instagram,  { companionUrl: 'http://localhost:3020' });
   // uppy.use(Url,  { companionUrl: 'http://localhost:3020' });
 
-
   uppy.on("file-added", (file) => {
-
     // Makes sure that the selected file is an mp3 only is the basicFileType is music-related. If not, then the file gets removed
     // if((basicFileType === "music" || basicFileType === "background audio") && isMusic(file.extension) === false){
     //   console.log("rejected")
@@ -105,38 +106,41 @@ export const UppyModal = ({ setUpload, basicFileType, isOpen, toggleModal }: Upp
   });
 
   uppy.on("error", (error) => {
-    console.log("there was an error", error)
-  })
+    console.log("there was an error", error);
+  });
 
   // alerts the user that the selected file cannot go through because of it's extension
-  uppy.on('file-removed', (file, reason) => {
-
-    if (reason === 'removed-by-user' && (basicFileType === "music" || basicFileType === "background audio")) {
-      alert(`sorry but ${file.name} has been rejected because it is not an mp3 file`)
+  uppy.on("file-removed", (file, reason) => {
+    if (
+      reason === "removed-by-user" &&
+      (basicFileType === "music" || basicFileType === "background audio")
+    ) {
+      alert(
+        `sorry but ${file.name} has been rejected because it is not an mp3 file`
+      );
     }
-    console.log("that file was removed", reason)
-  })
+    console.log("that file was removed", reason);
+  });
 
   uppy.on("progress", (progress) => {
     // progress: integer (total progress percentage)
-    console.log("progress", progress)
+    console.log("progress", progress);
     if (progress === 100) {
       uppy.pauseAll();
       uppy.resumeAll();
     }
   });
   uppy.on("complete", (result) => {
-    setOpen(false);
-    setUpload(result.successful[0]?.uploadURL, fileType);
-    console.log("setUpload", setUpload)
+    setUpload(result.successful[0]?.uploadURL, result.successful[0].data.type);
+    console.log("setUpload", setUpload);
     console.log("response ->", result);
-    toggleModal(false)
+    toggleModal(false);
 
     // console.log('Upload complete! We’ve uploaded these files:', result.successful)
   });
 
   const { username } = router.query;
-
+  const modalRef = useRef();
   const capitilizedUsername = username ? username[0] + username.slice(1) : null;
 
   useEffect(() => {
@@ -145,10 +149,9 @@ export const UppyModal = ({ setUpload, basicFileType, isOpen, toggleModal }: Upp
     }, 5000);
   }, []);
 
-  const onClick = () => { };
+  const onClick = () => {};
   const handleClose = () => {
-    setOpen(false);
-    toggleModal(false)
+    toggleModal(false);
   };
   return (
     <div>
