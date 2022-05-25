@@ -23,9 +23,15 @@ export default function Home({ isMobile, data }) {
 }
 const envType = process.env.NEXT_PUBLIC_ENVIRONMENT;
 
-const BASE_URL =
-  envType == "dev" ? "http://localhost:3000" : "https://dev1.vreel.page";
-
+let BASE_URL = "";
+const current_env = process.env.ENVIRONMENT;
+if (current_env === "dev") {
+  BASE_URL = "http://localhost:3000";
+} else if (current_env === "staging") {
+  BASE_URL = "https://staging.vreel.page";
+} else {
+  BASE_URL = "https://dev1.vreel.page";
+}
 export async function getStaticProps() {
   // const res = await fetch(`${BASE_URL}/api/pexels`);
   // const data = await res.json();

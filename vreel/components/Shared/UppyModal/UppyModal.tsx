@@ -51,6 +51,16 @@ interface UppyModalProps {
   toggleModal: (b: boolean) => void;
 }
 
+let BASE_URL = "";
+const current_env = process.env.ENVIRONMENT;
+if (current_env === "dev") {
+  BASE_URL = "http://localhost:3000";
+} else if (current_env === "staging") {
+  BASE_URL = "https://staging.vreel.page";
+} else {
+  BASE_URL = "https://dev1.vreel.page";
+}
+
 export const UppyModal = ({
   setUpload,
   basicFileType,
@@ -62,11 +72,6 @@ export const UppyModal = ({
   const router = useRouter();
 
   console.log("isOpen", isOpen);
-
-  const envType = process.env.NEXT_PUBLIC_ENVIRONMENT;
-
-  const BASE_URL =
-    envType == "dev" ? "http://localhost:7070" : "https://dev1.vreel.page";
 
   console.log("[media endpoint]", BASE_URL);
   const uppy = new Uppy({
@@ -101,7 +106,6 @@ export const UppyModal = ({
     //   uppy.removeFile(file.id, "removed-by-user")
     // } else {
     //   console.log("went through", file.type)
-    setFileType(file.type);
     // }
   });
 

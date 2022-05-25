@@ -124,11 +124,17 @@ type Group struct {
 }
 
 type Link struct {
-	Position int    `json:"position"`
-	Header   string `json:"header"`
-	URL      string `json:"url"`
-	LinkType string `json:"link_type"`
-	Category string `json:"category"`
+	Position  int    `json:"position"`
+	Thumbnail string `json:"thumbnail"`
+	URL       string `json:"url"`
+	Category  string `json:"category"`
+}
+
+type LinkInput struct {
+	Thumbnail string `json:"thumbnail"`
+	URI       string `json:"uri"`
+	Position  int    `json:"position"`
+	Category  string `json:"category"`
 }
 
 type Links struct {
