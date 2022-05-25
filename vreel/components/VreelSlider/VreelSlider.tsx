@@ -3,7 +3,6 @@ import type { User } from "../../types";
 import { StaticMainPageContent } from "../../data";
 // Import Swiper React components
 import { Swiper, SwiperSlide } from "swiper/react";
-
 // Import Swiper styles
 import "swiper/css";
 import "swiper/css/navigation";

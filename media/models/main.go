@@ -19,11 +19,21 @@ type EditFileNameRequest struct {
 type File struct {
 	Author   string `json:"author"`
 	FileName string `json:"file_name"`
-	FileId   string `json:"uri"`
+	FileId   string `json:"id"`
 	FileType string `json:"file_type"`
 	FileSize int64  `json:"file_size"`
 }
 
 type UserFiles struct {
 	Files []File `json:"files"`
+}
+type FileEditResponse struct {
+	FileId    string `json:"file_id"`
+	Succeeded bool   `json:"succeeded"`
+	Error     string `json:"error"`
+}
+
+type FileDeletionRequest struct {
+	UserId string `json:"user_id"`
+	FileId string `json:"file_id"`
 }

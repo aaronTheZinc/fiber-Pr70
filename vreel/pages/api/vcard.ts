@@ -7,7 +7,6 @@ import vCardsJS from "vcards-js";
 const kevImg = require("../../public/kev.jpeg");
 
 //create a new vCard
-var vCard = vCardsJS();
 
 // const EncodedAudio = (): Buffer => {
 //   const dir = path.resolve(".../../public/background-vreel.mp3");
@@ -24,9 +23,10 @@ var vCard = vCardsJS();
 // };
 
 export default async function handler(req: Request, res: Response) {
+  const vCard = vCardsJS();
   console.log("HIT ENDPOINT");
   const { username } = req.query;
-  console.log("vCard", vCard);
+  console.log("vCard", username);
   if (!username) {
     vCard.firstName = "Donta'";
     vCard.lastName = "Bell";

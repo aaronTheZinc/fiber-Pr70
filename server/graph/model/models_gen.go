@@ -90,6 +90,7 @@ type Event struct {
 }
 
 type File struct {
+	ID       string `json:"id"`
 	FileName string `json:"file_name"`
 	FileType string `json:"file_type"`
 	URI      string `json:"uri"`

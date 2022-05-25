@@ -5,6 +5,11 @@ import { useAuth } from "../../../contexts/UserContext";
 import { User, Slide } from "../../../types";
 import { followSlide } from "../../../graphql/mutations";
 import { useCookies } from "react-cookie";
+import QRCode from "qrcode.react";
+const BASE_URL =
+  process.env.ENVIRONMENT === "dev"
+    ? "http://localhost:300"
+    : "https://dev1.vreel.page";
 interface VreelSlideProps {
   username: any;
   user: User | any;
@@ -309,7 +314,14 @@ const VreelSlide = ({
             )}
           </div>
           <VreelModal title="Share" isSocial={true} icon="/share-icon.svg" />
-          <VreelModal isQr={true} icon="/qr-icon.svg" />
+          {username ? (
+            <QRCode
+              style={{ width: "50px", height: "50px" }}
+              value={`${BASE_URL}/${username}/${slideId}`}
+            />
+          ) : (
+            <></>
+          )}
         </div>
       </aside>
       <audio

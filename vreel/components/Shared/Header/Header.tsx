@@ -77,17 +77,17 @@ const Header = (): JSX.Element => {
               className="rounded-circle"
             >
             </div> */}
-        {/* <img
-            onClick={(e) => {
-              const menuWrapperEl = document.querySelector(
-                ".vreel-menu.vreel-menu__wrapper"
-              );
-              (menuWrapperEl as any).style.display = "flex";
-            }}
-            src="/menu-bars.svg"
-            alt="vreel menu"
-            style={{ width: "35px", marginTop: "2pc" }}
-          /> */}
+        <img
+          onClick={(e) => {
+            const menuWrapperEl = document.querySelector(
+              ".vreel-menu.vreel-menu__wrapper"
+            );
+            (menuWrapperEl as any).style.display = "flex";
+          }}
+          src="/menu-bars.svg"
+          alt="vreel menu"
+          style={{ width: "35px", marginTop: "2pc" }}
+        />
         {/* </div>  */}
       </header>
     </>

@@ -123,6 +123,7 @@ type ComplexityRoot struct {
 		FileName func(childComplexity int) int
 		FileSize func(childComplexity int) int
 		FileType func(childComplexity int) int
+		ID       func(childComplexity int) int
 		URI      func(childComplexity int) int
 	}
 
@@ -180,7 +181,7 @@ type ComplexityRoot struct {
 		CreateSlide                       func(childComplexity int, token string) int
 		DeleteFile                        func(childComplexity int, token string, fileID string) int
 		DeleteGroup                       func(childComplexity int, id string, token string) int
-		EditFileName                      func(childComplexity int, token string, fileName string, newName string, fileID string) int
+		EditFileName                      func(childComplexity int, token string, newName string, fileID string) int
 		Follow                            func(childComplexity int, input model.AnalyticsMutation) int
 		LikeSlide                         func(childComplexity int, input model.AnalyticsMutation) int
 		LogPageLoad                       func(childComplexity int, vreelID string) int
@@ -354,7 +355,7 @@ type MutationResolver interface {
 	Follow(ctx context.Context, input model.AnalyticsMutation) (*model.MutationResponse, error)
 	UnFollow(ctx context.Context, input model.AnalyticsMutation) (*model.MutationResponse, error)
 	LogPageLoad(ctx context.Context, vreelID string) (*model.MutationResponse, error)
-	EditFileName(ctx context.Context, token string, fileName string, newName string, fileID string) (*model.MutationResponse, error)
+	EditFileName(ctx context.Context, token string, newName string, fileID string) (*model.MutationResponse, error)
 	DeleteFile(ctx context.Context, token string, fileID string) (*model.MutationResponse, error)
 }
 type QueryResolver interface {
@@ -752,6 +753,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.File.FileType(childComplexity), true
 
+	case "File.id":
+		if e.complexity.File.ID == nil {
+			break
+		}
+
+		return e.complexity.File.ID(childComplexity), true
+
 	case "File.uri":
 		if e.complexity.File.URI == nil {
 			break
@@ -1059,7 +1067,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.EditFileName(childComplexity, args["token"].(string), args["fileName"].(string), args["newName"].(string), args["fileId"].(string)), true
+		return e.complexity.Mutation.EditFileName(childComplexity, args["token"].(string), args["newName"].(string), args["fileId"].(string)), true
 
 	case "Mutation.follow":
 		if e.complexity.Mutation.Follow == nil {
@@ -2002,6 +2010,7 @@ type ServerAnalytics {
   userCount: Int!
 }
 type File {
+  id: String!
   file_name: String!
   file_type: String!
   uri: String!
@@ -2331,7 +2340,11 @@ type Mutation {
     userId: String!
   ): MutationResponse!
   addEmployeeToEnterprise(token: String!, newUser: NewUser!): MutationResponse!
-  updateEmployee(token: String!, employee: String! fields: [VreelFields!]): MutationResponse!
+  updateEmployee(
+    token: String!
+    employee: String!
+    fields: [VreelFields!]
+  ): MutationResponse!
   removeUserFromGroup(
     token: String!
     groupId: String!
@@ -2346,7 +2359,11 @@ type Mutation {
   follow(input: AnalyticsMutation!): MutationResponse!
   unFollow(input: AnalyticsMutation!): MutationResponse!
   logPageLoad(vreelId: String!): MutationResponse!
-  editFileName(token: String!, fileName: String!, newName: String!, fileId: String!): MutationResponse!
+  editFileName(
+    token: String!
+    newName: String!
+    fileId: String!
+  ): MutationResponse!
   deleteFile(token: String!, fileId: String!): MutationResponse!
 }
 `, BuiltIn: false},
@@ -2559,32 +2576,23 @@ func (ec *executionContext) field_Mutation_editFileName_args(ctx context.Context
 	}
 	args["token"] = arg0
 	var arg1 string
-	if tmp, ok := rawArgs["fileName"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("fileName"))
+	if tmp, ok := rawArgs["newName"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("newName"))
 		arg1, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["fileName"] = arg1
+	args["newName"] = arg1
 	var arg2 string
-	if tmp, ok := rawArgs["newName"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("newName"))
+	if tmp, ok := rawArgs["fileId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("fileId"))
 		arg2, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["newName"] = arg2
-	var arg3 string
-	if tmp, ok := rawArgs["fileId"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("fileId"))
-		arg3, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["fileId"] = arg3
+	args["fileId"] = arg2
 	return args, nil
 }
 
@@ -4821,6 +4829,41 @@ func (ec *executionContext) _Event_groups(ctx context.Context, field graphql.Col
 	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _File_id(ctx context.Context, field graphql.CollectedField, obj *model.File) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "File",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _File_file_name(ctx context.Context, field graphql.CollectedField, obj *model.File) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -6754,7 +6797,7 @@ func (ec *executionContext) _Mutation_editFileName(ctx context.Context, field gr
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().EditFileName(rctx, args["token"].(string), args["fileName"].(string), args["newName"].(string), args["fileId"].(string))
+		return ec.resolvers.Mutation().EditFileName(rctx, args["token"].(string), args["newName"].(string), args["fileId"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -12184,6 +12227,11 @@ func (ec *executionContext) _File(ctx context.Context, sel ast.SelectionSet, obj
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("File")
+		case "id":
+			out.Values[i] = ec._File_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "file_name":
 			out.Values[i] = ec._File_file_name(ctx, field, obj)
 			if out.Values[i] == graphql.Null {

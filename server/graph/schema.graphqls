@@ -8,6 +8,7 @@ type ServerAnalytics {
   userCount: Int!
 }
 type File {
+  id: String!
   file_name: String!
   file_type: String!
   uri: String!
@@ -337,7 +338,11 @@ type Mutation {
     userId: String!
   ): MutationResponse!
   addEmployeeToEnterprise(token: String!, newUser: NewUser!): MutationResponse!
-  updateEmployee(token: String!, employee: String! fields: [VreelFields!]): MutationResponse!
+  updateEmployee(
+    token: String!
+    employee: String!
+    fields: [VreelFields!]
+  ): MutationResponse!
   removeUserFromGroup(
     token: String!
     groupId: String!
@@ -352,6 +357,10 @@ type Mutation {
   follow(input: AnalyticsMutation!): MutationResponse!
   unFollow(input: AnalyticsMutation!): MutationResponse!
   logPageLoad(vreelId: String!): MutationResponse!
-  editFileName(token: String!, fileName: String!, newName: String!, fileId: String!): MutationResponse!
+  editFileName(
+    token: String!
+    newName: String!
+    fileId: String!
+  ): MutationResponse!
   deleteFile(token: String!, fileId: String!): MutationResponse!
 }

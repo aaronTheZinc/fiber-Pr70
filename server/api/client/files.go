@@ -29,6 +29,7 @@ type UserFileResponse struct {
 type FileEditResponse struct {
 	FileId    string `json:"file_id"`
 	Succeeded bool   `json:"succeeded"`
+	Error     string `json:"error"`
 }
 
 func GetUsersFiles(id string) (model.Files, error) {
@@ -67,7 +68,8 @@ func GetUsersFiles(id string) (model.Files, error) {
 func EditFileName(userId, fileId, newName string) error {
 	var err error
 	endpoint := os.Getenv("MEDIA_SERVER_ENDPOINT") + "/files/filename/edit"
-	values := map[string]string{"name": "John Doe", "occupation": "gardener"}
+	values := map[string]string{"user_id": userId, "file_id": fileId, "new_file_name": newName}
+
 	body, _ := json.Marshal(values)
 	if resp, postErr := http.Post(endpoint, "application/json", bytes.NewBuffer(body)); postErr == nil {
 		body, e := ioutil.ReadAll(resp.Body)
@@ -78,7 +80,33 @@ func EditFileName(userId, fileId, newName string) error {
 		r := FileEditResponse{}
 		json.Unmarshal([]byte(body), &r)
 		if !r.Succeeded {
-			err = errors.New("[failed] updating file: " + r.FileId)
+			err = errors.New(r.Error)
+			log.Println("failed to edit", r.Error)
+			return err
+		}
+	} else {
+		err = postErr
+	}
+	return err
+}
+
+func DeleteFile(userId, fileId string) error {
+	var err error
+	endpoint := os.Getenv("MEDIA_SERVER_ENDPOINT") + "/files/delete"
+	values := map[string]string{"user_id": userId, "file_id": fileId}
+
+	body, _ := json.Marshal(values)
+	if resp, postErr := http.Post(endpoint, "application/json", bytes.NewBuffer(body)); postErr == nil {
+		body, e := ioutil.ReadAll(resp.Body)
+		if e != nil {
+			err = e
+			return err
+		}
+		r := FileEditResponse{}
+		json.Unmarshal([]byte(body), &r)
+		if !r.Succeeded {
+			err = errors.New(r.Error)
+			log.Println("failed to edit", r.Error)
 			return err
 		}
 	} else {
