@@ -61,7 +61,7 @@ func RestHandler() {
 func main() {
 
 	godotenv.Load(".env")
-	fmt.Printf("val: %s", os.Getenv("MEDIA_SERVER_ENDPOINT"))
+
 	var wg sync.WaitGroup
 	// test.TestCache()
 	wg.Add(1)
