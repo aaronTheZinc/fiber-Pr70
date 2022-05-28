@@ -21,7 +21,7 @@ type ConfigResponse struct {
 func ConfigHandler(c *fiber.Ctx) error {
 	v, _ := json.Marshal(ConfigResponse{
 		MediaServer:             os.Getenv("MEDIA_SERVER_ENDPOINT"),
-		MediaServerFileEndpoint: os.Getenv("MEDIA_SERVER_FILE_ENDPOINZT"),
+		MediaServerFileEndpoint: os.Getenv("MEDIA_SERVER_FILE_ENDPOINT"),
 		DatabaseIsConnected:     database.IsConnected(),
 	})
 	return c.Send(v)

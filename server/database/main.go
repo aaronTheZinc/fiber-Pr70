@@ -34,7 +34,7 @@ func databaseInit() (*gorm.DB, error) {
 }
 
 func IsConnected() bool {
-	return db == nil
+	return !(db == nil)
 }
 
 func Migrate() {
