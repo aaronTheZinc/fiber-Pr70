@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"os"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/vreel/app/database"
@@ -11,6 +12,20 @@ type HealthResponse struct {
 	Ok bool `json:"ok"`
 }
 
+type ConfigResponse struct {
+	MediaServer             string `json:"media_server_endpoint"`
+	MediaServerFileEndpoint string `json:"media_server_file_endpoint"`
+	DatabaseIsConnected     bool   `json:"database_is_connected"`
+}
+
+func ConfigHandler(c *fiber.Ctx) error {
+	v, _ := json.Marshal(ConfigResponse{
+		MediaServer:             os.Getenv("MEDIA_SERVER_ENDPOINT"),
+		MediaServerFileEndpoint: os.Getenv("MEDIA_SERVER_FILE_ENDPOINT"),
+		DatabaseIsConnected:     database.IsConnected(),
+	})
+	return c.Send(v)
+}
 func HealthHandler(app *fiber.App) {
 	g := app.Group("/health")
 
@@ -24,4 +39,6 @@ func HealthHandler(app *fiber.App) {
 			return nil
 		}
 	})
+
+	g.Get("/config", ConfigHandler)
 }
