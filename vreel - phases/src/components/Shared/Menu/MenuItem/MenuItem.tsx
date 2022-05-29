@@ -24,6 +24,7 @@ const MenuTitle: React.FC<{
         router.push(item.href);
         dispatch(action());
       }}
+      className={Styles.menuItemContainer}
     >
       <div
         className={clsx(

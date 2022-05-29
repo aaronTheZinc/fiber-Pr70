@@ -12,6 +12,7 @@ import { LoginQuery } from "../../graphql/query";
 import { useCookies } from "react-cookie";
 import { FormikRegFormTypes } from "../../formik/Types/FormikTypes";
 import Styles from "./Register.module.scss";
+import clsx from "clsx";
 
 const initialValues: FormikRegFormTypes = {
   username: "",
@@ -86,6 +87,8 @@ const Register = () => {
   };
 
   const router = useRouter();
+  const [checked, setChecked] = useState(false);
+
   return (
     <AuthContainer>
       <div className={Styles.vreelLoginForm}>
@@ -132,13 +135,17 @@ const Register = () => {
                     placeholder="Confirm Password"
                   />
 
-                  <div className={Styles.checkbox}>
-                    <input
+                  <div
+                    className={Styles.checkbox}
+                    onClick={() => setChecked(!checked)}
+                  >
+                    <div
                       id="check"
-                      type="checkbox"
-                      name="checked"
-                      className={Styles.formCheckbox}
-                    />
+                      className={clsx(
+                        Styles.formCheckbox,
+                        checked && Styles.active
+                      )}
+                    ></div>
                     <label htmlFor="check">
                       By continuing you accept our Privacy Policy
                     </label>

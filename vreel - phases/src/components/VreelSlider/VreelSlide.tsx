@@ -1,11 +1,11 @@
-import React, { useEffect, useRef, useState } from 'react';
-import type { VreelSlideProps } from '../../types';
-import { rightSidebar } from './SlideData';
-import ReactPlayer from 'react-player';
-import { useRouter } from 'next/router';
-import { useAppDispatch } from '../../redux/store/store';
-import UserProfile from '../common/UserProfile';
-import Styles from './VreelSlider.module.scss';
+import React, { useEffect, useRef, useState } from "react";
+import type { VreelSlideProps } from "../../types";
+import { rightSidebar } from "./SlideData";
+import ReactPlayer from "react-player";
+import { useRouter } from "next/router";
+import { useAppDispatch } from "../../redux/store/store";
+import UserProfile from "../common/UserProfile";
+import Styles from "./VreelSlider.module.scss";
 
 const VreelSlide = ({
   swiper,
@@ -27,37 +27,43 @@ const VreelSlide = ({
         <div className={Styles.vreelSlide__content_wrapper}>
           {/* LEFT SIDEBAR */}
           <div className={Styles.vreelSlide__content_wrapper__left}>
-            <div>
-              <button onClick={() => setMute(!mute)}>
-                <img
-                  src={`/assets/${
-                    mute ? 'icons/sound-off.svg' : 'icons/sound-on.svg'
-                  }`}
-                  alt='Mute Icon'
-                />
-              </button>
-            </div>
+            <img
+              className={Styles.vreelLogo}
+              src="/assets/icons/Vreel_logo_small.svg"
+              alt="Brand Logo"
+            />
+
+            <button onClick={() => setMute(!mute)}>
+              <img
+                src={`/assets/${
+                  mute ? "icons/audioOff.svg" : "icons/audioOn.svg"
+                }`}
+                alt="Mute Icon"
+              />
+            </button>
           </div>
 
           {/* CONTENT */}
           <div className={Styles.vreelSlide__content_wrapper__middle}>
-            <div>
+            <div
+              className={Styles.vreelSlide__content_wrapper__middle_container}
+            >
               <h3>VREEL™</h3>
               <p>
                 We make you look better! Our Web 3.0 storytelling interface
-                visually elevates your brand.{' '}
+                visually elevates your brand.{" "}
               </p>
 
               <div className={Styles.button_container}>
                 <button
-                  className='btn-slide'
-                  onClick={() => router.push('/login')}
+                  className="btn-slide"
+                  onClick={() => router.push("/login")}
                 >
                   Log in
                 </button>
                 <button
-                  className='btn-slide'
-                  onClick={() => router.push('/register')}
+                  className="btn-slide"
+                  onClick={() => router.push("/register")}
                 >
                   Register
                 </button>
@@ -98,15 +104,15 @@ const VreelSlide = ({
               autoPlay: true,
               playsInline: true,
               muted: mute,
-              type: 'video/mp4',
+              type: "video/mp4",
               style: {
-                position: 'absolute',
+                position: "absolute",
                 top: 0,
                 left: 0,
                 zIndex: -2,
-                height: '100%',
-                width: '100%',
-                objectFit: 'cover',
+                height: "100%",
+                width: "100%",
+                objectFit: "cover",
               },
             },
           },

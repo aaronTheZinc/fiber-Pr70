@@ -4,21 +4,6 @@
   @include displaySizing(100vw, 100vh);
   position: relative;
 
-  // VREEL LOGO
-  .vreelLogo {
-    position: absolute;
-    top: 2rem;
-    left: 1rem;
-    z-index: 10;
-    height: 4rem;
-    object-fit: cover;
-
-    @media (min-width: 1020px) {
-      top: 2.5rem;
-      left: 0.8rem;
-    }
-  }
-
   // VREEL SLIDE
   .vreelSlide {
     overflow: hidden;
@@ -83,10 +68,26 @@
         // LEFT SLIDE PART
         &__left {
           @include displaySizing(max-content, 100%);
-          @include displayFlex2(auto, flex, flex-end, initial, column);
+          @include displayFlex2(auto, flex, space-between, flex-start, column);
+
+          // VREEL LOGO
+          .vreelLogo {
+            height: 4rem;
+            object-fit: cover;
+
+            @media (min-width: 1020px) {
+              top: 2.5rem;
+              left: 0.8rem;
+            }
+          }
+
+          button {
+            margin: 0;
+            padding: 0;
+          }
 
           img {
-            height: 5rem;
+            height: 4rem;
             cursor: pointer;
             object-fit: cover;
           }
@@ -96,13 +97,10 @@
         &__middle {
           @include displayFlex2(auto, flex, center, flex-end, row);
           flex: 1;
-
-          margin-bottom: 1.5rem;
-          padding: 0 0.5rem;
           text-align: center;
           color: $vreel_white;
 
-          div > * {
+          &_container > *:not(:last-child) {
             margin-bottom: 1rem;
           }
 
@@ -129,7 +127,7 @@
           }
 
           @media (min-width: 1020px) {
-            margin-bottom: 1rem;
+            // margin-bottom: 1rem;
 
             p {
               font-size: $text-lg;

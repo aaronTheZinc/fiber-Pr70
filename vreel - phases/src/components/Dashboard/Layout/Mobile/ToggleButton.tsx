@@ -9,7 +9,7 @@ const ToggleButton: React.FC = () => {
       <div
         onClick={() => {
           setButtonState(!buttonState);
-          // router.push('/');
+          router.push('/');
         }}
         className='btn-toggle__wrapper'
         // className='bg-secondary rounded-[40px] border-2 border-white p-[2px] flex justify-between'

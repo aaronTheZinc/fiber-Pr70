@@ -26,7 +26,7 @@ const AuthContainer: React.FC<{ children: React.ReactNode }> = ({
 
         <div className={Styles.form}>
           <div className={Styles.logoContainer}>
-            <img src="/assets/images/vreel-logo.png" alt="Vreel Logo" />
+            <img src="/assets/images/Vreel_logo.svg" alt="Vreel Logo" />
           </div>
           <div>{children}</div>
         </div>

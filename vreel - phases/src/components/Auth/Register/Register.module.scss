@@ -1,49 +1,59 @@
-@import '../Login/Login.module.scss';
+@import "../Login/Login.module.scss";
 
-.error{
-    color: $vreel_red;
-    margin-bottom: 8px;
+.error {
+  color: $vreel_red;
+  margin-bottom: 8px;
 }
-.checkbox{
-    @include displayFlex(100%,flex,center,center);
-    margin-bottom: 30px;
-    color:$vreel_white;
-    .formCheckbox{
-        width: 25px;
-        background-color: white;
-        margin: auto 0;
-        padding: 0;
-        -webkit-appearance: radio;
-    }
-    span{
-        color: $vreel_white;
-        opacity: .9;
-    }
-}
-.logIn{
-    padding: 30px 0;
-    text-align: center;
+.checkbox {
+  @include displayFlex(100%, flex, center, center);
+  margin-bottom: 30px;
+  color: $vreel_white;
+  @media only screen and (min-width: 568px) {
+    width: max-content;
+    margin: 0 auto 30px auto;
+  }
+  .formCheckbox {
+    min-width: 18px;
+    min-height: 18px;
+    @include componentsBorder(2px solid $vreel_white, 50%);
+    background-color: white;
+    padding: 0;
+    margin-right: 10px;
+    -webkit-appearance: radio;
+  }
+  .active {
+    background-color: $secondary;
+  }
+  span {
     color: $vreel_white;
-    p{
-        .logInBtn{
-            color: $secondary;
-            text-decoration: underline;
-            font-weight: 600;
-            display: inline-block;
-            cursor: pointer;
-        }
-    }
+    opacity: 0.9;
+  }
 }
-.terms{
-    text-align: center;
-    color: $vreel_white;
-    padding-top: 60px;
-    padding-bottom: 30px;
-    p{
-        span{
-            color: $secondary;
-            cursor: pointer;
-            text-decoration: underline;
-        }
+.logIn {
+  padding: 30px 0;
+  text-align: center;
+  color: $vreel_white;
+  p {
+    .logInBtn {
+      color: $secondary;
+      text-decoration: underline;
+      font-weight: 700;
+      padding-left: 5px;
+      display: inline-block;
+      cursor: pointer;
     }
+  }
+}
+.terms {
+  text-align: center;
+  color: $vreel_white;
+  padding-top: 60px;
+  padding-bottom: 30px;
+  p {
+    span {
+      color: $secondary;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+  }
 }
