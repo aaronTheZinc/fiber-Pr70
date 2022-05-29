@@ -1,9 +1,10 @@
-.vreel-register-form {
+.vreel-login-form {
   font-size: 22px;
   @media only screen and (max-width: 768px) {
-    height: 100% !important;
-
-    padding: 0px 20px;
+    img {
+      height: 85px;
+      width: 85px;
+    }
   }
   h1 {
     font-family: Pragati Narrow;
@@ -11,7 +12,7 @@
     font-weight: 700;
     font-size: 24px;
     line-height: 41px;
-    color: aqua;
+    color: aquamarine;
   }
   &__wrapper {
     width: 100%;
@@ -29,6 +30,9 @@
         font-size: 16px;
         font-weight: normal;
         margin: 35px 0 25px 0;
+      }
+      button {
+        margin-top: 35px;
       }
     }
   }

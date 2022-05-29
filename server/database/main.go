@@ -21,7 +21,7 @@ func databaseInit() (*gorm.DB, error) {
 		host = hostENV
 	}
 	db, err := gorm.Open(postgres.New(postgres.Config{
-		DSN:                  "host=" + host + " user=gorm password=gorm dbname=gorm port=5432 sslmode=disable TimeZone=Asia/Shanghai", // data source name, refer https://github.com/jackc/pgx
+		DSN:                  "host=" + host + " user=gorm password=gorm dbname=gorm port=5440 sslmode=disable TimeZone=Asia/Shanghai", // data source name, refer https://github.com/jackc/pgx
 		PreferSimpleProtocol: true,                                                                                                     // disables implicit prepared statement usage. By default pgx automatically uses the extended protocol
 	}), &gorm.Config{})
 

@@ -1,0 +1,7 @@
+@import "@styles/utils";
+.container {
+  @include full_screen;
+  position: relative;
+  display: flex;
+  background-color: black;
+}
