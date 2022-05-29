@@ -1,6 +1,7 @@
 import { useRouter } from "next/router";
 import { useRef, useState } from "react";
 import { components } from "../../data";
+import Styles from "./MobileForm.module.scss";
 
 const MobileFormButton: React.FC<{ obj: { title: string; href: string } }> = ({
   obj,
@@ -21,10 +22,11 @@ const MobileFormButton: React.FC<{ obj: { title: string; href: string } }> = ({
 
   if (!element?.component) {
     return (
-      <div className="rounded-2xl  bg-vreel_blue_dark">
+      <div className={Styles.buttonWrapper__button}>
         <button
           onClick={handleSetHeight}
-          className={` text-white text-base font-medium w-full py-3 px-4  flex items-center justify-between  active:scale-100  `}
+          className={Styles.button}
+          // className={` text-white text-base font-medium w-full py-3 px-4  flex items-center justify-between  active:scale-100  `}
         >
           <span>{obj.title}</span>
           <span className="">
@@ -38,7 +40,7 @@ const MobileFormButton: React.FC<{ obj: { title: string; href: string } }> = ({
 
         <div
           style={{ height: `${height}px` }}
-          className=" w-full overflow-hidden transition-all duration-500 ease-in-out "
+          className={Styles.buttonWrapper__elementWrapper}
         >
           <p ref={wrapperRef} className="p-[1rem] lg:p-[2rem] text-white">
             No Component
@@ -49,10 +51,14 @@ const MobileFormButton: React.FC<{ obj: { title: string; href: string } }> = ({
   }
 
   return (
-    <div className="rounded-2xl  bg-vreel_blue_dark">
+    <div
+      className={Styles.buttonWrapper__button}
+      // className='rounded-2xl  bg-vreel_blue_dark'
+    >
       <button
         onClick={handleSetHeight}
-        className={` text-white text-base font-medium w-full py-3 px-4  flex items-center justify-between  active:scale-100  `}
+        className={Styles.button}
+        // className={` text-white text-base font-medium w-full py-3 px-4  flex items-center justify-between  active:scale-100  `}
       >
         <span>{obj.title}</span>
         <span className="">
@@ -66,7 +72,7 @@ const MobileFormButton: React.FC<{ obj: { title: string; href: string } }> = ({
 
       <div
         style={{ height: `${height}px` }}
-        className=" w-full overflow-hidden transition-all duration-700 ease-in "
+        className={Styles.buttonWrapper__elementWrapper}
       >
         <div ref={wrapperRef} className="">
           <element.component />

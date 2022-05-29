@@ -50,7 +50,17 @@ export const VideoData:FilesDataType[] = [
         id:5,
         name:"Sunsite with Birds",
         url:'https://www.youtube.com/embed/MqECmceXVzE'
-    }
+    },
+    {
+        id:6,
+        name:"sample-mp4-file",
+        url:''
+    },
+    {
+        id:7,
+        name:"Sunsite with Birds",
+        url:'https://www.youtube.com/embed/MqECmceXVzE'
+    },
 ];
 export const AudioData:FilesDataType[] = [
     {

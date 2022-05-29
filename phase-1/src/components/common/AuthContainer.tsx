@@ -8,9 +8,9 @@ const AuthContainer: React.FC<{ children: React.ReactNode }> = ({
   const router = useRouter();
 
   return (
-    <div className="w-full h-screen relative flex">
+    <div className="h-screen w-full relative flex">
       <div
-        className="absolute top-10 left-10 text-white cursor-pointer group"
+        className="absolute top-10 text left-10 text-white cursor-pointer group"
         onClick={() => router.push("/")}
       >
         <BsArrowLeftCircle className="text-5xl group-hover:text-secondary duration-500" />

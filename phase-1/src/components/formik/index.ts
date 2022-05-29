@@ -1,2 +1,2 @@
-export { default as Input } from "./common/Input";
-export { default as TextError } from "./common/TextError";
+export { default as Input } from "./common/Input/Input";
+export { default as TextError } from "./common/TextError/TextError";

@@ -1,4 +1,4 @@
-import { NavMenuAction, AccMenuAction } from '../../redux/actions/actions';
+import { AccMenuAction, NavMenuAction } from 'src/redux/actions/actions';
 import type { RightSidebar } from '../../types';
 
 export const rightSidebar: RightSidebar = {
@@ -6,7 +6,7 @@ export const rightSidebar: RightSidebar = {
     {
       src: '/assets/icons/icon-menu.svg',
       alt: 'Menu Icon',
-      method: function (dispatch: Function) {
+      method: function (dispatch: Function) {; 
         dispatch(NavMenuAction());
       },
     },

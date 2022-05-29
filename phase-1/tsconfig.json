@@ -13,8 +13,12 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "incremental": true
+    "incremental": true,
+    "baseUrl": ".",
+    "paths": {
+      "@sass/*": ["src/styles/sass/*"]
+    }
   },
   "exclude": ["node_modules"],
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/components/formik/common/Input.tsx", "src/pages/uploadImg.js"]
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/components/formik/common/Input/Input.tsx", "src/pages/uploadImg.js", "**/*.scss", "next.config.js"]
 }

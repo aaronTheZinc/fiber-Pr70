@@ -1,15 +1,17 @@
-@use './reset';
-@use '../components/components.scss';
-@use './bootstrap/scss/bootstrap';
+@use "./reset";
+@use "../components/components.scss";
+@use "./utils";
+@use "./fonts.scss";
+@use "./bootstrap/scss/bootstrap";
 @use "~video-react/styles/scss/video-react";
 
-
-$poppins-font: 'Poppins';
+$poppins-font: "Poppins";
 
 body {
-    &.modal-open{
-        padding: 0 !important;
-    }
+  &.modal-open {
+    padding: 0 !important;
+  }
+  font-size: 16px;
 }
 
 /* .vreel-slide__text {
@@ -23,5 +25,5 @@ body {
 } */
 
 .vreel-slide__btn {
-    font-family: $poppins-font;
+  font-family: $poppins-font;
 }

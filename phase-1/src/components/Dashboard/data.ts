@@ -1,5 +1,5 @@
 import type { DashboardComponent, DashboardItem } from '../../types';
-import EditFiles from './components/Files/EditFiles';
+import EditFiles from './components/Files/EditFiles/EditFiles';
 import NewsFeed from './components/NewsFeed';
 
 export const regularOptions: Array<DashboardItem> = [

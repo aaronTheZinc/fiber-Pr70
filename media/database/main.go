@@ -14,11 +14,11 @@ var db, db_init_err = databaseInit()
 func databaseInit() (*gorm.DB, error) {
 	env := os.Getenv("env")
 	host := "db"
-	port := "5432"
+	port := "5440"
 	log.Println("connecting to db")
 	if env == "dev" || env == "" {
 		host = "localhost"
-		port = "5433"
+		port = "5441"
 	}
 	return gorm.Open(postgres.New(postgres.Config{
 		DSN:                  "host=" + host + " user=gorm password=gorm dbname=gorm port=" + port + " sslmode=disable TimeZone=Asia/Shanghai", // data source name, refer https://github.com/jackc/pgx

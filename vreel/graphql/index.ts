@@ -17,7 +17,7 @@ if (current_env === "dev") {
 } else {
   BASE_URL = "https://dev1.vreel.page";
 }
-// const BASE_URL = "http://localhost:8080"
+BASE_URL = "http://localhost:8080";
 
 console.log("[base url] testingggg thissss ->", BASE_URL);
 const defaultOptions: DefaultOptions = {

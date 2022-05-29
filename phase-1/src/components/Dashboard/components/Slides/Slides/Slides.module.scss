@@ -1,0 +1,14 @@
+@import '../../../../../styles/sass/settings/_settings';
+
+.slidesContainer{
+    @include displaySizingMinH(100%,100vh);
+    background-color: $vreel_blue_dark;
+    @media only screen and (max-width:768px){
+        @include displaySizing(342px, 100%);
+    }
+    .slides{
+        background-color: $vreel_light_gray;
+        padding: 8px 16px;
+        @include displaySizing(342px, 100%);
+    }
+}

@@ -1,23 +1,25 @@
-import { useEffect, useRef, useState } from 'react';
-import VreelSlide from './VreelSlide';
-import Navbar from '../MenuBar/Navbar';
-import { RootState } from '../../redux/store/store';
-import { useSelector } from 'react-redux';
-import AccMenu from '../MenuBar/AccMenu';
+import { useEffect, useRef, useState } from "react";
+import VreelSlide from "./VreelSlide";
+import GeneralMenu from "../Shared/Menu/GeneralMenu/GeneralMenu";
+import { RootState } from "../../redux/store/store";
+import { useSelector } from "react-redux";
+import AccountMenu from "../Shared/Menu/AccountMenu/AccountMenu";
 
 // Import Swiper React components
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Pagination, Autoplay, EffectFade, Lazy } from 'swiper';
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Pagination, Autoplay, EffectFade, Lazy } from "swiper";
 
 // Import Swiper styles
-import 'swiper/css';
-import 'swiper/css/navigation';
-import 'swiper/css/pagination';
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+
+import Styles from "./VreelSlider.module.scss";
 
 const data = [
-  { src: '/assets/videos/test-video-1.mp4', alt: 'slide-1' },
-  { src: '/assets/videos/test-video-2.mp4', alt: 'slide-2' },
-  { src: '/assets/videos/test-video-3.mp4', alt: 'slide-3' },
+  { src: "/assets/videos/test-video-1.mp4", alt: "slide-1" },
+  { src: "/assets/videos/test-video-2.mp4", alt: "slide-2" },
+  { src: "/assets/videos/test-video-3.mp4", alt: "slide-3" },
   // { src: '/assets/videos/test-video-4.mp4', alt: 'slide-4' },
   // { src: '/assets/videos/test-video-5.mp4', alt: 'slide-5' },
 ];
@@ -44,16 +46,16 @@ const VreelSlider: React.FC = () => {
         setSwiper(swiper);
       }}
       // effect='fade'
-      className='relative  h-screen w-screen overflow-hidden'
+      className={Styles.vreelSlider}
     >
       <img
-        className='absolute top-6 lg:top-10 left-4 lg:left-12 z-10 h-16 lg:h-24 object-cover'
-        src='/assets/vreel-logo.png'
-        alt='Brand Logo'
+        className={Styles.vreelLogo}
+        src="/assets/vreel-logo.png"
+        alt="Brand Logo"
       />
 
       {data.map((obj, index) => (
-        <SwiperSlide key={index} className='overflow-hidden'>
+        <SwiperSlide key={index} className={Styles.vreelSlide}>
           <VreelSlide
             slide={obj}
             currentSlide={currentSlide}

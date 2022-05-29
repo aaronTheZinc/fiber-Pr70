@@ -2,6 +2,8 @@ const React = require("react");
 const Uppy = require("@uppy/core");
 const Tus = require("@uppy/tus");
 const GoogleDrive = require("@uppy/google-drive");
+import "@uppy/core/dist/style.css";
+import "@uppy/dashboard/dist/style.css";
 
 const {
   Dashboard,

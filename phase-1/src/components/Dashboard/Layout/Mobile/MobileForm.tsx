@@ -3,17 +3,24 @@ import { advanceOptions, editOptions, regularOptions } from '../../data';
 
 import MobileFormButton from './MobileFormButton';
 
+import Styles from './MobileForm.module.scss';
+
 const MobileForm: React.FC = () => {
   return (
-    <div>
-      <div className='px-4 space-y-5'>
+    <div className={Styles.mobileForm}>
+      <div className={Styles.buttonWrapper}>
         {editOptions.map((obj, index) => (
           <MobileFormButton key={index} obj={obj} />
         ))}
       </div>
 
-      <div className='text-secondary text-lg my-6 advance'>Advanced</div>
-      <div className='px-4 space-y-5 '>
+      <div
+        className={Styles.advanceTitle}
+        // className='text-secondary text-lg my-6 advance'
+      >
+        Advanced
+      </div>
+      <div className={Styles.buttonWrapper}>
         {advanceOptions.map((obj, index) => (
           <MobileFormButton key={index} obj={obj} />
         ))}
@@ -24,7 +31,8 @@ const MobileForm: React.FC = () => {
 
 export default MobileForm;
 
-<div className='text-secondary text-lg my-6 advance'>Edit Vreels</div>;
+{
+  /* <div className='text-secondary text-lg my-6 advance'>Edit Vreels</div>;
 {
   regularOptions.map((obj) => {
     if (obj.children) {
@@ -37,4 +45,5 @@ export default MobileForm;
       );
     }
   });
+} */
 }

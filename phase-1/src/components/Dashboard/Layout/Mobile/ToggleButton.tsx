@@ -5,32 +5,41 @@ const ToggleButton: React.FC = () => {
   const [buttonState, setButtonState] = useState<boolean>(false);
   const router = useRouter();
   return (
-    <div>
+    <div className='btn-toggle'>
       <div
         onClick={() => {
           setButtonState(!buttonState);
-          router.push('/');
+          // router.push('/');
         }}
-        className='bg-secondary rounded-[40px] border-2 border-white p-[2px] flex justify-between'
+        className='btn-toggle__wrapper'
+        // className='bg-secondary rounded-[40px] border-2 border-white p-[2px] flex justify-between'
       >
         <button
-          className={`w-full font-medium rounded-[40px] py-1 px-4 text-white ${
-            buttonState && 'bg-white text-secondary'
-          }`}
+          className={
+            buttonState
+              ? 'btn-toggle__wrapper__active'
+              : 'btn-toggle__wrapper__inactive'
+          }
+          // className={`w-full font-medium rounded-[40px] py-1 px-4 text-white ${
+          //   buttonState && 'bg-white text-secondary'
+          // }`}
         >
           View
         </button>
         <button
-          className={`w-full font-medium rounded-[40px] py-1 px-4 text-white ${
-            !buttonState && 'bg-white text-secondary'
-          }`}
+          className={
+            !buttonState
+              ? 'btn-toggle__wrapper__active'
+              : 'btn-toggle__wrapper__inactive'
+          }
+          // className={`w-full font-medium rounded-[40px] py-1 px-4 text-white ${
+          //   !buttonState && 'bg-white text-secondary'
+          // }`}
         >
           Edit
         </button>
       </div>
-      <p className='text-white font-medium text-sm mt-2'>
-        Toggle To View VReel
-      </p>
+      <p className='text'>Toggle To View VReel</p>
     </div>
   );
 };

@@ -1,12 +1,13 @@
+import "@sass/main.scss";
+// import '../styles/main.scss';
 import Head from "next/head";
 import { AppProps } from "next/app";
-import "../styles/index.css";
 import { Provider } from "react-redux";
 import { store } from "../redux/store/store";
 import { ApolloProvider } from "@apollo/client";
 import { client } from "../components/graphql";
-import Navbar from "../components/MenuBar/Navbar";
-import AccMenu from "../components/MenuBar/AccMenu";
+import GeneralMenu from "../components/Shared/Menu/GeneralMenu/GeneralMenu";
+import AccountMenu from "../components/Shared/Menu/AccountMenu/AccountMenu";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -17,8 +18,8 @@ function MyApp({ Component, pageProps }: AppProps) {
       </Head>
       <ApolloProvider client={client}>
         <Provider store={store}>
-          <Navbar />
-          <AccMenu />
+          <GeneralMenu />
+          <AccountMenu />
           <Component {...pageProps} />
         </Provider>
       </ApolloProvider>

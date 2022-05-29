@@ -4,8 +4,8 @@ import { rightSidebar } from './SlideData';
 import ReactPlayer from 'react-player';
 import { useRouter } from 'next/router';
 import { useAppDispatch } from '../../redux/store/store';
-import { AccMenuAction } from '../../redux/actions/actions';
 import UserProfile from '../common/UserProfile';
+import Styles from './VreelSlider.module.scss';
 
 const VreelSlide = ({
   swiper,
@@ -19,34 +19,19 @@ const VreelSlide = ({
   const dispatch = useAppDispatch();
 
   return (
-    <div className='relative '>
-      {/* <img
-        className='absolute top-0 left-0 h-full w-full object-cover object-top '
-        src={img.src}
-        alt={img.alt}
-      /> */}
-
+    <div className={Styles.vreelSlide__container}>
       {/* USER PROFILE */}
-      <UserProfile className='absolute top-6 lg:top-8 right-20 lg:right-28 z-20' />
+      <UserProfile />
 
-      <div className='bg-black/60 px-4  lg:px-12 py-6 lg:py-8 relative z-10 h-screen'>
-        <div className='h-full flex'>
+      <div className={Styles.vreelSlide__content}>
+        <div className={Styles.vreelSlide__content_wrapper}>
           {/* LEFT SIDEBAR */}
-          <div className='h-full flex flex-col justify-end w-max '>
-            <div className='flex flex-col space-y-4'>
-              {/*     <button>
-                <img
-                  src='/assets/background-credit-icon.svg'
-                  alt='Credit Icon'
-                />
-              </button> */}
+          <div className={Styles.vreelSlide__content_wrapper__left}>
+            <div>
               <button onClick={() => setMute(!mute)}>
                 <img
-                  className='h-20 object-cover'
                   src={`/assets/${
-                    mute
-                      ? 'slide-sound-mute-icon-2.svg'
-                      : 'slide-sound-icon-2.svg'
+                    mute ? 'icons/sound-off.svg' : 'icons/sound-on.svg'
                   }`}
                   alt='Mute Icon'
                 />
@@ -55,25 +40,23 @@ const VreelSlide = ({
           </div>
 
           {/* CONTENT */}
-          <div className='px-2  flex-1  flex items-end justify-center mb-6 lg:mb-12 '>
-            <div className='text-center '>
-              <h3 className='text-base lg:text-2xl text-white font-bold '>
-                VREEL™
-              </h3>
-              <p className='text-sm lg:text-xl text-white'>
+          <div className={Styles.vreelSlide__content_wrapper__middle}>
+            <div>
+              <h3>VREEL™</h3>
+              <p>
                 We make you look better! Our Web 3.0 storytelling interface
                 visually elevates your brand.{' '}
               </p>
 
-              <div className='flex justify-center  items-center space-x-2 lg:space-x-10'>
+              <div className={Styles.button_container}>
                 <button
-                  className='btn-slide w-24  lg:w-40 py-3'
+                  className='btn-slide'
                   onClick={() => router.push('/login')}
                 >
                   Log in
                 </button>
                 <button
-                  className='btn-slide w-24 lg:w-40 py-3'
+                  className='btn-slide'
                   onClick={() => router.push('/register')}
                 >
                   Register
@@ -83,27 +66,19 @@ const VreelSlide = ({
           </div>
 
           {/* RIGHT SIDEBAR */}
-          <div className='w-max flex flex-col justify-between items-end '>
-            <div className=' flex flex-col items-center space-y-4'>
+          <div className={Styles.vreelSlide__content_wrapper__right}>
+            <div>
               {rightSidebar.topIcons.map((icon, index) => (
                 <button key={index} onClick={() => icon.method(dispatch)}>
-                  <img
-                    className={`w-8 object-cover ${icon?.className}`}
-                    src={icon.src}
-                    alt={icon.alt}
-                  />
+                  <img src={icon.src} alt={icon.alt} />
                 </button>
               ))}
             </div>
 
-            <div className=' flex flex-col items-center space-y-4'>
+            <div>
               {rightSidebar.bottomIcons.map((icon, index) => (
                 <button key={index} onClick={() => icon.method()}>
-                  <img
-                    className={`w-8 object-cover ${icon?.className}`}
-                    src={icon.src}
-                    alt={icon.alt}
-                  />
+                  <img src={icon.src} alt={icon.alt} />
                 </button>
               ))}
             </div>

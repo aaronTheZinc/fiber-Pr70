@@ -3,21 +3,27 @@ import { useState } from 'react';
 import UserProfile from '../../../common/UserProfile';
 import MobileForm from './MobileForm';
 import ToggleButton from './ToggleButton';
+import Styles from './MobileDashboard.module.scss';
 
 const MobileDashboard: React.FC = () => {
   return (
-    <section className=' md:hidden bg-primary min-h-screen py-6'>
-      <div className='flex justify-center px-4 '>
-        <div className='flex space-x-6'>
-          <button className='w-max h-max  px-6 py-2 bg-vreel_green text-white font-bold rounded-[40px]'>
-            Save
-          </button>
+    <section className={Styles.mobileDash}>
+      <div
+        className={Styles.container}
+
+        // className='flex justify-center px-4'
+      >
+        <div
+          className={Styles.wrapper}
+          // className='flex space-x-6'
+        >
+          <button className='btn-save'>Save</button>
           <ToggleButton />
-          <UserProfile className=' h-max' />
+          <UserProfile section='dashboard' />
         </div>
       </div>
 
-      <div className='h-full'>
+      <div className={Styles.content}>
         <MobileForm />
       </div>
     </section>

@@ -2,6 +2,7 @@ import { useRouter } from 'next/router';
 import React from 'react';
 import { components } from '../../data';
 import DesktopSidebar from './DesktopSidebar';
+import Styles from './Dashboard-lg.module.scss';
 
 const DesktopDashboard: React.FC = () => {
   const router = useRouter();
@@ -12,29 +13,33 @@ const DesktopDashboard: React.FC = () => {
     components.find((obj) => obj.title === slug);
 
   return (
-    <section className='hidden md:block bg-primary  px-8 py-6'>
-      <div className=' h-max flex space-x-10 '>
-        <div className='w-[250px]  h-full space-y-2 '>
-          {/* <div>
-            <img src='/assets/back-icon.svg' alt='' />
-          </div> */}
-          <div className='pb-8 relative'>
-            <div className='bg-secondary rounded-3xl py-4 absolute top-0 left-4 right-0 h-full '></div>
-            <DesktopSidebar />
-          </div>
-        </div>
-        <div className='flex-1 '>
+    <section className={Styles.d_dashboard}>
+      <div className={Styles.d_dashboard__container}>
+        <aside className={Styles.left}>
+          <div className={Styles.background}></div>
+          <DesktopSidebar />
+        </aside>
+
+        <aside className={Styles.right}>
           {element?.component ? (
             <element.component />
           ) : (
             <div>
-              <h1 className='text-white'>No Components</h1>
+              <h1 className={Styles.emptyTitle}>No Components</h1>
             </div>
           )}
-        </div>
+        </aside>
       </div>
     </section>
   );
 };
 
 export default DesktopDashboard;
+
+{
+  /* <aside className='w-[250px]  h-full space-y-2 '>
+  <div>
+    <img src='/assets/back-icon.svg' alt='' />
+  </div>
+</aside>; */
+}

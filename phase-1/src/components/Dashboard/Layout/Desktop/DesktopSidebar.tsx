@@ -1,6 +1,7 @@
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { advanceOptions, footerOptions, regularOptions } from '../../data';
+import Styles from './Dashboard-lg-sidebar.module.scss';
 
 const DesktopSidebar: React.FC = () => {
   const router = useRouter();
@@ -10,14 +11,10 @@ const DesktopSidebar: React.FC = () => {
   const parentPath = pathLength.join('/');
 
   return (
-    <div className='relative pt-6'>
+    <div className={Styles.desktopSidebar}>
       {/* BRAND LOGO */}
-      <div className='w-max mx-auto pb-6'>
-        <img
-          className='w-12 object-cover'
-          src='/assets/vreel-logo-2.png'
-          alt='Brand Logo'
-        />
+      <div className={Styles.brandLogo}>
+        <img src='/assets/vreel-logo-2.png' alt='Brand Logo' />
       </div>
 
       <ul className=''>
@@ -28,24 +25,24 @@ const DesktopSidebar: React.FC = () => {
               onClick={() => {
                 router.push(obj.href);
               }}
-              className={`relative text-2xl font-semibold uppercase text-black py-3 pl-10 cursor-pointer ${
-                (obj.href == parentPath && 'bg-white font-bold') ||
-                (obj.href == pathName && 'bg-white font-bold')
-              }`}
+              className={`${Styles.navItem} ${
+                (obj.href == parentPath && Styles.navItem__active) ||
+                (obj.href == pathName && Styles.navItem__active)
+              } `}
               key={index}
             >
               {(obj.href == pathName && (
-                <span className='absolute left-3 top-1/2 -translate-y-1/2 block h-3 w-3 rounded-full bg-secondary'></span>
+                <span className={Styles.navItem__activeSpan}></span>
               )) ||
                 (obj.href == parentPath && (
-                  <span className='absolute left-3 top-1/2 -translate-y-1/2 block h-3 w-3 rounded-full bg-secondary'></span>
+                  <span className={Styles.navItem__activeSpan}></span>
                 ))}
               {obj.title}
             </li>
 
             {/* IF CHILDREN EXIST */}
             {obj.children && (
-              <div className='ml-9 pt-4 overflow-hidden'>
+              <div className={Styles.navChild}>
                 {obj.children.map((obj, index) => (
                   <li
                     onClick={() => {
@@ -53,10 +50,10 @@ const DesktopSidebar: React.FC = () => {
                       router.push(obj.href);
                     }}
                     key={index}
-                    className={`relative text-xl -mt-2  py-3 cursor-pointer dashboard-nested  ${
+                    className={`${Styles.navChild__treeItem} ${
                       obj.href == pathName
-                        ? 'text-white before:border-white z-10'
-                        : 'text-black'
+                        ? Styles.navChild__activeItem
+                        : Styles.navChild__inactiveItem
                     }`}
                   >
                     {obj.title}
@@ -68,21 +65,19 @@ const DesktopSidebar: React.FC = () => {
         ))}
 
         {/* ADVANCED ITEMS */}
-        <div>
-          <li className='ml-9 bg-primary text-white text-center py-2'>
-            Advanced Edits
-          </li>
-          <div className='ml-9 pt-4 overflow-hidden'>
+        <div className={Styles.advanceEdit}>
+          <span className={Styles.advanceEdit_title}>Advanced Edits</span>
+          <div className={Styles.advanceEdit__wrapper}>
             {advanceOptions.map((obj, index) => (
               <li
                 onClick={() => {
                   router.push(obj.href);
                 }}
                 key={index}
-                className={`relative text-xl -mt-2  py-3 cursor-pointer dashboard-nested  ${
+                className={` ${Styles.advanceEdit__wrapper__treeItem} ${
                   obj.href == pathName
-                    ? 'text-white before:border-white z-10'
-                    : 'text-black'
+                    ? Styles.advanceEdit__wrapper__activeItem
+                    : Styles.advanceEdit__wrapper__inactiveItem
                 }`}
               >
                 {obj.title}
@@ -99,9 +94,9 @@ const DesktopSidebar: React.FC = () => {
                 onClick={() => {
                   router.push(obj.href);
                 }}
-                className={`relative text-2xl font-semibold uppercase text-black py-3 pl-10 cursor-pointer ${
-                  (obj.href == parentPath && 'bg-white font-bold') ||
-                  (obj.href == pathName && 'bg-white font-bold')
+                className={`${Styles.footerItem} ${
+                  (obj.href == parentPath && Styles.footerItem__active) ||
+                  (obj.href == pathName && Styles.footerItem__active)
                 }`}
                 key={index}
               >
@@ -144,31 +139,3 @@ const DesktopSidebar: React.FC = () => {
 };
 
 export default DesktopSidebar;
-
-{
-  /* <li className='ml-4 flex items-center justify-between text-2xl text-black font-bold my-8'>
-          <img className='w-12 -ml-4' src='/assets/before-icon.png' alt='' />
-          <span>Advanced</span>
-          <img className='w-12 -mr-4' src='/assets/after-icon.png' alt='' />
-        </li> */
-}
-
-{
-  /* <div className=' space-y-2'>
-          {advanceOptions.map((obj, index) => (
-            <li
-              onClick={() => {
-                // setCurrentIndex2(index);
-                // setCurrentIndex(null);
-                router.push(obj.href);
-              }}
-              className={`text-2xl text-black py-3 pl-8 cursor-pointer ${
-                obj.href == pathName && 'bg-vreel_gray font-bold'
-              }`}
-              key={index}
-            >
-              {obj.title}
-            </li>
-          ))}
-        </div> */
-}
