@@ -353,7 +353,7 @@ func (c VreelModel) ToVreel(slides []*Slide) (Vreel, error) {
 func CreateNewSlideModel() SlideModel {
 	n := 0
 	title, _ := json.Marshal(Title{"", ""})
-	advanced, _ := json.Marshal(Advanced{"", "", ""})
+	advanced, _ := json.Marshal(Advanced{})
 	content, _ := json.Marshal(Content{&n, &n, nil, "video", "/waterfall.mp4"})
 	cta, _ := json.Marshal(Cta{"", "", ""})
 	return SlideModel{

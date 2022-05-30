@@ -44,9 +44,12 @@ type DirectiveRoot struct {
 
 type ComplexityRoot struct {
 	Advanced struct {
-		Info       func(childComplexity int) int
-		LinkHeader func(childComplexity int) int
-		LinkType   func(childComplexity int) int
+		Credits  func(childComplexity int) int
+		GroupID  func(childComplexity int) int
+		Header   func(childComplexity int) int
+		Info     func(childComplexity int) int
+		LinkType func(childComplexity int) int
+		LogoURL  func(childComplexity int) int
 	}
 
 	AnalyticFragment struct {
@@ -154,10 +157,12 @@ type ComplexityRoot struct {
 	}
 
 	Link struct {
-		Category  func(childComplexity int) int
-		Position  func(childComplexity int) int
-		Thumbnail func(childComplexity int) int
-		URL       func(childComplexity int) int
+		Category   func(childComplexity int) int
+		LinkHeader func(childComplexity int) int
+		LinkType   func(childComplexity int) int
+		Position   func(childComplexity int) int
+		Thumbnail  func(childComplexity int) int
+		URL        func(childComplexity int) int
 	}
 
 	Links struct {
@@ -398,6 +403,27 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	_ = ec
 	switch typeName + "." + field {
 
+	case "Advanced.credits":
+		if e.complexity.Advanced.Credits == nil {
+			break
+		}
+
+		return e.complexity.Advanced.Credits(childComplexity), true
+
+	case "Advanced.groupId":
+		if e.complexity.Advanced.GroupID == nil {
+			break
+		}
+
+		return e.complexity.Advanced.GroupID(childComplexity), true
+
+	case "Advanced.header":
+		if e.complexity.Advanced.Header == nil {
+			break
+		}
+
+		return e.complexity.Advanced.Header(childComplexity), true
+
 	case "Advanced.info":
 		if e.complexity.Advanced.Info == nil {
 			break
@@ -405,19 +431,19 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Advanced.Info(childComplexity), true
 
-	case "Advanced.link_header":
-		if e.complexity.Advanced.LinkHeader == nil {
-			break
-		}
-
-		return e.complexity.Advanced.LinkHeader(childComplexity), true
-
 	case "Advanced.link_type":
 		if e.complexity.Advanced.LinkType == nil {
 			break
 		}
 
 		return e.complexity.Advanced.LinkType(childComplexity), true
+
+	case "Advanced.logoUrl":
+		if e.complexity.Advanced.LogoURL == nil {
+			break
+		}
+
+		return e.complexity.Advanced.LogoURL(childComplexity), true
 
 	case "AnalyticFragment.action":
 		if e.complexity.AnalyticFragment.Action == nil {
@@ -901,6 +927,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Link.Category(childComplexity), true
+
+	case "Link.link_header":
+		if e.complexity.Link.LinkHeader == nil {
+			break
+		}
+
+		return e.complexity.Link.LinkHeader(childComplexity), true
+
+	case "Link.link_type":
+		if e.complexity.Link.LinkType == nil {
+			break
+		}
+
+		return e.complexity.Link.LinkType(childComplexity), true
 
 	case "Link.position":
 		if e.complexity.Link.Position == nil {
@@ -2177,8 +2217,12 @@ type CTA {
 }
 type Advanced {
   info: String!
-  link_header: String!
+  header: String!
   link_type: String!
+  logoUrl: String
+  groupId: String
+  credits: String
+
 }
 type Slide {
   id: String!
@@ -2213,6 +2257,8 @@ type Link {
   thumbnail: String!
   url: String!
   category: String!
+  link_type: String!
+  link_header: String!
 }
 
 type Links {
@@ -3281,7 +3327,7 @@ func (ec *executionContext) _Advanced_info(ctx context.Context, field graphql.Co
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Advanced_link_header(ctx context.Context, field graphql.CollectedField, obj *model.Advanced) (ret graphql.Marshaler) {
+func (ec *executionContext) _Advanced_header(ctx context.Context, field graphql.CollectedField, obj *model.Advanced) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -3299,7 +3345,7 @@ func (ec *executionContext) _Advanced_link_header(ctx context.Context, field gra
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.LinkHeader, nil
+		return obj.Header, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3349,6 +3395,102 @@ func (ec *executionContext) _Advanced_link_type(ctx context.Context, field graph
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Advanced_logoUrl(ctx context.Context, field graphql.CollectedField, obj *model.Advanced) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Advanced",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LogoURL, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Advanced_groupId(ctx context.Context, field graphql.CollectedField, obj *model.Advanced) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Advanced",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.GroupID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Advanced_credits(ctx context.Context, field graphql.CollectedField, obj *model.Advanced) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Advanced",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Credits, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _AnalyticFragment_id(ctx context.Context, field graphql.CollectedField, obj *model.AnalyticFragment) (ret graphql.Marshaler) {
@@ -5819,6 +5961,76 @@ func (ec *executionContext) _Link_category(ctx context.Context, field graphql.Co
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return obj.Category, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Link_link_type(ctx context.Context, field graphql.CollectedField, obj *model.Link) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Link",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LinkType, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Link_link_header(ctx context.Context, field graphql.CollectedField, obj *model.Link) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Link",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LinkHeader, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -12150,8 +12362,8 @@ func (ec *executionContext) _Advanced(ctx context.Context, sel ast.SelectionSet,
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "link_header":
-			out.Values[i] = ec._Advanced_link_header(ctx, field, obj)
+		case "header":
+			out.Values[i] = ec._Advanced_header(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -12160,6 +12372,12 @@ func (ec *executionContext) _Advanced(ctx context.Context, sel ast.SelectionSet,
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "logoUrl":
+			out.Values[i] = ec._Advanced_logoUrl(ctx, field, obj)
+		case "groupId":
+			out.Values[i] = ec._Advanced_groupId(ctx, field, obj)
+		case "credits":
+			out.Values[i] = ec._Advanced_credits(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -12767,6 +12985,16 @@ func (ec *executionContext) _Link(ctx context.Context, sel ast.SelectionSet, obj
 			}
 		case "category":
 			out.Values[i] = ec._Link_category(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "link_type":
+			out.Values[i] = ec._Link_link_type(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "link_header":
+			out.Values[i] = ec._Link_link_header(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}

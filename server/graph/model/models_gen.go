@@ -3,9 +3,12 @@
 package model
 
 type Advanced struct {
-	Info       string `json:"info"`
-	LinkHeader string `json:"link_header"`
-	LinkType   string `json:"link_type"`
+	Info     string  `json:"info"`
+	Header   string  `json:"header"`
+	LinkType string  `json:"link_type"`
+	LogoURL  *string `json:"logoUrl"`
+	GroupID  *string `json:"groupId"`
+	Credits  *string `json:"credits"`
 }
 
 type AnalyticFragment struct {
@@ -124,10 +127,12 @@ type Group struct {
 }
 
 type Link struct {
-	Position  int    `json:"position"`
-	Thumbnail string `json:"thumbnail"`
-	URL       string `json:"url"`
-	Category  string `json:"category"`
+	Position   int    `json:"position"`
+	Thumbnail  string `json:"thumbnail"`
+	URL        string `json:"url"`
+	Category   string `json:"category"`
+	LinkType   string `json:"link_type"`
+	LinkHeader string `json:"link_header"`
 }
 
 type LinkInput struct {

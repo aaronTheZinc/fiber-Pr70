@@ -128,8 +128,12 @@ type CTA {
 }
 type Advanced {
   info: String!
-  link_header: String!
+  header: String!
   link_type: String!
+  logoUrl: String
+  groupId: String
+  credits: String
+
 }
 type Slide {
   id: String!
@@ -164,6 +168,8 @@ type Link {
   thumbnail: String!
   url: String!
   category: String!
+  link_type: String!
+  link_header: String!
 }
 
 type Links {
