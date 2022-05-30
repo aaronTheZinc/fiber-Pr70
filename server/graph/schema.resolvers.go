@@ -142,6 +142,12 @@ func (r *mutationResolver) AddVreelLink(ctx context.Context, token string, link 
 	return &resp, err
 }
 
+func (r *mutationResolver) AddSocialMediaLink(ctx context.Context, token string, input model.SocialsInput) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeAddSocialsLink(token, input)
+
+	return &resp, err
+}
+
 func (r *queryResolver) User(ctx context.Context, id *string) (*model.User, error) {
 	user, err := database.GetUser(*id)
 	return &user, err

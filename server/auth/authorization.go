@@ -13,6 +13,29 @@ import (
 	"github.com/vreel/app/utils"
 )
 
+func AuthorizeAddSocialsLink(token string, input model.SocialsInput) (model.MutationResponse, error) {
+	var err error
+	var resp model.MutationResponse
+	claims, isAuth, parseErr := ParseToken(token)
+	userId := claims.ID
+
+	if isAuth && parseErr == nil {
+		editErr := database.AddSocialsLink(userId, input)
+
+		if err != nil {
+			err = editErr
+		} else {
+			resp.Message = "added " + input.Platform + " to " + userId
+			resp.Succeeded = true
+		}
+
+	} else {
+		err = e.UNAUTHORIZED_ERROR
+	}
+
+	return resp, err
+}
+
 func AuthorizeAddLinkToVreel(token string, link model.Link) (model.MutationResponse, error) {
 	var err error
 	var resp model.MutationResponse

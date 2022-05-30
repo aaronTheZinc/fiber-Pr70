@@ -192,11 +192,17 @@ type Gallery {
   hidden: Boolean
 }
 
+type Socials {
+  platform: String!
+  username: String!
+}
+
 type VreelElements {
   text_area: TextArea
   videos: Videos
   gallery: Gallery
   services: Service
+  socials: [Socials]
   links: Links
   contact: Contact
 }
@@ -324,6 +330,12 @@ input LinkInput {
   position: Int!
   category: String!
 }
+
+input SocialsInput {
+  platform: String!
+  username: String!
+}
+
 type Mutation {
   register(input: NewUser!): User!
   createEvent(token: String!, input: NewEvent!): Event!
@@ -369,4 +381,5 @@ type Mutation {
   ): MutationResponse!
   deleteFile(token: String!, fileId: String!): MutationResponse!
   addVreelLink(token: String!, link: LinkInput!): MutationResponse!
+  addSocialMediaLink(token: String!, input: SocialsInput! ): MutationResponse!
 }

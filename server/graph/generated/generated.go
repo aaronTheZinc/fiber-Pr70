@@ -172,6 +172,7 @@ type ComplexityRoot struct {
 
 	Mutation struct {
 		AddEmployeeToEnterprise           func(childComplexity int, token string, newUser model.NewUser) int
+		AddSocialMediaLink                func(childComplexity int, token string, input model.SocialsInput) int
 		AddUserToGroup                    func(childComplexity int, token string, groupID string, userID string) int
 		AddVreelLink                      func(childComplexity int, token string, link model.LinkInput) int
 		CreateEnterprise                  func(childComplexity int, input model.NewEnterprise) int
@@ -263,6 +264,11 @@ type ComplexityRoot struct {
 		Size    func(childComplexity int) int
 	}
 
+	Socials struct {
+		Platform func(childComplexity int) int
+		Username func(childComplexity int) int
+	}
+
 	TextArea struct {
 		Content  func(childComplexity int) int
 		Hidden   func(childComplexity int) int
@@ -328,6 +334,7 @@ type ComplexityRoot struct {
 		Gallery  func(childComplexity int) int
 		Links    func(childComplexity int) int
 		Services func(childComplexity int) int
+		Socials  func(childComplexity int) int
 		TextArea func(childComplexity int) int
 		Videos   func(childComplexity int) int
 	}
@@ -358,6 +365,7 @@ type MutationResolver interface {
 	EditFileName(ctx context.Context, token string, newName string, fileID string) (*model.MutationResponse, error)
 	DeleteFile(ctx context.Context, token string, fileID string) (*model.MutationResponse, error)
 	AddVreelLink(ctx context.Context, token string, link model.LinkInput) (*model.MutationResponse, error)
+	AddSocialMediaLink(ctx context.Context, token string, input model.SocialsInput) (*model.MutationResponse, error)
 }
 type QueryResolver interface {
 	User(ctx context.Context, id *string) (*model.User, error)
@@ -954,6 +962,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.AddEmployeeToEnterprise(childComplexity, args["token"].(string), args["newUser"].(model.NewUser)), true
+
+	case "Mutation.addSocialMediaLink":
+		if e.complexity.Mutation.AddSocialMediaLink == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_addSocialMediaLink_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.AddSocialMediaLink(childComplexity, args["token"].(string), args["input"].(model.SocialsInput)), true
 
 	case "Mutation.addUserToGroup":
 		if e.complexity.Mutation.AddUserToGroup == nil {
@@ -1585,6 +1605,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.SlideMetaData.Size(childComplexity), true
 
+	case "Socials.platform":
+		if e.complexity.Socials.Platform == nil {
+			break
+		}
+
+		return e.complexity.Socials.Platform(childComplexity), true
+
+	case "Socials.username":
+		if e.complexity.Socials.Username == nil {
+			break
+		}
+
+		return e.complexity.Socials.Username(childComplexity), true
+
 	case "TextArea.content":
 		if e.complexity.TextArea.Content == nil {
 			break
@@ -1928,6 +1962,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.VreelElements.Services(childComplexity), true
 
+	case "VreelElements.socials":
+		if e.complexity.VreelElements.Socials == nil {
+			break
+		}
+
+		return e.complexity.VreelElements.Socials(childComplexity), true
+
 	case "VreelElements.text_area":
 		if e.complexity.VreelElements.TextArea == nil {
 			break
@@ -2200,11 +2241,17 @@ type Gallery {
   hidden: Boolean
 }
 
+type Socials {
+  platform: String!
+  username: String!
+}
+
 type VreelElements {
   text_area: TextArea
   videos: Videos
   gallery: Gallery
   services: Service
+  socials: [Socials]
   links: Links
   contact: Contact
 }
@@ -2332,6 +2379,12 @@ input LinkInput {
   position: Int!
   category: String!
 }
+
+input SocialsInput {
+  platform: String!
+  username: String!
+}
+
 type Mutation {
   register(input: NewUser!): User!
   createEvent(token: String!, input: NewEvent!): Event!
@@ -2377,6 +2430,7 @@ type Mutation {
   ): MutationResponse!
   deleteFile(token: String!, fileId: String!): MutationResponse!
   addVreelLink(token: String!, link: LinkInput!): MutationResponse!
+  addSocialMediaLink(token: String!, input: SocialsInput! ): MutationResponse!
 }
 `, BuiltIn: false},
 }
@@ -2407,6 +2461,30 @@ func (ec *executionContext) field_Mutation_addEmployeeToEnterprise_args(ctx cont
 		}
 	}
 	args["newUser"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_addSocialMediaLink_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["token"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("token"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["token"] = arg0
+	var arg1 model.SocialsInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg1, err = ec.unmarshalNSocialsInput2githubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐSocialsInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg1
 	return args, nil
 }
 
@@ -6899,6 +6977,48 @@ func (ec *executionContext) _Mutation_addVreelLink(ctx context.Context, field gr
 	return ec.marshalNMutationResponse2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐMutationResponse(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Mutation_addSocialMediaLink(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_addSocialMediaLink_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().AddSocialMediaLink(rctx, args["token"].(string), args["input"].(model.SocialsInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.MutationResponse)
+	fc.Result = res
+	return ec.marshalNMutationResponse2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐMutationResponse(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _MutationResponse_succeeded(ctx context.Context, field graphql.CollectedField, obj *model.MutationResponse) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -8496,6 +8616,76 @@ func (ec *executionContext) _SlideMetaData_size(ctx context.Context, field graph
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return obj.Size, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Socials_platform(ctx context.Context, field graphql.CollectedField, obj *model.Socials) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Socials",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Platform, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Socials_username(ctx context.Context, field graphql.CollectedField, obj *model.Socials) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Socials",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Username, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -10185,6 +10375,38 @@ func (ec *executionContext) _VreelElements_services(ctx context.Context, field g
 	return ec.marshalOService2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐService(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _VreelElements_socials(ctx context.Context, field graphql.CollectedField, obj *model.VreelElements) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "VreelElements",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Socials, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Socials)
+	fc.Result = res
+	return ec.marshalOSocials2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐSocials(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _VreelElements_links(ctx context.Context, field graphql.CollectedField, obj *model.VreelElements) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -11842,6 +12064,37 @@ func (ec *executionContext) unmarshalInputResetPasswordInput(ctx context.Context
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputSocialsInput(ctx context.Context, obj interface{}) (model.SocialsInput, error) {
+	var it model.SocialsInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "platform":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("platform"))
+			it.Platform, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "username":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("username"))
+			it.Username, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputVreelFields(ctx context.Context, obj interface{}) (model.VreelFields, error) {
 	var it model.VreelFields
 	asMap := map[string]interface{}{}
@@ -12721,6 +12974,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "addSocialMediaLink":
+			out.Values[i] = ec._Mutation_addSocialMediaLink(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -13231,6 +13489,38 @@ func (ec *executionContext) _SlideMetaData(ctx context.Context, sel ast.Selectio
 	return out
 }
 
+var socialsImplementors = []string{"Socials"}
+
+func (ec *executionContext) _Socials(ctx context.Context, sel ast.SelectionSet, obj *model.Socials) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, socialsImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Socials")
+		case "platform":
+			out.Values[i] = ec._Socials_platform(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "username":
+			out.Values[i] = ec._Socials_username(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var textAreaImplementors = []string{"TextArea"}
 
 func (ec *executionContext) _TextArea(ctx context.Context, sel ast.SelectionSet, obj *model.TextArea) graphql.Marshaler {
@@ -13555,6 +13845,8 @@ func (ec *executionContext) _VreelElements(ctx context.Context, sel ast.Selectio
 			out.Values[i] = ec._VreelElements_gallery(ctx, field, obj)
 		case "services":
 			out.Values[i] = ec._VreelElements_services(ctx, field, obj)
+		case "socials":
+			out.Values[i] = ec._VreelElements_socials(ctx, field, obj)
 		case "links":
 			out.Values[i] = ec._VreelElements_links(ctx, field, obj)
 		case "contact":
@@ -14241,6 +14533,11 @@ func (ec *executionContext) marshalNSlideMetaData2ᚖgithubᚗcomᚋvreelᚋapp�
 		return graphql.Null
 	}
 	return ec._SlideMetaData(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNSocialsInput2githubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐSocialsInput(ctx context.Context, v interface{}) (model.SocialsInput, error) {
+	res, err := ec.unmarshalInputSocialsInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalNString2string(ctx context.Context, v interface{}) (string, error) {
@@ -14940,6 +15237,54 @@ func (ec *executionContext) marshalOSlide2ᚖgithubᚗcomᚋvreelᚋappᚋgraph�
 		return graphql.Null
 	}
 	return ec._Slide(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOSocials2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐSocials(ctx context.Context, sel ast.SelectionSet, v []*model.Socials) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOSocials2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐSocials(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	return ret
+}
+
+func (ec *executionContext) marshalOSocials2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐSocials(ctx context.Context, sel ast.SelectionSet, v *model.Socials) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Socials(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOString2string(ctx context.Context, v interface{}) (string, error) {

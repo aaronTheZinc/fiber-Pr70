@@ -248,6 +248,16 @@ type SlideMetaData struct {
 	Size    string `json:"size"`
 }
 
+type Socials struct {
+	Platform string `json:"platform"`
+	Username string `json:"username"`
+}
+
+type SocialsInput struct {
+	Platform string `json:"platform"`
+	Username string `json:"username"`
+}
+
 type TextArea struct {
 	Position int    `json:"position"`
 	Content  string `json:"content"`
@@ -309,12 +319,13 @@ type Vreel struct {
 }
 
 type VreelElements struct {
-	TextArea *TextArea `json:"text_area"`
-	Videos   *Videos   `json:"videos"`
-	Gallery  *Gallery  `json:"gallery"`
-	Services *Service  `json:"services"`
-	Links    *Links    `json:"links"`
-	Contact  *Contact  `json:"contact"`
+	TextArea *TextArea  `json:"text_area"`
+	Videos   *Videos    `json:"videos"`
+	Gallery  *Gallery   `json:"gallery"`
+	Services *Service   `json:"services"`
+	Socials  []*Socials `json:"socials"`
+	Links    *Links     `json:"links"`
+	Contact  *Contact   `json:"contact"`
 }
 
 type VreelFields struct {

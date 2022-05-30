@@ -21,27 +21,27 @@ services:
       - POSTGRES_USER=gorm
       - POSTGRES_PASSWORD=gorm
 
-  media:
-    build:
-      context: ./media
-      dockerfile: dockerfile
-    ports:
-      - "7070:7070"
-      - "7071:7071"
-    depends_on:
-      - server
+  # media:
+  #   build:
+  #     context: ./media
+  #     dockerfile: dockerfile
+  #   ports:
+  #     - "7070:7070"
+  #     - "7071:7071"
+  #   depends_on:
+  #     - server
 
-  server:
-    build:
-      context: ./server
-      dockerfile: dockerfile
-    ports:
-      - "8080:8080"
-      - "8081:8081"
-    depends_on:
-      - db
-    environment:
-      - DB_HOST=db
+  # server:
+  #   build:
+  #     context: ./server
+  #     dockerfile: dockerfile
+  #   ports:
+  #     - "8080:8080"
+  #     - "8081:8081"
+  #   depends_on:
+  #     - db
+  #   environment:
+  #     - DB_HOST=db
 
   cache:
     image: redis:6.2-alpine

@@ -150,3 +150,33 @@ func AddLinkToVreel(vreelId string, newLink model.Link) error {
 	}
 
 }
+
+func AddSocialsLink(vreelId string, input model.SocialsInput) error {
+	var vreel model.VreelModel
+	var elements model.VreelElements
+	var socials []*model.Socials
+
+	fetchErr := db.Where("id = ?", vreelId).First(&vreel).Error
+
+	if fetchErr != nil {
+		return e.VREEL_NOT_FOUND
+	}
+
+	parseErr := json.Unmarshal([]byte(vreel.Elements), &elements)
+
+	if parseErr != nil {
+		return errors.New("failed to parse")
+	}
+	socials = elements.Socials
+
+	newSocial := model.Socials{Platform: input.Platform, Username: input.Username}
+	socials = append(socials, &newSocial)
+
+	elements.Socials = socials
+	u, marshalErr := json.Marshal(&elements)
+	if marshalErr == nil {
+		return db.Model(model.VreelModel{}).Where("id = ?", vreelId).Update("elements", string(u)).Error
+	} else {
+		return marshalErr
+	}
+}
