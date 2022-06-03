@@ -7,33 +7,74 @@ import { FormikContainer } from "../../formik/FormikContainer";
 import FormikControl from "../../formik/FormikControl";
 import AuthContainer from "../../common/AuthContainer/AuthContainer";
 import { useLazyQuery } from "@apollo/client";
-import { LoginQuery } from "../../graphql/query";
+import { GET_USER_BY_TOKEN, LOGIN_QUERY } from "../../graphql/query";
 import { useCookies } from "react-cookie";
 import Styles from "./Login.module.scss";
+import toast from "react-hot-toast";
+
+const initialValues = {
+  email: "",
+  password: "",
+};
+const validationSchema = Yup.object({
+  email: Yup.string().email("Must be a valid email").required("Required"),
+  password: Yup.string().required("No password provided."),
+  // .min(8, "Password is too short - should be 8 chars minimum."),
+  // .matches(/[a-zA-Z]/, "Password can only contain Latin letters."),
+});
 
 const Login = () => {
   /*  var today = new Date();
   today.setMinutes(today.getMinutes() + 1); */
 
-  const [userError, setUserError] = useState(null);
   const [cookies, setCookie] = useCookies(["userAuthToken"]);
   console.log("login cookies", cookies);
-  const initialValues = {
-    email: "",
-    password: "",
-  };
-  const validationSchema = Yup.object({
-    email: Yup.string().email("Must be a valid email").required("Required"),
-    password: Yup.string().required("No password provided."),
-    // .min(8, "Password is too short - should be 8 chars minimum."),
-    // .matches(/[a-zA-Z]/, "Password can only contain Latin letters."),
-  });
+
   const router = useRouter();
 
-  const [loginUser, { loading: loading2, error: error2, data: data2 }] =
-    useLazyQuery(LoginQuery);
-  console.log(data2);
-  console.log(error2);
+  const [loginUser] = useLazyQuery(LOGIN_QUERY);
+  const [getUserByToken] = useLazyQuery(GET_USER_BY_TOKEN);
+
+  const handleLogin = async (formik) => {
+    const { email, password } = formik.values;
+    if (!email || !password) {
+      toast.success("Please fill up the form");
+      return;
+    }
+    try {
+      const user = await loginUser({
+        variables: {
+          email,
+          password,
+        },
+      });
+      console.log(user.data);
+      const userData = await getUserByToken({
+        variables: {
+          token: user.data.login.token,
+        },
+      });
+
+      const { username } = userData.data.getUserByToken;
+
+      if (!user.data) {
+        toast.success("User not found");
+      } else {
+        setCookie("userAuthToken", user.data.login.token, {
+          path: "/",
+          // expires: today,
+          secure: true,
+        });
+        router.push(`${username}`);
+        toast.success("Login successful");
+      }
+      formik.resetForm();
+    } catch (error) {
+      console.log(formik);
+      formik.errors["password"] = "Please provide valid Email and password";
+      formik.setSubmitting(false);
+    }
+  };
   return (
     <AuthContainer>
       <div className={Styles.vreelLoginForm}>
@@ -46,48 +87,23 @@ const Login = () => {
             {(formik) => {
               return (
                 <form
-                  onSubmit={async (e) => {
+                  onSubmit={(e) => {
                     e.preventDefault();
-                    setUserError(null);
-                    const { email, password } = formik.values;
-                    // formik.handleSubmit();
-                    try {
-                      const user = await loginUser({
-                        variables: {
-                          email,
-                          password,
-                        },
-                      });
-                      if (!user.data) {
-                        setUserError("user not found");
-                      } else {
-                        setCookie("userAuthToken", user.data.login.token, {
-                          path: "/",
-                          // expires: today,
-                          secure: true,
-                        });
-                      }
-                      console.log("main token", user);
-                    } catch (error) {
-                      console.log(error.message);
-                    }
+                    formik.handleSubmit();
+                    handleLogin(formik);
                   }}
-                  className=""
                 >
-                  {userError && <span>{userError}</span>}
                   <FormikControl
                     control="input"
                     type="email"
                     name="email"
                     placeholder="Phone / Email"
-                    required={true}
                   />
                   <FormikControl
                     control="input"
                     type="password"
                     placeholder="Password"
                     name="password"
-                    required={true}
                   />
 
                   <div className={Styles.btnCenter}>
@@ -105,16 +121,16 @@ const Login = () => {
               <br /> or phone number to login.
             </p>
             <span>
-              <Link href={""}>Forgot Password?</Link>
+              <Link href={"/"}>Forgot Password?</Link>
             </span>
           </div>
 
           <div className={Styles.signUp}>
             <p>
               Don't have an account?
-              <div>
+              <>
                 <br />
-              </div>
+              </>
               <Link href="/register">
                 <span className={Styles.signUpBtn}>Sign Up FREE!</span>
               </Link>

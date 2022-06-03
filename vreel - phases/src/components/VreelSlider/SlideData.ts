@@ -1,4 +1,5 @@
-import { AccMenuAction, NavMenuAction } from 'src/redux/actions/actions';
+import { expandMenu, expandQR } from 'src/redux/createSlice/createMenuSlice';
+import { heartReducers } from 'src/redux/createSlice/HeroBannerSlice';
 import type { RightSidebar } from '../../types';
 
 export const rightSidebar: RightSidebar = {
@@ -6,23 +7,21 @@ export const rightSidebar: RightSidebar = {
     {
       src: '/assets/icons/icon-menu.svg',
       alt: 'Menu Icon',
-      method: function (dispatch: Function) {; 
-        dispatch(NavMenuAction());
+      method: function (dispatch: Function) {
+        dispatch(expandMenu());
       },
     },
     {
       src: '/assets/icons/icon-follow.svg',
       alt: 'Follow Icon',
-      method: function (message) {
-        console.log(message);
+      method: function (dispatch: Function) {
+        dispatch(expandMenu());
       },
     },
     {
       src: '/assets/icons/icon-address.svg',
       alt: 'V-Card Icon',
-      method: function (dispatch: Function) {
-        dispatch(AccMenuAction());
-      },
+      method: function () {},
     },
 
     // {
@@ -44,9 +43,7 @@ export const rightSidebar: RightSidebar = {
     {
       src: '/assets/icons/icon-heart-filled.svg',
       alt: 'like Icon',
-      method: function (message) {
-        console.log(message);
-      },
+      method: function () {},
     },
     {
       src: '/assets/icons/icon-share.svg',
@@ -58,8 +55,8 @@ export const rightSidebar: RightSidebar = {
     {
       src: '/assets/icons/icon-qr.svg',
       alt: 'QR Icon',
-      method: function (message) {
-        console.log(message);
+      method: function (dispatch: Function) {
+        dispatch(expandQR());
       },
     },
   ],

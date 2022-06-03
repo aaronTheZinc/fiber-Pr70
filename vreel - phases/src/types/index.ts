@@ -22,9 +22,10 @@ export interface VreelSlideProps {
   currentSlide: number;
 }
 
-export interface DashboardItem {
+export interface EditItem {
   title: string;
   href: string;
+  pathname?: string;
   children?: Array<{
     title: string;
     href: string;
@@ -33,7 +34,7 @@ export interface DashboardItem {
   method?: Function;
 }
 
-export interface DashboardComponent {
+export interface EditComponent {
   title: string;
   component: any;
 }

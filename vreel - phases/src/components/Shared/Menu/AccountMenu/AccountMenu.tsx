@@ -3,26 +3,45 @@ import { AccMenus, NavItemTypes } from "../MenuItems";
 import { useSelector } from "react-redux";
 import MenuItem from "../MenuItem/MenuItem";
 import MenuCloseBtn from "../../Buttons/MenuCloseBtn/MenuCloseBtn";
-import { AccMenuAction } from "../../../../redux/actions/actions";
-import Link from "next/link";
-import { RootState } from "../../../../redux/store/store";
+
+import { RootState, useAppDispatch } from "../../../../redux/store/store";
 import Styles from "./AccountMenu.module.scss";
 import clsx from "clsx";
+import {
+  expandAccountMenu,
+  expandMenu,
+} from "src/redux/createSlice/createMenuSlice";
+import { useCookies } from "react-cookie";
+import toast from "react-hot-toast";
 
 const AccountMenu = () => {
-  const { accMenu } = useSelector((state: RootState) => state.expandAccMenu);
+  const [cookies, setCookie, removeCookie] = useCookies(["userAuthToken"]);
+  const { initialAccountMenuState } = useSelector(
+    (state: RootState) => state.expandMenu
+  );
+  const dispatch = useAppDispatch();
+
   return (
     <div
       className={clsx(
         Styles.generalMenu,
-        accMenu ? Styles.active : Styles.deactive
+        initialAccountMenuState ? Styles.active : Styles.deactive
       )}
     >
       <div className={Styles.container}>
-        <MenuCloseBtn action={AccMenuAction} />
+        <MenuCloseBtn action={expandAccountMenu} />
         <div className={Styles.logoContainer}>
           <div className={Styles.logo}>
-            <button className={Styles.logOutBtn}>Log Out</button>
+            <button
+              onClick={() => {
+                removeCookie("userAuthToken");
+                dispatch(expandAccountMenu());
+                toast.success("Log Out Successfully");
+              }}
+              className={Styles.logOutBtn}
+            >
+              Log Out
+            </button>
           </div>
         </div>
         <div className={Styles.menuAccContainer}>
@@ -31,7 +50,7 @@ const AccountMenu = () => {
               key={index}
               item={item}
               isRightRound={false}
-              action={AccMenuAction}
+              action={expandAccountMenu}
             />
           ))}
         </div>

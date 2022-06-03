@@ -1,8 +1,15 @@
 @import '@sass/settings/_settings';
 
 .vreelSlider {
-  @include displaySizing(100vw, 100vh);
   position: relative;
+
+  &_desktop {
+    @include displaySizing(100vw, 100vh);
+  }
+
+  &_mobile {
+    @include displaySizing(100%, 100vh);
+  }
 
   // VREEL SLIDE
   .vreelSlide {
@@ -111,11 +118,12 @@
 
           p {
             font-size: $text-base;
+            line-height: 1.5rem;
           }
 
           .button_container {
             @include displayFlex2(auto, flex, center, center, row);
-            margin-bottom: 0;
+            margin-bottom: 1rem;
 
             & > *:not(:last-child) {
               margin-right: 0.5rem;

@@ -12,10 +12,10 @@ export const FormikContainer = ({
   return (
     <Formik
       initialValues={initialValues}
+      validationSchema={validationSchema}
       onSubmit={(values) => {
         console.log(values);
       }}
-      validationSchema={validationSchema}
     >
       {children}
     </Formik>

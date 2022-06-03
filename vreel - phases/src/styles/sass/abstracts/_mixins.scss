@@ -3,11 +3,6 @@
   height: $height;
 }
 
-@mixin displaySizingMaxH($width, $height) {
-    width: $width;
-    max-height: $height;
-}
-
 @mixin displaySizingMinH($width, $height) {
     width: $width;
     min-height: $height;

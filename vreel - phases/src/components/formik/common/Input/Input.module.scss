@@ -21,3 +21,10 @@
     margin-bottom: 8px;
     @include componentsBorder(none,16px);
 }
+.slideInput {
+    width: 100%;
+    border-radius: 5px;
+    padding: 8px 10px;
+    border: none;
+    outline: none;
+}

@@ -8,6 +8,8 @@ import { ApolloProvider } from "@apollo/client";
 import { client } from "../components/graphql";
 import GeneralMenu from "../components/Shared/Menu/GeneralMenu/GeneralMenu";
 import AccountMenu from "../components/Shared/Menu/AccountMenu/AccountMenu";
+import { CookiesProvider } from "react-cookie";
+import { Toaster } from "react-hot-toast";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -16,13 +18,22 @@ function MyApp({ Component, pageProps }: AppProps) {
         <title>VReel</title>
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
       </Head>
-      <ApolloProvider client={client}>
-        <Provider store={store}>
-          <GeneralMenu />
-          <AccountMenu />
-          <Component {...pageProps} />
-        </Provider>
-      </ApolloProvider>
+      <CookiesProvider>
+        <ApolloProvider client={client}>
+          <Provider store={store}>
+            <GeneralMenu />
+            <AccountMenu />
+            <Toaster
+              position="top-center"
+              reverseOrder={false}
+              toastOptions={{
+                duration: 3000,
+              }}
+            />
+            <Component {...pageProps} />
+          </Provider>
+        </ApolloProvider>
+      </CookiesProvider>
     </>
   );
 }

@@ -7,11 +7,12 @@ const BtnForm: React.FC<{
   customClass?: string;
   formik?: any;
 }> = ({ title, type, customClass, formik }) => {
+  console.log(formik.isValid, formik.isSubmitting);
   return (
     <button
       type={type}
       className={Styles.btnForm}
-      // disabled={!formik.isValid || formik.isSubmitting}
+      disabled={formik.isSubmitting}
     >
       {title}
     </button>

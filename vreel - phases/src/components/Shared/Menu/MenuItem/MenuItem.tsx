@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import React from "react";
 import { useDispatch } from "react-redux";
-import { NavMenuAction } from "../../../../redux/actions/actions";
+
 import { NavItemTypes } from "../MenuItems";
 import Styles from "./MenuItem.module.scss";
 
@@ -14,9 +14,6 @@ const MenuTitle: React.FC<{
 }> = ({ item, isRightRound, action }) => {
   const dispatch = useDispatch();
   const router = useRouter();
-  console.log("🚀 ~ file: MenuTitle.tsx ~ line 16 ~ item.href", item.href);
-  console.log(item.href);
-  console.log(router.pathname);
   const isActive = item.href == router.pathname;
   return (
     <div

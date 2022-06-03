@@ -1,0 +1,88 @@
+@import '@sass/settings/_settings';
+
+.mediaContainer{
+    &__container{
+        display: grid;
+        grid-template-columns: repeat(2,1fr );
+        grid-column-gap: 11px;
+        .leftItem{
+            &__mediaControl{
+                background-color: $vreel_gray_dark;
+                border-radius: 20px;
+                height: 142px;
+                &__mediaImg{
+                    @include displaySizing(100%, calc(100% - 15%));
+            
+                    img {
+                        @include displaySizing(100%, 100%);
+                        object-fit: cover;
+                        border-radius: 20px;
+            
+                    }
+                }
+                &__playBtn{
+                    padding: 3px 0px 8px 8px;
+                    @include displayFlex(auto, flex, flex-start, center);
+                    height: 15%;
+                    span{
+                        font-size: 7px;
+                        margin-left: 2px;
+                    }
+                    button{
+                        margin-top: 3px
+                    }
+                }
+            }
+            .iconContainer{
+                @include displayFlex(auto,flex,space-between,center);
+                padding: 15px 0px 28px 0;
+                span {
+                        font-size: 11px;
+                    }
+               & > button {
+                   color: $secondary;
+                   cursor: pointer;
+                   @include displaySizing(16px,16px);
+                   margin-top: 1px;
+                   img{
+                        @include displaySizing(100%, 100%);
+                        object-fit: cover;
+                   }
+                   .viewIcon{
+                        font-size: 16px;
+                    }
+               }
+            }
+        }
+        .rightItem{
+            @include displayFlex(auto,flex,center,center);
+            flex-direction: column;
+            height: 132px;
+            background-color: $secondary;
+            border-radius: 20px;
+            transition: all .5s ease-in-out;
+            margin-bottom: 28px;
+            cursor: pointer;
+            img{
+                @include displaySizing(64px,64px);
+                object-fit: contain;
+            }
+            // &:hover{
+            //     transform: rotate(-90deg);
+            // }
+            p{
+                font-size: 10px;
+                padding-top: 10px;
+            }
+        }
+    }
+
+    .toggleBtnContainer{
+        @include displayFlex(100%, flex, center, center);
+        flex-direction: column;
+        
+        span{
+            font-size: 10px;
+        }
+    }
+}

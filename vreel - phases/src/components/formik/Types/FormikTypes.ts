@@ -12,5 +12,6 @@ export interface FormikControlPropsTypes{
     name:string,
     placeholder:string,
     label?:string,
-    required?:boolean
+    required?:boolean,
+    slideInput?:boolean
 }

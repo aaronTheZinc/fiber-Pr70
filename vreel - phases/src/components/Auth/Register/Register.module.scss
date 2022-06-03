@@ -1,8 +1,63 @@
 @import "../Login/Login.module.scss";
 
+.user_input {
+  width: 100%;
+    color: $primary;
+    padding: 12px 20px;
+    background-color: $vreel_white;
+    outline: none;
+
+    border-radius: 16px ;
+    border: none;
+}
+
+.user_loading {
+  height: 15px;
+  margin: 5px;
+  color: $vreel_red;
+}
+
+.user_not_found {
+  color: green;
+}
+
 .error {
   color: $vreel_red;
   margin-bottom: 8px;
+ 
+}
+
+.formControl{
+  .info {
+      font-weight: $font-regular;
+      color:$vreel_gray;
+      padding: .5rem 0 .5rem 2rem;
+  }
+  .error{
+      color: $vreel_red;
+      margin-bottom: 10px;
+      margin-left: 10px;
+  }
+}
+.input {
+  width: 100%;
+  color: $primary;
+  padding: 12px 20px;
+  background-color: $vreel_white;
+  outline: none;
+  margin-bottom: 8px;
+  @include componentsBorder(none,16px);
+}
+
+
+.input {
+  width: 100%;
+  color: $primary;
+  padding: 12px 20px;
+  background-color: $vreel_white;
+  outline: none;
+  margin-bottom: 8px;
+  @include componentsBorder(none,16px);
 }
 .checkbox {
   @include displayFlex(100%, flex, center, center);

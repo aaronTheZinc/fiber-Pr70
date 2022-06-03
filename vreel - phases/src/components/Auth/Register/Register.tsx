@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { ChangeEvent, useState } from "react";
 import Link from "next/link";
 import BtnForm from "../../common/BtnForn/BtnForm";
 import { useRouter } from "next/router";
@@ -8,56 +8,77 @@ import FormikControl from "../../formik/FormikControl";
 import { useLazyQuery, useMutation } from "@apollo/client";
 import { CREATE_USER } from "../../graphql/mutations";
 import AuthContainer from "../../common/AuthContainer/AuthContainer";
-import { LoginQuery } from "../../graphql/query";
+import { GET_USER_BY_USER_NAME, LOGIN_QUERY } from "../../graphql/query";
 import { useCookies } from "react-cookie";
 import { FormikRegFormTypes } from "../../formik/Types/FormikTypes";
 import Styles from "./Register.module.scss";
 import clsx from "clsx";
-
-const initialValues: FormikRegFormTypes = {
-  username: "",
-  email: "",
-  password: "",
-  confirmPassword: "",
-};
-// in layout change commit
-/* const validationSchema = Yup.object({
-    email: Yup.string().required("Required"),
-    password: Yup.string().required("Required"),
-  });
- */
-const validationSchema = Yup.object({
-  username: Yup.string().required("required"),
-  email: Yup.string().email("Must be a valid email").required("Required"),
-  password: Yup.string()
-    .required("No password provided.")
-    .min(8, "Password is too short - should be 8 chars minimum.")
-    .matches(/[a-zA-Z]/, "Password can only contain Latin letters."),
-  /*   .min(8, "Password is too short - should be 8 chars minimum.")
-    .matches(/[a-zA-Z]/, "Password can only contain Latin letters."), */
-  confirmPassword: Yup.string()
-    .required("required")
-    .oneOf([Yup.ref("password"), null], "Passwords must match"),
-});
+import toast from "react-hot-toast";
 
 const Register = () => {
+  const initialValues: FormikRegFormTypes = {
+    email: "",
+    password: "",
+    confirmPassword: "",
+  };
+
+  const validationSchema = Yup.object({
+    email: Yup.string().email("Must be a valid email").required("Required"),
+    password: Yup.string().required("No password provided."),
+
+    /*   .min(8, "Password is too short - should be 8 chars minimum.")
+      .matches(/[a-zA-Z]/, "Password can only contain Latin letters."), */
+    confirmPassword: Yup.string()
+      .required("required")
+      .oneOf([Yup.ref("password"), null], "Passwords must match"),
+  });
+
   const [userError, setUserError] = useState(null);
   const [cookies, setCookie] = useCookies(["userAuthToken"]);
-  console.log("signUp ", cookies);
-  const [createUser, { data, loading, error }] = useMutation(CREATE_USER);
-  const [loginUser, { loading: loading2, error: error2, data: data2 }] =
-    useLazyQuery(LoginQuery);
-  console.log("token", data2);
-  console.log(data);
-  /*   console.log("error", error);
-  console.log("registerDAta", data);
-  console.log("loading", loading); */
+  const [createUser] = useMutation(CREATE_USER);
+  const [loginUser] = useLazyQuery(LOGIN_QUERY);
+  const [getUser] = useLazyQuery(GET_USER_BY_USER_NAME);
+  const router = useRouter();
+  const [checked, setChecked] = useState(false);
+
+  const [value, setValue] = useState<string>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [useable, setUseable] = useState<string>(null);
+
+  //=================== handle user validation function ==========================//
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setLoading(true);
+    setUseable(null);
+    setUserError(null);
+    setValue(event.target.value);
+    setTimeout(async () => {
+      const userName = await getUser({
+        variables: {
+          username: event.target.value,
+        },
+      });
+      if (!event.target.value) {
+        setUseable(null);
+      } else if (userName.data) {
+        setUseable("Already used ");
+      } else if (!userName.data) {
+        setUseable("Useable");
+      }
+      setLoading(false);
+    }, 10);
+  };
 
   // =================== handle Register Form ===================//
-  const handleRegisterForm = async (formik) => {
-    // formik.handleSubmit();
+  const handleRegisterUser = async (formik) => {
     setUserError(null);
-    const { username, email, password } = formik.values;
+    const { email, password } = formik.values;
+    const username = value;
+    if (!username || !email || !password) {
+      toast.success("Fill up the form please");
+      return;
+    }
+
+    console.log({ username, email, password });
     try {
       await createUser({
         variables: {
@@ -74,20 +95,20 @@ const Register = () => {
           password,
         },
       });
-      console.log("main token", user);
       if (user.data.login.token) {
-        setCookie("userAuthToken", user.data.login.token);
+        setCookie("userAuthToken", user.data.login.token, {
+          path: "/",
+          secure: true,
+        });
         router.push(`/${username}`);
+        toast.success(`${username} Successfully Created`);
       }
-
-      // formik.resetForm();
+      formik.resetForm();
     } catch (error) {
-      setUserError(error.message);
+      formik.errors["password"] = error.message;
+      formik.setSubmitting(false);
     }
   };
-
-  const router = useRouter();
-  const [checked, setChecked] = useState(false);
 
   return (
     <AuthContainer>
@@ -99,23 +120,38 @@ const Register = () => {
             validationSchema={validationSchema}
           >
             {(formik) => {
+              console.log(formik);
               return (
                 <form
                   onSubmit={(e) => {
                     e.preventDefault();
-                    handleRegisterForm(formik);
+                    formik.handleSubmit();
+                    handleRegisterUser(formik);
                   }}
                 >
-                  <div className={Styles.error}>
-                    {userError && <span>{userError}</span>}
-                  </div>
-                  <FormikControl
-                    control="input"
+                  <input
                     type="text"
                     name="username"
                     placeholder="Vreel.Page/ Username"
-                    required={true}
+                    value={value || ""}
+                    onChange={handleChange}
+                    className={Styles.user_input}
                   />
+                  <div className={Styles.user_loading}>
+                    {loading ? (
+                      <div className={Styles.user_not_found}>loading...</div>
+                    ) : (
+                      <div
+                        className={
+                          useable == "Useable"
+                            ? `${Styles.user_not_found}`
+                            : null
+                        }
+                      >
+                        {useable}
+                      </div>
+                    )}
+                  </div>
                   <FormikControl
                     control="input"
                     type="email"
@@ -135,6 +171,10 @@ const Register = () => {
                     placeholder="Confirm Password"
                   />
 
+                  <div className={Styles.error}>
+                    {userError && <span>{userError}</span>}
+                  </div>
+
                   <div
                     className={Styles.checkbox}
                     onClick={() => setChecked(!checked)}
@@ -146,6 +186,7 @@ const Register = () => {
                         checked && Styles.active
                       )}
                     ></div>
+
                     <label htmlFor="check">
                       By continuing you accept our Privacy Policy
                     </label>

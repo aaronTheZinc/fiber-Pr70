@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import { useAppDispatch } from "../../redux/store/store";
 import UserProfile from "../common/UserProfile";
 import Styles from "./VreelSlider.module.scss";
+import { useCookies } from "react-cookie";
 
 const VreelSlide = ({
   swiper,
@@ -14,6 +15,7 @@ const VreelSlide = ({
   slideId,
 }: VreelSlideProps): JSX.Element => {
   const [mute, setMute] = useState<boolean>(true);
+  const [cookies] = useCookies(["userAuthToken"]);
 
   const router = useRouter();
   const dispatch = useAppDispatch();
@@ -21,7 +23,7 @@ const VreelSlide = ({
   return (
     <div className={Styles.vreelSlide__container}>
       {/* USER PROFILE */}
-      <UserProfile />
+      {cookies.userAuthToken && <UserProfile />}
 
       <div className={Styles.vreelSlide__content}>
         <div className={Styles.vreelSlide__content_wrapper}>
@@ -55,18 +57,22 @@ const VreelSlide = ({
               </p>
 
               <div className={Styles.button_container}>
-                <button
-                  className="btn-slide"
-                  onClick={() => router.push("/login")}
-                >
-                  Log in
-                </button>
-                <button
-                  className="btn-slide"
-                  onClick={() => router.push("/register")}
-                >
-                  Register
-                </button>
+                {!cookies.userAuthToken && (
+                  <button
+                    className="btn-slide"
+                    onClick={() => router.push("/login")}
+                  >
+                    Log in
+                  </button>
+                )}
+                {!cookies.userAuthToken && (
+                  <button
+                    className="btn-slide"
+                    onClick={() => router.push("/register")}
+                  >
+                    Register
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -83,7 +89,7 @@ const VreelSlide = ({
 
             <div>
               {rightSidebar.bottomIcons.map((icon, index) => (
-                <button key={index} onClick={() => icon.method()}>
+                <button key={index} onClick={() => icon.method(dispatch)}>
                   <img src={icon.src} alt={icon.alt} />
                 </button>
               ))}

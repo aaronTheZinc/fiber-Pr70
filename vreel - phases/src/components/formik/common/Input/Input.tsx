@@ -2,9 +2,10 @@ import React from "react";
 import { Field, ErrorMessage, useFormikContext } from "formik";
 import TextError from "../TextError/TextError";
 import Styles from "./Input.module.scss";
+import clsx from "clsx";
 
 const Input = (props: any) => {
-  const { placeholder, name, info, ...rest } = props;
+  const { slideInput, placeholder, name, ...rest } = props;
   const { errors, setFieldValue } = useFormikContext();
 
   return (
@@ -18,16 +19,15 @@ const Input = (props: any) => {
                 {...field}
                 {...rest}
                 placeholder={`${placeholder} `}
-                className={Styles.input}
+                className={clsx(slideInput ? Styles.slideInput : Styles.input)}
               />
             </div>
           );
         }}
       </Field>
-      {!errors[name] && info && <div className={Styles.info}>{info}</div>}
 
       <div className={Styles.error}>
-        <ErrorMessage component={TextError} name={name} />
+        {errors[name] && <ErrorMessage component={TextError} name={name} />}
       </div>
     </div>
   );

@@ -1,7 +1,6 @@
 import React from "react";
 import { NavItem, NavItemTypes } from "../MenuItems";
 
-import { NavMenuAction } from "../../../../redux/actions/actions";
 import { useSelector } from "react-redux";
 import MenuItem from "../MenuItem/MenuItem";
 import MenuCloseBtn from "../../Buttons/MenuCloseBtn/MenuCloseBtn";
@@ -9,20 +8,21 @@ import { useRouter } from "next/router";
 import { RootState } from "../../../../redux/store/store";
 import clsx from "clsx";
 import Styles from "./GeneralMenu.module.scss";
+import { expandMenu } from "src/redux/createSlice/createMenuSlice";
 
 const GeneralMenu = () => {
   const router = useRouter();
-  const { navMenu } = useSelector((state: RootState) => state.expandNav);
+  const { initMenuState } = useSelector((state: RootState) => state.expandMenu);
 
   return (
     <div
       className={clsx(
         Styles.generalMenu,
-        navMenu ? Styles.active : Styles.deactive
+        initMenuState ? Styles.active : Styles.deactive
       )}
     >
       <div className={Styles.container}>
-        <MenuCloseBtn action={NavMenuAction} />
+        <MenuCloseBtn action={expandMenu} />
         <div className={Styles.logoContainer}>
           <div className={Styles.logo}>
             <p>Powered By</p>
@@ -37,7 +37,7 @@ const GeneralMenu = () => {
               key={index}
               item={item}
               isRightRound={true}
-              action={NavMenuAction}
+              action={expandMenu}
             />
           ))}
         </div>

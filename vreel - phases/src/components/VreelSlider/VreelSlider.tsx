@@ -1,9 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 import VreelSlide from './VreelSlide';
-import GeneralMenu from '../Shared/Menu/GeneralMenu/GeneralMenu';
-import { RootState } from '../../redux/store/store';
-import { useSelector } from 'react-redux';
-import AccountMenu from '../Shared/Menu/AccountMenu/AccountMenu';
 
 // Import Swiper React components
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -15,6 +11,7 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 
 import Styles from './VreelSlider.module.scss';
+import clsx from 'clsx';
 
 const data = [
   { src: '/assets/videos/test-video-1.mp4', alt: 'slide-1' },
@@ -24,7 +21,7 @@ const data = [
   // { src: '/assets/videos/test-video-5.mp4', alt: 'slide-5' },
 ];
 
-const VreelSlider: React.FC = () => {
+const VreelSlider: React.FC<{ view: 'Mobile' | 'Desktop' }> = ({ view }) => {
   const [currentSlide, setCurrentSlide] = useState(null);
   const [swiper, setSwiper] = useState(null);
 
@@ -46,7 +43,12 @@ const VreelSlider: React.FC = () => {
         setSwiper(swiper);
       }}
       // effect='fade'
-      className={Styles.vreelSlider}
+      className={clsx(
+        Styles.vreelSlider,
+        view === 'Desktop'
+          ? Styles.vreelSlider_desktop
+          : Styles.vreelSlider_mobile
+      )}
     >
       {data.map((obj, index) => (
         <SwiperSlide key={index} className={Styles.vreelSlide}>
