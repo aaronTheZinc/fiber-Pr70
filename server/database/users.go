@@ -278,3 +278,7 @@ func AddFollowingToUser(userId, vreelId string) error {
 
 	return err
 }
+
+func RemoveUser(id string) error {
+	return db.Where("id = ?", id).Delete(model.UserModel{}).Error
+}

@@ -85,5 +85,23 @@ function UpdateEmployee(employeeId, email) {
 
   const data = client.request(EDIT_EMPLOYEE, variables);
 }
-UpdateEmployee("cafb25q23akj9g4qk1gg", "ggradvohl@avaicg.com");
+
+(async () => {
+  const variables = {
+    token: ENTERPRISE_TOKEN,
+    firstName: "",
+    lastName: "",
+    email: "acollins@avaicg.com",
+    password: "",
+    username: "",
+    accountType: "employee"
+  }
+  const data = await client.request(CREATE_EMPLOYEE, variables);
+  console.log(data)
+})()
+
+
+
+
+// UpdateEmployee("cafb25q23akj9g4qk1f0", "jstephens@avaicg.com");
 console.log("----------->COMPLETE<-----------")
