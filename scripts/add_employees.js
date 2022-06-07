@@ -1,15 +1,7 @@
-const { ApolloClient,
-    InMemoryCache,
-    useQuery,
-    gql
-} = require("@apollo/client")
+const { request, gql, GraphQLClient } = require('graphql-request');
+const { employees } = require('./employees');
 
 const data = require('./employees')
-
-const client = new ApolloClient({
-    uri: 'https://48p1r2roz4.sse.codesandbox.io',
-    cache: new InMemoryCache()
-});
 
 const CREATE_EMPLOYEE = gql`
   mutation employees(
@@ -32,27 +24,34 @@ const CREATE_EMPLOYEE = gql`
         password: $password
       }
     ) {
-      message
+      id
     }
   }
 `;
 
+const endpoint = 'http://localhost:8080/graphql'
+const ENTERPRISE_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNhZjFlNmZicGw1NHRkNnVsbjdnIiwiYWNjb3VudF90eXBlIjoiZW50ZXJwcmlzZSIsImV4cCI6MTY1NTE3MDUwM30.snj9joWcnYWN0nwCDpBNVONoDS1HlEZ7N8QBiu013X0";
 
-const ENTERPRISE_TOKEN = "";
+const client = new GraphQLClient(endpoint, {
+  headers: {
+    authorization: 'Bearer MY_TOKEN',
+  },
+})
 
-
-function AddEmployees() {
-    const registeredEmployeeIds = [];
-
-    data.employees.forEach(async (employee) => {
-
-        const { data } = await client.mutate({
-            mutation: CREATE_EMPLOYEE,
-            variables: {
-                token: ENTERPRISE_TOKEN,
-                firstName: employee.first_name,
-
-            }
-        })
-    })
-}
+const employeeIdStack = []
+data.employees.forEach((employee) => {
+  (async () => {
+    const variables = {
+      token: ENTERPRISE_TOKEN,
+      firstName: employee.first_name,
+      lastName: employee.last_name,
+      email: employee.email,
+      password: "",
+      username: "",
+      accountType: "employee"
+    }
+    const data = await client.request(CREATE_EMPLOYEE, variables);
+    console.log(data)
+  })()
+})
+console.log("----------->COMPLETE<-----------")

@@ -63,10 +63,10 @@ func (r *mutationResolver) AddUserToGroup(ctx context.Context, token string, gro
 	return &resp, err
 }
 
-func (r *mutationResolver) AddEmployeeToEnterprise(ctx context.Context, token string, newUser model.NewUser) (*model.MutationResponse, error) {
-	resp, err := auth.AuthorizeAddEmployeeToEnterprise(token, newUser)
+func (r *mutationResolver) AddEmployeeToEnterprise(ctx context.Context, token string, newUser model.NewUser) (*model.User, error) {
+	employee, err := auth.AuthorizeAddEmployeeToEnterprise(token, newUser)
 
-	return &resp, err
+	return &employee, err
 }
 
 func (r *mutationResolver) UpdateEmployee(ctx context.Context, token string, employee string, fields []*model.VreelFields) (*model.MutationResponse, error) {

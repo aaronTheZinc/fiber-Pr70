@@ -360,7 +360,7 @@ type Mutation {
     groupId: String!
     userId: String!
   ): MutationResponse!
-  addEmployeeToEnterprise(token: String!, newUser: NewUser!): MutationResponse!
+  addEmployeeToEnterprise(token: String!, newUser: NewUser!): User!
   updateEmployee(
     token: String!
     employee: String!

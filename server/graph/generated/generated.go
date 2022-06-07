@@ -355,7 +355,7 @@ type MutationResolver interface {
 	CreateSlide(ctx context.Context, token string) (*model.Slide, error)
 	DeleteGroup(ctx context.Context, id string, token string) (*model.MutationResponse, error)
 	AddUserToGroup(ctx context.Context, token string, groupID string, userID string) (*model.MutationResponse, error)
-	AddEmployeeToEnterprise(ctx context.Context, token string, newUser model.NewUser) (*model.MutationResponse, error)
+	AddEmployeeToEnterprise(ctx context.Context, token string, newUser model.NewUser) (*model.User, error)
 	UpdateEmployee(ctx context.Context, token string, employee string, fields []*model.VreelFields) (*model.MutationResponse, error)
 	RemoveUserFromGroup(ctx context.Context, token string, groupID string, member string) (*model.MutationResponse, error)
 	RemoveSlide(ctx context.Context, token string, slideID *string) (*model.MutationResponse, error)
@@ -2449,7 +2449,7 @@ type Mutation {
     groupId: String!
     userId: String!
   ): MutationResponse!
-  addEmployeeToEnterprise(token: String!, newUser: NewUser!): MutationResponse!
+  addEmployeeToEnterprise(token: String!, newUser: NewUser!): User!
   updateEmployee(
     token: String!
     employee: String!
@@ -6596,9 +6596,9 @@ func (ec *executionContext) _Mutation_addEmployeeToEnterprise(ctx context.Contex
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.MutationResponse)
+	res := resTmp.(*model.User)
 	fc.Result = res
-	return ec.marshalNMutationResponse2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐMutationResponse(ctx, field.Selections, res)
+	return ec.marshalNUser2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_updateEmployee(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
