@@ -59,7 +59,7 @@ type User {
   work_phone: String!
   password: String!
   business_address: String!
-  billing_address: String!
+  home_address: String!
   website: String!
   landing_page: String!
   job_title: String!

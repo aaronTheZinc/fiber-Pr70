@@ -36,7 +36,8 @@ module.exports = {
         companyName: "Avangard Innovative",
         cell_phone: "2815820793",
         work_phone: "7138581131",
-        business_address: "18314 Mathis Rd., Waller, TX 77484"
+        business_address: "18314 Mathis Rd., Waller, TX 77484",
+        home_address: "920 Memorial City Way Ste 715, Houston TX 77024"
     },
     {
         first_name: "Rick",

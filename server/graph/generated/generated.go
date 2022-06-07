@@ -287,7 +287,6 @@ type ComplexityRoot struct {
 
 	User struct {
 		AccountType     func(childComplexity int) int
-		BillingAddress  func(childComplexity int) int
 		BusinessAddress func(childComplexity int) int
 		CellPhone       func(childComplexity int) int
 		CompanyName     func(childComplexity int) int
@@ -296,6 +295,7 @@ type ComplexityRoot struct {
 		FirstName       func(childComplexity int) int
 		Following       func(childComplexity int) int
 		Groups          func(childComplexity int) int
+		HomeAddress     func(childComplexity int) int
 		HomePhone       func(childComplexity int) int
 		ID              func(childComplexity int) int
 		JobTitle        func(childComplexity int) int
@@ -1701,13 +1701,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.User.AccountType(childComplexity), true
 
-	case "User.billing_address":
-		if e.complexity.User.BillingAddress == nil {
-			break
-		}
-
-		return e.complexity.User.BillingAddress(childComplexity), true
-
 	case "User.business_address":
 		if e.complexity.User.BusinessAddress == nil {
 			break
@@ -1763,6 +1756,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.User.Groups(childComplexity), true
+
+	case "User.home_address":
+		if e.complexity.User.HomeAddress == nil {
+			break
+		}
+
+		return e.complexity.User.HomeAddress(childComplexity), true
 
 	case "User.home_phone":
 		if e.complexity.User.HomePhone == nil {
@@ -2148,7 +2148,7 @@ type User {
   work_phone: String!
   password: String!
   business_address: String!
-  billing_address: String!
+  home_address: String!
   website: String!
   landing_page: String!
   job_title: String!
@@ -9745,7 +9745,7 @@ func (ec *executionContext) _User_business_address(ctx context.Context, field gr
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _User_billing_address(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+func (ec *executionContext) _User_home_address(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -9763,7 +9763,7 @@ func (ec *executionContext) _User_billing_address(ctx context.Context, field gra
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.BillingAddress, nil
+		return obj.HomeAddress, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -13915,8 +13915,8 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "billing_address":
-			out.Values[i] = ec._User_billing_address(ctx, field, obj)
+		case "home_address":
+			out.Values[i] = ec._User_home_address(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}

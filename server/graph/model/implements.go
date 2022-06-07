@@ -21,7 +21,7 @@ type UserModel struct {
 	WorkPhone       string         `json:"work_number"`
 	Password        string         `json:"password"`
 	BusinessAddress string         `json:"business_address"`
-	BillingAddress  string         `json:"billing_address"`
+	HomeAddress     string         `json:"billing_address"`
 	Website         string         `json:"website"`
 	JobTitle        string         `json:"job_title"`
 	Groups          pq.StringArray `gorm:"type:text[]"`
@@ -152,7 +152,7 @@ func (c *NewUser) ToDatabaseModel() UserModel {
 		WorkPhone:       "",
 		CellPhone:       "",
 		BusinessAddress: "",
-		BillingAddress:  "",
+		HomeAddress:     "",
 		Website:         "",
 		JobTitle:        "",
 		LandingPage:     "",
@@ -187,6 +187,7 @@ func (c *UserModel) ToUser() User {
 		Username:        c.Username,
 		ProfilePicture:  c.ProfilePicture,
 		FirstName:       c.FirstName,
+		CompanyName:     c.CompanyName,
 		LastName:        c.LastName,
 		Email:           c.Email,
 		Password:        c.Password,
@@ -194,7 +195,7 @@ func (c *UserModel) ToUser() User {
 		WorkPhone:       c.WorkPhone,
 		CellPhone:       c.CellPhone,
 		BusinessAddress: c.BusinessAddress,
-		BillingAddress:  c.BillingAddress,
+		HomeAddress:     c.HomeAddress,
 		Website:         c.Website,
 		JobTitle:        c.JobTitle,
 		AccountType:     c.AccountType,
