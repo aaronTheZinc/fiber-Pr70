@@ -294,7 +294,7 @@ type User struct {
 	WorkPhone       string    `json:"work_phone"`
 	Password        string    `json:"password"`
 	BusinessAddress string    `json:"business_address"`
-	BillingAddress  string    `json:"billing_address"`
+	HomeAddress     string    `json:"home_address"`
 	Website         string    `json:"website"`
 	LandingPage     string    `json:"landing_page"`
 	JobTitle        string    `json:"job_title"`

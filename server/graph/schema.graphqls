@@ -59,7 +59,7 @@ type User {
   work_phone: String!
   password: String!
   business_address: String!
-  billing_address: String!
+  home_address: String!
   website: String!
   landing_page: String!
   job_title: String!
@@ -345,6 +345,7 @@ input SocialsInput {
 type Mutation {
   register(input: NewUser!): User!
   createEvent(token: String!, input: NewEvent!): Event!
+  removeUser(id: String!): MutationResponse!
   createEnterprise(input: NewEnterprise!): Enterprise!
   createResetPasswordRequestIntent(email: String!): ResetPasswordResponse!
   resolveResetPasswordRequestIntent(
@@ -360,7 +361,7 @@ type Mutation {
     groupId: String!
     userId: String!
   ): MutationResponse!
-  addEmployeeToEnterprise(token: String!, newUser: NewUser!): MutationResponse!
+  addEmployeeToEnterprise(token: String!, newUser: NewUser!): User!
   updateEmployee(
     token: String!
     employee: String!

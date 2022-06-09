@@ -23,7 +23,7 @@ const UploadImages = ({ refetch }) => {
 
   const uppy = new Uppy({ id: "uppy", autoProceed: false, debug: true })
     .use(Tus, {
-      endpoint: "http://192.168.0.106:7070/files/",
+      endpoint: "http://localhost:7070/files/",
       headers: {
         token: cookies["userAuthToken"],
         "Access-Control-Allow-Origin": "http://localhost:7070",
