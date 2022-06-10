@@ -1,4 +1,5 @@
 .vscode/
 .env
 pgdata/*
+pgdata1/*
 docker-compose.*
