@@ -125,7 +125,7 @@ const InnerSlide: React.FC<{
         </div>
 
         <div className={Styles.moreInfo__toggleBtn}>
-          <SlidesToggleButton
+          {/* <SlidesToggleButton
             bgColor="green"
             firstTitle="Light"
             secondTitle="Dark"
@@ -133,7 +133,7 @@ const InnerSlide: React.FC<{
             height={33}
             firstInnerText="Switch for Dark Mode"
             secondInnertext="Switch For Light Mode"
-          />
+          /> */}
         </div>
       </div>
     </div>

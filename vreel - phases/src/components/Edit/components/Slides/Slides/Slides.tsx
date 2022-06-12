@@ -1,13 +1,12 @@
-import React, { useEffect, useRef, useState } from 'react';
-import Slide from '../Slide/Slide';
-import { BsPlus } from 'react-icons/bs';
-import Styles from './Slides.module.scss';
-import SlideActionsBtn from 'src/components/Shared/Buttons/SlidesBtn/SlideActionsBtn/SlideActionsBtn';
-import SlidesToggleButton from 'src/components/Shared/Buttons/SlidesBtn/SlidesToggleButton/SlidesToggleButton';
-import clsx from 'clsx';
-import VreelSlider from 'src/components/VreelSlider/VreelSlider';
-import MobilePreview from '../Preview/MobilePreview/MobilePreview';
-import DesktopPreview from '../Preview/DesktopPreview/DesktopPreview';
+import React, { useEffect, useRef, useState } from "react";
+import Slide from "../Slide/Slide";
+import { BsPlus } from "react-icons/bs";
+import Styles from "./Slides.module.scss";
+import SlideActionsBtn from "src/components/Shared/Buttons/SlidesBtn/SlideActionsBtn/SlideActionsBtn";
+import clsx from "clsx";
+import VreelSlider from "src/components/VreelSlider/VreelSlider";
+import MobilePreview from "../Preview/MobilePreview/MobilePreview";
+import DesktopPreview from "../Preview/DesktopPreview/DesktopPreview";
 
 const Slides = () => {
   const [preview, setPreview] = useState(false);
@@ -20,9 +19,9 @@ const Slides = () => {
             <span>Slides</span>
             <SlideActionsBtn
               Icon={BsPlus}
-              title='Add Slide'
-              padding='8px 20px'
-              bgColor='green'
+              title="Add Slide"
+              padding="8px 20px"
+              bgColor="green"
               actions={() => {}}
             />
           </div>
@@ -46,7 +45,7 @@ const Slides = () => {
             }
             onClick={() => setPreview(!preview)}
           >
-            <SlidesToggleButton
+            {/* <SlidesToggleButton
               secondTitle='Mobile'
               firstTitle='WideScreen'
               width={200}
@@ -54,7 +53,7 @@ const Slides = () => {
               bgColor='green'
               firstInnerText='Toggle For Mobile View'
               secondInnertext='Toggle For Desktop View'
-            />
+            /> */}
           </div>
           <div>{preview ? <DesktopPreview /> : <MobilePreview />}</div>
         </div>

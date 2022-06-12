@@ -4,7 +4,6 @@ import Styles from "./Textarea.module.scss";
 
 const Textarea = (props: any) => {
   const { placeholder, name, ...rest } = props;
-  const { errors, setFieldValue } = useFormikContext();
   return (
     <div className={""}>
       <Field name={name}>

@@ -109,6 +109,7 @@ const Media = () => {
           height={23}
           firstTitle="On"
           secondTitle="Off"
+          name="media_sound"
         />
         <span>Media File Sound</span>
       </div>
