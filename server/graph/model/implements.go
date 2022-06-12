@@ -403,10 +403,12 @@ func (c *SlideModel) ToSlide() Slide {
 
 func (c *LinkInput) ToLink() Link {
 	return Link{
-		Thumbnail: c.Thumbnail,
-		Category:  c.Category,
-		Position:  c.Position,
-		URL:       c.URI,
+		Thumbnail:  c.Thumbnail,
+		Category:   c.Category,
+		Position:   c.Position,
+		URL:        c.URL,
+		LinkHeader: c.LinkHeader,
+		LinkType:   c.LinkType,
 	}
 }
 

@@ -331,10 +331,12 @@ input AnalyticsMutation {
   token: String!
 }
 input LinkInput {
-  thumbnail: String!
-  uri: String!
   position: Int!
+  thumbnail: String!
+  url: String!
   category: String!
+  link_type: String!
+  link_header: String!
 }
 
 input SocialsInput {

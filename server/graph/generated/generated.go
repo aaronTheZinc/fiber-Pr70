@@ -2434,10 +2434,12 @@ input AnalyticsMutation {
   token: String!
 }
 input LinkInput {
-  thumbnail: String!
-  uri: String!
   position: Int!
+  thumbnail: String!
+  url: String!
   category: String!
+  link_type: String!
+  link_header: String!
 }
 
 input SocialsInput {
@@ -11956,22 +11958,6 @@ func (ec *executionContext) unmarshalInputLinkInput(ctx context.Context, obj int
 
 	for k, v := range asMap {
 		switch k {
-		case "thumbnail":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("thumbnail"))
-			it.Thumbnail, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "uri":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("uri"))
-			it.URI, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
 		case "position":
 			var err error
 
@@ -11980,11 +11966,43 @@ func (ec *executionContext) unmarshalInputLinkInput(ctx context.Context, obj int
 			if err != nil {
 				return it, err
 			}
+		case "thumbnail":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("thumbnail"))
+			it.Thumbnail, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "url":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("url"))
+			it.URL, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "category":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("category"))
 			it.Category, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "link_type":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("link_type"))
+			it.LinkType, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "link_header":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("link_header"))
+			it.LinkHeader, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}

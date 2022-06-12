@@ -136,10 +136,12 @@ type Link struct {
 }
 
 type LinkInput struct {
-	Thumbnail string `json:"thumbnail"`
-	URI       string `json:"uri"`
-	Position  int    `json:"position"`
-	Category  string `json:"category"`
+	Position   int    `json:"position"`
+	Thumbnail  string `json:"thumbnail"`
+	URL        string `json:"url"`
+	Category   string `json:"category"`
+	LinkType   string `json:"link_type"`
+	LinkHeader string `json:"link_header"`
 }
 
 type Links struct {
