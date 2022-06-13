@@ -229,6 +229,7 @@ func GetAllUsernames() ([]model.UserModel, error) {
 func UpdateUserFields(id string, fields []*model.VreelFields) error {
 	userFields := []string{"first_name", "last_name", "email", "prefix",
 		"suffix", "work_phone", "cell_phone", "home_phone", "job_title", "profile_picture",
+		"company_name", "business_address", "home_address",
 		"landing_page", "middle_initial"}
 	var wg sync.WaitGroup
 	var err error
@@ -276,4 +277,8 @@ func AddFollowingToUser(userId, vreelId string) error {
 	}
 
 	return err
+}
+
+func RemoveUser(id string) error {
+	return db.Where("id = ?", id).Delete(model.UserModel{}).Error
 }

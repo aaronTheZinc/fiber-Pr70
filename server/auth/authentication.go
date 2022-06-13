@@ -262,3 +262,14 @@ func CompareHashPassword(rawPassword string, hashedPassword string) (bool, error
 		return true, nil
 	}
 }
+
+func RemoveUser(id string) (model.MutationResponse, error) {
+	if err := database.RemoveUser(id); err != nil {
+		return model.MutationResponse{false, "failed"}, err
+	} else {
+		return model.MutationResponse{
+			Succeeded: true,
+			Message:   "deleted user -> " + id,
+		}, err
+	}
+}

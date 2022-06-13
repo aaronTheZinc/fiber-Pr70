@@ -323,9 +323,9 @@ func AuthorizeRemoveSlide(token, slideId string) (model.MutationResponse, error)
 	return r, err
 }
 
-func AuthorizeAddEmployeeToEnterprise(token string, newUser model.NewUser) (model.MutationResponse, error) {
+func AuthorizeAddEmployeeToEnterprise(token string, newUser model.NewUser) (model.User, error) {
 	var err error
-	var r model.MutationResponse
+	var employee model.User
 
 	claims, isAuth, parseErr := ParseToken(token)
 	userId := claims.ID
@@ -349,10 +349,7 @@ func AuthorizeAddEmployeeToEnterprise(token string, newUser model.NewUser) (mode
 						if updateErr != nil {
 							err = e.ENTERPRISE_FAILED_ADD_EMPLOYEE
 						} else {
-							r = model.MutationResponse{
-								Succeeded: true,
-								Message:   "added user to enterprise: " + *enterprise.ID,
-							}
+							employee = u
 						}
 					}
 				}
@@ -363,7 +360,7 @@ func AuthorizeAddEmployeeToEnterprise(token string, newUser model.NewUser) (mode
 	} else {
 		err = e.UNAUTHORIZED_ERROR
 	}
-	return r, err
+	return employee, err
 }
 
 func AuthorizeUpdateEmployeeFields(token, employeeId string, fields []*model.VreelFields) (model.MutationResponse, error) {

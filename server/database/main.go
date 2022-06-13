@@ -2,7 +2,7 @@ package database
 
 import (
 	"log"
-	"os"
+
 	"time"
 
 	"github.com/vreel/app/graph/model"
@@ -14,7 +14,7 @@ var db, db_init_err = databaseInit()
 
 func databaseInit() (*gorm.DB, error) {
 	var host string
-	hostENV := os.Getenv("DB_HOST")
+	hostENV := "localhost"
 	if hostENV == "" {
 		host = "localhost"
 	} else {

@@ -193,6 +193,7 @@ type ComplexityRoot struct {
 		LogPageLoad                       func(childComplexity int, vreelID string) int
 		Register                          func(childComplexity int, input model.NewUser) int
 		RemoveSlide                       func(childComplexity int, token string, slideID *string) int
+		RemoveUser                        func(childComplexity int, id string) int
 		RemoveUserFromGroup               func(childComplexity int, token string, groupID string, member string) int
 		ResolveResetPasswordRequestIntent func(childComplexity int, token string, password string) int
 		UnFollow                          func(childComplexity int, input model.AnalyticsMutation) int
@@ -287,7 +288,6 @@ type ComplexityRoot struct {
 
 	User struct {
 		AccountType     func(childComplexity int) int
-		BillingAddress  func(childComplexity int) int
 		BusinessAddress func(childComplexity int) int
 		CellPhone       func(childComplexity int) int
 		CompanyName     func(childComplexity int) int
@@ -296,6 +296,7 @@ type ComplexityRoot struct {
 		FirstName       func(childComplexity int) int
 		Following       func(childComplexity int) int
 		Groups          func(childComplexity int) int
+		HomeAddress     func(childComplexity int) int
 		HomePhone       func(childComplexity int) int
 		ID              func(childComplexity int) int
 		JobTitle        func(childComplexity int) int
@@ -348,6 +349,7 @@ type ComplexityRoot struct {
 type MutationResolver interface {
 	Register(ctx context.Context, input model.NewUser) (*model.User, error)
 	CreateEvent(ctx context.Context, token string, input model.NewEvent) (*model.Event, error)
+	RemoveUser(ctx context.Context, id string) (*model.MutationResponse, error)
 	CreateEnterprise(ctx context.Context, input model.NewEnterprise) (*model.Enterprise, error)
 	CreateResetPasswordRequestIntent(ctx context.Context, email string) (*model.ResetPasswordResponse, error)
 	ResolveResetPasswordRequestIntent(ctx context.Context, token string, password string) (*model.ResolvedPasswordReset, error)
@@ -355,7 +357,7 @@ type MutationResolver interface {
 	CreateSlide(ctx context.Context, token string) (*model.Slide, error)
 	DeleteGroup(ctx context.Context, id string, token string) (*model.MutationResponse, error)
 	AddUserToGroup(ctx context.Context, token string, groupID string, userID string) (*model.MutationResponse, error)
-	AddEmployeeToEnterprise(ctx context.Context, token string, newUser model.NewUser) (*model.MutationResponse, error)
+	AddEmployeeToEnterprise(ctx context.Context, token string, newUser model.NewUser) (*model.User, error)
 	UpdateEmployee(ctx context.Context, token string, employee string, fields []*model.VreelFields) (*model.MutationResponse, error)
 	RemoveUserFromGroup(ctx context.Context, token string, groupID string, member string) (*model.MutationResponse, error)
 	RemoveSlide(ctx context.Context, token string, slideID *string) (*model.MutationResponse, error)
@@ -1195,6 +1197,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.RemoveSlide(childComplexity, args["token"].(string), args["slideId"].(*string)), true
 
+	case "Mutation.removeUser":
+		if e.complexity.Mutation.RemoveUser == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_removeUser_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.RemoveUser(childComplexity, args["id"].(string)), true
+
 	case "Mutation.removeUserFromGroup":
 		if e.complexity.Mutation.RemoveUserFromGroup == nil {
 			break
@@ -1701,13 +1715,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.User.AccountType(childComplexity), true
 
-	case "User.billing_address":
-		if e.complexity.User.BillingAddress == nil {
-			break
-		}
-
-		return e.complexity.User.BillingAddress(childComplexity), true
-
 	case "User.business_address":
 		if e.complexity.User.BusinessAddress == nil {
 			break
@@ -1763,6 +1770,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.User.Groups(childComplexity), true
+
+	case "User.home_address":
+		if e.complexity.User.HomeAddress == nil {
+			break
+		}
+
+		return e.complexity.User.HomeAddress(childComplexity), true
 
 	case "User.home_phone":
 		if e.complexity.User.HomePhone == nil {
@@ -2148,7 +2162,7 @@ type User {
   work_phone: String!
   password: String!
   business_address: String!
-  billing_address: String!
+  home_address: String!
   website: String!
   landing_page: String!
   job_title: String!
@@ -2434,6 +2448,7 @@ input SocialsInput {
 type Mutation {
   register(input: NewUser!): User!
   createEvent(token: String!, input: NewEvent!): Event!
+  removeUser(id: String!): MutationResponse!
   createEnterprise(input: NewEnterprise!): Enterprise!
   createResetPasswordRequestIntent(email: String!): ResetPasswordResponse!
   resolveResetPasswordRequestIntent(
@@ -2449,7 +2464,7 @@ type Mutation {
     groupId: String!
     userId: String!
   ): MutationResponse!
-  addEmployeeToEnterprise(token: String!, newUser: NewUser!): MutationResponse!
+  addEmployeeToEnterprise(token: String!, newUser: NewUser!): User!
   updateEmployee(
     token: String!
     employee: String!
@@ -2870,6 +2885,21 @@ func (ec *executionContext) field_Mutation_removeUserFromGroup_args(ctx context.
 		}
 	}
 	args["member"] = arg2
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_removeUser_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
 	return args, nil
 }
 
@@ -6265,6 +6295,48 @@ func (ec *executionContext) _Mutation_createEvent(ctx context.Context, field gra
 	return ec.marshalNEvent2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐEvent(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Mutation_removeUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_removeUser_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().RemoveUser(rctx, args["id"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.MutationResponse)
+	fc.Result = res
+	return ec.marshalNMutationResponse2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐMutationResponse(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Mutation_createEnterprise(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -6596,9 +6668,9 @@ func (ec *executionContext) _Mutation_addEmployeeToEnterprise(ctx context.Contex
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.MutationResponse)
+	res := resTmp.(*model.User)
 	fc.Result = res
-	return ec.marshalNMutationResponse2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐMutationResponse(ctx, field.Selections, res)
+	return ec.marshalNUser2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_updateEmployee(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -9745,7 +9817,7 @@ func (ec *executionContext) _User_business_address(ctx context.Context, field gr
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _User_billing_address(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+func (ec *executionContext) _User_home_address(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -9763,7 +9835,7 @@ func (ec *executionContext) _User_billing_address(ctx context.Context, field gra
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.BillingAddress, nil
+		return obj.HomeAddress, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -13092,6 +13164,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "removeUser":
+			out.Values[i] = ec._Mutation_removeUser(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "createEnterprise":
 			out.Values[i] = ec._Mutation_createEnterprise(ctx, field)
 			if out.Values[i] == graphql.Null {
@@ -13915,8 +13992,8 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "billing_address":
-			out.Values[i] = ec._User_billing_address(ctx, field, obj)
+		case "home_address":
+			out.Values[i] = ec._User_home_address(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
