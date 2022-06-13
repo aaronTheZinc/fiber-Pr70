@@ -119,12 +119,9 @@ func GetLatestVreelSlideId(id string) (string, int, error) {
 	return *v.LastSlideEdited, vreel.TimeLastEdited, err
 }
 
-//create a function called CreateVreel that accepts a title as a string and saves to gorm database
-
-func AddLinkToVreel(vreelId string, newLink model.Link) error {
+func AddSimpleLinkToVreel(vreelId string, newLink model.SimpleLink) error {
 	var vreel model.VreelModel
 	var elements model.VreelElements
-	var links model.Links
 
 	fetchErr := db.Where("id = ?", vreelId).First(&vreel).Error
 
@@ -137,13 +134,46 @@ func AddLinkToVreel(vreelId string, newLink model.Link) error {
 	if parseErr != nil {
 		return errors.New("failed to parse")
 	}
-	links = *elements.Links
-	links.Links = append(links.Links, &newLink)
+	newLink.ID = utils.GenerateId()
+	links := elements.SimpleLinks
 
-	elements.Links = &links
+	links = append(links, &newLink)
+
+	elements.SimpleLinks = links
+
 	u, marshalErr := json.Marshal(&elements)
 	if marshalErr == nil {
-		log.Println("Hit!")
+		return db.Model(model.VreelModel{}).Where("id = ?", vreelId).Update("elements", string(u)).Error
+	} else {
+		return marshalErr
+	}
+
+}
+
+func AddSuperLinkToVreel(vreelId string, newLink model.SuperLink) error {
+	var vreel model.VreelModel
+	var elements model.VreelElements
+
+	fetchErr := db.Where("id = ?", vreelId).First(&vreel).Error
+
+	if fetchErr != nil {
+		return e.VREEL_NOT_FOUND
+	}
+
+	parseErr := json.Unmarshal([]byte(vreel.Elements), &elements)
+
+	if parseErr != nil {
+		return errors.New("failed to parse")
+	}
+	newLink.ID = utils.GenerateId()
+	links := elements.SuperLinks
+
+	links = append(links, &newLink)
+
+	elements.SuperLinks = links
+
+	u, marshalErr := json.Marshal(&elements)
+	if marshalErr == nil {
 		return db.Model(model.VreelModel{}).Where("id = ?", vreelId).Update("elements", string(u)).Error
 	} else {
 		return marshalErr

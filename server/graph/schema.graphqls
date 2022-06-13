@@ -170,21 +170,40 @@ type Link {
   category: String!
   link_type: String!
   link_header: String!
+  link_sub_header: String
+  tag: String!
 }
 
-type Links {
-  position: Int!
-  links: [Link]
-  hidden: Boolean
+type SimpleLink {
+  id: String!
+  thumbnail: String!
+  link_header: String!
+  url: String!
+  link_type: String!
+  tag: String!
 }
+type SuperLink {
+  id: String!
+  thumbnail: String!
+  link_header: String!
+  link_sub_header: String!
+  url: String!
+  link_type: String!
+  description: String!
+}
+
+
+
 
 type TextArea {
+  header: String!
   position: Int!
   content: String!
   hidden: Boolean
 }
 
 type Videos {
+  header: String!
   position: Int!
   uri: String!
   tag: String!
@@ -192,6 +211,7 @@ type Videos {
 }
 
 type Gallery {
+  header: String!
   position: Int!
   uris: [String!]
   tag: String!
@@ -209,7 +229,8 @@ type VreelElements {
   gallery: Gallery
   services: Service
   socials: [Socials]
-  links: Links
+  simple_links: [SimpleLink]
+  super_links: [SuperLink]
   contact: Contact
 }
 type Vreel {
@@ -330,15 +351,21 @@ input AnalyticsMutation {
   target: String!
   token: String!
 }
-input LinkInput {
-  position: Int!
+input SimpleLinkInput {
   thumbnail: String!
-  url: String!
-  category: String!
-  link_type: String!
   link_header: String!
+  url: String!
+  link_type: String!
+  tag: String!
 }
-
+input SuperLinkInput {
+  thumbnail: String!
+  link_header: String!
+  link_sub_header: String!
+  url: String!
+  link_type: String!
+  description: String!
+}
 input SocialsInput {
   platform: String!
   username: String!
@@ -389,6 +416,7 @@ type Mutation {
     fileId: String!
   ): MutationResponse!
   deleteFile(token: String!, fileId: String!): MutationResponse!
-  addVreelLink(token: String!, link: LinkInput!): MutationResponse!
+  addSimpleVreelLink(token: String!, link: SimpleLinkInput!): MutationResponse!
+  addSuperVreelLink(token: String!, link: SuperLinkInput): MutationResponse!
   addSocialMediaLink(token: String!, input: SocialsInput! ): MutationResponse!
 }
