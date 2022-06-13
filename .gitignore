@@ -2,4 +2,6 @@
 .env
 pgdata/*
 pgdata1/*
+pgdata1
+pgdata
 docker-compose.*
