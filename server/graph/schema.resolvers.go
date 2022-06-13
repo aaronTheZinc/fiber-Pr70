@@ -142,8 +142,14 @@ func (r *mutationResolver) DeleteFile(ctx context.Context, token string, fileID 
 	return &resp, err
 }
 
-func (r *mutationResolver) AddVreelLink(ctx context.Context, token string, link model.LinkInput) (*model.MutationResponse, error) {
-	resp, err := auth.AuthorizeAddLinkToVreel(token, link.ToLink())
+func (r *mutationResolver) AddSimpleVreelLink(ctx context.Context, token string, link model.SimpleLinkInput) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeAddSimpleLinkToVreel(token, link.ToLink())
+
+	return &resp, err
+}
+
+func (r *mutationResolver) AddSuperVreelLink(ctx context.Context, token string, link *model.SuperLinkInput) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeAddSuperLinkToVreel(token, link.ToLink())
 
 	return &resp, err
 }

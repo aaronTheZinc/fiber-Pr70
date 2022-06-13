@@ -106,6 +106,7 @@ type Files struct {
 }
 
 type Gallery struct {
+	Header   string   `json:"header"`
 	Position int      `json:"position"`
 	Uris     []string `json:"uris"`
 	Tag      string   `json:"tag"`
@@ -127,25 +128,14 @@ type Group struct {
 }
 
 type Link struct {
-	Position   int    `json:"position"`
-	Thumbnail  string `json:"thumbnail"`
-	URL        string `json:"url"`
-	Category   string `json:"category"`
-	LinkType   string `json:"link_type"`
-	LinkHeader string `json:"link_header"`
-}
-
-type LinkInput struct {
-	Thumbnail string `json:"thumbnail"`
-	URI       string `json:"uri"`
-	Position  int    `json:"position"`
-	Category  string `json:"category"`
-}
-
-type Links struct {
-	Position int     `json:"position"`
-	Links    []*Link `json:"links"`
-	Hidden   *bool   `json:"hidden"`
+	Position      int     `json:"position"`
+	Thumbnail     string  `json:"thumbnail"`
+	URL           string  `json:"url"`
+	Category      string  `json:"category"`
+	LinkType      string  `json:"link_type"`
+	LinkHeader    string  `json:"link_header"`
+	LinkSubHeader *string `json:"link_sub_header"`
+	Tag           string  `json:"tag"`
 }
 
 type LocalSession struct {
@@ -233,6 +223,23 @@ type Service struct {
 	Hidden   *bool     `json:"hidden"`
 }
 
+type SimpleLink struct {
+	ID         string `json:"id"`
+	Thumbnail  string `json:"thumbnail"`
+	LinkHeader string `json:"link_header"`
+	URL        string `json:"url"`
+	LinkType   string `json:"link_type"`
+	Tag        string `json:"tag"`
+}
+
+type SimpleLinkInput struct {
+	Thumbnail  string `json:"thumbnail"`
+	LinkHeader string `json:"link_header"`
+	URL        string `json:"url"`
+	LinkType   string `json:"link_type"`
+	Tag        string `json:"tag"`
+}
+
 type Slide struct {
 	ID            string         `json:"id"`
 	Author        string         `json:"author"`
@@ -263,7 +270,27 @@ type SocialsInput struct {
 	Username string `json:"username"`
 }
 
+type SuperLink struct {
+	ID            string `json:"id"`
+	Thumbnail     string `json:"thumbnail"`
+	LinkHeader    string `json:"link_header"`
+	LinkSubHeader string `json:"link_sub_header"`
+	URL           string `json:"url"`
+	LinkType      string `json:"link_type"`
+	Description   string `json:"description"`
+}
+
+type SuperLinkInput struct {
+	Thumbnail     string `json:"thumbnail"`
+	LinkHeader    string `json:"link_header"`
+	LinkSubHeader string `json:"link_sub_header"`
+	URL           string `json:"url"`
+	LinkType      string `json:"link_type"`
+	Description   string `json:"description"`
+}
+
 type TextArea struct {
+	Header   string `json:"header"`
 	Position int    `json:"position"`
 	Content  string `json:"content"`
 	Hidden   *bool  `json:"hidden"`
@@ -305,6 +332,7 @@ type User struct {
 }
 
 type Videos struct {
+	Header   string `json:"header"`
 	Position int    `json:"position"`
 	URI      string `json:"uri"`
 	Tag      string `json:"tag"`
@@ -324,13 +352,14 @@ type Vreel struct {
 }
 
 type VreelElements struct {
-	TextArea *TextArea  `json:"text_area"`
-	Videos   *Videos    `json:"videos"`
-	Gallery  *Gallery   `json:"gallery"`
-	Services *Service   `json:"services"`
-	Socials  []*Socials `json:"socials"`
-	Links    *Links     `json:"links"`
-	Contact  *Contact   `json:"contact"`
+	TextArea    *TextArea     `json:"text_area"`
+	Videos      *Videos       `json:"videos"`
+	Gallery     *Gallery      `json:"gallery"`
+	Services    *Service      `json:"services"`
+	Socials     []*Socials    `json:"socials"`
+	SimpleLinks []*SimpleLink `json:"simple_links"`
+	SuperLinks  []*SuperLink  `json:"super_links"`
+	Contact     *Contact      `json:"contact"`
 }
 
 type VreelFields struct {

@@ -71,13 +71,11 @@ func CreateNewUser(newUser model.NewUser) (model.User, error) {
 		err = usernameCheckError
 	}
 	if !isRegisted && !usernameIsRegistered {
-		fmt.Println("running!")
 		hashedPw, hashErr := HashPassword(*newUser.Password)
 		if hashErr != nil {
 			return model.User{}, hashErr
 		}
 		u, oerr := database.CreateUser(newUser, utils.GenerateId(), hashedPw)
-		fmt.Printf("enterprise uid: %s", u.ID)
 		s, _ := database.CreateSlide(u.ID)
 		cErr := database.CreateNewVreel(u.ID)
 		if cErr == nil {

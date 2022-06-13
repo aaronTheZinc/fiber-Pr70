@@ -401,12 +401,23 @@ func (c *SlideModel) ToSlide() Slide {
 	}
 }
 
-func (c *LinkInput) ToLink() Link {
-	return Link{
-		Thumbnail: c.Thumbnail,
-		Category:  c.Category,
-		Position:  c.Position,
-		URL:       c.URI,
+func (c *SimpleLinkInput) ToLink() SimpleLink {
+	return SimpleLink{
+		Thumbnail:  c.Thumbnail,
+		LinkHeader: c.LinkHeader,
+		LinkType:   c.LinkType,
+		URL:        c.URL,
+		Tag:        c.Tag,
+	}
+}
+func (c *SuperLinkInput) ToLink() SuperLink {
+	return SuperLink{
+		Thumbnail:     c.Thumbnail,
+		URL:           c.URL,
+		LinkHeader:    c.LinkHeader,
+		LinkSubHeader: c.LinkSubHeader,
+		LinkType:      c.LinkType,
+		Description:   c.Description,
 	}
 }
 

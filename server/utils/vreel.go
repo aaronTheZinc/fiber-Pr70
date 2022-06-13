@@ -31,11 +31,6 @@ func GetDefaultElementsString() (string, error) {
 		Header:   textArea.Content,
 		Hidden:   &f,
 	}
-	links := model.Links{
-		Position: 5,
-		Links:    []*model.Link{},
-		Hidden:   &f,
-	}
 	contact := model.Contact{
 		Position: 6,
 		Header:   emptyString,
@@ -43,12 +38,13 @@ func GetDefaultElementsString() (string, error) {
 	}
 
 	elements := model.VreelElements{
-		TextArea: &textArea,
-		Videos:   &videos,
-		Gallery:  &gallery,
-		Services: &services,
-		Links:    &links,
-		Contact:  &contact,
+		TextArea:    &textArea,
+		Videos:      &videos,
+		Gallery:     &gallery,
+		Services:    &services,
+		SimpleLinks: []*model.SimpleLink{},
+		SuperLinks:  []*model.SuperLink{},
+		Contact:     &contact,
 	}
 
 	o, err := json.Marshal(elements)

@@ -36,14 +36,32 @@ func AuthorizeAddSocialsLink(token string, input model.SocialsInput) (model.Muta
 	return resp, err
 }
 
-func AuthorizeAddLinkToVreel(token string, link model.Link) (model.MutationResponse, error) {
+func AuthorizeAddSimpleLinkToVreel(token string, link model.SimpleLink) (model.MutationResponse, error) {
 	var err error
 	var resp model.MutationResponse
 	claims, isAuth, parseErr := ParseToken(token)
 	userId := claims.ID
 
 	if isAuth && parseErr == nil {
-		linkAddErr := database.AddLinkToVreel(userId, link)
+		linkAddErr := database.AddSimpleLinkToVreel(userId, link)
+		if linkAddErr != nil {
+			err = errors.New("fialed to add link")
+		}
+	} else {
+		return resp, e.UNAUTHORIZED_ERROR
+	}
+
+	return resp, err
+}
+
+func AuthorizeAddSuperLinkToVreel(token string, link model.SuperLink) (model.MutationResponse, error) {
+	var err error
+	var resp model.MutationResponse
+	claims, isAuth, parseErr := ParseToken(token)
+	userId := claims.ID
+
+	if isAuth && parseErr == nil {
+		linkAddErr := database.AddSuperLinkToVreel(userId, link)
 		if linkAddErr != nil {
 			err = errors.New("fialed to add link")
 		}

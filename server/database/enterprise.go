@@ -20,7 +20,7 @@ func GetEnterprise(id string) (model.Enterprise, error) {
 	}
 	employees, _ := GetEnterpriseEmployees(id)
 
-	if vreel, get_err := GetVreel(id); get_err != nil {
+	if vreel, get_err := GetVreel(enterprise.Owner); get_err != nil {
 		err = e.VREEL_NOT_FOUND
 	} else {
 		r := enterprise.ToEnterprise(employees)
@@ -82,7 +82,7 @@ func GetEnterpriseByName(name string) (model.Enterprise, error) {
 	}
 	employees, _ := GetEnterpriseEmployees(enterprise.ID)
 
-	if vreel, get_err := GetVreel(enterprise.ID); get_err != nil {
+	if vreel, get_err := GetVreel(enterprise.Owner); get_err != nil {
 		err = e.VREEL_NOT_FOUND
 	} else {
 		r := enterprise.ToEnterprise(employees)
