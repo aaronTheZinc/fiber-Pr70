@@ -138,9 +138,14 @@ type ComplexityRoot struct {
 	Gallery struct {
 		Header   func(childComplexity int) int
 		Hidden   func(childComplexity int) int
+		Images   func(childComplexity int) int
 		Position func(childComplexity int) int
-		Tag      func(childComplexity int) int
-		Uris     func(childComplexity int) int
+	}
+
+	GalleryImage struct {
+		ID       func(childComplexity int) int
+		Position func(childComplexity int) int
+		URL      func(childComplexity int) int
 	}
 
 	Group struct {
@@ -174,6 +179,7 @@ type ComplexityRoot struct {
 
 	Mutation struct {
 		AddEmployeeToEnterprise           func(childComplexity int, token string, newUser model.NewUser) int
+		AddImageToVreelGallery            func(childComplexity int, token string, input model.AddGalleryImageInput) int
 		AddSimpleVreelLink                func(childComplexity int, token string, link model.SimpleLinkInput) int
 		AddSocialMediaLink                func(childComplexity int, token string, input model.SocialsInput) int
 		AddSuperVreelLink                 func(childComplexity int, token string, link *model.SuperLinkInput) int
@@ -190,6 +196,7 @@ type ComplexityRoot struct {
 		LikeSlide                         func(childComplexity int, input model.AnalyticsMutation) int
 		LogPageLoad                       func(childComplexity int, vreelID string) int
 		Register                          func(childComplexity int, input model.NewUser) int
+		RemoveImageFromVreelGallery       func(childComplexity int, token string, imageID string) int
 		RemoveSlide                       func(childComplexity int, token string, slideID *string) int
 		RemoveUser                        func(childComplexity int, id string) int
 		RemoveUserFromGroup               func(childComplexity int, token string, groupID string, member string) int
@@ -390,10 +397,12 @@ type MutationResolver interface {
 	UnFollow(ctx context.Context, input model.AnalyticsMutation) (*model.MutationResponse, error)
 	LogPageLoad(ctx context.Context, vreelID string) (*model.MutationResponse, error)
 	EditFileName(ctx context.Context, token string, newName string, fileID string) (*model.MutationResponse, error)
+	RemoveImageFromVreelGallery(ctx context.Context, token string, imageID string) (*model.MutationResponse, error)
 	DeleteFile(ctx context.Context, token string, fileID string) (*model.MutationResponse, error)
 	AddSimpleVreelLink(ctx context.Context, token string, link model.SimpleLinkInput) (*model.MutationResponse, error)
 	AddSuperVreelLink(ctx context.Context, token string, link *model.SuperLinkInput) (*model.MutationResponse, error)
 	AddSocialMediaLink(ctx context.Context, token string, input model.SocialsInput) (*model.MutationResponse, error)
+	AddImageToVreelGallery(ctx context.Context, token string, input model.AddGalleryImageInput) (*model.MutationResponse, error)
 }
 type QueryResolver interface {
 	User(ctx context.Context, id *string) (*model.User, error)
@@ -853,6 +862,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Gallery.Hidden(childComplexity), true
 
+	case "Gallery.images":
+		if e.complexity.Gallery.Images == nil {
+			break
+		}
+
+		return e.complexity.Gallery.Images(childComplexity), true
+
 	case "Gallery.position":
 		if e.complexity.Gallery.Position == nil {
 			break
@@ -860,19 +876,26 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Gallery.Position(childComplexity), true
 
-	case "Gallery.tag":
-		if e.complexity.Gallery.Tag == nil {
+	case "GalleryImage.id":
+		if e.complexity.GalleryImage.ID == nil {
 			break
 		}
 
-		return e.complexity.Gallery.Tag(childComplexity), true
+		return e.complexity.GalleryImage.ID(childComplexity), true
 
-	case "Gallery.uris":
-		if e.complexity.Gallery.Uris == nil {
+	case "GalleryImage.position":
+		if e.complexity.GalleryImage.Position == nil {
 			break
 		}
 
-		return e.complexity.Gallery.Uris(childComplexity), true
+		return e.complexity.GalleryImage.Position(childComplexity), true
+
+	case "GalleryImage.url":
+		if e.complexity.GalleryImage.URL == nil {
+			break
+		}
+
+		return e.complexity.GalleryImage.URL(childComplexity), true
 
 	case "Group.author":
 		if e.complexity.Group.Author == nil {
@@ -1025,6 +1048,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.AddEmployeeToEnterprise(childComplexity, args["token"].(string), args["newUser"].(model.NewUser)), true
+
+	case "Mutation.addImageToVreelGallery":
+		if e.complexity.Mutation.AddImageToVreelGallery == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_addImageToVreelGallery_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.AddImageToVreelGallery(childComplexity, args["token"].(string), args["input"].(model.AddGalleryImageInput)), true
 
 	case "Mutation.addSimpleVreelLink":
 		if e.complexity.Mutation.AddSimpleVreelLink == nil {
@@ -1217,6 +1252,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.Register(childComplexity, args["input"].(model.NewUser)), true
+
+	case "Mutation.removeImageFromVreelGallery":
+		if e.complexity.Mutation.RemoveImageFromVreelGallery == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_removeImageFromVreelGallery_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.RemoveImageFromVreelGallery(childComplexity, args["token"].(string), args["imageId"].(string)), true
 
 	case "Mutation.removeSlide":
 		if e.complexity.Mutation.RemoveSlide == nil {
@@ -2458,11 +2505,16 @@ type Videos {
   hidden: Boolean
 }
 
+type GalleryImage {
+  id: String!
+  url: String!
+  position: Int!
+}
+
 type Gallery {
   header: String!
   position: Int!
-  uris: [String!]
-  tag: String!
+  images: [GalleryImage!]!
   hidden: Boolean
 }
 
@@ -2619,6 +2671,11 @@ input SocialsInput {
   username: String!
 }
 
+input AddGalleryImageInput {
+  imageUrl: String!
+  position: Int!
+}
+
 type Mutation {
   register(input: NewUser!): User!
   createEvent(token: String!, input: NewEvent!): Event!
@@ -2663,10 +2720,12 @@ type Mutation {
     newName: String!
     fileId: String!
   ): MutationResponse!
+  removeImageFromVreelGallery(token: String!, imageId: String!): MutationResponse!
   deleteFile(token: String!, fileId: String!): MutationResponse!
   addSimpleVreelLink(token: String!, link: SimpleLinkInput!): MutationResponse!
   addSuperVreelLink(token: String!, link: SuperLinkInput): MutationResponse!
   addSocialMediaLink(token: String!, input: SocialsInput! ): MutationResponse!
+  addImageToVreelGallery(token: String!, input: AddGalleryImageInput!): MutationResponse!
 }
 `, BuiltIn: false},
 }
@@ -2697,6 +2756,30 @@ func (ec *executionContext) field_Mutation_addEmployeeToEnterprise_args(ctx cont
 		}
 	}
 	args["newUser"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_addImageToVreelGallery_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["token"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("token"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["token"] = arg0
+	var arg1 model.AddGalleryImageInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg1, err = ec.unmarshalNAddGalleryImageInput2githubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐAddGalleryImageInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg1
 	return args, nil
 }
 
@@ -3027,6 +3110,30 @@ func (ec *executionContext) field_Mutation_register_args(ctx context.Context, ra
 		}
 	}
 	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_removeImageFromVreelGallery_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["token"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("token"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["token"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["imageId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("imageId"))
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["imageId"] = arg1
 	return args, nil
 }
 
@@ -5629,7 +5736,7 @@ func (ec *executionContext) _Gallery_position(ctx context.Context, field graphql
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Gallery_uris(ctx context.Context, field graphql.CollectedField, obj *model.Gallery) (ret graphql.Marshaler) {
+func (ec *executionContext) _Gallery_images(ctx context.Context, field graphql.CollectedField, obj *model.Gallery) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -5647,39 +5754,7 @@ func (ec *executionContext) _Gallery_uris(ctx context.Context, field graphql.Col
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Uris, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]string)
-	fc.Result = res
-	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Gallery_tag(ctx context.Context, field graphql.CollectedField, obj *model.Gallery) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Gallery",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Tag, nil
+		return obj.Images, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -5691,9 +5766,9 @@ func (ec *executionContext) _Gallery_tag(ctx context.Context, field graphql.Coll
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.([]*model.GalleryImage)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalNGalleryImage2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐGalleryImageᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Gallery_hidden(ctx context.Context, field graphql.CollectedField, obj *model.Gallery) (ret graphql.Marshaler) {
@@ -5726,6 +5801,111 @@ func (ec *executionContext) _Gallery_hidden(ctx context.Context, field graphql.C
 	res := resTmp.(*bool)
 	fc.Result = res
 	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _GalleryImage_id(ctx context.Context, field graphql.CollectedField, obj *model.GalleryImage) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "GalleryImage",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _GalleryImage_url(ctx context.Context, field graphql.CollectedField, obj *model.GalleryImage) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "GalleryImage",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.URL, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _GalleryImage_position(ctx context.Context, field graphql.CollectedField, obj *model.GalleryImage) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "GalleryImage",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Position, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Group_id(ctx context.Context, field graphql.CollectedField, obj *model.Group) (ret graphql.Marshaler) {
@@ -7379,6 +7559,48 @@ func (ec *executionContext) _Mutation_editFileName(ctx context.Context, field gr
 	return ec.marshalNMutationResponse2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐMutationResponse(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Mutation_removeImageFromVreelGallery(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_removeImageFromVreelGallery_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().RemoveImageFromVreelGallery(rctx, args["token"].(string), args["imageId"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.MutationResponse)
+	fc.Result = res
+	return ec.marshalNMutationResponse2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐMutationResponse(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Mutation_deleteFile(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -7531,6 +7753,48 @@ func (ec *executionContext) _Mutation_addSocialMediaLink(ctx context.Context, fi
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return ec.resolvers.Mutation().AddSocialMediaLink(rctx, args["token"].(string), args["input"].(model.SocialsInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.MutationResponse)
+	fc.Result = res
+	return ec.marshalNMutationResponse2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐMutationResponse(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_addImageToVreelGallery(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_addImageToVreelGallery_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().AddImageToVreelGallery(rctx, args["token"].(string), args["input"].(model.AddGalleryImageInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -12678,6 +12942,37 @@ func (ec *executionContext) ___Type_ofType(ctx context.Context, field graphql.Co
 
 // region    **************************** input.gotpl *****************************
 
+func (ec *executionContext) unmarshalInputAddGalleryImageInput(ctx context.Context, obj interface{}) (model.AddGalleryImageInput, error) {
+	var it model.AddGalleryImageInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "imageUrl":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("imageUrl"))
+			it.ImageURL, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "position":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("position"))
+			it.Position, err = ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputAnalyticsMutation(ctx context.Context, obj interface{}) (model.AnalyticsMutation, error) {
 	var it model.AnalyticsMutation
 	asMap := map[string]interface{}{}
@@ -13821,15 +14116,50 @@ func (ec *executionContext) _Gallery(ctx context.Context, sel ast.SelectionSet, 
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "uris":
-			out.Values[i] = ec._Gallery_uris(ctx, field, obj)
-		case "tag":
-			out.Values[i] = ec._Gallery_tag(ctx, field, obj)
+		case "images":
+			out.Values[i] = ec._Gallery_images(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
 		case "hidden":
 			out.Values[i] = ec._Gallery_hidden(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var galleryImageImplementors = []string{"GalleryImage"}
+
+func (ec *executionContext) _GalleryImage(ctx context.Context, sel ast.SelectionSet, obj *model.GalleryImage) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, galleryImageImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("GalleryImage")
+		case "id":
+			out.Values[i] = ec._GalleryImage_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "url":
+			out.Values[i] = ec._GalleryImage_url(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "position":
+			out.Values[i] = ec._GalleryImage_position(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -14122,6 +14452,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "removeImageFromVreelGallery":
+			out.Values[i] = ec._Mutation_removeImageFromVreelGallery(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "deleteFile":
 			out.Values[i] = ec._Mutation_deleteFile(ctx, field)
 			if out.Values[i] == graphql.Null {
@@ -14139,6 +14474,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			}
 		case "addSocialMediaLink":
 			out.Values[i] = ec._Mutation_addSocialMediaLink(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "addImageToVreelGallery":
+			out.Values[i] = ec._Mutation_addImageToVreelGallery(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -15396,6 +15736,11 @@ func (ec *executionContext) ___Type(ctx context.Context, sel ast.SelectionSet, o
 
 // region    ***************************** type.gotpl *****************************
 
+func (ec *executionContext) unmarshalNAddGalleryImageInput2githubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐAddGalleryImageInput(ctx context.Context, v interface{}) (model.AddGalleryImageInput, error) {
+	res, err := ec.unmarshalInputAddGalleryImageInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) marshalNAnalyticFragment2githubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐAnalyticFragment(ctx context.Context, sel ast.SelectionSet, v model.AnalyticFragment) graphql.Marshaler {
 	return ec._AnalyticFragment(ctx, sel, &v)
 }
@@ -15606,6 +15951,60 @@ func (ec *executionContext) marshalNFiles2ᚖgithubᚗcomᚋvreelᚋappᚋgraph�
 		return graphql.Null
 	}
 	return ec._Files(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNGalleryImage2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐGalleryImageᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.GalleryImage) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNGalleryImage2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐGalleryImage(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNGalleryImage2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐGalleryImage(ctx context.Context, sel ast.SelectionSet, v *model.GalleryImage) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._GalleryImage(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNGroup2githubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐGroup(ctx context.Context, sel ast.SelectionSet, v model.Group) graphql.Marshaler {

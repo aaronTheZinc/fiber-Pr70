@@ -40,7 +40,7 @@ const EDIT_EMPLOYEE = gql`
 const endpoint = 'https://staging.vreel.page/graphql'
 const ENTERPRISE_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNhZmIwb3EyM2FrajlnNHFrMTlnIiwiYWNjb3VudF90eXBlIjoiZW50ZXJwcmlzZSIsImV4cCI6MTY1NTE3MTg1OH0.ZoAaz8VABQfPsAIv0kenL-LMWU9XrdkYF97HGdQn4Gg";
 
-const client = new GraphQLClient(endpoint, {
+exports.client = new GraphQLClient(endpoint, {
   headers: {
     authorization: 'Bearer MY_TOKEN',
   },

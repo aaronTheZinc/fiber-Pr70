@@ -210,11 +210,16 @@ type Videos {
   hidden: Boolean
 }
 
+type GalleryImage {
+  id: String!
+  url: String!
+  position: Int!
+}
+
 type Gallery {
   header: String!
   position: Int!
-  uris: [String!]
-  tag: String!
+  images: [GalleryImage!]!
   hidden: Boolean
 }
 
@@ -371,6 +376,11 @@ input SocialsInput {
   username: String!
 }
 
+input AddGalleryImageInput {
+  imageUrl: String!
+  position: Int!
+}
+
 type Mutation {
   register(input: NewUser!): User!
   createEvent(token: String!, input: NewEvent!): Event!
@@ -415,8 +425,10 @@ type Mutation {
     newName: String!
     fileId: String!
   ): MutationResponse!
+  removeImageFromVreelGallery(token: String!, imageId: String!): MutationResponse!
   deleteFile(token: String!, fileId: String!): MutationResponse!
   addSimpleVreelLink(token: String!, link: SimpleLinkInput!): MutationResponse!
   addSuperVreelLink(token: String!, link: SuperLinkInput): MutationResponse!
   addSocialMediaLink(token: String!, input: SocialsInput! ): MutationResponse!
+  addImageToVreelGallery(token: String!, input: AddGalleryImageInput!): MutationResponse!
 }

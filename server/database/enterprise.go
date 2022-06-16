@@ -39,7 +39,6 @@ func GetEnterpiseByOwner(owner string) (model.Enterprise, error) {
 	var enterprise model.Enterprise
 
 	if getErr := db.Where("owner = ?", owner).First(&enterprise_m).Error; getErr == nil {
-		log.Println("here ->", enterprise_m.ID, owner)
 		if e, err_ := GetEnterprise(enterprise_m.ID); err_ == nil {
 			enterprise = e
 		} else {

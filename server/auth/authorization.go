@@ -13,6 +13,50 @@ import (
 	"github.com/vreel/app/utils"
 )
 
+func AuthorizeAddImageToGallery(token string, input model.AddGalleryImageInput) (model.MutationResponse, error) {
+	var err error
+	var resp model.MutationResponse
+	claims, isAuth, parseErr := ParseToken(token)
+	userId := claims.ID
+
+	if isAuth && parseErr == nil {
+		if updateErr := database.AddImageToVreelGallery(userId, input); updateErr != nil {
+			err = updateErr
+		} else {
+			resp = model.MutationResponse{
+				Succeeded: true,
+				Message:   "successfully added image: " + input.ImageURL + " to gallery.",
+			}
+		}
+	} else {
+		err = e.UNAUTHORIZED_ERROR
+	}
+
+	return resp, err
+}
+func AuthorizeRemoveImageFromGallery(token, imageId string) (model.MutationResponse, error) {
+	var err error
+	var resp model.MutationResponse
+	claims, isAuth, parseErr := ParseToken(token)
+	userId := claims.ID
+
+	if isAuth && parseErr == nil {
+		if updateErr := database.RemoveImageFromGallery(userId, imageId); updateErr != nil {
+			err = updateErr
+		} else {
+			resp = model.MutationResponse{
+				Succeeded: true,
+				Message:   "successfully removed image: " + imageId + " to gallery.",
+			}
+		}
+
+	} else {
+		err = e.UNAUTHORIZED_ERROR
+	}
+
+	return resp, err
+}
+
 func AuthorizeAddSocialsLink(token string, input model.SocialsInput) (model.MutationResponse, error) {
 	var err error
 	var resp model.MutationResponse

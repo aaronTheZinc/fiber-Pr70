@@ -210,3 +210,70 @@ func AddSocialsLink(vreelId string, input model.SocialsInput) error {
 		return marshalErr
 	}
 }
+
+func AddImageToVreelGallery(vreelId string, input model.AddGalleryImageInput) error {
+	var vreel model.VreelModel
+	var err error
+	var elements model.VreelElements
+	if fetchErr := db.Where("id = ?", vreelId).First(&vreel).Error; fetchErr == nil {
+		parseErr := json.Unmarshal([]byte(vreel.Elements), &elements)
+		if parseErr != nil {
+			return parseErr
+		}
+		galleryImages := elements.Gallery
+		galleryImages.Images = append(galleryImages.Images, &model.GalleryImage{
+			ID:       utils.GenerateId(),
+			Position: input.Position,
+			URL:      input.ImageURL,
+		})
+
+		elements.Gallery = galleryImages
+
+		v, marshalErr := json.Marshal(&elements)
+
+		if marshalErr != nil {
+			return marshalErr
+		} else {
+			return db.Model(model.VreelModel{}).Where("id = ?", vreelId).Update("elements", string(v)).Error
+		}
+
+	}
+
+	return err
+}
+
+func RemoveImageFromGallery(vreelId string, imageId string) error {
+	var vreel model.VreelModel
+	var err error
+	var elements model.VreelElements
+	if fetchErr := db.Where("id = ?", vreelId).First(&vreel).Error; fetchErr == nil {
+		parseErr := json.Unmarshal([]byte(vreel.Elements), &elements)
+		if parseErr != nil {
+			return parseErr
+		}
+
+		images := elements.Gallery.Images
+		imgWasFound := false
+
+		for idx, image := range images {
+			if image.ID == imageId {
+				imgWasFound = true
+				images = append(images[:idx], images[idx+1:]...)
+				break
+			}
+		}
+		if !imgWasFound {
+			err = errors.New("gallery image: " + imageId + " not found")
+		} else {
+			elements.Gallery.Images = images
+			v, marshalErr := json.Marshal(&elements)
+			if marshalErr == nil {
+				return db.Model(model.VreelModel{}).Where("id = ?", vreelId).Update("elements", string(v)).Error
+			} else {
+				return marshalErr
+			}
+		}
+	}
+
+	return err
+}

@@ -22,8 +22,7 @@ func GetDefaultElementsString() (string, error) {
 	}
 	gallery := model.Gallery{
 		Position: 3,
-		Uris:     []string{},
-		Tag:      emptyString,
+		Images:   []*model.GalleryImage{},
 		Hidden:   &f,
 	}
 	services := model.Service{

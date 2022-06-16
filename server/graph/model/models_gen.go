@@ -2,6 +2,11 @@
 
 package model
 
+type AddGalleryImageInput struct {
+	ImageURL string `json:"imageUrl"`
+	Position int    `json:"position"`
+}
+
 type Advanced struct {
 	Info     string  `json:"info"`
 	Header   string  `json:"header"`
@@ -106,11 +111,16 @@ type Files struct {
 }
 
 type Gallery struct {
-	Header   string   `json:"header"`
-	Position int      `json:"position"`
-	Uris     []string `json:"uris"`
-	Tag      string   `json:"tag"`
-	Hidden   *bool    `json:"hidden"`
+	Header   string          `json:"header"`
+	Position int             `json:"position"`
+	Images   []*GalleryImage `json:"images"`
+	Hidden   *bool           `json:"hidden"`
+}
+
+type GalleryImage struct {
+	ID       string `json:"id"`
+	URL      string `json:"url"`
+	Position int    `json:"position"`
 }
 
 type Group struct {
