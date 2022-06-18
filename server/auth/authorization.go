@@ -555,10 +555,12 @@ func AuthorizeSlideLike(slideId string, token string) (model.MutationResponse, e
 					err = likeCreationErr
 				} else {
 					r.Message = "Liked Fragment Id: " + f.ID
+					r.Succeeded = true
 				}
 
 			} else {
 				r.Message = "Has Been Liked By Author."
+				r.Succeeded = false
 			}
 		} else {
 			err = e.SLIDE_NOT_FOUND
@@ -595,14 +597,20 @@ func AuthorizeFollowVreel(vreelId, token string) (model.MutationResponse, error)
 	userId := claims.ID
 	log.Println("-->", userId)
 	if isAuth && parseErr == nil {
-		if isLiked, isLikedErr := database.HasBeenFollowedByAuthor(userId, vreelId); !isLiked && isLikedErr == nil {
+		if isFollow, isFollowErr := database.HasBeenFollowedByAuthor(userId, vreelId); !isFollow && isFollowErr == nil {
 			_, likeCreationErr := database.CreateFollow(userId, vreelId)
 			database.AddFollowingToUser(userId, vreelId)
 			if likeCreationErr != nil {
 				err = likeCreationErr
+			} else {
+				r = model.MutationResponse{
+					Succeeded: true,
+					Message:   "follow succeeded on: " + vreelId,
+				}
 			}
-		} else if isLikedErr != nil {
-			err = isLikedErr
+
+		} else if isFollowErr != nil {
+			err = isFollowErr
 		} else {
 			r = model.MutationResponse{
 				Message:   "Already Followed By Author",

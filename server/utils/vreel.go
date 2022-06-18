@@ -36,13 +36,13 @@ func GetDefaultElementsString() (string, error) {
 	}
 
 	elements := model.VreelElements{
-		TextArea:    &textArea,
-		Videos:      &videos,
-		Gallery:     &gallery,
-		Services:    &services,
-		SimpleLinks: []*model.SimpleLink{},
-		SuperLinks:  []*model.SuperLink{},
-		Contact:     &contact,
+		TextArea: &textArea,
+		Videos:   &videos,
+		Gallery:  &gallery,
+		Services: &services,
+		// SimpleLinks: []*model.SimpleLink{},
+		SuperLinks: []*model.SuperLink{},
+		Contact:    &contact,
 	}
 
 	o, err := json.Marshal(elements)
