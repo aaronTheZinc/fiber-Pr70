@@ -13,6 +13,52 @@ import (
 	"github.com/vreel/app/utils"
 )
 
+func AuthorizeAddContributionLinkToVreel(token string, input model.ContributionsInput) (model.MutationResponse, error) {
+	var err error
+	var resp model.MutationResponse
+	claims, isAuth, parseErr := ParseToken(token)
+	userId := claims.ID
+
+	if isAuth && parseErr == nil {
+		updateErr := database.AddContributionLink(userId, input)
+		if updateErr != nil {
+			err = updateErr
+		} else {
+			resp = model.MutationResponse{
+				Succeeded: true,
+				Message:   "successfully created contribution: " + input.Platform,
+			}
+		}
+	} else {
+		err = e.UNAUTHORIZED_ERROR
+	}
+
+	return resp, err
+}
+
+func AuthorizeRemoveContributionLinkFromVreel(token, contributionLinkId string) (model.MutationResponse, error) {
+	var err error
+	var resp model.MutationResponse
+	claims, isAuth, parseErr := ParseToken(token)
+	userId := claims.ID
+
+	if isAuth && parseErr == nil {
+		updateErr := database.RemoveContributionLink(userId, contributionLinkId)
+		if updateErr != nil {
+			err = updateErr
+		} else {
+			resp = model.MutationResponse{
+				Succeeded: true,
+				Message:   "successfully removed contribution: " + contributionLinkId,
+			}
+		}
+	} else {
+		err = e.UNAUTHORIZED_ERROR
+	}
+
+	return resp, err
+}
+
 func AuthorizeRemoveVideoFromVreel(token, videoId string) (model.MutationResponse, error) {
 	var err error
 	var resp model.MutationResponse

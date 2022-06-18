@@ -94,6 +94,17 @@ type ComplexityRoot struct {
 		URI                func(childComplexity int) int
 	}
 
+	Contribution struct {
+		ID       func(childComplexity int) int
+		Link     func(childComplexity int) int
+		Platform func(childComplexity int) int
+	}
+
+	ContributionsElement struct {
+		Contributions func(childComplexity int) int
+		Header        func(childComplexity int) int
+	}
+
 	Enterprise struct {
 		Email     func(childComplexity int) int
 		Employees func(childComplexity int) int
@@ -188,6 +199,7 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
+		AddContributionLink               func(childComplexity int, token string, input model.ContributionsInput) int
 		AddEmployeeToEnterprise           func(childComplexity int, token string, newUser model.NewUser) int
 		AddImageToVreelGallery            func(childComplexity int, token string, input model.AddGalleryImageInput) int
 		AddSimpleVreelLink                func(childComplexity int, token string, link model.SimpleLinkInput) int
@@ -207,6 +219,7 @@ type ComplexityRoot struct {
 		LikeSlide                         func(childComplexity int, input model.AnalyticsMutation) int
 		LogPageLoad                       func(childComplexity int, vreelID string) int
 		Register                          func(childComplexity int, input model.NewUser) int
+		RemoveContributionLink            func(childComplexity int, token string, linkID string) int
 		RemoveImageFromVreelGallery       func(childComplexity int, token string, imageID string) int
 		RemoveSlide                       func(childComplexity int, token string, slideID *string) int
 		RemoveUser                        func(childComplexity int, id string) int
@@ -306,6 +319,11 @@ type ComplexityRoot struct {
 		Username func(childComplexity int) int
 	}
 
+	SocialsElement struct {
+		Header  func(childComplexity int) int
+		Socials func(childComplexity int) int
+	}
+
 	SuperLink struct {
 		Description   func(childComplexity int) int
 		ID            func(childComplexity int) int
@@ -388,14 +406,15 @@ type ComplexityRoot struct {
 	}
 
 	VreelElements struct {
-		Contact     func(childComplexity int) int
-		Gallery     func(childComplexity int) int
-		Services    func(childComplexity int) int
-		SimpleLinks func(childComplexity int) int
-		Socials     func(childComplexity int) int
-		SuperLinks  func(childComplexity int) int
-		TextArea    func(childComplexity int) int
-		Videos      func(childComplexity int) int
+		Contact       func(childComplexity int) int
+		Contributions func(childComplexity int) int
+		Gallery       func(childComplexity int) int
+		Services      func(childComplexity int) int
+		SimpleLinks   func(childComplexity int) int
+		Socials       func(childComplexity int) int
+		SuperLinks    func(childComplexity int) int
+		TextArea      func(childComplexity int) int
+		Videos        func(childComplexity int) int
 	}
 }
 
@@ -429,6 +448,8 @@ type MutationResolver interface {
 	AddSuperVreelLink(ctx context.Context, token string, link *model.SuperLinkInput) (*model.MutationResponse, error)
 	AddSocialMediaLink(ctx context.Context, token string, input model.SocialsInput) (*model.MutationResponse, error)
 	AddImageToVreelGallery(ctx context.Context, token string, input model.AddGalleryImageInput) (*model.MutationResponse, error)
+	AddContributionLink(ctx context.Context, token string, input model.ContributionsInput) (*model.MutationResponse, error)
+	RemoveContributionLink(ctx context.Context, token string, linkID string) (*model.MutationResponse, error)
 	AddVideoToVreel(ctx context.Context, token string, input model.AddVideoInput) (*model.MutationResponse, error)
 	RemoveVideoFromVreel(ctx context.Context, token string, videoID string) (*model.MutationResponse, error)
 }
@@ -693,6 +714,41 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Content.URI(childComplexity), true
+
+	case "Contribution.id":
+		if e.complexity.Contribution.ID == nil {
+			break
+		}
+
+		return e.complexity.Contribution.ID(childComplexity), true
+
+	case "Contribution.link":
+		if e.complexity.Contribution.Link == nil {
+			break
+		}
+
+		return e.complexity.Contribution.Link(childComplexity), true
+
+	case "Contribution.platform":
+		if e.complexity.Contribution.Platform == nil {
+			break
+		}
+
+		return e.complexity.Contribution.Platform(childComplexity), true
+
+	case "ContributionsElement.contributions":
+		if e.complexity.ContributionsElement.Contributions == nil {
+			break
+		}
+
+		return e.complexity.ContributionsElement.Contributions(childComplexity), true
+
+	case "ContributionsElement.header":
+		if e.complexity.ContributionsElement.Header == nil {
+			break
+		}
+
+		return e.complexity.ContributionsElement.Header(childComplexity), true
 
 	case "Enterprise.email":
 		if e.complexity.Enterprise.Email == nil {
@@ -1114,6 +1170,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.LocalSession.Token(childComplexity), true
 
+	case "Mutation.addContributionLink":
+		if e.complexity.Mutation.AddContributionLink == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_addContributionLink_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.AddContributionLink(childComplexity, args["token"].(string), args["input"].(model.ContributionsInput)), true
+
 	case "Mutation.addEmployeeToEnterprise":
 		if e.complexity.Mutation.AddEmployeeToEnterprise == nil {
 			break
@@ -1341,6 +1409,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.Register(childComplexity, args["input"].(model.NewUser)), true
+
+	case "Mutation.removeContributionLink":
+		if e.complexity.Mutation.RemoveContributionLink == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_removeContributionLink_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.RemoveContributionLink(childComplexity, args["token"].(string), args["linkId"].(string)), true
 
 	case "Mutation.removeImageFromVreelGallery":
 		if e.complexity.Mutation.RemoveImageFromVreelGallery == nil {
@@ -1910,6 +1990,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Socials.Username(childComplexity), true
 
+	case "SocialsElement.header":
+		if e.complexity.SocialsElement.Header == nil {
+			break
+		}
+
+		return e.complexity.SocialsElement.Header(childComplexity), true
+
+	case "SocialsElement.socials":
+		if e.complexity.SocialsElement.Socials == nil {
+			break
+		}
+
+		return e.complexity.SocialsElement.Socials(childComplexity), true
+
 	case "SuperLink.description":
 		if e.complexity.SuperLink.Description == nil {
 			break
@@ -2337,6 +2431,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.VreelElements.Contact(childComplexity), true
 
+	case "VreelElements.contributions":
+		if e.complexity.VreelElements.Contributions == nil {
+			break
+		}
+
+		return e.complexity.VreelElements.Contributions(childComplexity), true
+
 	case "VreelElements.gallery":
 		if e.complexity.VreelElements.Gallery == nil {
 			break
@@ -2696,6 +2797,22 @@ type Socials {
   username: String!
 }
 
+type SocialsElement {
+  header: String!
+  socials: [Socials]!
+}
+
+type Contribution {
+  id: String!
+  platform: String!
+  link: String!
+}
+
+type ContributionsElement {
+  header: String!
+  contributions: [Contribution!]!
+}
+
 type SimpleLinksElement {
   header: String!
   links: [SimpleLink!]!
@@ -2706,10 +2823,11 @@ type VreelElements {
   videos: Videos
   gallery: Gallery
   services: Service
-  socials: [Socials]
+  socials: SocialsElement
   simple_links: SimpleLinksElement
   super_links: [SuperLink]
   contact: Contact
+  contributions: ContributionsElement
 }
 type Vreel {
   author: String!
@@ -2849,6 +2967,11 @@ input SocialsInput {
   username: String!
 }
 
+input ContributionsInput {
+  platform: String!
+  link: String!
+}
+
 input AddGalleryImageInput {
   imageUrl: String!
   position: Int!
@@ -2933,6 +3056,11 @@ type Mutation {
     token: String!
     input: AddGalleryImageInput!
   ): MutationResponse!
+  addContributionLink(
+    token: String!
+    input: ContributionsInput!
+  ): MutationResponse!
+  removeContributionLink(token: String!, linkId: String!): MutationResponse!
   addVideoToVreel(token: String!, input: AddVideoInput!): MutationResponse!
   removeVideoFromVreel(token: String!, videoId: String!): MutationResponse!
 }
@@ -2943,6 +3071,30 @@ var parsedSchema = gqlparser.MustLoadSchema(sources...)
 // endregion ************************** generated!.gotpl **************************
 
 // region    ***************************** args.gotpl *****************************
+
+func (ec *executionContext) field_Mutation_addContributionLink_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["token"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("token"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["token"] = arg0
+	var arg1 model.ContributionsInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg1, err = ec.unmarshalNContributionsInput2githubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐContributionsInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg1
+	return args, nil
+}
 
 func (ec *executionContext) field_Mutation_addEmployeeToEnterprise_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
@@ -3343,6 +3495,30 @@ func (ec *executionContext) field_Mutation_register_args(ctx context.Context, ra
 		}
 	}
 	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_removeContributionLink_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["token"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("token"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["token"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["linkId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("linkId"))
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["linkId"] = arg1
 	return args, nil
 }
 
@@ -5020,6 +5196,181 @@ func (ec *executionContext) _Content_uri(ctx context.Context, field graphql.Coll
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Contribution_id(ctx context.Context, field graphql.CollectedField, obj *model.Contribution) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Contribution",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Contribution_platform(ctx context.Context, field graphql.CollectedField, obj *model.Contribution) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Contribution",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Platform, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Contribution_link(ctx context.Context, field graphql.CollectedField, obj *model.Contribution) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Contribution",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Link, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ContributionsElement_header(ctx context.Context, field graphql.CollectedField, obj *model.ContributionsElement) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ContributionsElement",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Header, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ContributionsElement_contributions(ctx context.Context, field graphql.CollectedField, obj *model.ContributionsElement) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ContributionsElement",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Contributions, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Contribution)
+	fc.Result = res
+	return ec.marshalNContribution2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐContributionᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Enterprise_id(ctx context.Context, field graphql.CollectedField, obj *model.Enterprise) (ret graphql.Marshaler) {
@@ -8316,6 +8667,90 @@ func (ec *executionContext) _Mutation_addImageToVreelGallery(ctx context.Context
 	return ec.marshalNMutationResponse2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐMutationResponse(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Mutation_addContributionLink(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_addContributionLink_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().AddContributionLink(rctx, args["token"].(string), args["input"].(model.ContributionsInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.MutationResponse)
+	fc.Result = res
+	return ec.marshalNMutationResponse2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐMutationResponse(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_removeContributionLink(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_removeContributionLink_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().RemoveContributionLink(rctx, args["token"].(string), args["linkId"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.MutationResponse)
+	fc.Result = res
+	return ec.marshalNMutationResponse2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐMutationResponse(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Mutation_addVideoToVreel(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -10361,6 +10796,76 @@ func (ec *executionContext) _Socials_username(ctx context.Context, field graphql
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _SocialsElement_header(ctx context.Context, field graphql.CollectedField, obj *model.SocialsElement) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "SocialsElement",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Header, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _SocialsElement_socials(ctx context.Context, field graphql.CollectedField, obj *model.SocialsElement) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "SocialsElement",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Socials, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Socials)
+	fc.Result = res
+	return ec.marshalNSocials2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐSocials(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _SuperLink_id(ctx context.Context, field graphql.CollectedField, obj *model.SuperLink) (ret graphql.Marshaler) {
@@ -12588,9 +13093,9 @@ func (ec *executionContext) _VreelElements_socials(ctx context.Context, field gr
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]*model.Socials)
+	res := resTmp.(*model.SocialsElement)
 	fc.Result = res
-	return ec.marshalOSocials2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐSocials(ctx, field.Selections, res)
+	return ec.marshalOSocialsElement2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐSocialsElement(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _VreelElements_simple_links(ctx context.Context, field graphql.CollectedField, obj *model.VreelElements) (ret graphql.Marshaler) {
@@ -12687,6 +13192,38 @@ func (ec *executionContext) _VreelElements_contact(ctx context.Context, field gr
 	res := resTmp.(*model.Contact)
 	fc.Result = res
 	return ec.marshalOContact2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐContact(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _VreelElements_contributions(ctx context.Context, field graphql.CollectedField, obj *model.VreelElements) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "VreelElements",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Contributions, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.ContributionsElement)
+	fc.Result = res
+	return ec.marshalOContributionsElement2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐContributionsElement(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) ___Directive_name(ctx context.Context, field graphql.CollectedField, obj *introspection.Directive) (ret graphql.Marshaler) {
@@ -14030,6 +14567,37 @@ func (ec *executionContext) unmarshalInputContentInput(ctx context.Context, obj 
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputContributionsInput(ctx context.Context, obj interface{}) (model.ContributionsInput, error) {
+	var it model.ContributionsInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "platform":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("platform"))
+			it.Platform, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "link":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("link"))
+			it.Link, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputCreateSlide(ctx context.Context, obj interface{}) (model.CreateSlide, error) {
 	var it model.CreateSlide
 	asMap := map[string]interface{}{}
@@ -14890,6 +15458,75 @@ func (ec *executionContext) _Content(ctx context.Context, sel ast.SelectionSet, 
 	return out
 }
 
+var contributionImplementors = []string{"Contribution"}
+
+func (ec *executionContext) _Contribution(ctx context.Context, sel ast.SelectionSet, obj *model.Contribution) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, contributionImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Contribution")
+		case "id":
+			out.Values[i] = ec._Contribution_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "platform":
+			out.Values[i] = ec._Contribution_platform(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "link":
+			out.Values[i] = ec._Contribution_link(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var contributionsElementImplementors = []string{"ContributionsElement"}
+
+func (ec *executionContext) _ContributionsElement(ctx context.Context, sel ast.SelectionSet, obj *model.ContributionsElement) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, contributionsElementImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ContributionsElement")
+		case "header":
+			out.Values[i] = ec._ContributionsElement_header(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "contributions":
+			out.Values[i] = ec._ContributionsElement_contributions(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var enterpriseImplementors = []string{"Enterprise"}
 
 func (ec *executionContext) _Enterprise(ctx context.Context, sel ast.SelectionSet, obj *model.Enterprise) graphql.Marshaler {
@@ -15568,6 +16205,16 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "addContributionLink":
+			out.Values[i] = ec._Mutation_addContributionLink(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "removeContributionLink":
+			out.Values[i] = ec._Mutation_removeContributionLink(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "addVideoToVreel":
 			out.Values[i] = ec._Mutation_addVideoToVreel(ctx, field)
 			if out.Values[i] == graphql.Null {
@@ -16204,6 +16851,38 @@ func (ec *executionContext) _Socials(ctx context.Context, sel ast.SelectionSet, 
 	return out
 }
 
+var socialsElementImplementors = []string{"SocialsElement"}
+
+func (ec *executionContext) _SocialsElement(ctx context.Context, sel ast.SelectionSet, obj *model.SocialsElement) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, socialsElementImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("SocialsElement")
+		case "header":
+			out.Values[i] = ec._SocialsElement_header(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "socials":
+			out.Values[i] = ec._SocialsElement_socials(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var superLinkImplementors = []string{"SuperLink"}
 
 func (ec *executionContext) _SuperLink(ctx context.Context, sel ast.SelectionSet, obj *model.SuperLink) graphql.Marshaler {
@@ -16655,6 +17334,8 @@ func (ec *executionContext) _VreelElements(ctx context.Context, sel ast.Selectio
 			out.Values[i] = ec._VreelElements_super_links(ctx, field, obj)
 		case "contact":
 			out.Values[i] = ec._VreelElements_contact(ctx, field, obj)
+		case "contributions":
+			out.Values[i] = ec._VreelElements_contributions(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -17002,6 +17683,65 @@ func (ec *executionContext) marshalNContent2ᚖgithubᚗcomᚋvreelᚋappᚋgrap
 func (ec *executionContext) unmarshalNContentInput2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐContentInput(ctx context.Context, v interface{}) (*model.ContentInput, error) {
 	res, err := ec.unmarshalInputContentInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNContribution2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐContributionᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Contribution) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNContribution2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐContribution(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNContribution2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐContribution(ctx context.Context, sel ast.SelectionSet, v *model.Contribution) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._Contribution(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNContributionsInput2githubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐContributionsInput(ctx context.Context, v interface{}) (model.ContributionsInput, error) {
+	res, err := ec.unmarshalInputContributionsInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalNEnterprise2githubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐEnterprise(ctx context.Context, sel ast.SelectionSet, v model.Enterprise) graphql.Marshaler {
@@ -17475,6 +18215,44 @@ func (ec *executionContext) marshalNSlideMetaData2ᚖgithubᚗcomᚋvreelᚋapp�
 		return graphql.Null
 	}
 	return ec._SlideMetaData(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNSocials2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐSocials(ctx context.Context, sel ast.SelectionSet, v []*model.Socials) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOSocials2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐSocials(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	return ret
 }
 
 func (ec *executionContext) unmarshalNSocialsInput2githubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐSocialsInput(ctx context.Context, v interface{}) (model.SocialsInput, error) {
@@ -18015,6 +18793,13 @@ func (ec *executionContext) marshalOContact2ᚖgithubᚗcomᚋvreelᚋappᚋgrap
 	return ec._Contact(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalOContributionsElement2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐContributionsElement(ctx context.Context, sel ast.SelectionSet, v *model.ContributionsElement) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._ContributionsElement(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalOEnterprise2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐEnterprise(ctx context.Context, sel ast.SelectionSet, v *model.Enterprise) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
@@ -18223,52 +19008,18 @@ func (ec *executionContext) marshalOSlide2ᚖgithubᚗcomᚋvreelᚋappᚋgraph�
 	return ec._Slide(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOSocials2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐSocials(ctx context.Context, sel ast.SelectionSet, v []*model.Socials) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalOSocials2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐSocials(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	return ret
-}
-
 func (ec *executionContext) marshalOSocials2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐSocials(ctx context.Context, sel ast.SelectionSet, v *model.Socials) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._Socials(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOSocialsElement2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐSocialsElement(ctx context.Context, sel ast.SelectionSet, v *model.SocialsElement) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._SocialsElement(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOString2string(ctx context.Context, v interface{}) (string, error) {

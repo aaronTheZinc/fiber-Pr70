@@ -197,12 +197,12 @@ func AddSocialsLink(vreelId string, input model.SocialsInput) error {
 	if parseErr != nil {
 		return errors.New("failed to parse")
 	}
-	socials = elements.Socials
+	socials = elements.Socials.Socials
 
 	newSocial := model.Socials{Platform: input.Platform, Username: input.Username}
 	socials = append(socials, &newSocial)
 
-	elements.Socials = socials
+	elements.Socials.Socials = socials
 	u, marshalErr := json.Marshal(&elements)
 	if marshalErr == nil {
 		return db.Model(model.VreelModel{}).Where("id = ?", vreelId).Update("elements", string(u)).Error
@@ -361,4 +361,93 @@ func RemoveVideoFromVreel(vreelId, videoId string) error {
 
 	return err
 
+}
+
+func AddContributionLink(vreelId string, input model.ContributionsInput) error {
+	var err error
+	var vreel model.VreelModel
+	var elements model.VreelElements
+
+	if fetchErr := db.Where("id = ?", vreelId).First(&vreel).Error; fetchErr != nil {
+		err = e.VREEL_NOT_FOUND
+	} else {
+		parseErr := json.Unmarshal([]byte(vreel.Elements), &elements)
+		if parseErr != nil {
+			err = parseErr
+			return err
+		}
+		c := model.Contribution{
+			ID:       utils.GenerateId(),
+			Link:     input.Link,
+			Platform: input.Platform,
+		}
+		if elements.Contributions == nil {
+			elements.Contributions = &model.ContributionsElement{Header: "", Contributions: []*model.Contribution{}}
+		}
+		contributions := elements.Contributions.Contributions
+
+		contributions = append(contributions, &c)
+		elements.Contributions.Contributions = contributions
+		v, marshalErr := json.Marshal(&elements)
+
+		if marshalErr != nil {
+			err = marshalErr
+			return err
+		}
+		updateErr := db.Model(model.VreelModel{}).Where("id = ?", vreelId).Update("elements", string(v)).Error
+
+		if updateErr != nil {
+			err = updateErr
+		}
+
+	}
+
+	return err
+}
+
+func RemoveContributionLink(vreelId, contributionLinkId string) error {
+	var err error
+	var vreel model.VreelModel
+	var elements model.VreelElements
+
+	if fetchErr := db.Where("id = ?", vreelId).First(&vreel).Error; fetchErr != nil {
+		err = e.VREEL_NOT_FOUND
+	} else {
+		parseErr := json.Unmarshal([]byte(vreel.Elements), &elements)
+		if parseErr != nil {
+			err = parseErr
+			return err
+		}
+
+		contributions := elements.Contributions.Contributions
+		linkWasFound := false
+
+		for idx, c := range contributions {
+			if c.ID == contributionLinkId {
+				contributions = append(contributions[:idx], contributions[idx+1:]...)
+				linkWasFound = true
+			}
+		}
+
+		if !linkWasFound {
+			err = errors.New("contribution: " + " not found")
+		} else {
+			elements.Contributions.Contributions = contributions
+			v, marshalErr := json.Marshal(&elements)
+
+			if marshalErr != nil {
+				err = marshalErr
+				return err
+			}
+			updateErr := db.Model(model.VreelModel{}).Where("id = ?", vreelId).Update("elements", string(v)).Error
+
+			if updateErr != nil {
+				err = updateErr
+			}
+
+		}
+
+	}
+
+	return err
 }

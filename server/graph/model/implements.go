@@ -2,6 +2,7 @@ package model
 
 import (
 	"encoding/json"
+	"log"
 
 	"github.com/lib/pq"
 )
@@ -311,7 +312,9 @@ func (c VreelModel) ToVreel(slides []*Slide) (Vreel, error) {
 	// 	s = append(s, &t)
 	// }
 	gErr := json.Unmarshal([]byte(c.Elements), &e)
-
+	if gErr != nil {
+		log.Println("im the problem!! ")
+	}
 	if gErr != nil {
 		err = gErr
 	}

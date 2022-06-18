@@ -35,14 +35,20 @@ func GetDefaultElementsString() (string, error) {
 		Hidden:   &f,
 	}
 
+	contributions := model.ContributionsElement{
+		Header:        "",
+		Contributions: []*model.Contribution{},
+	}
+
 	elements := model.VreelElements{
 		TextArea: &textArea,
 		Videos:   &videos,
 		Gallery:  &gallery,
 		Services: &services,
 		// SimpleLinks: []*model.SimpleLink{},
-		SuperLinks: []*model.SuperLink{},
-		Contact:    &contact,
+		Contributions: &contributions,
+		SuperLinks:    []*model.SuperLink{},
+		Contact:       &contact,
 	}
 
 	o, err := json.Marshal(elements)

@@ -174,6 +174,18 @@ func (r *mutationResolver) AddImageToVreelGallery(ctx context.Context, token str
 	return &resp, err
 }
 
+func (r *mutationResolver) AddContributionLink(ctx context.Context, token string, input model.ContributionsInput) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeAddContributionLinkToVreel(token, input)
+
+	return &resp, err
+}
+
+func (r *mutationResolver) RemoveContributionLink(ctx context.Context, token string, linkID string) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeRemoveContributionLinkFromVreel(token, linkID)
+
+	return &resp, err
+}
+
 func (r *mutationResolver) AddVideoToVreel(ctx context.Context, token string, input model.AddVideoInput) (*model.MutationResponse, error) {
 	resp, err := auth.AuthorizeAddVideoToVreel(token, input.ToVideo())
 

@@ -244,6 +244,22 @@ type Socials {
   username: String!
 }
 
+type SocialsElement {
+  header: String!
+  socials: [Socials]!
+}
+
+type Contribution {
+  id: String!
+  platform: String!
+  link: String!
+}
+
+type ContributionsElement {
+  header: String!
+  contributions: [Contribution!]!
+}
+
 type SimpleLinksElement {
   header: String!
   links: [SimpleLink!]!
@@ -254,10 +270,11 @@ type VreelElements {
   videos: Videos
   gallery: Gallery
   services: Service
-  socials: [Socials]
+  socials: SocialsElement
   simple_links: SimpleLinksElement
   super_links: [SuperLink]
   contact: Contact
+  contributions: ContributionsElement
 }
 type Vreel {
   author: String!
@@ -397,6 +414,11 @@ input SocialsInput {
   username: String!
 }
 
+input ContributionsInput {
+  platform: String!
+  link: String!
+}
+
 input AddGalleryImageInput {
   imageUrl: String!
   position: Int!
@@ -481,6 +503,11 @@ type Mutation {
     token: String!
     input: AddGalleryImageInput!
   ): MutationResponse!
+  addContributionLink(
+    token: String!
+    input: ContributionsInput!
+  ): MutationResponse!
+  removeContributionLink(token: String!, linkId: String!): MutationResponse!
   addVideoToVreel(token: String!, input: AddVideoInput!): MutationResponse!
   removeVideoFromVreel(token: String!, videoId: String!): MutationResponse!
 }

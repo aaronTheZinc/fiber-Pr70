@@ -86,6 +86,22 @@ type ContentInput struct {
 	URI                string  `json:"uri"`
 }
 
+type Contribution struct {
+	ID       string `json:"id"`
+	Platform string `json:"platform"`
+	Link     string `json:"link"`
+}
+
+type ContributionsElement struct {
+	Header        string          `json:"header"`
+	Contributions []*Contribution `json:"contributions"`
+}
+
+type ContributionsInput struct {
+	Platform string `json:"platform"`
+	Link     string `json:"link"`
+}
+
 type CreateSlide struct {
 	ContentType   string `json:"content_type"`
 	URI           string `json:"uri"`
@@ -313,6 +329,11 @@ type Socials struct {
 	Username string `json:"username"`
 }
 
+type SocialsElement struct {
+	Header  string     `json:"header"`
+	Socials []*Socials `json:"socials"`
+}
+
 type SocialsInput struct {
 	Platform string `json:"platform"`
 	Username string `json:"username"`
@@ -409,14 +430,15 @@ type Vreel struct {
 }
 
 type VreelElements struct {
-	TextArea    *TextArea           `json:"text_area"`
-	Videos      *Videos             `json:"videos"`
-	Gallery     *Gallery            `json:"gallery"`
-	Services    *Service            `json:"services"`
-	Socials     []*Socials          `json:"socials"`
-	SimpleLinks *SimpleLinksElement `json:"simple_links"`
-	SuperLinks  []*SuperLink        `json:"super_links"`
-	Contact     *Contact            `json:"contact"`
+	TextArea      *TextArea             `json:"text_area"`
+	Videos        *Videos               `json:"videos"`
+	Gallery       *Gallery              `json:"gallery"`
+	Services      *Service              `json:"services"`
+	Socials       *SocialsElement       `json:"socials"`
+	SimpleLinks   *SimpleLinksElement   `json:"simple_links"`
+	SuperLinks    []*SuperLink          `json:"super_links"`
+	Contact       *Contact              `json:"contact"`
+	Contributions *ContributionsElement `json:"contributions"`
 }
 
 type VreelFields struct {
