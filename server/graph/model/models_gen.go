@@ -7,6 +7,15 @@ type AddGalleryImageInput struct {
 	Position int    `json:"position"`
 }
 
+type AddVideoInput struct {
+	Cta1        *CTAInput     `json:"cta1"`
+	Cta2        *CTAInput     `json:"cta2"`
+	Desktop     *ContentInput `json:"desktop"`
+	Mobile      *ContentInput `json:"mobile"`
+	VideoHeader string        `json:"video_header"`
+	Description string        `json:"description"`
+}
+
 type Advanced struct {
 	Info     string  `json:"info"`
 	Header   string  `json:"header"`
@@ -48,6 +57,12 @@ type Cta struct {
 	LinkURL    string `json:"link_url"`
 }
 
+type CTAInput struct {
+	LinkHeader string `json:"link_header"`
+	LinkType   string `json:"link_type"`
+	LinkURL    string `json:"link_url"`
+}
+
 type Contact struct {
 	Position int    `json:"position"`
 	Header   string `json:"header"`
@@ -55,6 +70,14 @@ type Contact struct {
 }
 
 type Content struct {
+	StartTime          *int    `json:"start_time"`
+	StopTime           *int    `json:"stop_time"`
+	BackgroundAudioURI *string `json:"background_audio_uri"`
+	ContentType        string  `json:"content_type"`
+	URI                string  `json:"uri"`
+}
+
+type ContentInput struct {
 	StartTime          *int    `json:"start_time"`
 	StopTime           *int    `json:"stop_time"`
 	BackgroundAudioURI *string `json:"background_audio_uri"`
@@ -341,12 +364,21 @@ type User struct {
 	News            []*Slide  `json:"news"`
 }
 
+type Video struct {
+	ID          string   `json:"id"`
+	Cta1        *Cta     `json:"cta1"`
+	Cta2        *Cta     `json:"cta2"`
+	Desktop     *Content `json:"desktop"`
+	Mobile      *Content `json:"mobile"`
+	VideoHeader string   `json:"video_header"`
+	Description string   `json:"description"`
+}
+
 type Videos struct {
-	Header   string `json:"header"`
-	Position int    `json:"position"`
-	URI      string `json:"uri"`
-	Tag      string `json:"tag"`
-	Hidden   *bool  `json:"hidden"`
+	Header   string   `json:"header"`
+	Position int      `json:"position"`
+	Videos   []*Video `json:"videos"`
+	Hidden   *bool    `json:"hidden"`
 }
 
 type Vreel struct {

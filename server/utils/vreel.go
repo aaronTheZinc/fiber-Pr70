@@ -16,8 +16,7 @@ func GetDefaultElementsString() (string, error) {
 	}
 	videos := model.Videos{
 		Position: 2,
-		URI:      emptyString,
-		Tag:      emptyString,
+		Videos:   []*model.Video{},
 		Hidden:   &f,
 	}
 	gallery := model.Gallery{

@@ -277,3 +277,88 @@ func RemoveImageFromGallery(vreelId string, imageId string) error {
 
 	return err
 }
+
+func AddVideoToVreel(vreelId string, video model.Video) error {
+	var err error
+	var vreel model.VreelModel
+	var elements model.VreelElements
+
+	if fetchErr := db.Where("id = ?", vreelId).First(&vreel).Error; fetchErr != nil {
+		err = e.VREEL_NOT_FOUND
+	} else {
+		parseErr := json.Unmarshal([]byte(vreel.Elements), &elements)
+		if parseErr != nil {
+			err = parseErr
+			return err
+		}
+
+		videos := elements.Videos
+
+		video.ID = utils.GenerateId()
+		videos.Videos = append(videos.Videos, &video)
+
+		elements.Videos = videos
+
+		v, marshalErr := json.Marshal(&elements)
+
+		if marshalErr != nil {
+			err = marshalErr
+			return err
+		}
+		updateErr := db.Model(model.VreelModel{}).Where("id = ?", vreelId).Update("elements", string(v)).Error
+
+		if updateErr != nil {
+			err = updateErr
+		}
+
+	}
+
+	return err
+}
+
+func RemoveVideoFromVreel(vreelId, videoId string) error {
+	var err error
+	var vreel model.VreelModel
+	var elements model.VreelElements
+
+	if fetchErr := db.Where("id = ?", vreelId).First(&vreel).Error; fetchErr != nil {
+		err = e.VREEL_NOT_FOUND
+	} else {
+		parseErr := json.Unmarshal([]byte(vreel.Elements), &elements)
+		if parseErr != nil {
+			err = parseErr
+			return err
+		}
+		videos := elements.Videos.Videos
+
+		videoWasFound := false
+		for idx, video := range videos {
+			if video.ID == videoId {
+				videoWasFound = true
+				videos = append(videos[:idx], videos[idx+1:]...)
+				break
+			}
+		}
+
+		if !videoWasFound {
+			err = errors.New("video: " + videoId + "not found")
+		} else {
+			elements.Videos.Videos = videos
+			v, marshalErr := json.Marshal(&elements)
+
+			if marshalErr != nil {
+				err = marshalErr
+				return err
+			}
+			updateErr := db.Model(model.VreelModel{}).Where("id = ?", vreelId).Update("elements", string(v)).Error
+
+			if updateErr != nil {
+				err = updateErr
+			}
+		}
+
+	}
+
+	return err
+
+}

@@ -133,7 +133,6 @@ type Advanced {
   logoUrl: String
   groupId: String
   credits: String
-
 }
 type Slide {
   id: String!
@@ -192,9 +191,6 @@ type SuperLink {
   description: String!
 }
 
-
-
-
 type TextArea {
   header: String!
   position: Int!
@@ -205,9 +201,18 @@ type TextArea {
 type Videos {
   header: String!
   position: Int!
-  uri: String!
-  tag: String!
+  videos: [Video!]!
   hidden: Boolean
+}
+
+type Video {
+  id: String!
+  cta1: CTA!
+  cta2: CTA!
+  desktop: Content!
+  mobile: Content!
+  video_header: String!
+  description: String!
 }
 
 type GalleryImage {
@@ -381,6 +386,29 @@ input AddGalleryImageInput {
   position: Int!
 }
 
+input CTAInput {
+  link_header: String!
+  link_type: String!
+  link_url: String!
+}
+
+input ContentInput {
+  start_time: Int
+  stop_time: Int
+  background_audio_uri: String
+  content_type: String!
+  uri: String!
+}
+
+input AddVideoInput {
+  cta1: CTAInput!
+  cta2: CTAInput!
+  desktop: ContentInput!
+  mobile: ContentInput!
+  video_header: String!
+  description: String!
+}
+
 type Mutation {
   register(input: NewUser!): User!
   createEvent(token: String!, input: NewEvent!): Event!
@@ -425,10 +453,18 @@ type Mutation {
     newName: String!
     fileId: String!
   ): MutationResponse!
-  removeImageFromVreelGallery(token: String!, imageId: String!): MutationResponse!
+  removeImageFromVreelGallery(
+    token: String!
+    imageId: String!
+  ): MutationResponse!
   deleteFile(token: String!, fileId: String!): MutationResponse!
   addSimpleVreelLink(token: String!, link: SimpleLinkInput!): MutationResponse!
   addSuperVreelLink(token: String!, link: SuperLinkInput): MutationResponse!
-  addSocialMediaLink(token: String!, input: SocialsInput! ): MutationResponse!
-  addImageToVreelGallery(token: String!, input: AddGalleryImageInput!): MutationResponse!
+  addSocialMediaLink(token: String!, input: SocialsInput!): MutationResponse!
+  addImageToVreelGallery(
+    token: String!
+    input: AddGalleryImageInput!
+  ): MutationResponse!
+  addVideoToVreel(token: String!, input: AddVideoInput!): MutationResponse!
+  removeVideoFromVreel(token: String!, videoId: String!): MutationResponse!
 }

@@ -172,6 +172,18 @@ func (r *mutationResolver) AddImageToVreelGallery(ctx context.Context, token str
 	return &resp, err
 }
 
+func (r *mutationResolver) AddVideoToVreel(ctx context.Context, token string, input model.AddVideoInput) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeAddVideoToVreel(token, input.ToVideo())
+
+	return &resp, err
+}
+
+func (r *mutationResolver) RemoveVideoFromVreel(ctx context.Context, token string, videoID string) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeRemoveVideoFromVreel(token, videoID)
+
+	return &resp, err
+}
+
 func (r *queryResolver) User(ctx context.Context, id *string) (*model.User, error) {
 	user, err := database.GetUser(*id)
 	return &user, err
