@@ -3,8 +3,13 @@
 package model
 
 type AddGalleryImageInput struct {
-	ImageURL string `json:"imageUrl"`
-	Position int    `json:"position"`
+	Position    *int          `json:"position"`
+	Cta1        *CTAInput     `json:"cta1"`
+	Cta2        *CTAInput     `json:"cta2"`
+	Desktop     *ContentInput `json:"desktop"`
+	Mobile      *ContentInput `json:"mobile"`
+	ImageHeader string        `json:"image_header"`
+	Description string        `json:"description"`
 }
 
 type AddVideoInput struct {
@@ -86,6 +91,22 @@ type ContentInput struct {
 	URI                string  `json:"uri"`
 }
 
+type Contribution struct {
+	ID       string `json:"id"`
+	Platform string `json:"platform"`
+	Link     string `json:"link"`
+}
+
+type ContributionsElement struct {
+	Header        string          `json:"header"`
+	Contributions []*Contribution `json:"contributions"`
+}
+
+type ContributionsInput struct {
+	Platform string `json:"platform"`
+	Link     string `json:"link"`
+}
+
 type CreateSlide struct {
 	ContentType   string `json:"content_type"`
 	URI           string `json:"uri"`
@@ -142,9 +163,14 @@ type Gallery struct {
 }
 
 type GalleryImage struct {
-	ID       string `json:"id"`
-	URL      string `json:"url"`
-	Position int    `json:"position"`
+	ID          string   `json:"id"`
+	Position    *int     `json:"position"`
+	Cta1        *Cta     `json:"cta1"`
+	Cta2        *Cta     `json:"cta2"`
+	Desktop     *Content `json:"desktop"`
+	Mobile      *Content `json:"mobile"`
+	ImageHeader string   `json:"image_header"`
+	Description string   `json:"description"`
 }
 
 type Group struct {
@@ -188,6 +214,22 @@ type LocalSession struct {
 type LoginInput struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
+}
+
+type Music struct {
+	ID       string `json:"id"`
+	Platform string `json:"platform"`
+	Link     string `json:"link"`
+}
+
+type MusicElement struct {
+	Header string   `json:"header"`
+	Music  []*Music `json:"music"`
+}
+
+type MusicInput struct {
+	Platform string `json:"platform"`
+	Link     string `json:"link"`
 }
 
 type MutationResponse struct {
@@ -283,6 +325,11 @@ type SimpleLinkInput struct {
 	Tag        string `json:"tag"`
 }
 
+type SimpleLinksElement struct {
+	Header string        `json:"header"`
+	Links  []*SimpleLink `json:"links"`
+}
+
 type Slide struct {
 	ID            string         `json:"id"`
 	Author        string         `json:"author"`
@@ -306,6 +353,11 @@ type SlideMetaData struct {
 type Socials struct {
 	Platform string `json:"platform"`
 	Username string `json:"username"`
+}
+
+type SocialsElement struct {
+	Header  string     `json:"header"`
+	Socials []*Socials `json:"socials"`
 }
 
 type SocialsInput struct {
@@ -404,14 +456,16 @@ type Vreel struct {
 }
 
 type VreelElements struct {
-	TextArea    *TextArea     `json:"text_area"`
-	Videos      *Videos       `json:"videos"`
-	Gallery     *Gallery      `json:"gallery"`
-	Services    *Service      `json:"services"`
-	Socials     []*Socials    `json:"socials"`
-	SimpleLinks []*SimpleLink `json:"simple_links"`
-	SuperLinks  []*SuperLink  `json:"super_links"`
-	Contact     *Contact      `json:"contact"`
+	TextArea      *TextArea             `json:"text_area"`
+	Videos        *Videos               `json:"videos"`
+	Gallery       *Gallery              `json:"gallery"`
+	Services      *Service              `json:"services"`
+	Music         *MusicElement         `json:"music"`
+	Socials       *SocialsElement       `json:"socials"`
+	SimpleLinks   *SimpleLinksElement   `json:"simple_links"`
+	SuperLinks    []*SuperLink          `json:"super_links"`
+	Contact       *Contact              `json:"contact"`
+	Contributions *ContributionsElement `json:"contributions"`
 }
 
 type VreelFields struct {

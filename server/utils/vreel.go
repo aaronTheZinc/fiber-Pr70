@@ -34,15 +34,26 @@ func GetDefaultElementsString() (string, error) {
 		Header:   emptyString,
 		Hidden:   &f,
 	}
+	music := model.MusicElement{
+		Header: "",
+		Music:  []*model.Music{},
+	}
+
+	contributions := model.ContributionsElement{
+		Header:        "",
+		Contributions: []*model.Contribution{},
+	}
 
 	elements := model.VreelElements{
-		TextArea:    &textArea,
-		Videos:      &videos,
-		Gallery:     &gallery,
-		Services:    &services,
-		SimpleLinks: []*model.SimpleLink{},
-		SuperLinks:  []*model.SuperLink{},
-		Contact:     &contact,
+		TextArea: &textArea,
+		Videos:   &videos,
+		Gallery:  &gallery,
+		Services: &services,
+		Music:    &music,
+		// SimpleLinks: []*model.SimpleLink{},
+		Contributions: &contributions,
+		SuperLinks:    []*model.SuperLink{},
+		Contact:       &contact,
 	}
 
 	o, err := json.Marshal(elements)
