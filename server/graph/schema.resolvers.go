@@ -136,6 +136,12 @@ func (r *mutationResolver) EditFileName(ctx context.Context, token string, newNa
 	return &resp, err
 }
 
+func (r *mutationResolver) RemoveImageFromVreelGallery(ctx context.Context, token string, imageID string) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeRemoveImageFromGallery(token, imageID)
+
+	return &resp, err
+}
+
 func (r *mutationResolver) DeleteFile(ctx context.Context, token string, fileID string) (*model.MutationResponse, error) {
 	resp, err := auth.AuthorizeDeleteFile(token, fileID)
 
@@ -156,6 +162,24 @@ func (r *mutationResolver) AddSuperVreelLink(ctx context.Context, token string, 
 
 func (r *mutationResolver) AddSocialMediaLink(ctx context.Context, token string, input model.SocialsInput) (*model.MutationResponse, error) {
 	resp, err := auth.AuthorizeAddSocialsLink(token, input)
+
+	return &resp, err
+}
+
+func (r *mutationResolver) AddImageToVreelGallery(ctx context.Context, token string, input model.AddGalleryImageInput) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeAddImageToGallery(token, input)
+
+	return &resp, err
+}
+
+func (r *mutationResolver) AddVideoToVreel(ctx context.Context, token string, input model.AddVideoInput) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeAddVideoToVreel(token, input.ToVideo())
+
+	return &resp, err
+}
+
+func (r *mutationResolver) RemoveVideoFromVreel(ctx context.Context, token string, videoID string) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeRemoveVideoFromVreel(token, videoID)
 
 	return &resp, err
 }

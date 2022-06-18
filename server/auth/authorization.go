@@ -13,6 +13,94 @@ import (
 	"github.com/vreel/app/utils"
 )
 
+func AuthorizeRemoveVideoFromVreel(token, videoId string) (model.MutationResponse, error) {
+	var err error
+	var resp model.MutationResponse
+	claims, isAuth, parseErr := ParseToken(token)
+	userId := claims.ID
+
+	if isAuth && parseErr == nil {
+		updateErr := database.RemoveVideoFromVreel(userId, videoId)
+		if updateErr != nil {
+			err = updateErr
+		} else {
+			resp = model.MutationResponse{
+				Succeeded: true,
+				Message:   "successfully removed video: " + videoId,
+			}
+		}
+	} else {
+		err = e.UNAUTHORIZED_ERROR
+	}
+	return resp, err
+}
+
+func AuthorizeAddVideoToVreel(token string, video model.Video) (model.MutationResponse, error) {
+	var err error
+	var resp model.MutationResponse
+	claims, isAuth, parseErr := ParseToken(token)
+	userId := claims.ID
+	if isAuth && parseErr == nil {
+		updateErr := database.AddVideoToVreel(userId, video)
+		if updateErr != nil {
+			err = updateErr
+		} else {
+			resp = model.MutationResponse{
+				Succeeded: true,
+				Message:   "successfully added video: " + video.VideoHeader,
+			}
+		}
+
+	} else {
+		err = e.UNAUTHORIZED_ERROR
+	}
+	return resp, err
+}
+
+func AuthorizeAddImageToGallery(token string, input model.AddGalleryImageInput) (model.MutationResponse, error) {
+	var err error
+	var resp model.MutationResponse
+	claims, isAuth, parseErr := ParseToken(token)
+	userId := claims.ID
+
+	if isAuth && parseErr == nil {
+		if updateErr := database.AddImageToVreelGallery(userId, input); updateErr != nil {
+			err = updateErr
+		} else {
+			resp = model.MutationResponse{
+				Succeeded: true,
+				Message:   "successfully added image: " + input.ImageURL + " to gallery.",
+			}
+		}
+	} else {
+		err = e.UNAUTHORIZED_ERROR
+	}
+
+	return resp, err
+}
+func AuthorizeRemoveImageFromGallery(token, imageId string) (model.MutationResponse, error) {
+	var err error
+	var resp model.MutationResponse
+	claims, isAuth, parseErr := ParseToken(token)
+	userId := claims.ID
+
+	if isAuth && parseErr == nil {
+		if updateErr := database.RemoveImageFromGallery(userId, imageId); updateErr != nil {
+			err = updateErr
+		} else {
+			resp = model.MutationResponse{
+				Succeeded: true,
+				Message:   "successfully removed image: " + imageId + " to gallery.",
+			}
+		}
+
+	} else {
+		err = e.UNAUTHORIZED_ERROR
+	}
+
+	return resp, err
+}
+
 func AuthorizeAddSocialsLink(token string, input model.SocialsInput) (model.MutationResponse, error) {
 	var err error
 	var resp model.MutationResponse

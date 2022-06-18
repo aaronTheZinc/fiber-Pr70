@@ -420,5 +420,15 @@ func (c *SuperLinkInput) ToLink() SuperLink {
 		Description:   c.Description,
 	}
 }
+func (c *AddVideoInput) ToVideo() Video {
+	return Video{
+		VideoHeader: c.VideoHeader,
+		Desktop:     (*Content)(c.Desktop),
+		Mobile:      (*Content)(c.Mobile),
+		Description: c.Description,
+		Cta1:        (*Cta)(c.Cta1),
+		Cta2:        (*Cta)(c.Cta2),
+	}
+}
 
 // }
