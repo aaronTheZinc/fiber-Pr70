@@ -244,13 +244,18 @@ type Socials {
   username: String!
 }
 
+type SimpleLinksElement {
+  header: String!
+  links: [SimpleLink!]!
+}
+
 type VreelElements {
   text_area: TextArea
   videos: Videos
   gallery: Gallery
   services: Service
   socials: [Socials]
-  simple_links: [SimpleLink]
+  simple_links: SimpleLinksElement
   super_links: [SuperLink]
   contact: Contact
 }

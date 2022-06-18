@@ -276,6 +276,11 @@ type ComplexityRoot struct {
 		URL        func(childComplexity int) int
 	}
 
+	SimpleLinksElement struct {
+		Header func(childComplexity int) int
+		Links  func(childComplexity int) int
+	}
+
 	Slide struct {
 		Advanced      func(childComplexity int) int
 		Author        func(childComplexity int) int
@@ -1779,6 +1784,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.SimpleLink.URL(childComplexity), true
 
+	case "SimpleLinksElement.header":
+		if e.complexity.SimpleLinksElement.Header == nil {
+			break
+		}
+
+		return e.complexity.SimpleLinksElement.Header(childComplexity), true
+
+	case "SimpleLinksElement.links":
+		if e.complexity.SimpleLinksElement.Links == nil {
+			break
+		}
+
+		return e.complexity.SimpleLinksElement.Links(childComplexity), true
+
 	case "Slide.advanced":
 		if e.complexity.Slide.Advanced == nil {
 			break
@@ -2677,13 +2696,18 @@ type Socials {
   username: String!
 }
 
+type SimpleLinksElement {
+  header: String!
+  links: [SimpleLink!]!
+}
+
 type VreelElements {
   text_area: TextArea
   videos: Videos
   gallery: Gallery
   services: Service
   socials: [Socials]
-  simple_links: [SimpleLink]
+  simple_links: SimpleLinksElement
   super_links: [SuperLink]
   contact: Contact
 }
@@ -9712,6 +9736,76 @@ func (ec *executionContext) _SimpleLink_tag(ctx context.Context, field graphql.C
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _SimpleLinksElement_header(ctx context.Context, field graphql.CollectedField, obj *model.SimpleLinksElement) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "SimpleLinksElement",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Header, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _SimpleLinksElement_links(ctx context.Context, field graphql.CollectedField, obj *model.SimpleLinksElement) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "SimpleLinksElement",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Links, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.SimpleLink)
+	fc.Result = res
+	return ec.marshalNSimpleLink2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐSimpleLinkᚄ(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Slide_id(ctx context.Context, field graphql.CollectedField, obj *model.Slide) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -12526,9 +12620,9 @@ func (ec *executionContext) _VreelElements_simple_links(ctx context.Context, fie
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]*model.SimpleLink)
+	res := resTmp.(*model.SimpleLinksElement)
 	fc.Result = res
-	return ec.marshalOSimpleLink2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐSimpleLink(ctx, field.Selections, res)
+	return ec.marshalOSimpleLinksElement2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐSimpleLinksElement(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _VreelElements_super_links(ctx context.Context, field graphql.CollectedField, obj *model.VreelElements) (ret graphql.Marshaler) {
@@ -15935,6 +16029,38 @@ func (ec *executionContext) _SimpleLink(ctx context.Context, sel ast.SelectionSe
 	return out
 }
 
+var simpleLinksElementImplementors = []string{"SimpleLinksElement"}
+
+func (ec *executionContext) _SimpleLinksElement(ctx context.Context, sel ast.SelectionSet, obj *model.SimpleLinksElement) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, simpleLinksElementImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("SimpleLinksElement")
+		case "header":
+			out.Values[i] = ec._SimpleLinksElement_header(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "links":
+			out.Values[i] = ec._SimpleLinksElement_links(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var slideImplementors = []string{"Slide"}
 
 func (ec *executionContext) _Slide(ctx context.Context, sel ast.SelectionSet, obj *model.Slide) graphql.Marshaler {
@@ -17230,6 +17356,60 @@ func (ec *executionContext) marshalNResolvedPasswordReset2ᚖgithubᚗcomᚋvree
 	return ec._ResolvedPasswordReset(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNSimpleLink2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐSimpleLinkᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.SimpleLink) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNSimpleLink2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐSimpleLink(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNSimpleLink2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐSimpleLink(ctx context.Context, sel ast.SelectionSet, v *model.SimpleLink) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._SimpleLink(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNSimpleLinkInput2githubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐSimpleLinkInput(ctx context.Context, v interface{}) (model.SimpleLinkInput, error) {
 	res, err := ec.unmarshalInputSimpleLinkInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -17988,52 +18168,11 @@ func (ec *executionContext) marshalOService2ᚖgithubᚗcomᚋvreelᚋappᚋgrap
 	return ec._Service(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOSimpleLink2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐSimpleLink(ctx context.Context, sel ast.SelectionSet, v []*model.SimpleLink) graphql.Marshaler {
+func (ec *executionContext) marshalOSimpleLinksElement2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐSimpleLinksElement(ctx context.Context, sel ast.SelectionSet, v *model.SimpleLinksElement) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalOSimpleLink2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐSimpleLink(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	return ret
-}
-
-func (ec *executionContext) marshalOSimpleLink2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐSimpleLink(ctx context.Context, sel ast.SelectionSet, v *model.SimpleLink) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._SimpleLink(ctx, sel, v)
+	return ec._SimpleLinksElement(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOSlide2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐSlide(ctx context.Context, sel ast.SelectionSet, v []*model.Slide) graphql.Marshaler {

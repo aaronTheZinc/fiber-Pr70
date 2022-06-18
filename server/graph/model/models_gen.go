@@ -283,6 +283,11 @@ type SimpleLinkInput struct {
 	Tag        string `json:"tag"`
 }
 
+type SimpleLinksElement struct {
+	Header string        `json:"header"`
+	Links  []*SimpleLink `json:"links"`
+}
+
 type Slide struct {
 	ID            string         `json:"id"`
 	Author        string         `json:"author"`
@@ -404,14 +409,14 @@ type Vreel struct {
 }
 
 type VreelElements struct {
-	TextArea    *TextArea     `json:"text_area"`
-	Videos      *Videos       `json:"videos"`
-	Gallery     *Gallery      `json:"gallery"`
-	Services    *Service      `json:"services"`
-	Socials     []*Socials    `json:"socials"`
-	SimpleLinks []*SimpleLink `json:"simple_links"`
-	SuperLinks  []*SuperLink  `json:"super_links"`
-	Contact     *Contact      `json:"contact"`
+	TextArea    *TextArea           `json:"text_area"`
+	Videos      *Videos             `json:"videos"`
+	Gallery     *Gallery            `json:"gallery"`
+	Services    *Service            `json:"services"`
+	Socials     []*Socials          `json:"socials"`
+	SimpleLinks *SimpleLinksElement `json:"simple_links"`
+	SuperLinks  []*SuperLink        `json:"super_links"`
+	Contact     *Contact            `json:"contact"`
 }
 
 type VreelFields struct {
