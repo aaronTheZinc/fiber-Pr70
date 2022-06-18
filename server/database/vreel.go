@@ -222,9 +222,14 @@ func AddImageToVreelGallery(vreelId string, input model.AddGalleryImageInput) er
 		}
 		galleryImages := elements.Gallery
 		galleryImages.Images = append(galleryImages.Images, &model.GalleryImage{
-			ID:       utils.GenerateId(),
-			Position: input.Position,
-			URL:      input.ImageURL,
+			ID:          utils.GenerateId(),
+			Position:    input.Position,
+			Cta1:        (*model.Cta)(input.Cta1),
+			Cta2:        (*model.Cta)(input.Cta2),
+			ImageHeader: input.ImageHeader,
+			Description: input.Description,
+			Desktop:     (*model.Content)(input.Desktop),
+			Mobile:      (*model.Content)(input.Mobile),
 		})
 
 		elements.Gallery = galleryImages
@@ -426,6 +431,8 @@ func RemoveContributionLink(vreelId, contributionLinkId string) error {
 			if c.ID == contributionLinkId {
 				contributions = append(contributions[:idx], contributions[idx+1:]...)
 				linkWasFound = true
+				break
+
 			}
 		}
 
@@ -450,4 +457,94 @@ func RemoveContributionLink(vreelId, contributionLinkId string) error {
 	}
 
 	return err
+}
+
+func AddMusicLink(vreelId string, input model.MusicInput) error {
+	var err error
+	var vreel model.VreelModel
+	var elements model.VreelElements
+
+	if fetchErr := db.Where("id = ?", vreelId).First(&vreel).Error; fetchErr != nil {
+		err = e.VREEL_NOT_FOUND
+	} else {
+		parseErr := json.Unmarshal([]byte(vreel.Elements), &elements)
+		if parseErr != nil {
+			err = parseErr
+			return err
+		}
+		if elements.Music == nil {
+			elements.Music = &model.MusicElement{Header: "", Music: []*model.Music{}}
+		}
+		m := model.Music{
+			ID:       utils.GenerateId(),
+			Platform: input.Platform,
+			Link:     input.Link,
+		}
+		music := elements.Music.Music
+
+		music = append(music, &m)
+
+		elements.Music.Music = music
+
+		v, marshalErr := json.Marshal(&elements)
+
+		if marshalErr != nil {
+			err = marshalErr
+			return err
+		}
+		updateErr := db.Model(model.VreelModel{}).Where("id = ?", vreelId).Update("elements", string(v)).Error
+
+		if updateErr != nil {
+			err = updateErr
+		}
+
+	}
+
+	return err
+
+}
+
+func RemoveMusicLink(vreelId, musicLinkId string) error {
+	var err error
+	var vreel model.VreelModel
+	var elements model.VreelElements
+
+	if fetchErr := db.Where("id = ?", vreelId).First(&vreel).Error; fetchErr != nil {
+		err = e.VREEL_NOT_FOUND
+	} else {
+		parseErr := json.Unmarshal([]byte(vreel.Elements), &elements)
+		if parseErr != nil {
+			err = parseErr
+			return err
+		}
+		music := elements.Music.Music
+		linkWasFound := false
+
+		for idx, link := range music {
+			if link.ID == musicLinkId {
+				music = append(music[:idx], music[idx+1:]...)
+				linkWasFound = true
+				break
+			}
+		}
+		if !linkWasFound {
+			err = errors.New("music link not:  " + musicLinkId + " not found.")
+		} else {
+			elements.Music.Music = music
+			v, marshalErr := json.Marshal(&elements)
+
+			if marshalErr != nil {
+				err = marshalErr
+				return err
+			}
+			updateErr := db.Model(model.VreelModel{}).Where("id = ?", vreelId).Update("elements", string(v)).Error
+
+			if updateErr != nil {
+				err = updateErr
+			}
+		}
+	}
+
+	return err
+
 }

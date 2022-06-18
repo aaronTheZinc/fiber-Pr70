@@ -13,6 +13,52 @@ import (
 	"github.com/vreel/app/utils"
 )
 
+func AuthorizeAddMusicLinkToVreel(token string, input model.MusicInput) (model.MutationResponse, error) {
+	var err error
+	var resp model.MutationResponse
+	claims, isAuth, parseErr := ParseToken(token)
+	userId := claims.ID
+
+	if isAuth && parseErr == nil {
+		updateErr := database.AddMusicLink(userId, input)
+		if updateErr != nil {
+			err = updateErr
+		} else {
+			resp = model.MutationResponse{
+				Succeeded: true,
+				Message:   "successfully added music link: " + input.Platform,
+			}
+		}
+	} else {
+		err = e.UNAUTHORIZED_ERROR
+	}
+
+	return resp, err
+}
+
+func AuthorizeRemoveMusicLinkFromVreel(token, linkId string) (model.MutationResponse, error) {
+	var err error
+	var resp model.MutationResponse
+	claims, isAuth, parseErr := ParseToken(token)
+	userId := claims.ID
+
+	if isAuth && parseErr == nil {
+		updateErr := database.RemoveMusicLink(userId, linkId)
+		if updateErr != nil {
+			err = updateErr
+		} else {
+			resp = model.MutationResponse{
+				Succeeded: true,
+				Message:   "successfully removed link: " + linkId,
+			}
+		}
+	} else {
+		err = e.UNAUTHORIZED_ERROR
+	}
+
+	return resp, err
+}
+
 func AuthorizeAddContributionLinkToVreel(token string, input model.ContributionsInput) (model.MutationResponse, error) {
 	var err error
 	var resp model.MutationResponse
@@ -115,7 +161,7 @@ func AuthorizeAddImageToGallery(token string, input model.AddGalleryImageInput) 
 		} else {
 			resp = model.MutationResponse{
 				Succeeded: true,
-				Message:   "successfully added image: " + input.ImageURL + " to gallery.",
+				Message:   "successfully added image: " + input.ImageHeader + " to gallery.",
 			}
 		}
 	} else {

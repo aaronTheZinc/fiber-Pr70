@@ -34,6 +34,10 @@ func GetDefaultElementsString() (string, error) {
 		Header:   emptyString,
 		Hidden:   &f,
 	}
+	music := model.MusicElement{
+		Header: "",
+		Music:  []*model.Music{},
+	}
 
 	contributions := model.ContributionsElement{
 		Header:        "",
@@ -45,6 +49,7 @@ func GetDefaultElementsString() (string, error) {
 		Videos:   &videos,
 		Gallery:  &gallery,
 		Services: &services,
+		Music:    &music,
 		// SimpleLinks: []*model.SimpleLink{},
 		Contributions: &contributions,
 		SuperLinks:    []*model.SuperLink{},

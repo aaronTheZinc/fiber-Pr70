@@ -3,8 +3,13 @@
 package model
 
 type AddGalleryImageInput struct {
-	ImageURL string `json:"imageUrl"`
-	Position int    `json:"position"`
+	Position    *int          `json:"position"`
+	Cta1        *CTAInput     `json:"cta1"`
+	Cta2        *CTAInput     `json:"cta2"`
+	Desktop     *ContentInput `json:"desktop"`
+	Mobile      *ContentInput `json:"mobile"`
+	ImageHeader string        `json:"image_header"`
+	Description string        `json:"description"`
 }
 
 type AddVideoInput struct {
@@ -158,9 +163,14 @@ type Gallery struct {
 }
 
 type GalleryImage struct {
-	ID       string `json:"id"`
-	URL      string `json:"url"`
-	Position int    `json:"position"`
+	ID          string   `json:"id"`
+	Position    *int     `json:"position"`
+	Cta1        *Cta     `json:"cta1"`
+	Cta2        *Cta     `json:"cta2"`
+	Desktop     *Content `json:"desktop"`
+	Mobile      *Content `json:"mobile"`
+	ImageHeader string   `json:"image_header"`
+	Description string   `json:"description"`
 }
 
 type Group struct {
@@ -204,6 +214,22 @@ type LocalSession struct {
 type LoginInput struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
+}
+
+type Music struct {
+	ID       string `json:"id"`
+	Platform string `json:"platform"`
+	Link     string `json:"link"`
+}
+
+type MusicElement struct {
+	Header string   `json:"header"`
+	Music  []*Music `json:"music"`
+}
+
+type MusicInput struct {
+	Platform string `json:"platform"`
+	Link     string `json:"link"`
 }
 
 type MutationResponse struct {
@@ -434,6 +460,7 @@ type VreelElements struct {
 	Videos        *Videos               `json:"videos"`
 	Gallery       *Gallery              `json:"gallery"`
 	Services      *Service              `json:"services"`
+	Music         *MusicElement         `json:"music"`
 	Socials       *SocialsElement       `json:"socials"`
 	SimpleLinks   *SimpleLinksElement   `json:"simple_links"`
 	SuperLinks    []*SuperLink          `json:"super_links"`

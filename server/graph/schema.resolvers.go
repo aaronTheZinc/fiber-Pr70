@@ -180,6 +180,18 @@ func (r *mutationResolver) AddContributionLink(ctx context.Context, token string
 	return &resp, err
 }
 
+func (r *mutationResolver) AddMusicLink(ctx context.Context, token string, input model.MusicInput) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeAddMusicLinkToVreel(token, input)
+
+	return &resp, err
+}
+
+func (r *mutationResolver) RemoveMusicLink(ctx context.Context, token string, linkID string) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeRemoveMusicLinkFromVreel(token, linkID)
+
+	return &resp, err
+}
+
 func (r *mutationResolver) RemoveContributionLink(ctx context.Context, token string, linkID string) (*model.MutationResponse, error) {
 	resp, err := auth.AuthorizeRemoveContributionLinkFromVreel(token, linkID)
 

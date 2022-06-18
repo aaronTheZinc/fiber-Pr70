@@ -228,8 +228,13 @@ type Video {
 
 type GalleryImage {
   id: String!
-  url: String!
-  position: Int!
+  position: Int
+  cta1: CTA!
+  cta2: CTA!
+  desktop: Content!
+  mobile: Content!
+  image_header: String!
+  description: String!
 }
 
 type Gallery {
@@ -265,11 +270,23 @@ type SimpleLinksElement {
   links: [SimpleLink!]!
 }
 
+type Music {
+  id: String!
+  platform: String!
+  link: String!
+}
+
+type MusicElement {
+  header: String!
+  music: [Music!]!
+}
+
 type VreelElements {
   text_area: TextArea
   videos: Videos
   gallery: Gallery
   services: Service
+  music: MusicElement
   socials: SocialsElement
   simple_links: SimpleLinksElement
   super_links: [SuperLink]
@@ -419,9 +436,9 @@ input ContributionsInput {
   link: String!
 }
 
-input AddGalleryImageInput {
-  imageUrl: String!
-  position: Int!
+input MusicInput {
+  platform: String!
+  link: String!
 }
 
 input CTAInput {
@@ -444,6 +461,15 @@ input AddVideoInput {
   desktop: ContentInput!
   mobile: ContentInput!
   video_header: String!
+  description: String!
+}
+input AddGalleryImageInput {
+  position: Int
+  cta1: CTAInput!
+  cta2: CTAInput!
+  desktop: ContentInput!
+  mobile: ContentInput!
+  image_header: String!
   description: String!
 }
 
@@ -507,6 +533,8 @@ type Mutation {
     token: String!
     input: ContributionsInput!
   ): MutationResponse!
+  addMusicLink(token: String!, input: MusicInput!): MutationResponse!
+  removeMusicLink(token: String!, linkId: String!): MutationResponse
   removeContributionLink(token: String!, linkId: String!): MutationResponse!
   addVideoToVreel(token: String!, input: AddVideoInput!): MutationResponse!
   removeVideoFromVreel(token: String!, videoId: String!): MutationResponse!
