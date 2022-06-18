@@ -57,6 +57,10 @@ func RemoveLike(author, target string) error {
 	return db.Where("author = ? AND target = ? AND action = ?", author, target, "like").Delete(&model.AnalyticsFragmentModel{}).Error
 }
 
+func RemoveFollow(author, target string) error {
+	return db.Where("author = ? AND target = ? AND action = ?", author, target, "follow").Delete(&model.AnalyticsFragmentModel{}).Error
+}
+
 func CreateFollow(author, target string) (model.AnalyticsFragmentModel, error) {
 	var err error
 	follow := model.AnalyticsFragmentModel{

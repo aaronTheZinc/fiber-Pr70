@@ -126,13 +126,24 @@ type CTA {
   link_type: String!
   link_url: String!
 }
+
+type Info {
+  header: String!
+  description: String!
+  collaborators: [String!]!
+  credits: [String!]!
+  background_audio_credit: String!
+  music_credit: String!
+}
+
 type Advanced {
-  info: String!
+  info: Info!
   header: String!
   link_type: String!
   logoUrl: String
-  groupId: String
-  credits: String
+  isDarkMode: Boolean
+  background_audio_source: String!
+  background_audio_url: String!
 }
 type Slide {
   id: String!

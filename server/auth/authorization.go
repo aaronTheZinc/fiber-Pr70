@@ -616,17 +616,25 @@ func AuthorizeFollowVreel(vreelId, token string) (model.MutationResponse, error)
 	return r, err
 }
 
-// func AuthorizeUnfollowVreel(vreelId, token string) (model.MutationResponse, error) {
-// 	var err error
-// 	var r model.MutationResponse
+func AuthorizeUnfollowVreel(token, target string) (model.MutationResponse, error) {
+	var err error
+	var resp model.MutationResponse
 
-// 	claims, isAuth, parseErr := ParseToken(token)
-// 	userId := claims.ID
+	claims, isAuth, parseErr := ParseToken(token)
+	userId := claims.ID
 
-// 	if isAuth && parseErr == nil {
-
-// 	} else {
-// 		err = e.UNAUTHORIZED_ERROR
-// 	}
-// 	return r, err
-// }
+	if isAuth && parseErr == nil {
+		removeErr := database.RemoveFollow(userId, target)
+		if removeErr != nil {
+			err = removeErr
+		} else {
+			resp = model.MutationResponse{
+				Succeeded: true,
+				Message:   "unfollowed vreel: " + target,
+			}
+		}
+	} else {
+		err = e.UNAUTHORIZED_ERROR
+	}
+	return resp, err
+}

@@ -124,7 +124,9 @@ func (r *mutationResolver) Follow(ctx context.Context, input model.AnalyticsMuta
 }
 
 func (r *mutationResolver) UnFollow(ctx context.Context, input model.AnalyticsMutation) (*model.MutationResponse, error) {
-	panic(fmt.Errorf("not implemented"))
+	resp, err := auth.AuthorizeUnfollowVreel(input.Token, input.Target)
+
+	return &resp, err
 }
 
 func (r *mutationResolver) LogPageLoad(ctx context.Context, vreelID string) (*model.MutationResponse, error) {
