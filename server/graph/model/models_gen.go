@@ -17,12 +17,13 @@ type AddVideoInput struct {
 }
 
 type Advanced struct {
-	Info     string  `json:"info"`
-	Header   string  `json:"header"`
-	LinkType string  `json:"link_type"`
-	LogoURL  *string `json:"logoUrl"`
-	GroupID  *string `json:"groupId"`
-	Credits  *string `json:"credits"`
+	Info                  *Info   `json:"info"`
+	Header                string  `json:"header"`
+	LinkType              string  `json:"link_type"`
+	LogoURL               *string `json:"logoUrl"`
+	IsDarkMode            *bool   `json:"isDarkMode"`
+	BackgroundAudioSource string  `json:"background_audio_source"`
+	BackgroundAudioURL    string  `json:"background_audio_url"`
 }
 
 type AnalyticFragment struct {
@@ -158,6 +159,15 @@ type Group struct {
 	Members     []string `json:"members"`
 	Events      []*Event `json:"events"`
 	Vreel       *Vreel   `json:"vreel"`
+}
+
+type Info struct {
+	Header                string   `json:"header"`
+	Description           string   `json:"description"`
+	Collaborators         []string `json:"collaborators"`
+	Credits               []string `json:"credits"`
+	BackgroundAudioCredit string   `json:"background_audio_credit"`
+	MusicCredit           string   `json:"music_credit"`
 }
 
 type Link struct {
