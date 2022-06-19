@@ -105,6 +105,11 @@ type ComplexityRoot struct {
 		Header        func(childComplexity int) int
 	}
 
+	Credit struct {
+		AccreditedID func(childComplexity int) int
+		CreditType   func(childComplexity int) int
+	}
+
 	Enterprise struct {
 		Email     func(childComplexity int) int
 		Employees func(childComplexity int) int
@@ -201,6 +206,13 @@ type ComplexityRoot struct {
 
 	LocalSession struct {
 		Token func(childComplexity int) int
+	}
+
+	MoreInfo struct {
+		Collaborators func(childComplexity int) int
+		Credits       func(childComplexity int) int
+		Description   func(childComplexity int) int
+		Title         func(childComplexity int) int
 	}
 
 	Music struct {
@@ -322,6 +334,7 @@ type ComplexityRoot struct {
 		Cta2          func(childComplexity int) int
 		Desktop       func(childComplexity int) int
 		ID            func(childComplexity int) int
+		Info          func(childComplexity int) int
 		Metadata      func(childComplexity int) int
 		Mobile        func(childComplexity int) int
 		SlideLocation func(childComplexity int) int
@@ -774,6 +787,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ContributionsElement.Header(childComplexity), true
+
+	case "Credit.accredited_id":
+		if e.complexity.Credit.AccreditedID == nil {
+			break
+		}
+
+		return e.complexity.Credit.AccreditedID(childComplexity), true
+
+	case "Credit.credit_type":
+		if e.complexity.Credit.CreditType == nil {
+			break
+		}
+
+		return e.complexity.Credit.CreditType(childComplexity), true
 
 	case "Enterprise.email":
 		if e.complexity.Enterprise.Email == nil {
@@ -1229,6 +1256,34 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.LocalSession.Token(childComplexity), true
+
+	case "MoreInfo.collaborators":
+		if e.complexity.MoreInfo.Collaborators == nil {
+			break
+		}
+
+		return e.complexity.MoreInfo.Collaborators(childComplexity), true
+
+	case "MoreInfo.credits":
+		if e.complexity.MoreInfo.Credits == nil {
+			break
+		}
+
+		return e.complexity.MoreInfo.Credits(childComplexity), true
+
+	case "MoreInfo.description":
+		if e.complexity.MoreInfo.Description == nil {
+			break
+		}
+
+		return e.complexity.MoreInfo.Description(childComplexity), true
+
+	case "MoreInfo.title":
+		if e.complexity.MoreInfo.Title == nil {
+			break
+		}
+
+		return e.complexity.MoreInfo.Title(childComplexity), true
 
 	case "Music.id":
 		if e.complexity.Music.ID == nil {
@@ -2065,6 +2120,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Slide.ID(childComplexity), true
 
+	case "Slide.info":
+		if e.complexity.Slide.Info == nil {
+			break
+		}
+
+		return e.complexity.Slide.Info(childComplexity), true
+
 	case "Slide.metadata":
 		if e.complexity.Slide.Metadata == nil {
 			break
@@ -2841,6 +2903,11 @@ type Info {
   music_credit: String!
 }
 
+type Credit {
+  credit_type: String!
+  accredited_id: String!
+}
+
 type Advanced {
   info: Info!
   header: String!
@@ -2849,6 +2916,12 @@ type Advanced {
   isDarkMode: Boolean
   background_audio_source: String!
   background_audio_url: String!
+}
+type MoreInfo {
+  title: String
+  description: String
+  collaborators: [String!]
+  credits: [Credit!]
 }
 type Slide {
   id: String!
@@ -2863,6 +2936,7 @@ type Slide {
   cta1: CTA!
   cta2: CTA!
   advanced: Advanced
+  info: MoreInfo
 }
 
 type Contact {
@@ -5630,6 +5704,76 @@ func (ec *executionContext) _ContributionsElement_contributions(ctx context.Cont
 	return ec.marshalNContribution2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐContributionᚄ(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Credit_credit_type(ctx context.Context, field graphql.CollectedField, obj *model.Credit) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Credit",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreditType, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Credit_accredited_id(ctx context.Context, field graphql.CollectedField, obj *model.Credit) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Credit",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AccreditedID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Enterprise_id(ctx context.Context, field graphql.CollectedField, obj *model.Enterprise) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -7876,6 +8020,134 @@ func (ec *executionContext) _LocalSession_token(ctx context.Context, field graph
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _MoreInfo_title(ctx context.Context, field graphql.CollectedField, obj *model.MoreInfo) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "MoreInfo",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Title, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _MoreInfo_description(ctx context.Context, field graphql.CollectedField, obj *model.MoreInfo) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "MoreInfo",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Description, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _MoreInfo_collaborators(ctx context.Context, field graphql.CollectedField, obj *model.MoreInfo) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "MoreInfo",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Collaborators, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]string)
+	fc.Result = res
+	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _MoreInfo_credits(ctx context.Context, field graphql.CollectedField, obj *model.MoreInfo) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "MoreInfo",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Credits, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Credit)
+	fc.Result = res
+	return ec.marshalOCredit2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐCreditᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Music_id(ctx context.Context, field graphql.CollectedField, obj *model.Music) (ret graphql.Marshaler) {
@@ -11418,6 +11690,38 @@ func (ec *executionContext) _Slide_advanced(ctx context.Context, field graphql.C
 	res := resTmp.(*model.Advanced)
 	fc.Result = res
 	return ec.marshalOAdvanced2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐAdvanced(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Slide_info(ctx context.Context, field graphql.CollectedField, obj *model.Slide) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Slide",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Info, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.MoreInfo)
+	fc.Result = res
+	return ec.marshalOMoreInfo2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐMoreInfo(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _SlideMetaData_created(ctx context.Context, field graphql.CollectedField, obj *model.SlideMetaData) (ret graphql.Marshaler) {
@@ -16443,6 +16747,38 @@ func (ec *executionContext) _ContributionsElement(ctx context.Context, sel ast.S
 	return out
 }
 
+var creditImplementors = []string{"Credit"}
+
+func (ec *executionContext) _Credit(ctx context.Context, sel ast.SelectionSet, obj *model.Credit) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, creditImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Credit")
+		case "credit_type":
+			out.Values[i] = ec._Credit_credit_type(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "accredited_id":
+			out.Values[i] = ec._Credit_accredited_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var enterpriseImplementors = []string{"Enterprise"}
 
 func (ec *executionContext) _Enterprise(ctx context.Context, sel ast.SelectionSet, obj *model.Enterprise) graphql.Marshaler {
@@ -16972,6 +17308,36 @@ func (ec *executionContext) _LocalSession(ctx context.Context, sel ast.Selection
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var moreInfoImplementors = []string{"MoreInfo"}
+
+func (ec *executionContext) _MoreInfo(ctx context.Context, sel ast.SelectionSet, obj *model.MoreInfo) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, moreInfoImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("MoreInfo")
+		case "title":
+			out.Values[i] = ec._MoreInfo_title(ctx, field, obj)
+		case "description":
+			out.Values[i] = ec._MoreInfo_description(ctx, field, obj)
+		case "collaborators":
+			out.Values[i] = ec._MoreInfo_collaborators(ctx, field, obj)
+		case "credits":
+			out.Values[i] = ec._MoreInfo_credits(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -17800,6 +18166,8 @@ func (ec *executionContext) _Slide(ctx context.Context, sel ast.SelectionSet, ob
 			}
 		case "advanced":
 			out.Values[i] = ec._Slide_advanced(ctx, field, obj)
+		case "info":
+			out.Values[i] = ec._Slide_info(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -18773,6 +19141,16 @@ func (ec *executionContext) marshalNContribution2ᚖgithubᚗcomᚋvreelᚋapp�
 func (ec *executionContext) unmarshalNContributionsInput2githubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐContributionsInput(ctx context.Context, v interface{}) (model.ContributionsInput, error) {
 	res, err := ec.unmarshalInputContributionsInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNCredit2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐCredit(ctx context.Context, sel ast.SelectionSet, v *model.Credit) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._Credit(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNEnterprise2githubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐEnterprise(ctx context.Context, sel ast.SelectionSet, v model.Enterprise) graphql.Marshaler {
@@ -19890,6 +20268,53 @@ func (ec *executionContext) marshalOContributionsElement2ᚖgithubᚗcomᚋvreel
 	return ec._ContributionsElement(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalOCredit2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐCreditᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Credit) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNCredit2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐCredit(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
 func (ec *executionContext) marshalOEnterprise2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐEnterprise(ctx context.Context, sel ast.SelectionSet, v *model.Enterprise) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
@@ -20019,6 +20444,13 @@ func (ec *executionContext) unmarshalOLoginInput2ᚖgithubᚗcomᚋvreelᚋapp�
 	}
 	res, err := ec.unmarshalInputLoginInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOMoreInfo2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐMoreInfo(ctx context.Context, sel ast.SelectionSet, v *model.MoreInfo) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._MoreInfo(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOMusicElement2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐMusicElement(ctx context.Context, sel ast.SelectionSet, v *model.MusicElement) graphql.Marshaler {

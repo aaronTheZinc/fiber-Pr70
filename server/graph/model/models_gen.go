@@ -114,6 +114,11 @@ type CreateSlide struct {
 	SlideLocation int    `json:"slide_location"`
 }
 
+type Credit struct {
+	CreditType   string `json:"credit_type"`
+	AccreditedID string `json:"accredited_id"`
+}
+
 type Enterprise struct {
 	ID        *string `json:"id"`
 	Name      string  `json:"name"`
@@ -215,6 +220,13 @@ type LocalSession struct {
 type LoginInput struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
+}
+
+type MoreInfo struct {
+	Title         *string   `json:"title"`
+	Description   *string   `json:"description"`
+	Collaborators []string  `json:"collaborators"`
+	Credits       []*Credit `json:"credits"`
 }
 
 type Music struct {
@@ -346,6 +358,7 @@ type Slide struct {
 	Cta1          *Cta           `json:"cta1"`
 	Cta2          *Cta           `json:"cta2"`
 	Advanced      *Advanced      `json:"advanced"`
+	Info          *MoreInfo      `json:"info"`
 }
 
 type SlideMetaData struct {

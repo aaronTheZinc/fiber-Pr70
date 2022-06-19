@@ -237,14 +237,14 @@ func AddSocialsLink(vreelId string, input model.SocialsInput) error {
 	if parseErr != nil {
 		return errors.New("failed to parse")
 	}
+	if elements.Socials == nil {
+		elements.Socials = &model.SocialsElement{Header: "", Socials: []*model.Socials{}}
+	}
 	socials = elements.Socials.Socials
 
 	newSocial := model.Socials{Platform: input.Platform, Username: input.Username}
 	socials = append(socials, &newSocial)
 
-	if elements.Socials == nil {
-		elements.Socials = &model.SocialsElement{Header: "", Socials: []*model.Socials{}}
-	}
 	elements.Socials.Socials = socials
 	u, marshalErr := json.Marshal(&elements)
 	if marshalErr == nil {
