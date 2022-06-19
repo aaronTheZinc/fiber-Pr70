@@ -186,6 +186,7 @@ type Link {
 
 type SimpleLink {
   id: String!
+  position: Int!
   thumbnail: String!
   link_header: String!
   url: String!
@@ -218,6 +219,7 @@ type Videos {
 
 type Video {
   id: String!
+  position: Int!
   cta1: CTA!
   cta2: CTA!
   desktop: Content!
@@ -412,6 +414,7 @@ input AnalyticsMutation {
   token: String!
 }
 input SimpleLinkInput {
+  position: Int!
   thumbnail: String!
   link_header: String!
   url: String!
@@ -456,6 +459,7 @@ input ContentInput {
 }
 
 input AddVideoInput {
+  position: Int
   cta1: CTAInput!
   cta2: CTAInput!
   desktop: ContentInput!

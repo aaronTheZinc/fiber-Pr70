@@ -406,6 +406,7 @@ func (c *SlideModel) ToSlide() Slide {
 
 func (c *SimpleLinkInput) ToLink() SimpleLink {
 	return SimpleLink{
+		Position:   c.Position,
 		Thumbnail:  c.Thumbnail,
 		LinkHeader: c.LinkHeader,
 		LinkType:   c.LinkType,
@@ -425,6 +426,7 @@ func (c *SuperLinkInput) ToLink() SuperLink {
 }
 func (c *AddVideoInput) ToVideo() Video {
 	return Video{
+		Position:    *c.Position,
 		VideoHeader: c.VideoHeader,
 		Desktop:     (*Content)(c.Desktop),
 		Mobile:      (*Content)(c.Mobile),

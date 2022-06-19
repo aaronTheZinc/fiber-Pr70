@@ -13,6 +13,7 @@ type AddGalleryImageInput struct {
 }
 
 type AddVideoInput struct {
+	Position    *int          `json:"position"`
 	Cta1        *CTAInput     `json:"cta1"`
 	Cta2        *CTAInput     `json:"cta2"`
 	Desktop     *ContentInput `json:"desktop"`
@@ -310,6 +311,7 @@ type Service struct {
 
 type SimpleLink struct {
 	ID         string `json:"id"`
+	Position   int    `json:"position"`
 	Thumbnail  string `json:"thumbnail"`
 	LinkHeader string `json:"link_header"`
 	URL        string `json:"url"`
@@ -318,6 +320,7 @@ type SimpleLink struct {
 }
 
 type SimpleLinkInput struct {
+	Position   int    `json:"position"`
 	Thumbnail  string `json:"thumbnail"`
 	LinkHeader string `json:"link_header"`
 	URL        string `json:"url"`
@@ -428,6 +431,7 @@ type User struct {
 
 type Video struct {
 	ID          string   `json:"id"`
+	Position    int      `json:"position"`
 	Cta1        *Cta     `json:"cta1"`
 	Cta2        *Cta     `json:"cta2"`
 	Desktop     *Content `json:"desktop"`

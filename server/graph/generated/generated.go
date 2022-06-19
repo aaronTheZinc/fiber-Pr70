@@ -302,6 +302,7 @@ type ComplexityRoot struct {
 		ID         func(childComplexity int) int
 		LinkHeader func(childComplexity int) int
 		LinkType   func(childComplexity int) int
+		Position   func(childComplexity int) int
 		Tag        func(childComplexity int) int
 		Thumbnail  func(childComplexity int) int
 		URL        func(childComplexity int) int
@@ -401,6 +402,7 @@ type ComplexityRoot struct {
 		Desktop     func(childComplexity int) int
 		ID          func(childComplexity int) int
 		Mobile      func(childComplexity int) int
+		Position    func(childComplexity int) int
 		VideoHeader func(childComplexity int) int
 	}
 
@@ -1958,6 +1960,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.SimpleLink.LinkType(childComplexity), true
 
+	case "SimpleLink.position":
+		if e.complexity.SimpleLink.Position == nil {
+			break
+		}
+
+		return e.complexity.SimpleLink.Position(childComplexity), true
+
 	case "SimpleLink.tag":
 		if e.complexity.SimpleLink.Tag == nil {
 			break
@@ -2441,6 +2450,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Video.Mobile(childComplexity), true
 
+	case "Video.position":
+		if e.complexity.Video.Position == nil {
+			break
+		}
+
+		return e.complexity.Video.Position(childComplexity), true
+
 	case "Video.video_header":
 		if e.complexity.Video.VideoHeader == nil {
 			break
@@ -2861,6 +2877,7 @@ type Link {
 
 type SimpleLink {
   id: String!
+  position: Int!
   thumbnail: String!
   link_header: String!
   url: String!
@@ -2893,6 +2910,7 @@ type Videos {
 
 type Video {
   id: String!
+  position: Int!
   cta1: CTA!
   cta2: CTA!
   desktop: Content!
@@ -3087,6 +3105,7 @@ input AnalyticsMutation {
   token: String!
 }
 input SimpleLinkInput {
+  position: Int!
   thumbnail: String!
   link_header: String!
   url: String!
@@ -3131,6 +3150,7 @@ input ContentInput {
 }
 
 input AddVideoInput {
+  position: Int
   cta1: CTAInput!
   cta2: CTAInput!
   desktop: ContentInput!
@@ -10622,6 +10642,41 @@ func (ec *executionContext) _SimpleLink_id(ctx context.Context, field graphql.Co
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _SimpleLink_position(ctx context.Context, field graphql.CollectedField, obj *model.SimpleLink) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "SimpleLink",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Position, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _SimpleLink_thumbnail(ctx context.Context, field graphql.CollectedField, obj *model.SimpleLink) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -12917,6 +12972,41 @@ func (ec *executionContext) _Video_id(ctx context.Context, field graphql.Collect
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Video_position(ctx context.Context, field graphql.CollectedField, obj *model.Video) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Video",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Position, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Video_cta1(ctx context.Context, field graphql.CollectedField, obj *model.Video) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -15086,6 +15176,14 @@ func (ec *executionContext) unmarshalInputAddVideoInput(ctx context.Context, obj
 
 	for k, v := range asMap {
 		switch k {
+		case "position":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("position"))
+			it.Position, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "cta1":
 			var err error
 
@@ -15729,6 +15827,14 @@ func (ec *executionContext) unmarshalInputSimpleLinkInput(ctx context.Context, o
 
 	for k, v := range asMap {
 		switch k {
+		case "position":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("position"))
+			it.Position, err = ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "thumbnail":
 			var err error
 
@@ -17467,6 +17573,11 @@ func (ec *executionContext) _SimpleLink(ctx context.Context, sel ast.SelectionSe
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "position":
+			out.Values[i] = ec._SimpleLink_position(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "thumbnail":
 			out.Values[i] = ec._SimpleLink_thumbnail(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -17999,6 +18110,11 @@ func (ec *executionContext) _Video(ctx context.Context, sel ast.SelectionSet, ob
 			out.Values[i] = graphql.MarshalString("Video")
 		case "id":
 			out.Values[i] = ec._Video_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "position":
+			out.Values[i] = ec._Video_position(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
