@@ -145,6 +145,12 @@ type Advanced {
   background_audio_source: String!
   background_audio_url: String!
 }
+type MoreInfo {
+  music: MusicElement
+  socials: SocialsElement
+  simple_links: SimpleLinksElement
+  advanced: Advanced
+}
 type Slide {
   id: String!
   author: String!
@@ -157,10 +163,7 @@ type Slide {
   desktop: Content!
   cta1: CTA!
   cta2: CTA!
-  music: MusicElement
-  socials: SocialsElement
-  simple_links: SimpleLinksElement
-  advanced: Advanced
+  more_info: MoreInfo!
 }
 
 type Contact {
