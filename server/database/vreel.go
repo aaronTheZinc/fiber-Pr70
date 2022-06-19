@@ -135,6 +135,12 @@ func AddSimpleLinkToVreel(vreelId string, newLink model.SimpleLink) error {
 		return errors.New("failed to parse")
 	}
 	newLink.ID = utils.GenerateId()
+	if elements.SimpleLinks == nil {
+		elements.SimpleLinks = &model.SimpleLinksElement{
+			Links:  []*model.SimpleLink{},
+			Header: "",
+		}
+	}
 	links := elements.SimpleLinks.Links
 
 	links = append(links, &newLink)
