@@ -242,6 +242,9 @@ func AddSocialsLink(vreelId string, input model.SocialsInput) error {
 	newSocial := model.Socials{Platform: input.Platform, Username: input.Username}
 	socials = append(socials, &newSocial)
 
+	if elements.Socials == nil {
+		elements.Socials = &model.SocialsElement{Header: "", Socials: []*model.Socials{}}
+	}
 	elements.Socials.Socials = socials
 	u, marshalErr := json.Marshal(&elements)
 	if marshalErr == nil {
