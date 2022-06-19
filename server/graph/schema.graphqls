@@ -157,6 +157,9 @@ type Slide {
   desktop: Content!
   cta1: CTA!
   cta2: CTA!
+  music: MusicElement
+  socials: SocialsElement
+  simple_links: SimpleLinksElement
   advanced: Advanced
 }
 
@@ -288,9 +291,6 @@ type VreelElements {
   videos: Videos
   gallery: Gallery
   services: Service
-  music: MusicElement
-  socials: SocialsElement
-  simple_links: SimpleLinksElement
   super_links: [SuperLink]
   contact: Contact
   contributions: ContributionsElement
@@ -527,6 +527,7 @@ type Mutation {
   ): MutationResponse!
   deleteFile(token: String!, fileId: String!): MutationResponse!
   addSimpleVreelLink(token: String!, link: SimpleLinkInput!): MutationResponse!
+  removeSimpleVreelLinkI(token: String!, linkId: String!): MutationResponse!
   addSuperVreelLink(token: String!, link: SuperLinkInput): MutationResponse!
   addSocialMediaLink(token: String!, input: SocialsInput!): MutationResponse!
   addImageToVreelGallery(

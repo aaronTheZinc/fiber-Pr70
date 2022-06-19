@@ -239,6 +239,7 @@ type ComplexityRoot struct {
 		RemoveContributionLink            func(childComplexity int, token string, linkID string) int
 		RemoveImageFromVreelGallery       func(childComplexity int, token string, imageID string) int
 		RemoveMusicLink                   func(childComplexity int, token string, linkID string) int
+		RemoveSimpleVreelLinkI            func(childComplexity int, token string, linkID string) int
 		RemoveSlide                       func(childComplexity int, token string, slideID *string) int
 		RemoveUser                        func(childComplexity int, id string) int
 		RemoveUserFromGroup               func(childComplexity int, token string, groupID string, member string) int
@@ -466,6 +467,7 @@ type MutationResolver interface {
 	RemoveImageFromVreelGallery(ctx context.Context, token string, imageID string) (*model.MutationResponse, error)
 	DeleteFile(ctx context.Context, token string, fileID string) (*model.MutationResponse, error)
 	AddSimpleVreelLink(ctx context.Context, token string, link model.SimpleLinkInput) (*model.MutationResponse, error)
+	RemoveSimpleVreelLinkI(ctx context.Context, token string, linkID string) (*model.MutationResponse, error)
 	AddSuperVreelLink(ctx context.Context, token string, link *model.SuperLinkInput) (*model.MutationResponse, error)
 	AddSocialMediaLink(ctx context.Context, token string, input model.SocialsInput) (*model.MutationResponse, error)
 	AddImageToVreelGallery(ctx context.Context, token string, input model.AddGalleryImageInput) (*model.MutationResponse, error)
@@ -1550,6 +1552,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.RemoveMusicLink(childComplexity, args["token"].(string), args["linkId"].(string)), true
+
+	case "Mutation.removeSimpleVreelLinkI":
+		if e.complexity.Mutation.RemoveSimpleVreelLinkI == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_removeSimpleVreelLinkI_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.RemoveSimpleVreelLinkI(childComplexity, args["token"].(string), args["linkId"].(string)), true
 
 	case "Mutation.removeSlide":
 		if e.complexity.Mutation.RemoveSlide == nil {
@@ -3218,6 +3232,7 @@ type Mutation {
   ): MutationResponse!
   deleteFile(token: String!, fileId: String!): MutationResponse!
   addSimpleVreelLink(token: String!, link: SimpleLinkInput!): MutationResponse!
+  removeSimpleVreelLinkI(token: String!, linkId: String!): MutationResponse!
   addSuperVreelLink(token: String!, link: SuperLinkInput): MutationResponse!
   addSocialMediaLink(token: String!, input: SocialsInput!): MutationResponse!
   addImageToVreelGallery(
@@ -3741,6 +3756,30 @@ func (ec *executionContext) field_Mutation_removeImageFromVreelGallery_args(ctx 
 }
 
 func (ec *executionContext) field_Mutation_removeMusicLink_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["token"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("token"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["token"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["linkId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("linkId"))
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["linkId"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_removeSimpleVreelLinkI_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
@@ -9090,6 +9129,48 @@ func (ec *executionContext) _Mutation_addSimpleVreelLink(ctx context.Context, fi
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return ec.resolvers.Mutation().AddSimpleVreelLink(rctx, args["token"].(string), args["link"].(model.SimpleLinkInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.MutationResponse)
+	fc.Result = res
+	return ec.marshalNMutationResponse2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐMutationResponse(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_removeSimpleVreelLinkI(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_removeSimpleVreelLinkI_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().RemoveSimpleVreelLinkI(rctx, args["token"].(string), args["linkId"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -17113,6 +17194,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			}
 		case "addSimpleVreelLink":
 			out.Values[i] = ec._Mutation_addSimpleVreelLink(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "removeSimpleVreelLinkI":
+			out.Values[i] = ec._Mutation_removeSimpleVreelLinkI(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}

@@ -156,6 +156,10 @@ func (r *mutationResolver) AddSimpleVreelLink(ctx context.Context, token string,
 	return &resp, err
 }
 
+func (r *mutationResolver) RemoveSimpleVreelLinkI(ctx context.Context, token string, linkID string) (*model.MutationResponse, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
 func (r *mutationResolver) AddSuperVreelLink(ctx context.Context, token string, link *model.SuperLinkInput) (*model.MutationResponse, error) {
 	resp, err := auth.AuthorizeAddSuperLinkToVreel(token, link.ToLink())
 
