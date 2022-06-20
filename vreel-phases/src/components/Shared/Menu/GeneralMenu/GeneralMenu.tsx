@@ -1,7 +1,7 @@
 import React from "react";
 import { NavItem, NavItemTypes } from "../MenuItems";
 
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import MenuItem from "../MenuItem/MenuItem";
 import MenuCloseBtn from "../../Buttons/MenuCloseBtn/MenuCloseBtn";
 import { useRouter } from "next/router";
@@ -11,7 +11,6 @@ import Styles from "./GeneralMenu.module.scss";
 import { expandMenu } from "src/redux/createSlice/createMenuSlice";
 
 const GeneralMenu = () => {
-  const router = useRouter();
   const { initMenuState } = useSelector((state: RootState) => state.expandMenu);
 
   return (
@@ -32,14 +31,20 @@ const GeneralMenu = () => {
           </div>
         </div>
         <div className={Styles.menuContainer}>
-          {NavItem.map((item: NavItemTypes, index: number) => (
-            <MenuItem
-              key={index}
-              item={item}
-              isRightRound={true}
-              action={expandMenu}
-            />
-          ))}
+          <div className={Styles.menuContainer__menu}>
+            {NavItem.map((item: NavItemTypes, index: number) => (
+              <MenuItem
+                key={index}
+                item={item}
+                isRightRound={true}
+                action={expandMenu}
+              />
+            ))}
+          </div>
+          <div className={Styles.menuContainer__menuLink}>
+            <button>Follow</button>
+            <button>Add To Contacts</button>
+          </div>
         </div>
       </div>
     </div>

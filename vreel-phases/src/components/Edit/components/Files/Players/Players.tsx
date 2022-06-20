@@ -13,7 +13,6 @@ const Players = ({ mobilePreview }: Props) => {
     (state: RootState) => state.expandMenu
   );
 
-  console.log(showPreviewInitialState.payload);
   return (
     <>
       {showPreviewInitialState.type === "image" && (

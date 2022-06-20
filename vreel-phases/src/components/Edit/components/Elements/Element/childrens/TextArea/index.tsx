@@ -1,12 +1,11 @@
 import clsx from 'clsx';
 import { useRef } from 'react';
+import { FormikContainer } from 'src/components/formik/FormikContainer';
+import FormikControl from 'src/components/formik/FormikControl';
 import AddTitleButton from 'src/components/Shared/Buttons/AddTitleButton/AddTitleButton';
-import ChildInput from 'src/components/Shared/Inputs/ChildInput';
 import Styles from '../Children.module.scss';
 
 const TextArea: React.FC = () => {
-  const inputRef1 = useRef(null);
-  const inputRef2 = useRef(null);
   const options = [
     { title: 'b' },
     { title: 'i' },
@@ -15,39 +14,76 @@ const TextArea: React.FC = () => {
     { title: 'Link' },
   ];
 
-  const handleClearText = () => {
-    inputRef1.current.value = '';
-    inputRef2.current.value = '';
+  const initialValues = {
+    header: '',
+    info: '',
+  };
+
+  const handleSubmit = async (values) => {
+    console.log(values);
   };
 
   return (
     <div className={Styles.children}>
-      <ChildInput type='text' placeholder='Header' icon={true} />
-      <ChildInput type='textarea' placeholder='Info' icon={true} />
-
-      <div className={Styles.optionWrapper}>
-        {options.map((option, index) => (
-          <button key={index} className={Styles.option}>
-            <span
-              className={clsx(
-                option.title === 'b'
-                  ? Styles.option_bold
-                  : option.title === 'i'
-                  ? Styles.option_italic
-                  : option.title === 'u'
-                  ? Styles.option_underline
-                  : ''
-              )}
+      <FormikContainer>
+        {(formik) => {
+          return (
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleSubmit(formik.values);
+              }}
             >
-              {option.title}
-            </span>
-          </button>
-        ))}
-      </div>
-      <AddTitleButton title='Add Image' />
-      <button onClick={handleClearText} className={Styles.clearArea}>
-        Clear Text Area
-      </button>
+              <FormikControl
+                control='input'
+                type='text'
+                name='header'
+                placeholder='Header'
+                required={true}
+                elementInput={true}
+                icon={true}
+              />
+              <FormikControl
+                control='textarea'
+                type='text'
+                name='info'
+                placeholder='Info'
+                required={true}
+                elementInput={true}
+                icon={true}
+              />
+
+              <div className={Styles.optionWrapper}>
+                {options.map((option, index) => (
+                  <button key={index} className={Styles.option}>
+                    <span
+                      className={clsx(
+                        option.title === 'b'
+                          ? Styles.option_bold
+                          : option.title === 'i'
+                          ? Styles.option_italic
+                          : option.title === 'u'
+                          ? Styles.option_underline
+                          : ''
+                      )}
+                    >
+                      {option.title}
+                    </span>
+                  </button>
+                ))}
+              </div>
+
+              <AddTitleButton title='Add Image' />
+              <button
+                onClick={(e) => formik.resetForm()}
+                className={Styles.clearArea}
+              >
+                Clear Text Area
+              </button>
+            </form>
+          );
+        }}
+      </FormikContainer>
     </div>
   );
 };

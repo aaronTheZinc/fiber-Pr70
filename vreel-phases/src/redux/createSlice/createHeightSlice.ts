@@ -34,8 +34,6 @@ export const heightSlice = createSlice({
       }
     ) => {
       state.parent = [...state.parent, actions.payload];
-
-      console.log(state.parent);
     },
 
     removeFromParent: (

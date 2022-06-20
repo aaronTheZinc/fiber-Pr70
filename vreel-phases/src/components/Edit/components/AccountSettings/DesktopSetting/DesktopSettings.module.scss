@@ -100,6 +100,7 @@
             @include displayFlex(100%, flex, flex-start, center);
             flex-direction: column;
             padding: 10px 0;
+            text-align: center;
             P {
               color: $vreel_white;
               font-size: 18px;

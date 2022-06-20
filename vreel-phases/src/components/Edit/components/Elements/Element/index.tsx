@@ -1,17 +1,22 @@
-import { useEffect, useRef, useState } from "react";
-import Styles from "../Elements.module.scss";
-import * as AiIcons from "react-icons/ai";
-import BtnShow from "./Buttons/BtnShow";
-import BtnHide from "./Buttons/BtnHide";
-import { ElementsType } from "../ElementsData";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "src/redux/store/store";
+import { useEffect, useRef, useState } from 'react';
+import Styles from '../Elements.module.scss';
+import * as AiIcons from 'react-icons/ai';
+import BtnShow from './Buttons/BtnShow';
+import BtnHide from './Buttons/BtnHide';
+import { ElementsType } from '../ElementsData';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from 'src/redux/store/store';
 import {
   removeFromParent,
   setParent,
-} from "src/redux/createSlice/createHeightSlice";
+} from 'src/redux/createSlice/createHeightSlice';
+import ToggleButton from 'src/components/Shared/Buttons/ToggleButton/ToggleButton';
+import { FormikContainer } from 'src/components/formik/FormikContainer';
 
-const Element: React.FC<{ element: ElementsType }> = ({ element }) => {
+const Element: React.FC<{ element: ElementsType; handleDrag?: any }> = ({
+  element,
+  handleDrag,
+}) => {
   const [height, setHeight] = useState<number>(0);
   const wrapperRef = useRef(null);
   const [collapse, setCollapse] = useState<boolean>(false);
@@ -33,14 +38,14 @@ const Element: React.FC<{ element: ElementsType }> = ({ element }) => {
         setParent({
           index: currentParent?.index,
           height: currentParent?.height + wrapperRef.current.offsetHeight,
-          title: "Elements",
+          title: 'Elements',
         })
       );
       dispatch(
         setParent({
           index: currentParent?.index,
           height: currentParent?.height + wrapperRef.current.offsetHeight,
-          title: "Elements",
+          title: 'Elements',
         })
       );
 
@@ -50,7 +55,7 @@ const Element: React.FC<{ element: ElementsType }> = ({ element }) => {
         setParent({
           index: currentParent?.index,
           height: currentParent?.height - wrapperRef.current.offsetHeight,
-          title: "Elements",
+          title: 'Elements',
         })
       );
 
@@ -59,16 +64,57 @@ const Element: React.FC<{ element: ElementsType }> = ({ element }) => {
   };
 
   useEffect(() => {
-    setCurrentParent(parent.find((obj) => obj.title === "Elements"));
+    setCurrentParent(parent.find((obj) => obj.title === 'Elements'));
   }, [handleSetHeight, collapse]);
+
+  const handleSubmit = async (values) => {
+    console.log(values);
+  };
 
   if (!element?.component) {
     return (
       <div className={Styles.elementWrapper}>
         <div className={Styles.element}>
-          <div onClick={() => setShow(!show)}>
-            {show ? <BtnShow /> : <BtnHide />}
+          <div className={Styles.buttonWrapper}>
+            <span
+              {...handleDrag}
+              style={{
+                cursor: 'pointer',
+              }}
+            >
+              <img src='/assets/icons/drag.svg' alt='Drag & Drop Icon' />
+            </span>
+
+            <FormikContainer
+              initialValues={{
+                show: element.active,
+              }}
+            >
+              {(formik) => {
+                return (
+                  <form
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      handleSubmit(formik.values);
+                    }}
+                  >
+                    <ToggleButton
+                      name='show'
+                      backgroundColor='white'
+                      height='35'
+                      activeTitle='Hidden'
+                      activeBackground='#61FF00'
+                      activeIcon={<AiIcons.AiOutlineEye />}
+                      deactiveTitle='Show'
+                      deactiveBackground='#a3a1a1'
+                      deactiveIcon={<AiIcons.AiOutlineEyeInvisible />}
+                    />
+                  </form>
+                );
+              }}
+            </FormikContainer>
           </div>
+
           <span className={Styles.element__title} onClick={handleSetHeight}>
             {element.title}
           </span>
@@ -84,9 +130,9 @@ const Element: React.FC<{ element: ElementsType }> = ({ element }) => {
         <div
           style={{
             height: `${height}px`,
-            overflow: "hidden",
-            width: "100%",
-            transition: "all .5s ease",
+            overflow: 'hidden',
+            width: '100%',
+            transition: 'all .5s ease',
           }}
         >
           <div className={Styles.empty_component} ref={wrapperRef}>
@@ -99,9 +145,47 @@ const Element: React.FC<{ element: ElementsType }> = ({ element }) => {
   return (
     <div className={Styles.elementWrapper}>
       <div className={Styles.element}>
-        <div onClick={() => setShow(!show)}>
-          {show ? <BtnShow /> : <BtnHide />}
+        <div className={Styles.buttonWrapper}>
+          <span
+            {...handleDrag}
+            style={{
+              cursor: 'pointer',
+            }}
+          >
+            <img src='/assets/icons/drag.svg' alt='Drag & Drop Icon' />
+          </span>
+          <FormikContainer
+            initialValues={{
+              show: element.active,
+            }}
+          >
+            {(formik) => {
+              return (
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    handleSubmit(formik.values);
+                  }}
+                >
+                  <ToggleButton
+                    name='show'
+                    backgroundColor='white'
+                    height='35'
+                    activeTitle='Hidden'
+                    activeBackground='#61FF00'
+                    activeIcon={<AiIcons.AiOutlineEye />}
+                    deactiveTitle='Show'
+                    deactiveBackground='#a3a1a1'
+                    deactiveIcon={<AiIcons.AiOutlineEyeInvisible />}
+                  />
+                </form>
+              );
+            }}
+          </FormikContainer>
         </div>
+        {/* <div onClick={() => setShow(!show)}>
+          {show ? <BtnShow /> : <BtnHide />}
+        </div> */}
         <span className={Styles.element__title} onClick={handleSetHeight}>
           {element.title}
         </span>
@@ -117,9 +201,9 @@ const Element: React.FC<{ element: ElementsType }> = ({ element }) => {
       <div
         style={{
           height: `${height}px`,
-          overflow: "hidden",
-          width: "100%",
-          transition: "all 1.5s ease",
+          overflow: 'hidden',
+          width: '100%',
+          transition: 'all 1.5s ease',
         }}
       >
         <div ref={wrapperRef}>

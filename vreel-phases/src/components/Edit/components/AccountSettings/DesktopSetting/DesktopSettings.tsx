@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import React from 'react';
 import CopyLinkBtn from 'src/components/Shared/Buttons/AccountSettings/CopyLinkBtn/CopyLinkBtn';
-import SlidesToggleButton from 'src/components/Shared/Buttons/SlidesBtn/SlidesToggleButton/SlidesToggleButton';
 import ToggleButton from '../../DisplayOptions/Buttons/ToggleButton';
 import PersonalInfoFields from '../PersonalInfo/PersonalInfoFields';
 import AccountCompletionStatus from './childrens/AccountCompletionStatus';

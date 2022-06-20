@@ -13,13 +13,15 @@ import {
 } from "src/redux/createSlice/createMenuSlice";
 import { useCookies } from "react-cookie";
 import toast from "react-hot-toast";
-
+import { userAuthReducer } from "src/redux/createSlice/userSlice";
+import { useRouter } from "next/router";
 const AccountMenu = () => {
   const [cookies, setCookie, removeCookie] = useCookies(["userAuthToken"]);
   const { initialAccountMenuState } = useSelector(
     (state: RootState) => state.expandMenu
   );
   const dispatch = useAppDispatch();
+  const router = useRouter();
 
   return (
     <div
@@ -36,7 +38,9 @@ const AccountMenu = () => {
               onClick={() => {
                 removeCookie("userAuthToken");
                 dispatch(expandAccountMenu());
+                dispatch(userAuthReducer(false));
                 toast.success("Log Out Successfully");
+                router.push("/");
               }}
               className={Styles.logOutBtn}
             >

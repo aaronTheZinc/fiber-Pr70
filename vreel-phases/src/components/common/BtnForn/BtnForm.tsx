@@ -6,8 +6,7 @@ const BtnForm: React.FC<{
   type: any;
   customClass?: string;
   formik?: any;
-}> = ({ title, type, customClass, formik }) => {
-  console.log(formik.isValid, formik.isSubmitting);
+}> = ({ title, type = "button", customClass, formik }) => {
   return (
     <button
       type={type}

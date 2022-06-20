@@ -32,13 +32,10 @@ const Desktop = () => {
     },
   });
 
-  console.log(userFiles);
-
   const { showPreviewInitialState, mobilePreviewInitialState } = useSelector(
     (state: RootState) => state.expandMenu
   );
-  const len = showPreviewInitialState.payload.length ? true : false;
-
+  const len = showPreviewInitialState.payload?.length ? true : false;
   return (
     <div className={Styles.filesDesktopVersion}>
       <div className={Styles.grid}>

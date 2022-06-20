@@ -1,19 +1,21 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   initMenuState: false,
   initQRState: false,
+  initShareState: false,
+  initInfoState: false,
   initialAccountMenuState: false,
   mobilePreviewInitialState: false,
   showPreviewInitialState: {
-    type: '',
-    payload: '',
+    type: "",
+    payload: "",
   },
   collupse: { level1: [], level2: [], level3: [] },
 };
 
 export const menuSlice = createSlice({
-  name: 'expandMenu',
+  name: "expandMenu",
   initialState,
 
   reducers: {
@@ -22,7 +24,13 @@ export const menuSlice = createSlice({
     },
     expandQR: (state) => {
       state.initQRState = !state.initQRState;
-      console.log(state.initQRState);
+    },
+    expandShare: (state) => {
+      state.initShareState = !state.initShareState;
+    },
+
+    expandInfo: (state) => {
+      state.initInfoState = !state.initInfoState;
     },
     expandAccountMenu: (state) => {
       state.initialAccountMenuState = !state.initialAccountMenuState;
@@ -33,31 +41,6 @@ export const menuSlice = createSlice({
     showPreviewActions: (state, actions) => {
       state.showPreviewInitialState = actions.payload;
     },
-
-    addCollupse: (state, actions) => {
-      const { level, height } = actions.payload;
-      if (level == 2) {
-        state.collupse.level1.push(actions.payload);
-        console.log(state.collupse.level1);
-      }
-      if (level == 3) {
-        state.collupse.level2.push(actions.payload);
-        console.log(state.collupse.level2);
-      }
-    },
-    removeCollupse: (state, actions) => {
-      const { level, height, title } = actions.payload;
-      if (level == 2) {
-        state.collupse.level1.map((e) => e.title).indexOf(title);
-        state.collupse.level1.splice(0, 1);
-        console.log(state.collupse.level1);
-      }
-      if (level == 3) {
-        state.collupse.level2.map((e) => e.title).indexOf(title);
-        state.collupse.level2.splice(0, 1);
-        console.log(state.collupse.level2);
-      }
-    },
   },
 });
 
@@ -65,10 +48,10 @@ export const menuSlice = createSlice({
 export const {
   expandMenu,
   expandQR,
+  expandShare,
+  expandInfo,
   expandAccountMenu,
   showMobilePreview,
   showPreviewActions,
-  addCollupse,
-  removeCollupse,
 } = menuSlice.actions;
 export default menuSlice.reducer;

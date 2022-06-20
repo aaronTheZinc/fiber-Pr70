@@ -1,17 +1,44 @@
-import React from "react";
-import { Field, ErrorMessage, useFormikContext } from "formik";
-import TextError from "../TextError/TextError";
-import Styles from "./Input.module.scss";
-import clsx from "clsx";
+import React from 'react';
+import { Field, ErrorMessage, useFormikContext } from 'formik';
+import TextError from '../TextError/TextError';
+import Styles from './Input.module.scss';
+import clsx from 'clsx';
+import ElementInput from '../ElementInput/ElementInput';
+import SocialInput from '../SocialInput/SocialInput';
 
 const Input = (props: any) => {
-  const { slideInput, placeholder, name, ...rest } = props;
+  const { slideinput, elementInput, social, icon, placeholder, name, ...rest } =
+    props;
   const { errors, setFieldValue } = useFormikContext();
 
   return (
     <div className={Styles.formControl}>
       <Field name={name}>
         {({ field, form }) => {
+          if (elementInput) {
+            return (
+              <ElementInput
+                type='text'
+                placeholder={placeholder}
+                field={field}
+                rest={rest}
+                icon={icon}
+              />
+            );
+          }
+
+          if (social) {
+            return (
+              <SocialInput
+                logo={social.logo}
+                title={social.title}
+                placeholder={placeholder}
+                field={field}
+                rest={rest}
+              />
+            );
+          }
+
           return (
             <div>
               <input
@@ -19,7 +46,7 @@ const Input = (props: any) => {
                 {...field}
                 {...rest}
                 placeholder={`${placeholder} `}
-                className={clsx(slideInput ? Styles.slideInput : Styles.input)}
+                className={clsx(slideinput ? Styles.slideinput : Styles.input)}
               />
             </div>
           );

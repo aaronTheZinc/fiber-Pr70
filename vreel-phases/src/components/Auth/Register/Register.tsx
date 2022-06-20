@@ -62,10 +62,10 @@ const Register = () => {
       } else if (userName.data) {
         setUseable("Already used ");
       } else if (!userName.data) {
-        setUseable("Useable");
+        setUseable("Available");
       }
       setLoading(false);
-    }, 10);
+    }, 1000);
   };
 
   // =================== handle Register Form ===================//
@@ -74,11 +74,10 @@ const Register = () => {
     const { email, password } = formik.values;
     const username = value;
     if (!username || !email || !password) {
-      toast.success("Fill up the form please");
+      toast.error("Fill up the form please");
       return;
     }
 
-    console.log({ username, email, password });
     try {
       await createUser({
         variables: {
@@ -105,7 +104,9 @@ const Register = () => {
       }
       formik.resetForm();
     } catch (error) {
-      formik.errors["password"] = error.message;
+      formik.errors["email"] = error.message;
+      console.log(error.message);
+
       formik.setSubmitting(false);
     }
   };
@@ -139,18 +140,25 @@ const Register = () => {
                   />
                   <div className={Styles.user_loading}>
                     {loading ? (
-                      <div className={Styles.user_not_found}>loading...</div>
+                      <div className={Styles.user_not_found}>
+                        <span style={{ color: "white" }}> Username : </span>
+                        loading...
+                      </div>
                     ) : (
                       <div
                         className={
-                          useable == "Useable"
+                          useable == "Available"
                             ? `${Styles.user_not_found}`
                             : null
                         }
                       >
+                        <span style={{ color: "white" }}> Username : </span>
                         {useable}
                       </div>
                     )}
+                    <div style={{ margin: "10px 20px" }}>
+                      After registration username CAN NOT be changed!{" "}
+                    </div>
                   </div>
                   <FormikControl
                     control="input"
