@@ -44,12 +44,18 @@ func GetDefaultElementsString() (string, error) {
 		Contributions: []*model.Contribution{},
 	}
 
+	simpleLinks := model.SimpleLinksElement{
+		Links:  []*model.SimpleLink{},
+		Header: "",
+	}
+
 	elements := model.VreelElements{
-		TextArea: &textArea,
-		Videos:   &videos,
-		Gallery:  &gallery,
-		Services: &services,
-		Music:    &music,
+		TextArea:    &textArea,
+		Videos:      &videos,
+		Gallery:     &gallery,
+		Services:    &services,
+		Music:       &music,
+		SimpleLinks: &simpleLinks,
 		// SimpleLinks: []*model.SimpleLink{},
 		Contributions: &contributions,
 		SuperLinks:    []*model.SuperLink{},

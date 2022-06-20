@@ -136,6 +136,11 @@ type Info {
   music_credit: String!
 }
 
+type Credit {
+  credit_type: String!
+  accredited_id: String!
+}
+
 type Advanced {
   info: Info!
   header: String!
@@ -144,6 +149,12 @@ type Advanced {
   isDarkMode: Boolean
   background_audio_source: String!
   background_audio_url: String!
+}
+type MoreInfo {
+  title: String
+  description: String
+  collaborators: [String!]
+  credits: [Credit!]
 }
 type Slide {
   id: String!
@@ -158,6 +169,7 @@ type Slide {
   cta1: CTA!
   cta2: CTA!
   advanced: Advanced
+  info: MoreInfo
 }
 
 type Contact {
@@ -186,6 +198,7 @@ type Link {
 
 type SimpleLink {
   id: String!
+  position: Int!
   thumbnail: String!
   link_header: String!
   url: String!
@@ -218,6 +231,7 @@ type Videos {
 
 type Video {
   id: String!
+  position: Int!
   cta1: CTA!
   cta2: CTA!
   desktop: Content!
@@ -412,6 +426,7 @@ input AnalyticsMutation {
   token: String!
 }
 input SimpleLinkInput {
+  position: Int!
   thumbnail: String!
   link_header: String!
   url: String!
@@ -456,6 +471,7 @@ input ContentInput {
 }
 
 input AddVideoInput {
+  position: Int
   cta1: CTAInput!
   cta2: CTAInput!
   desktop: ContentInput!
@@ -523,6 +539,7 @@ type Mutation {
   ): MutationResponse!
   deleteFile(token: String!, fileId: String!): MutationResponse!
   addSimpleVreelLink(token: String!, link: SimpleLinkInput!): MutationResponse!
+  removeSimpleVreelLink(token: String!, linkId: String!): MutationResponse!
   addSuperVreelLink(token: String!, link: SuperLinkInput): MutationResponse!
   addSocialMediaLink(token: String!, input: SocialsInput!): MutationResponse!
   addImageToVreelGallery(

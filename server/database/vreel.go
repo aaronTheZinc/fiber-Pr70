@@ -135,6 +135,12 @@ func AddSimpleLinkToVreel(vreelId string, newLink model.SimpleLink) error {
 		return errors.New("failed to parse")
 	}
 	newLink.ID = utils.GenerateId()
+	if elements.SimpleLinks == nil {
+		elements.SimpleLinks = &model.SimpleLinksElement{
+			Links:  []*model.SimpleLink{},
+			Header: "",
+		}
+	}
 	links := elements.SimpleLinks.Links
 
 	links = append(links, &newLink)
@@ -148,6 +154,40 @@ func AddSimpleLinkToVreel(vreelId string, newLink model.SimpleLink) error {
 		return marshalErr
 	}
 
+}
+
+func RemoveSimpleLink(vreelId, linkId string) error {
+	var vreel model.VreelModel
+	var err error
+	var elements model.VreelElements
+	if fetchErr := db.Where("id = ?", vreelId).First(&vreel).Error; fetchErr == nil {
+		parseErr := json.Unmarshal([]byte(vreel.Elements), &elements)
+		if parseErr != nil {
+			return parseErr
+		}
+		links := elements.SimpleLinks.Links
+		linkWasFound := false
+
+		for idx, link := range links {
+			if link.ID == linkId {
+				linkWasFound = true
+				links = append(links[:idx], links[idx+1:]...)
+				break
+			}
+		}
+		if !linkWasFound {
+			err = errors.New("gallery image: " + linkId + " not found")
+		} else {
+			elements.SimpleLinks.Links = links
+			v, marshalErr := json.Marshal(&elements)
+			if marshalErr == nil {
+				return db.Model(model.VreelModel{}).Where("id = ?", vreelId).Update("elements", string(v)).Error
+			} else {
+				return marshalErr
+			}
+		}
+	}
+	return err
 }
 
 func AddSuperLinkToVreel(vreelId string, newLink model.SuperLink) error {
@@ -196,6 +236,9 @@ func AddSocialsLink(vreelId string, input model.SocialsInput) error {
 
 	if parseErr != nil {
 		return errors.New("failed to parse")
+	}
+	if elements.Socials == nil {
+		elements.Socials = &model.SocialsElement{Header: "", Socials: []*model.Socials{}}
 	}
 	socials = elements.Socials.Socials
 

@@ -156,6 +156,12 @@ func (r *mutationResolver) AddSimpleVreelLink(ctx context.Context, token string,
 	return &resp, err
 }
 
+func (r *mutationResolver) RemoveSimpleVreelLink(ctx context.Context, token string, linkID string) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeRemoveSimpleLinkFromVreel(token, linkID)
+
+	return &resp, err
+}
+
 func (r *mutationResolver) AddSuperVreelLink(ctx context.Context, token string, link *model.SuperLinkInput) (*model.MutationResponse, error) {
 	resp, err := auth.AuthorizeAddSuperLinkToVreel(token, link.ToLink())
 
@@ -297,6 +303,9 @@ type queryResolver struct{ *Resolver }
 //  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
 //    it when you're done.
 //  - You have helper methods in this file. Move them out to keep these resolver files clean.
+func (r *mutationResolver) RemoveSimpleVreelLinkI(ctx context.Context, token string, linkID string) (*model.MutationResponse, error) {
+	panic(fmt.Errorf("not implemented"))
+}
 func (r *mutationResolver) AnalyticsUpdate(ctx context.Context, token string, action string, target string) (*model.MutationResponse, error) {
 	panic(fmt.Errorf("not implemented"))
 }

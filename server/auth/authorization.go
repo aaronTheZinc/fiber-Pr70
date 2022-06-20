@@ -216,6 +216,29 @@ func AuthorizeAddSocialsLink(token string, input model.SocialsInput) (model.Muta
 	return resp, err
 }
 
+func AuthorizeRemoveSimpleLinkFromVreel(token, linkId string) (model.MutationResponse, error) {
+	var err error
+	var resp model.MutationResponse
+	claims, isAuth, parseErr := ParseToken(token)
+	userId := claims.ID
+
+	if isAuth && parseErr == nil {
+		updateErr := database.RemoveSimpleLink(userId, linkId)
+
+		if updateErr != nil {
+			err = updateErr
+		} else {
+			resp = model.MutationResponse{
+				Message:   "successfully removed simple link: " + linkId,
+				Succeeded: true,
+			}
+		}
+	} else {
+		err = e.UNAUTHORIZED_ERROR
+	}
+	return resp, err
+}
+
 func AuthorizeAddSimpleLinkToVreel(token string, link model.SimpleLink) (model.MutationResponse, error) {
 	var err error
 	var resp model.MutationResponse

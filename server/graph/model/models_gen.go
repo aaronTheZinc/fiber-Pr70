@@ -13,6 +13,7 @@ type AddGalleryImageInput struct {
 }
 
 type AddVideoInput struct {
+	Position    *int          `json:"position"`
 	Cta1        *CTAInput     `json:"cta1"`
 	Cta2        *CTAInput     `json:"cta2"`
 	Desktop     *ContentInput `json:"desktop"`
@@ -111,6 +112,11 @@ type CreateSlide struct {
 	ContentType   string `json:"content_type"`
 	URI           string `json:"uri"`
 	SlideLocation int    `json:"slide_location"`
+}
+
+type Credit struct {
+	CreditType   string `json:"credit_type"`
+	AccreditedID string `json:"accredited_id"`
 }
 
 type Enterprise struct {
@@ -216,6 +222,13 @@ type LoginInput struct {
 	Password string `json:"password"`
 }
 
+type MoreInfo struct {
+	Title         *string   `json:"title"`
+	Description   *string   `json:"description"`
+	Collaborators []string  `json:"collaborators"`
+	Credits       []*Credit `json:"credits"`
+}
+
 type Music struct {
 	ID       string `json:"id"`
 	Platform string `json:"platform"`
@@ -310,6 +323,7 @@ type Service struct {
 
 type SimpleLink struct {
 	ID         string `json:"id"`
+	Position   int    `json:"position"`
 	Thumbnail  string `json:"thumbnail"`
 	LinkHeader string `json:"link_header"`
 	URL        string `json:"url"`
@@ -318,6 +332,7 @@ type SimpleLink struct {
 }
 
 type SimpleLinkInput struct {
+	Position   int    `json:"position"`
 	Thumbnail  string `json:"thumbnail"`
 	LinkHeader string `json:"link_header"`
 	URL        string `json:"url"`
@@ -343,6 +358,7 @@ type Slide struct {
 	Cta1          *Cta           `json:"cta1"`
 	Cta2          *Cta           `json:"cta2"`
 	Advanced      *Advanced      `json:"advanced"`
+	Info          *MoreInfo      `json:"info"`
 }
 
 type SlideMetaData struct {
@@ -428,6 +444,7 @@ type User struct {
 
 type Video struct {
 	ID          string   `json:"id"`
+	Position    int      `json:"position"`
 	Cta1        *Cta     `json:"cta1"`
 	Cta2        *Cta     `json:"cta2"`
 	Desktop     *Content `json:"desktop"`
