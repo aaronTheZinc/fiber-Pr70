@@ -12,7 +12,8 @@ import (
 )
 
 func CreateSlide(author string) (model.Slide, error) {
-
+	var err error
+	slideCount, getSlideCountErr := 
 	slide := model.CreateNewSlideModel()
 	slide.Author = author
 	slide.ID = utils.GenerateId()
@@ -22,9 +23,9 @@ func CreateSlide(author string) (model.Slide, error) {
 
 	v, _ := json.Marshal(md)
 	slide.Metadata = string(v)
-	err := db.Create(&slide).Error
-	if err != nil {
-		return model.Slide{}, e.FAILED_SLIDE_CREATE
+	creationErr := db.Create(&slide).Error
+	if creationErr != nil {
+		err = creationErr
 	}
 	return slide.ToSlide(), err
 
