@@ -493,6 +493,7 @@ type Mutation {
   register(input: NewUser!): User!
   createEvent(token: String!, input: NewEvent!): Event!
   removeUser(id: String!): MutationResponse!
+  resetElements(token: String!): MutationResponse!
   createEnterprise(input: NewEnterprise!): Enterprise!
   createResetPasswordRequestIntent(email: String!): ResetPasswordResponse!
   resolveResetPasswordRequestIntent(

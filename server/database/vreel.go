@@ -591,3 +591,10 @@ func RemoveMusicLink(vreelId, musicLinkId string) error {
 	return err
 
 }
+
+func ResetUserEmployee(vreelId string) error {
+	elements, _ := utils.GetDefaultElementsString()
+	updateErr := db.Model(model.VreelModel{}).Where("id = ?", vreelId).Update("elements", elements).Error
+
+	return updateErr
+}

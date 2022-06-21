@@ -30,6 +30,12 @@ func (r *mutationResolver) RemoveUser(ctx context.Context, id string) (*model.Mu
 	return &resp, err
 }
 
+func (r *mutationResolver) ResetElements(ctx context.Context, token string) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeResetElements(token)
+
+	return &resp, err
+}
+
 func (r *mutationResolver) CreateEnterprise(ctx context.Context, input model.NewEnterprise) (*model.Enterprise, error) {
 	enterprise, err := auth.CreateNewEnterprise(input)
 

@@ -13,6 +13,29 @@ import (
 	"github.com/vreel/app/utils"
 )
 
+func AuthorizeResetElements(token string) (model.MutationResponse, error) {
+	var err error
+	var resp model.MutationResponse
+	claims, isAuth, parseErr := ParseToken(token)
+	userId := claims.ID
+
+	if isAuth && parseErr == nil {
+		updateErr := database.ResetUserEmployee(userId)
+		if updateErr != nil {
+			err = updateErr
+		} else {
+			resp = model.MutationResponse{
+				Succeeded: true,
+				Message:   "reset elements for: " + userId,
+			}
+		}
+	} else {
+		err = e.UNAUTHORIZED_ERROR
+	}
+
+	return resp, err
+}
+
 func AuthorizeAddMusicLinkToVreel(token string, input model.MusicInput) (model.MutationResponse, error) {
 	var err error
 	var resp model.MutationResponse
