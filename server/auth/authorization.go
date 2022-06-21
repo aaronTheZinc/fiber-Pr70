@@ -13,6 +13,165 @@ import (
 	"github.com/vreel/app/utils"
 )
 
+func AuthorizeResetElements(token string) (model.MutationResponse, error) {
+	var err error
+	var resp model.MutationResponse
+	claims, isAuth, parseErr := ParseToken(token)
+	userId := claims.ID
+
+	if isAuth && parseErr == nil {
+		updateErr := database.ResetUserEmployee(userId)
+		if updateErr != nil {
+			err = updateErr
+		} else {
+			resp = model.MutationResponse{
+				Succeeded: true,
+				Message:   "reset elements for: " + userId,
+			}
+		}
+	} else {
+		err = e.UNAUTHORIZED_ERROR
+	}
+
+	return resp, err
+}
+
+func AuthorizeAddMusicLinkToVreel(token string, input model.MusicInput) (model.MutationResponse, error) {
+	var err error
+	var resp model.MutationResponse
+	claims, isAuth, parseErr := ParseToken(token)
+	userId := claims.ID
+
+	if isAuth && parseErr == nil {
+		updateErr := database.AddMusicLink(userId, input)
+		if updateErr != nil {
+			err = updateErr
+		} else {
+			resp = model.MutationResponse{
+				Succeeded: true,
+				Message:   "successfully added music link: " + input.Platform,
+			}
+		}
+	} else {
+		err = e.UNAUTHORIZED_ERROR
+	}
+
+	return resp, err
+}
+
+func AuthorizeRemoveMusicLinkFromVreel(token, linkId string) (model.MutationResponse, error) {
+	var err error
+	var resp model.MutationResponse
+	claims, isAuth, parseErr := ParseToken(token)
+	userId := claims.ID
+
+	if isAuth && parseErr == nil {
+		updateErr := database.RemoveMusicLink(userId, linkId)
+		if updateErr != nil {
+			err = updateErr
+		} else {
+			resp = model.MutationResponse{
+				Succeeded: true,
+				Message:   "successfully removed link: " + linkId,
+			}
+		}
+	} else {
+		err = e.UNAUTHORIZED_ERROR
+	}
+
+	return resp, err
+}
+
+func AuthorizeAddContributionLinkToVreel(token string, input model.ContributionsInput) (model.MutationResponse, error) {
+	var err error
+	var resp model.MutationResponse
+	claims, isAuth, parseErr := ParseToken(token)
+	userId := claims.ID
+
+	if isAuth && parseErr == nil {
+		updateErr := database.AddContributionLink(userId, input)
+		if updateErr != nil {
+			err = updateErr
+		} else {
+			resp = model.MutationResponse{
+				Succeeded: true,
+				Message:   "successfully created contribution: " + input.Platform,
+			}
+		}
+	} else {
+		err = e.UNAUTHORIZED_ERROR
+	}
+
+	return resp, err
+}
+
+func AuthorizeRemoveContributionLinkFromVreel(token, contributionLinkId string) (model.MutationResponse, error) {
+	var err error
+	var resp model.MutationResponse
+	claims, isAuth, parseErr := ParseToken(token)
+	userId := claims.ID
+
+	if isAuth && parseErr == nil {
+		updateErr := database.RemoveContributionLink(userId, contributionLinkId)
+		if updateErr != nil {
+			err = updateErr
+		} else {
+			resp = model.MutationResponse{
+				Succeeded: true,
+				Message:   "successfully removed contribution: " + contributionLinkId,
+			}
+		}
+	} else {
+		err = e.UNAUTHORIZED_ERROR
+	}
+
+	return resp, err
+}
+
+func AuthorizeRemoveVideoFromVreel(token, videoId string) (model.MutationResponse, error) {
+	var err error
+	var resp model.MutationResponse
+	claims, isAuth, parseErr := ParseToken(token)
+	userId := claims.ID
+
+	if isAuth && parseErr == nil {
+		updateErr := database.RemoveVideoFromVreel(userId, videoId)
+		if updateErr != nil {
+			err = updateErr
+		} else {
+			resp = model.MutationResponse{
+				Succeeded: true,
+				Message:   "successfully removed video: " + videoId,
+			}
+		}
+	} else {
+		err = e.UNAUTHORIZED_ERROR
+	}
+	return resp, err
+}
+
+func AuthorizeAddVideoToVreel(token string, video model.Video) (model.MutationResponse, error) {
+	var err error
+	var resp model.MutationResponse
+	claims, isAuth, parseErr := ParseToken(token)
+	userId := claims.ID
+	if isAuth && parseErr == nil {
+		updateErr := database.AddVideoToVreel(userId, video)
+		if updateErr != nil {
+			err = updateErr
+		} else {
+			resp = model.MutationResponse{
+				Succeeded: true,
+				Message:   "successfully added video: " + video.VideoHeader,
+			}
+		}
+
+	} else {
+		err = e.UNAUTHORIZED_ERROR
+	}
+	return resp, err
+}
+
 func AuthorizeAddImageToGallery(token string, input model.AddGalleryImageInput) (model.MutationResponse, error) {
 	var err error
 	var resp model.MutationResponse
@@ -25,7 +184,7 @@ func AuthorizeAddImageToGallery(token string, input model.AddGalleryImageInput) 
 		} else {
 			resp = model.MutationResponse{
 				Succeeded: true,
-				Message:   "successfully added image: " + input.ImageURL + " to gallery.",
+				Message:   "successfully added image: " + input.ImageHeader + " to gallery.",
 			}
 		}
 	} else {
@@ -77,6 +236,29 @@ func AuthorizeAddSocialsLink(token string, input model.SocialsInput) (model.Muta
 		err = e.UNAUTHORIZED_ERROR
 	}
 
+	return resp, err
+}
+
+func AuthorizeRemoveSimpleLinkFromVreel(token, linkId string) (model.MutationResponse, error) {
+	var err error
+	var resp model.MutationResponse
+	claims, isAuth, parseErr := ParseToken(token)
+	userId := claims.ID
+
+	if isAuth && parseErr == nil {
+		updateErr := database.RemoveSimpleLink(userId, linkId)
+
+		if updateErr != nil {
+			err = updateErr
+		} else {
+			resp = model.MutationResponse{
+				Message:   "successfully removed simple link: " + linkId,
+				Succeeded: true,
+			}
+		}
+	} else {
+		err = e.UNAUTHORIZED_ERROR
+	}
 	return resp, err
 }
 
@@ -511,10 +693,12 @@ func AuthorizeSlideLike(slideId string, token string) (model.MutationResponse, e
 					err = likeCreationErr
 				} else {
 					r.Message = "Liked Fragment Id: " + f.ID
+					r.Succeeded = true
 				}
 
 			} else {
 				r.Message = "Has Been Liked By Author."
+				r.Succeeded = false
 			}
 		} else {
 			err = e.SLIDE_NOT_FOUND
@@ -551,14 +735,20 @@ func AuthorizeFollowVreel(vreelId, token string) (model.MutationResponse, error)
 	userId := claims.ID
 	log.Println("-->", userId)
 	if isAuth && parseErr == nil {
-		if isLiked, isLikedErr := database.HasBeenFollowedByAuthor(userId, vreelId); !isLiked && isLikedErr == nil {
+		if isFollow, isFollowErr := database.HasBeenFollowedByAuthor(userId, vreelId); !isFollow && isFollowErr == nil {
 			_, likeCreationErr := database.CreateFollow(userId, vreelId)
 			database.AddFollowingToUser(userId, vreelId)
 			if likeCreationErr != nil {
 				err = likeCreationErr
+			} else {
+				r = model.MutationResponse{
+					Succeeded: true,
+					Message:   "follow succeeded on: " + vreelId,
+				}
 			}
-		} else if isLikedErr != nil {
-			err = isLikedErr
+
+		} else if isFollowErr != nil {
+			err = isFollowErr
 		} else {
 			r = model.MutationResponse{
 				Message:   "Already Followed By Author",
@@ -572,17 +762,25 @@ func AuthorizeFollowVreel(vreelId, token string) (model.MutationResponse, error)
 	return r, err
 }
 
-// func AuthorizeUnfollowVreel(vreelId, token string) (model.MutationResponse, error) {
-// 	var err error
-// 	var r model.MutationResponse
+func AuthorizeUnfollowVreel(token, target string) (model.MutationResponse, error) {
+	var err error
+	var resp model.MutationResponse
 
-// 	claims, isAuth, parseErr := ParseToken(token)
-// 	userId := claims.ID
+	claims, isAuth, parseErr := ParseToken(token)
+	userId := claims.ID
 
-// 	if isAuth && parseErr == nil {
-
-// 	} else {
-// 		err = e.UNAUTHORIZED_ERROR
-// 	}
-// 	return r, err
-// }
+	if isAuth && parseErr == nil {
+		removeErr := database.RemoveFollow(userId, target)
+		if removeErr != nil {
+			err = removeErr
+		} else {
+			resp = model.MutationResponse{
+				Succeeded: true,
+				Message:   "unfollowed vreel: " + target,
+			}
+		}
+	} else {
+		err = e.UNAUTHORIZED_ERROR
+	}
+	return resp, err
+}

@@ -1,5 +1,4 @@
 import "@sass/main.scss";
-// import '../styles/main.scss';
 import Head from "next/head";
 import { AppProps } from "next/app";
 import { Provider } from "react-redux";
@@ -9,7 +8,11 @@ import { client } from "../components/graphql";
 import GeneralMenu from "../components/Shared/Menu/GeneralMenu/GeneralMenu";
 import AccountMenu from "../components/Shared/Menu/AccountMenu/AccountMenu";
 import { CookiesProvider } from "react-cookie";
-import { Toaster } from "react-hot-toast";
+import ToastNotification from "src/components/common/Toast/ToastNotification/ToastNotification";
+import QR from "src/components/Shared/QR";
+import AuthProvider from "src/components/WithAuth/AuthProvider";
+import Share from "src/components/Shared/Share";
+import Info from "src/components/Shared/BottomSheet/Info";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -21,16 +24,15 @@ function MyApp({ Component, pageProps }: AppProps) {
       <CookiesProvider>
         <ApolloProvider client={client}>
           <Provider store={store}>
-            <GeneralMenu />
-            <AccountMenu />
-            <Toaster
-              position="top-center"
-              reverseOrder={false}
-              toastOptions={{
-                duration: 3000,
-              }}
-            />
-            <Component {...pageProps} />
+            <AuthProvider>
+              <GeneralMenu />
+              <AccountMenu />
+              <ToastNotification />
+              <QR />
+              <Share />
+              <Info />
+              <Component {...pageProps} />
+            </AuthProvider>
           </Provider>
         </ApolloProvider>
       </CookiesProvider>

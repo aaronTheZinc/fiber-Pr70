@@ -3,17 +3,33 @@
 package model
 
 type AddGalleryImageInput struct {
-	ImageURL string `json:"imageUrl"`
-	Position int    `json:"position"`
+	Position    *int          `json:"position"`
+	Cta1        *CTAInput     `json:"cta1"`
+	Cta2        *CTAInput     `json:"cta2"`
+	Desktop     *ContentInput `json:"desktop"`
+	Mobile      *ContentInput `json:"mobile"`
+	ImageHeader string        `json:"image_header"`
+	Description string        `json:"description"`
+}
+
+type AddVideoInput struct {
+	Position    *int          `json:"position"`
+	Cta1        *CTAInput     `json:"cta1"`
+	Cta2        *CTAInput     `json:"cta2"`
+	Desktop     *ContentInput `json:"desktop"`
+	Mobile      *ContentInput `json:"mobile"`
+	VideoHeader string        `json:"video_header"`
+	Description string        `json:"description"`
 }
 
 type Advanced struct {
-	Info     string  `json:"info"`
-	Header   string  `json:"header"`
-	LinkType string  `json:"link_type"`
-	LogoURL  *string `json:"logoUrl"`
-	GroupID  *string `json:"groupId"`
-	Credits  *string `json:"credits"`
+	Info                  *Info   `json:"info"`
+	Header                string  `json:"header"`
+	LinkType              string  `json:"link_type"`
+	LogoURL               *string `json:"logoUrl"`
+	IsDarkMode            *bool   `json:"isDarkMode"`
+	BackgroundAudioSource string  `json:"background_audio_source"`
+	BackgroundAudioURL    string  `json:"background_audio_url"`
 }
 
 type AnalyticFragment struct {
@@ -48,6 +64,12 @@ type Cta struct {
 	LinkURL    string `json:"link_url"`
 }
 
+type CTAInput struct {
+	LinkHeader string `json:"link_header"`
+	LinkType   string `json:"link_type"`
+	LinkURL    string `json:"link_url"`
+}
+
 type Contact struct {
 	Position int    `json:"position"`
 	Header   string `json:"header"`
@@ -62,10 +84,39 @@ type Content struct {
 	URI                string  `json:"uri"`
 }
 
+type ContentInput struct {
+	StartTime          *int    `json:"start_time"`
+	StopTime           *int    `json:"stop_time"`
+	BackgroundAudioURI *string `json:"background_audio_uri"`
+	ContentType        string  `json:"content_type"`
+	URI                string  `json:"uri"`
+}
+
+type Contribution struct {
+	ID       string `json:"id"`
+	Platform string `json:"platform"`
+	Link     string `json:"link"`
+}
+
+type ContributionsElement struct {
+	Header        string          `json:"header"`
+	Contributions []*Contribution `json:"contributions"`
+}
+
+type ContributionsInput struct {
+	Platform string `json:"platform"`
+	Link     string `json:"link"`
+}
+
 type CreateSlide struct {
 	ContentType   string `json:"content_type"`
 	URI           string `json:"uri"`
 	SlideLocation int    `json:"slide_location"`
+}
+
+type Credit struct {
+	CreditType   string `json:"credit_type"`
+	AccreditedID string `json:"accredited_id"`
 }
 
 type Enterprise struct {
@@ -118,9 +169,14 @@ type Gallery struct {
 }
 
 type GalleryImage struct {
-	ID       string `json:"id"`
-	URL      string `json:"url"`
-	Position int    `json:"position"`
+	ID          string   `json:"id"`
+	Position    *int     `json:"position"`
+	Cta1        *Cta     `json:"cta1"`
+	Cta2        *Cta     `json:"cta2"`
+	Desktop     *Content `json:"desktop"`
+	Mobile      *Content `json:"mobile"`
+	ImageHeader string   `json:"image_header"`
+	Description string   `json:"description"`
 }
 
 type Group struct {
@@ -135,6 +191,15 @@ type Group struct {
 	Members     []string `json:"members"`
 	Events      []*Event `json:"events"`
 	Vreel       *Vreel   `json:"vreel"`
+}
+
+type Info struct {
+	Header                string   `json:"header"`
+	Description           string   `json:"description"`
+	Collaborators         []string `json:"collaborators"`
+	Credits               []string `json:"credits"`
+	BackgroundAudioCredit string   `json:"background_audio_credit"`
+	MusicCredit           string   `json:"music_credit"`
 }
 
 type Link struct {
@@ -155,6 +220,29 @@ type LocalSession struct {
 type LoginInput struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
+}
+
+type MoreInfo struct {
+	Title         *string   `json:"title"`
+	Description   *string   `json:"description"`
+	Collaborators []string  `json:"collaborators"`
+	Credits       []*Credit `json:"credits"`
+}
+
+type Music struct {
+	ID       string `json:"id"`
+	Platform string `json:"platform"`
+	Link     string `json:"link"`
+}
+
+type MusicElement struct {
+	Header string   `json:"header"`
+	Music  []*Music `json:"music"`
+}
+
+type MusicInput struct {
+	Platform string `json:"platform"`
+	Link     string `json:"link"`
 }
 
 type MutationResponse struct {
@@ -235,6 +323,7 @@ type Service struct {
 
 type SimpleLink struct {
 	ID         string `json:"id"`
+	Position   int    `json:"position"`
 	Thumbnail  string `json:"thumbnail"`
 	LinkHeader string `json:"link_header"`
 	URL        string `json:"url"`
@@ -243,11 +332,17 @@ type SimpleLink struct {
 }
 
 type SimpleLinkInput struct {
+	Position   int    `json:"position"`
 	Thumbnail  string `json:"thumbnail"`
 	LinkHeader string `json:"link_header"`
 	URL        string `json:"url"`
 	LinkType   string `json:"link_type"`
 	Tag        string `json:"tag"`
+}
+
+type SimpleLinksElement struct {
+	Header string        `json:"header"`
+	Links  []*SimpleLink `json:"links"`
 }
 
 type Slide struct {
@@ -263,6 +358,7 @@ type Slide struct {
 	Cta1          *Cta           `json:"cta1"`
 	Cta2          *Cta           `json:"cta2"`
 	Advanced      *Advanced      `json:"advanced"`
+	Info          *MoreInfo      `json:"info"`
 }
 
 type SlideMetaData struct {
@@ -273,6 +369,11 @@ type SlideMetaData struct {
 type Socials struct {
 	Platform string `json:"platform"`
 	Username string `json:"username"`
+}
+
+type SocialsElement struct {
+	Header  string     `json:"header"`
+	Socials []*Socials `json:"socials"`
 }
 
 type SocialsInput struct {
@@ -341,12 +442,22 @@ type User struct {
 	News            []*Slide  `json:"news"`
 }
 
+type Video struct {
+	ID          string   `json:"id"`
+	Position    int      `json:"position"`
+	Cta1        *Cta     `json:"cta1"`
+	Cta2        *Cta     `json:"cta2"`
+	Desktop     *Content `json:"desktop"`
+	Mobile      *Content `json:"mobile"`
+	VideoHeader string   `json:"video_header"`
+	Description string   `json:"description"`
+}
+
 type Videos struct {
-	Header   string `json:"header"`
-	Position int    `json:"position"`
-	URI      string `json:"uri"`
-	Tag      string `json:"tag"`
-	Hidden   *bool  `json:"hidden"`
+	Header   string   `json:"header"`
+	Position int      `json:"position"`
+	Videos   []*Video `json:"videos"`
+	Hidden   *bool    `json:"hidden"`
 }
 
 type Vreel struct {
@@ -362,14 +473,16 @@ type Vreel struct {
 }
 
 type VreelElements struct {
-	TextArea    *TextArea     `json:"text_area"`
-	Videos      *Videos       `json:"videos"`
-	Gallery     *Gallery      `json:"gallery"`
-	Services    *Service      `json:"services"`
-	Socials     []*Socials    `json:"socials"`
-	SimpleLinks []*SimpleLink `json:"simple_links"`
-	SuperLinks  []*SuperLink  `json:"super_links"`
-	Contact     *Contact      `json:"contact"`
+	TextArea      *TextArea             `json:"text_area"`
+	Videos        *Videos               `json:"videos"`
+	Gallery       *Gallery              `json:"gallery"`
+	Services      *Service              `json:"services"`
+	Music         *MusicElement         `json:"music"`
+	Socials       *SocialsElement       `json:"socials"`
+	SimpleLinks   *SimpleLinksElement   `json:"simple_links"`
+	SuperLinks    []*SuperLink          `json:"super_links"`
+	Contact       *Contact              `json:"contact"`
+	Contributions *ContributionsElement `json:"contributions"`
 }
 
 type VreelFields struct {

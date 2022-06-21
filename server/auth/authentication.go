@@ -97,7 +97,7 @@ func CreateNewUser(newUser model.NewUser) (model.User, error) {
 
 func Login(email string, password string) (model.LocalSession, error) {
 	var localSession model.LocalSession
-	user, err := database.GetUserByEmail(email)
+	user, err := database.GetUserModelByEmail(email)
 
 	if err != nil {
 		return localSession, err

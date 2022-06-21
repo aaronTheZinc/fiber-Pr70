@@ -1,11 +1,11 @@
 import { ErrorMessage, Field, useFormikContext } from "formik";
 import React from "react";
-import Styles from "./SlideInput.module.scss";
+import Styles from "./slideinput.module.scss";
 
-const SlideInput = ({ placeholder, name, type }: any) => {
+const slideinput = ({ placeholder, name, type }: any) => {
   return (
     <input
-      className={Styles.slideInput}
+      className={Styles.slideinput}
       placeholder={placeholder}
       name={name}
       type={type}
@@ -13,4 +13,4 @@ const SlideInput = ({ placeholder, name, type }: any) => {
   );
 };
 
-export default SlideInput;
+export default slideinput;

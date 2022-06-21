@@ -8,14 +8,20 @@ const SlideActionsBtn: React.FC<{
   Icon?: any;
   width?: string;
   actions: Function;
-}> = ({ title, bgColor, Icon, padding, actions, width }) => {
+  type?: any;
+}> = ({ title, bgColor, Icon, padding, actions, width, type = "button" }) => {
   const style = {
     backgroundColor: bgColor,
     padding: padding,
     width: width,
   };
   return (
-    <button style={style} className={Styles.deletBtn} onClick={() => actions()}>
+    <button
+      type={type}
+      style={style}
+      className={Styles.deletBtn}
+      onClick={() => actions()}
+    >
       <span>
         {Icon && (
           <span className={Styles.icon}>

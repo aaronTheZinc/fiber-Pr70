@@ -12,7 +12,7 @@ import {
 import { gql, useMutation } from "@apollo/client";
 import { useCookies } from "react-cookie";
 import toast from "react-hot-toast";
-import { ToastModal } from "src/components/common/ToastModal/ToastModal";
+import Alert from "src/components/common/Alert/Alert";
 const EIDT_SCHEMA = gql`
   mutation renameFile($token: String!, $newName: String!, $fileId: String!) {
     editFileName(token: $token, newName: $newName, fileId: $fileId) {
@@ -38,14 +38,20 @@ const FileInput: React.FC<{
   const [cookies] = useCookies(["userAuthToken"]);
   const inputRef = useRef(null);
   const dispatch = useAppDispatch();
-  const [renameItem, { data: data1, loading: loading1, error: error1 }] =
-    useMutation(EIDT_SCHEMA);
-  const [deleteItem, { data, loading, error }] = useMutation(DELETE_SCHEMA);
-  const [isDelete, setIsDelete] = useState<boolean>(false);
-  console.log(isDelete);
+  const [renameItem] = useMutation(EIDT_SCHEMA);
+  const [isAlertActive, setAlertActive] = useState<boolean>(false);
 
   return (
     <div className={Styles.fileInputContainer}>
+      <Alert
+        isAlertActive={isAlertActive}
+        setAlertActive={setAlertActive}
+        id={item.id}
+        DELETE_SCHEMA={DELETE_SCHEMA}
+        type={type}
+        refetch={refetch}
+      />
+
       <div
         className={clsx(
           Styles.inputContainer,
@@ -64,74 +70,8 @@ const FileInput: React.FC<{
         <button
           className={Styles.iconButtons}
           onClick={() => {
+            setAlertActive(true);
             toast.dismiss();
-            toast((tost) => (
-              <ToastModal
-                id={item.id}
-                tost={tost}
-                DELETE_SCHEMA={DELETE_SCHEMA}
-                type={type}
-                refetch={refetch}
-              />
-
-              /*    <div style={{ height: "90px", width: "220px" }}>
-                <div
-                  style={{
-                    textAlign: "center",
-                    marginBottom: "12px",
-                    fontSize: "17px",
-                  }}
-                >
-                  Are you sure you want to delete it ?
-                </div>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-around",
-                  }}
-                >
-                  <button
-                    style={{
-                      background: "red",
-                      padding: "7px 20px",
-                      color: "white",
-                      borderRadius: "5px",
-                    }}
-                    onClick={() => {
-                      setIsDelete(true);
-                      toast.dismiss(t.id);
-                      deleteItem({
-                        variables: {
-                          token: cookies["userAuthToken"],
-                          fileId: item.id,
-                        },
-                      }).then((res: any) => {
-                        if (res?.data?.deleteFile.succeeded) {
-                          refetch();
-                          toast.success(`${type} delete successfully`);
-                        }
-                      });
-                    }}
-                  >
-                    Yes
-                  </button>
-                  <button
-                    onClick={() => {
-                      setIsDelete(false);
-                      toast.dismiss(t.id);
-                    }}
-                    style={{
-                      background: "Green",
-                      padding: "7px 20px",
-                      color: "white",
-                      borderRadius: "5px",
-                    }}
-                  >
-                    No
-                  </button>
-                </div>
-              </div> */
-            ));
           }}
         >
           <span className={Styles.delText}>Delete</span>
@@ -150,12 +90,16 @@ const FileInput: React.FC<{
                   newName: inputRef?.current?.value,
                   fileId: item.id,
                 },
-              }).then((res) => {
-                if (res?.data?.editFileName.succeeded) {
-                  refetch();
-                  toast.success(`${type} File Rename Successfully`);
-                }
-              });
+              })
+                .then((res) => {
+                  if (res?.data?.editFileName.succeeded) {
+                    refetch();
+                    toast.success(`${type} File Rename Successfully`);
+                  }
+                })
+                .catch((error) => {
+                  toast.error(error.message);
+                });
               setEditable(false);
             }
           }}

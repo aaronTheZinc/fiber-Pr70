@@ -25,3 +25,13 @@ export const CREATE_USER = gql`
 export const registerUser = async (username: string, email: string , password: string , accout_type: string) =>{
 
 }
+
+export const CREATE_SLIDE =  gql`
+mutation CreateSlide($token: String!) {
+    createSlide(token: $token) {
+      id
+      author
+    }
+  }
+
+`

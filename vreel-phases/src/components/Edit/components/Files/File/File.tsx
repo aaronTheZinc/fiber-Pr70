@@ -1,4 +1,6 @@
 import React, { SyntheticEvent } from "react";
+import { useDispatch } from "react-redux";
+import { setMediaSelector } from "src/redux/createSlice/createMobileMediaSelector";
 import FileInput from "../FileInput/FileInput";
 import Styles from "./File.module.scss";
 
@@ -6,14 +8,18 @@ const File = ({ userFiles }: any) => {
   const { loading, error, data, refetch } = userFiles || {};
 
   if (loading || error || !data) return <div>Loading...</div>;
-  console.log(data);
+  // console.log(data.getUserByToken.files.files);
+  const dispatch = useDispatch();
+  dispatch(setMediaSelector(data.getUserByToken.files.files));
+  console.log({ files: data });
+
   const images = data?.getUserByToken?.files.files
     .filter((e) => e.file_type.split("/")[0] == "image")
     .map((e) => {
       return {
         id: e.id,
         name: e.file_name,
-        url: `${e.uri}${e.id}`,
+        url: `${e.uri}`,
       };
     });
   const videos = data?.getUserByToken?.files.files
@@ -22,7 +28,7 @@ const File = ({ userFiles }: any) => {
       return {
         id: e.id,
         name: e.file_name,
-        url: `${e.uri}${e.id}`,
+        url: `${e.uri}`,
       };
     });
   const audios = data?.getUserByToken?.files.files
@@ -31,10 +37,9 @@ const File = ({ userFiles }: any) => {
       return {
         id: e.id,
         name: e.file_name,
-        url: `${e.uri}${e.id}`,
+        url: `${e.uri}`,
       };
     });
-  console.log({ images, videos, audios });
 
   return (
     <div className={Styles.gridContainer}>

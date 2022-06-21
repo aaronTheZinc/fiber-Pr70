@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent } from "react";
 
 export interface Icons {
   src: string;
@@ -15,11 +15,11 @@ export interface RightSidebar {
 export interface VreelSlideProps {
   swiper: any;
   slideId: any;
-  slide: {
-    src: string;
-    alt: string;
-  };
+  slide: any;
   currentSlide: number;
+  autoPlay?: boolean;
+  setAutoPlay?: Function;
+  parentSwiper:any
 }
 
 export interface EditItem {

@@ -6,7 +6,7 @@
 
   //DISPLAY LEFT
   &__left {
-    width: 344px;
+    width: 390px;
     @media (max-width: 1020px) {
       width: 100%;
     }
@@ -45,8 +45,9 @@
 
     //DISPLAY OPTION
     .displayOptionWrapper {
-      background: $vreel_light_gray;
-      border: 1px solid #8d8d8d;
+      // background: $vreel_light_gray;
+      background-color: rgba(45, 52, 80, 0.81);
+      // border: 1px solid #8d8d8d;
       border-radius: 15px;
       overflow: hidden;
 
@@ -60,6 +61,10 @@
       align-items: center;
       justify-content: space-between;
       margin: 0.7rem;
+
+      @media (min-width: 1020px) {
+        display: none;
+      }
 
       &__title {
         font-size: $text-base;
@@ -76,8 +81,44 @@
     .displayDataWrapper {
       padding: 10px;
 
+      @media (min-width: 1020px) {
+        padding: 3rem;
+
+        &:last-child {
+          padding: 1rem 3rem;
+        }
+      }
+
       & > * {
         margin-bottom: 10px;
+      }
+    }
+
+    .displayBackgroundAudio {
+      width: max-content;
+      margin: 1.6rem auto 1rem;
+
+      span {
+        display: block;
+        color: $vreel_white;
+        font-weight: $font-semibold;
+        text-align: center;
+      }
+
+      .buttonWrapper {
+        margin: 1rem 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+
+        button {
+          background: $secondary;
+          color: $vreel-white;
+          padding: 0.4rem 1.2rem;
+          border-radius: $rounded-full;
+          font-weight: $font-medium;
+        }
       }
     }
 

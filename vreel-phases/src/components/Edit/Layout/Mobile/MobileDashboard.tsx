@@ -18,7 +18,7 @@ const MobileDashboard: React.FC = () => {
           // className='flex space-x-6'
         >
           <button className='btn-save'>Save</button>
-          <ToggleButton />
+          {/* <ToggleButton /> */}
           <UserProfile section='edit' />
         </div>
       </div>

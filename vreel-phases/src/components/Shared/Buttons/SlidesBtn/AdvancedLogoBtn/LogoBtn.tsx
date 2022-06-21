@@ -1,5 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
+import FormikControl from "src/components/formik/FormikControl";
 import {
   isDesktopShow,
   showAdvancedLogo,
@@ -17,9 +18,11 @@ const LogoBtn = (props: Props) => {
   const dispatch = useAppDispatch();
   return (
     <div className={Styles.imgContainer}>
-      <img
-        src={getMediaIconsLink?.link || `/assets/images/female.png`}
-        alt="Logo Images"
+      <FormikControl
+        control="image"
+        name="advanced"
+        placeholder="Submit"
+        type="image"
       />
       <button
         className={Styles.imgContainer__addLogo}

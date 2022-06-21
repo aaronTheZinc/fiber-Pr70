@@ -2,6 +2,7 @@ package model
 
 import (
 	"encoding/json"
+	"log"
 
 	"github.com/lib/pq"
 )
@@ -80,6 +81,7 @@ type SlideModel struct {
 	CTA2          string `json:"cta2"`
 	Advanced      string `json:"advanced"`
 	Metadata      string `json:"-"`
+	MoreInfo      string `json:"more_info"`
 }
 type AnalyticsChunkModel struct {
 }
@@ -283,6 +285,7 @@ func (c *Slide) ToDatabaseModel() SlideModel {
 	cta2, _ := json.Marshal(c.Cta2)
 	m_cotent, _ := json.Marshal(c.Mobile)
 	d_content, _ := json.Marshal(c.Desktop)
+	more_info, _ := json.Marshal(c.Info)
 	return SlideModel{
 		ID:            c.ID,
 		Author:        c.Author,
@@ -295,6 +298,7 @@ func (c *Slide) ToDatabaseModel() SlideModel {
 		CTA2:          string(cta2),
 		Mobile:        string(m_cotent),
 		Desktop:       string(d_content),
+		MoreInfo:      string(more_info),
 		// Metadata:      *c.Metadata,
 	}
 }
@@ -311,7 +315,9 @@ func (c VreelModel) ToVreel(slides []*Slide) (Vreel, error) {
 	// 	s = append(s, &t)
 	// }
 	gErr := json.Unmarshal([]byte(c.Elements), &e)
-
+	if gErr != nil {
+		log.Println("im the problem!! ")
+	}
 	if gErr != nil {
 		err = gErr
 	}
@@ -378,12 +384,14 @@ func (c *SlideModel) ToSlide() Slide {
 	cta1 := Cta{}
 	cta2 := Cta{}
 	advanced := Advanced{}
+	more_info := MoreInfo{}
 	json.Unmarshal([]byte(c.Title), &title)
 	json.Unmarshal([]byte(c.Mobile), &mobile)
 	json.Unmarshal([]byte(c.Desktop), &desktop)
 	json.Unmarshal([]byte(c.CTA1), &cta1)
 	json.Unmarshal([]byte(c.CTA2), &cta2)
 	json.Unmarshal([]byte(c.Advanced), &advanced)
+	json.Unmarshal([]byte(c.MoreInfo), &more_info)
 
 	return Slide{
 		ID:            c.ID,
@@ -398,11 +406,13 @@ func (c *SlideModel) ToSlide() Slide {
 		Cta1:          &cta1,
 		Cta2:          &cta2,
 		Metadata:      &m,
+		Info:          &more_info,
 	}
 }
 
 func (c *SimpleLinkInput) ToLink() SimpleLink {
 	return SimpleLink{
+		Position:   c.Position,
 		Thumbnail:  c.Thumbnail,
 		LinkHeader: c.LinkHeader,
 		LinkType:   c.LinkType,
@@ -418,6 +428,17 @@ func (c *SuperLinkInput) ToLink() SuperLink {
 		LinkSubHeader: c.LinkSubHeader,
 		LinkType:      c.LinkType,
 		Description:   c.Description,
+	}
+}
+func (c *AddVideoInput) ToVideo() Video {
+	return Video{
+		Position:    *c.Position,
+		VideoHeader: c.VideoHeader,
+		Desktop:     (*Content)(c.Desktop),
+		Mobile:      (*Content)(c.Mobile),
+		Description: c.Description,
+		Cta1:        (*Cta)(c.Cta1),
+		Cta2:        (*Cta)(c.Cta2),
 	}
 }
 

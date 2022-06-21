@@ -53,24 +53,36 @@
     }
 
     // ELEMENT
-    .elementWrapper {
+    .dragWrapper {
       background: $vreel_light_gray;
       border-radius: 15px;
       padding: 0.7rem;
       overflow: hidden;
 
       &:not(:last-child) {
-        margin-bottom: 1.2rem;
+        margin-bottom: 1rem;
       }
     }
+
+    .elementWrapper {
+      flex: 1;
+    }
     .element {
+      width: 100%;
       display: flex;
       align-items: center;
       justify-content: space-between;
 
+      .buttonWrapper {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
       &__title {
         font-size: $text-base;
         color: $vreel_white;
+        cursor: pointer;
       }
 
       .collapse_icon {

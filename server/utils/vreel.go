@@ -16,8 +16,7 @@ func GetDefaultElementsString() (string, error) {
 	}
 	videos := model.Videos{
 		Position: 2,
-		URI:      emptyString,
-		Tag:      emptyString,
+		Videos:   []*model.Video{},
 		Hidden:   &f,
 	}
 	gallery := model.Gallery{
@@ -35,15 +34,32 @@ func GetDefaultElementsString() (string, error) {
 		Header:   emptyString,
 		Hidden:   &f,
 	}
+	music := model.MusicElement{
+		Header: "",
+		Music:  []*model.Music{},
+	}
+
+	contributions := model.ContributionsElement{
+		Header:        "",
+		Contributions: []*model.Contribution{},
+	}
+
+	simpleLinks := model.SimpleLinksElement{
+		Links:  []*model.SimpleLink{},
+		Header: "",
+	}
 
 	elements := model.VreelElements{
 		TextArea:    &textArea,
 		Videos:      &videos,
 		Gallery:     &gallery,
 		Services:    &services,
-		SimpleLinks: []*model.SimpleLink{},
-		SuperLinks:  []*model.SuperLink{},
-		Contact:     &contact,
+		Music:       &music,
+		SimpleLinks: &simpleLinks,
+		// SimpleLinks: []*model.SimpleLink{},
+		Contributions: &contributions,
+		SuperLinks:    []*model.SuperLink{},
+		Contact:       &contact,
 	}
 
 	o, err := json.Marshal(elements)

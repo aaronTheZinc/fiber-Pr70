@@ -14,7 +14,7 @@ const Mobile = () => {
     (state: RootState) => state.expandMenu
   );
 
-  let len = showPreviewInitialState.payload.length ? true : false;
+  let len = showPreviewInitialState.payload?.length ? true : false;
   const dispatch = useAppDispatch();
   return (
     <div className={Styles.filesMobileVersion}>

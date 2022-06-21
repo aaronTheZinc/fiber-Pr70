@@ -30,6 +30,12 @@ func (r *mutationResolver) RemoveUser(ctx context.Context, id string) (*model.Mu
 	return &resp, err
 }
 
+func (r *mutationResolver) ResetElements(ctx context.Context, token string) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeResetElements(token)
+
+	return &resp, err
+}
+
 func (r *mutationResolver) CreateEnterprise(ctx context.Context, input model.NewEnterprise) (*model.Enterprise, error) {
 	enterprise, err := auth.CreateNewEnterprise(input)
 
@@ -124,7 +130,9 @@ func (r *mutationResolver) Follow(ctx context.Context, input model.AnalyticsMuta
 }
 
 func (r *mutationResolver) UnFollow(ctx context.Context, input model.AnalyticsMutation) (*model.MutationResponse, error) {
-	panic(fmt.Errorf("not implemented"))
+	resp, err := auth.AuthorizeUnfollowVreel(input.Token, input.Target)
+
+	return &resp, err
 }
 
 func (r *mutationResolver) LogPageLoad(ctx context.Context, vreelID string) (*model.MutationResponse, error) {
@@ -154,6 +162,12 @@ func (r *mutationResolver) AddSimpleVreelLink(ctx context.Context, token string,
 	return &resp, err
 }
 
+func (r *mutationResolver) RemoveSimpleVreelLink(ctx context.Context, token string, linkID string) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeRemoveSimpleLinkFromVreel(token, linkID)
+
+	return &resp, err
+}
+
 func (r *mutationResolver) AddSuperVreelLink(ctx context.Context, token string, link *model.SuperLinkInput) (*model.MutationResponse, error) {
 	resp, err := auth.AuthorizeAddSuperLinkToVreel(token, link.ToLink())
 
@@ -168,6 +182,42 @@ func (r *mutationResolver) AddSocialMediaLink(ctx context.Context, token string,
 
 func (r *mutationResolver) AddImageToVreelGallery(ctx context.Context, token string, input model.AddGalleryImageInput) (*model.MutationResponse, error) {
 	resp, err := auth.AuthorizeAddImageToGallery(token, input)
+
+	return &resp, err
+}
+
+func (r *mutationResolver) AddContributionLink(ctx context.Context, token string, input model.ContributionsInput) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeAddContributionLinkToVreel(token, input)
+
+	return &resp, err
+}
+
+func (r *mutationResolver) AddMusicLink(ctx context.Context, token string, input model.MusicInput) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeAddMusicLinkToVreel(token, input)
+
+	return &resp, err
+}
+
+func (r *mutationResolver) RemoveMusicLink(ctx context.Context, token string, linkID string) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeRemoveMusicLinkFromVreel(token, linkID)
+
+	return &resp, err
+}
+
+func (r *mutationResolver) RemoveContributionLink(ctx context.Context, token string, linkID string) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeRemoveContributionLinkFromVreel(token, linkID)
+
+	return &resp, err
+}
+
+func (r *mutationResolver) AddVideoToVreel(ctx context.Context, token string, input model.AddVideoInput) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeAddVideoToVreel(token, input.ToVideo())
+
+	return &resp, err
+}
+
+func (r *mutationResolver) RemoveVideoFromVreel(ctx context.Context, token string, videoID string) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeRemoveVideoFromVreel(token, videoID)
 
 	return &resp, err
 }
@@ -259,6 +309,9 @@ type queryResolver struct{ *Resolver }
 //  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
 //    it when you're done.
 //  - You have helper methods in this file. Move them out to keep these resolver files clean.
+func (r *mutationResolver) RemoveSimpleVreelLinkI(ctx context.Context, token string, linkID string) (*model.MutationResponse, error) {
+	panic(fmt.Errorf("not implemented"))
+}
 func (r *mutationResolver) AnalyticsUpdate(ctx context.Context, token string, action string, target string) (*model.MutationResponse, error) {
 	panic(fmt.Errorf("not implemented"))
 }

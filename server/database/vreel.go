@@ -135,11 +135,17 @@ func AddSimpleLinkToVreel(vreelId string, newLink model.SimpleLink) error {
 		return errors.New("failed to parse")
 	}
 	newLink.ID = utils.GenerateId()
-	links := elements.SimpleLinks
+	if elements.SimpleLinks == nil {
+		elements.SimpleLinks = &model.SimpleLinksElement{
+			Links:  []*model.SimpleLink{},
+			Header: "",
+		}
+	}
+	links := elements.SimpleLinks.Links
 
 	links = append(links, &newLink)
 
-	elements.SimpleLinks = links
+	elements.SimpleLinks.Links = links
 
 	u, marshalErr := json.Marshal(&elements)
 	if marshalErr == nil {
@@ -148,6 +154,40 @@ func AddSimpleLinkToVreel(vreelId string, newLink model.SimpleLink) error {
 		return marshalErr
 	}
 
+}
+
+func RemoveSimpleLink(vreelId, linkId string) error {
+	var vreel model.VreelModel
+	var err error
+	var elements model.VreelElements
+	if fetchErr := db.Where("id = ?", vreelId).First(&vreel).Error; fetchErr == nil {
+		parseErr := json.Unmarshal([]byte(vreel.Elements), &elements)
+		if parseErr != nil {
+			return parseErr
+		}
+		links := elements.SimpleLinks.Links
+		linkWasFound := false
+
+		for idx, link := range links {
+			if link.ID == linkId {
+				linkWasFound = true
+				links = append(links[:idx], links[idx+1:]...)
+				break
+			}
+		}
+		if !linkWasFound {
+			err = errors.New("gallery image: " + linkId + " not found")
+		} else {
+			elements.SimpleLinks.Links = links
+			v, marshalErr := json.Marshal(&elements)
+			if marshalErr == nil {
+				return db.Model(model.VreelModel{}).Where("id = ?", vreelId).Update("elements", string(v)).Error
+			} else {
+				return marshalErr
+			}
+		}
+	}
+	return err
 }
 
 func AddSuperLinkToVreel(vreelId string, newLink model.SuperLink) error {
@@ -197,12 +237,15 @@ func AddSocialsLink(vreelId string, input model.SocialsInput) error {
 	if parseErr != nil {
 		return errors.New("failed to parse")
 	}
-	socials = elements.Socials
+	if elements.Socials == nil {
+		elements.Socials = &model.SocialsElement{Header: "", Socials: []*model.Socials{}}
+	}
+	socials = elements.Socials.Socials
 
 	newSocial := model.Socials{Platform: input.Platform, Username: input.Username}
 	socials = append(socials, &newSocial)
 
-	elements.Socials = socials
+	elements.Socials.Socials = socials
 	u, marshalErr := json.Marshal(&elements)
 	if marshalErr == nil {
 		return db.Model(model.VreelModel{}).Where("id = ?", vreelId).Update("elements", string(u)).Error
@@ -222,9 +265,14 @@ func AddImageToVreelGallery(vreelId string, input model.AddGalleryImageInput) er
 		}
 		galleryImages := elements.Gallery
 		galleryImages.Images = append(galleryImages.Images, &model.GalleryImage{
-			ID:       utils.GenerateId(),
-			Position: input.Position,
-			URL:      input.ImageURL,
+			ID:          utils.GenerateId(),
+			Position:    input.Position,
+			Cta1:        (*model.Cta)(input.Cta1),
+			Cta2:        (*model.Cta)(input.Cta2),
+			ImageHeader: input.ImageHeader,
+			Description: input.Description,
+			Desktop:     (*model.Content)(input.Desktop),
+			Mobile:      (*model.Content)(input.Mobile),
 		})
 
 		elements.Gallery = galleryImages
@@ -276,4 +324,277 @@ func RemoveImageFromGallery(vreelId string, imageId string) error {
 	}
 
 	return err
+}
+
+func AddVideoToVreel(vreelId string, video model.Video) error {
+	var err error
+	var vreel model.VreelModel
+	var elements model.VreelElements
+
+	if fetchErr := db.Where("id = ?", vreelId).First(&vreel).Error; fetchErr != nil {
+		err = e.VREEL_NOT_FOUND
+	} else {
+		parseErr := json.Unmarshal([]byte(vreel.Elements), &elements)
+		if parseErr != nil {
+			err = parseErr
+			return err
+		}
+
+		videos := elements.Videos
+
+		video.ID = utils.GenerateId()
+		videos.Videos = append(videos.Videos, &video)
+
+		elements.Videos = videos
+
+		v, marshalErr := json.Marshal(&elements)
+
+		if marshalErr != nil {
+			err = marshalErr
+			return err
+		}
+		updateErr := db.Model(model.VreelModel{}).Where("id = ?", vreelId).Update("elements", string(v)).Error
+
+		if updateErr != nil {
+			err = updateErr
+		}
+
+	}
+
+	return err
+}
+
+func RemoveVideoFromVreel(vreelId, videoId string) error {
+	var err error
+	var vreel model.VreelModel
+	var elements model.VreelElements
+
+	if fetchErr := db.Where("id = ?", vreelId).First(&vreel).Error; fetchErr != nil {
+		err = e.VREEL_NOT_FOUND
+	} else {
+		parseErr := json.Unmarshal([]byte(vreel.Elements), &elements)
+		if parseErr != nil {
+			err = parseErr
+			return err
+		}
+		videos := elements.Videos.Videos
+
+		videoWasFound := false
+		for idx, video := range videos {
+			if video.ID == videoId {
+				videoWasFound = true
+				videos = append(videos[:idx], videos[idx+1:]...)
+				break
+			}
+		}
+
+		if !videoWasFound {
+			err = errors.New("video: " + videoId + "not found")
+		} else {
+			elements.Videos.Videos = videos
+			v, marshalErr := json.Marshal(&elements)
+
+			if marshalErr != nil {
+				err = marshalErr
+				return err
+			}
+			updateErr := db.Model(model.VreelModel{}).Where("id = ?", vreelId).Update("elements", string(v)).Error
+
+			if updateErr != nil {
+				err = updateErr
+			}
+		}
+
+	}
+
+	return err
+
+}
+
+func AddContributionLink(vreelId string, input model.ContributionsInput) error {
+	var err error
+	var vreel model.VreelModel
+	var elements model.VreelElements
+
+	if fetchErr := db.Where("id = ?", vreelId).First(&vreel).Error; fetchErr != nil {
+		err = e.VREEL_NOT_FOUND
+	} else {
+		parseErr := json.Unmarshal([]byte(vreel.Elements), &elements)
+		if parseErr != nil {
+			err = parseErr
+			return err
+		}
+		c := model.Contribution{
+			ID:       utils.GenerateId(),
+			Link:     input.Link,
+			Platform: input.Platform,
+		}
+		if elements.Contributions == nil {
+			elements.Contributions = &model.ContributionsElement{Header: "", Contributions: []*model.Contribution{}}
+		}
+		contributions := elements.Contributions.Contributions
+
+		contributions = append(contributions, &c)
+		elements.Contributions.Contributions = contributions
+		v, marshalErr := json.Marshal(&elements)
+
+		if marshalErr != nil {
+			err = marshalErr
+			return err
+		}
+		updateErr := db.Model(model.VreelModel{}).Where("id = ?", vreelId).Update("elements", string(v)).Error
+
+		if updateErr != nil {
+			err = updateErr
+		}
+
+	}
+
+	return err
+}
+
+func RemoveContributionLink(vreelId, contributionLinkId string) error {
+	var err error
+	var vreel model.VreelModel
+	var elements model.VreelElements
+
+	if fetchErr := db.Where("id = ?", vreelId).First(&vreel).Error; fetchErr != nil {
+		err = e.VREEL_NOT_FOUND
+	} else {
+		parseErr := json.Unmarshal([]byte(vreel.Elements), &elements)
+		if parseErr != nil {
+			err = parseErr
+			return err
+		}
+
+		contributions := elements.Contributions.Contributions
+		linkWasFound := false
+
+		for idx, c := range contributions {
+			if c.ID == contributionLinkId {
+				contributions = append(contributions[:idx], contributions[idx+1:]...)
+				linkWasFound = true
+				break
+
+			}
+		}
+
+		if !linkWasFound {
+			err = errors.New("contribution: " + " not found")
+		} else {
+			elements.Contributions.Contributions = contributions
+			v, marshalErr := json.Marshal(&elements)
+
+			if marshalErr != nil {
+				err = marshalErr
+				return err
+			}
+			updateErr := db.Model(model.VreelModel{}).Where("id = ?", vreelId).Update("elements", string(v)).Error
+
+			if updateErr != nil {
+				err = updateErr
+			}
+
+		}
+
+	}
+
+	return err
+}
+
+func AddMusicLink(vreelId string, input model.MusicInput) error {
+	var err error
+	var vreel model.VreelModel
+	var elements model.VreelElements
+
+	if fetchErr := db.Where("id = ?", vreelId).First(&vreel).Error; fetchErr != nil {
+		err = e.VREEL_NOT_FOUND
+	} else {
+		parseErr := json.Unmarshal([]byte(vreel.Elements), &elements)
+		if parseErr != nil {
+			err = parseErr
+			return err
+		}
+		if elements.Music == nil {
+			elements.Music = &model.MusicElement{Header: "", Music: []*model.Music{}}
+		}
+		m := model.Music{
+			ID:       utils.GenerateId(),
+			Platform: input.Platform,
+			Link:     input.Link,
+		}
+		music := elements.Music.Music
+
+		music = append(music, &m)
+
+		elements.Music.Music = music
+
+		v, marshalErr := json.Marshal(&elements)
+
+		if marshalErr != nil {
+			err = marshalErr
+			return err
+		}
+		updateErr := db.Model(model.VreelModel{}).Where("id = ?", vreelId).Update("elements", string(v)).Error
+
+		if updateErr != nil {
+			err = updateErr
+		}
+
+	}
+
+	return err
+
+}
+
+func RemoveMusicLink(vreelId, musicLinkId string) error {
+	var err error
+	var vreel model.VreelModel
+	var elements model.VreelElements
+
+	if fetchErr := db.Where("id = ?", vreelId).First(&vreel).Error; fetchErr != nil {
+		err = e.VREEL_NOT_FOUND
+	} else {
+		parseErr := json.Unmarshal([]byte(vreel.Elements), &elements)
+		if parseErr != nil {
+			err = parseErr
+			return err
+		}
+		music := elements.Music.Music
+		linkWasFound := false
+
+		for idx, link := range music {
+			if link.ID == musicLinkId {
+				music = append(music[:idx], music[idx+1:]...)
+				linkWasFound = true
+				break
+			}
+		}
+		if !linkWasFound {
+			err = errors.New("music link not:  " + musicLinkId + " not found.")
+		} else {
+			elements.Music.Music = music
+			v, marshalErr := json.Marshal(&elements)
+
+			if marshalErr != nil {
+				err = marshalErr
+				return err
+			}
+			updateErr := db.Model(model.VreelModel{}).Where("id = ?", vreelId).Update("elements", string(v)).Error
+
+			if updateErr != nil {
+				err = updateErr
+			}
+		}
+	}
+
+	return err
+
+}
+
+func ResetUserEmployee(vreelId string) error {
+	elements, _ := utils.GetDefaultElementsString()
+	updateErr := db.Model(model.VreelModel{}).Where("id = ?", vreelId).Update("elements", elements).Error
+
+	return updateErr
 }

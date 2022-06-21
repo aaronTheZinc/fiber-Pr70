@@ -1,35 +1,40 @@
-import React, { useRef, useState } from "react";
-import { useSelector } from "react-redux";
-import AccSettings from "src/components/Edit/components/AccountSettings/AccSettings/AccSettings";
-import PersonalInfo from "src/components/Edit/components/AccountSettings/PersonalInfo/PersonalInfo";
-import Slides from "src/components/Edit/components/Slides/Slides/Slides";
-import AccountMenu from "src/components/Shared/Menu/AccountMenu/AccountMenu";
-import GeneralMenu from "src/components/Shared/Menu/GeneralMenu/GeneralMenu";
-import { RootState, useAppDispatch } from "src/redux/store/store";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Pagination, Autoplay, Mousewheel } from "swiper";
+// Import Swiper styles
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+import VreelSlider from "src/components/VreelSlider/VreelSlider";
+import Links from "src/components/Shared/BottomSheet/Links/Links";
+import VLinks from "src/components/Shared/BottomSheet/VLinks/VLinks/VLinks";
+import Events from "src/components/Shared/BottomSheet/Events/Events";
+import Socials from "src/components/Shared/BottomSheet/Socials/Socials";
+import Contribute from "src/components/Shared/BottomSheet/Contribute/Contribute";
+import MusicLinks from "src/components/Shared/BottomSheet/MusicLinks/MusicLinks";
+import Styles from "./test.module.scss";
+import BottomSheetContainer from "src/components/Shared/BottomSheet/BottomSheetContainer/BottomSheetContainer";
 
 export default function test() {
   return (
-    <>
-      <AccSettings />
-      {/* <PersonalInfo /> */}
-      {/* <EditFiles /> */}
-      {/* <GeneralMenu /> */}
-      {/* <AccountMenu /> */}
-
-      {/* {[1].map((item, index) => (
-        <Collapse title={`Slides_1`} key={index} height={topHeight}>
-          {[1, 2, 3, 4, 5].map((item, index) => (
-            <Collapse
-              title={`Slides_${index}`}
-              index={index}
-              key={index}
-              height={middleHeight[index]}
-            >
-              <p style={{ color: "black", border: "1px solid red" }}>Hello</p>
-            </Collapse>
-          ))}
-        </Collapse>
-      ))} */}
-    </>
+    <BottomSheetContainer title="Container">
+      <main className={Styles.gridContainer}></main>
+    </BottomSheetContainer>
   );
+}
+
+// https://github.com/nygardk/react-share/blob/master/demo/Demo.tsx
+{
+  /* <Swiper
+          modules={[Navigation, Pagination, Autoplay]}
+          loop
+          pagination={{
+            clickable: true,
+          }}
+          slidesPerView={1}
+          style={{ height: "100vh" }}
+        >
+          <SwiperSlide></SwiperSlide>
+          <SwiperSlide>4</SwiperSlide>
+          <SwiperSlide>5</SwiperSlide>
+        </Swiper> */
 }

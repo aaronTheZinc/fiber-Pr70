@@ -23,18 +23,18 @@ services:
     volumes:
       - ./pgdata1:/var/lib/postgresql/data
 
-  media:
-    build:
-      context: ./media
-      dockerfile: dockerfile
-    network_mode: "host"
-    ports:
-      - "7070:7070"
-      - "7071:7071"
-    depends_on:
-      - server
-    environment:
-      - DB_HOST=db
+  # media:
+  #   build:
+  #     context: ./media
+  #     dockerfile: dockerfile
+  #   network_mode: "host"
+  #   ports:
+  #     - "7070:7070"
+  #     - "7071:7071"
+  #   depends_on:
+  #     - server
+  #   environment:
+  #     - DB_HOST=db
 
   server:
     build:
@@ -60,5 +60,3 @@ services:
 volumes:
   cache:
     driver: local
-
-# Some text for nothing
