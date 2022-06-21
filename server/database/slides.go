@@ -13,21 +13,28 @@ import (
 
 func CreateSlide(author string) (model.Slide, error) {
 	var err error
-	slideCount, getSlideCountErr := 
-	slide := model.CreateNewSlideModel()
-	slide.Author = author
-	slide.ID = utils.GenerateId()
-	md := model.SlideMetaData{}
-	md.Created = time.Now().UTC().String()
-	md.Size = "0"
+	var _slide model.SlideModel
+	if slideCount, getSlideCountErr := GetVreelSlideCount(author); getSlideCountErr == nil {
 
-	v, _ := json.Marshal(md)
-	slide.Metadata = string(v)
-	creationErr := db.Create(&slide).Error
-	if creationErr != nil {
-		err = creationErr
+		// increment slide position as slides are added
+		slide := model.CreateNewSlideModel(slideCount + 1)
+		slide.Author = author
+		slide.ID = utils.GenerateId()
+		md := model.SlideMetaData{}
+		md.Created = time.Now().UTC().String()
+		md.Size = "0"
+
+		v, _ := json.Marshal(md)
+		slide.Metadata = string(v)
+		creationErr := db.Create(&slide).Error
+		if creationErr != nil {
+			err = creationErr
+		}
+		_slide = slide
+	} else {
+		err = getSlideCountErr
 	}
-	return slide.ToSlide(), err
+	return _slide.ToSlide(), err
 
 }
 

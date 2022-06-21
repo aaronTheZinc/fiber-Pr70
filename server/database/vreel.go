@@ -598,3 +598,17 @@ func ResetUserEmployee(vreelId string) error {
 
 	return updateErr
 }
+
+func GetVreelSlideCount(vreelId string) (int, error) {
+	var vreel model.VreelModel
+	var err error
+	count := 0
+	if fetchErr := db.Where("id = ?", vreelId).Select("slides").First(&vreel).Error; err == nil {
+		count = len(vreel.Slides)
+	} else {
+		err = fetchErr
+	}
+
+	return count, err
+
+}
