@@ -341,8 +341,9 @@ type SimpleLinkInput struct {
 }
 
 type SimpleLinksElement struct {
-	Header string        `json:"header"`
-	Links  []*SimpleLink `json:"links"`
+	Header   string        `json:"header"`
+	Position int           `json:"position"`
+	Links    []*SimpleLink `json:"links"`
 }
 
 type Slide struct {
@@ -367,16 +368,19 @@ type SlideMetaData struct {
 }
 
 type Socials struct {
+	Position *int   `json:"position"`
 	Platform string `json:"platform"`
 	Username string `json:"username"`
 }
 
 type SocialsElement struct {
-	Header  string     `json:"header"`
-	Socials []*Socials `json:"socials"`
+	Position int        `json:"position"`
+	Header   string     `json:"header"`
+	Socials  []*Socials `json:"socials"`
 }
 
 type SocialsInput struct {
+	Position int    `json:"position"`
 	Platform string `json:"platform"`
 	Username string `json:"username"`
 }

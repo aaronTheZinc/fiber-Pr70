@@ -259,11 +259,13 @@ type Gallery {
 }
 
 type Socials {
+  position: Int
   platform: String!
   username: String!
 }
 
 type SocialsElement {
+  position: Int!
   header: String!
   socials: [Socials]!
 }
@@ -281,6 +283,7 @@ type ContributionsElement {
 
 type SimpleLinksElement {
   header: String!
+  position: Int!
   links: [SimpleLink!]!
 }
 
@@ -442,6 +445,7 @@ input SuperLinkInput {
   description: String!
 }
 input SocialsInput {
+  position: Int!
   platform: String!
   username: String!
 }
@@ -529,6 +533,7 @@ type Mutation {
   follow(input: AnalyticsMutation!): MutationResponse!
   unFollow(input: AnalyticsMutation!): MutationResponse!
   logPageLoad(vreelId: String!): MutationResponse!
+  editElementPosition(token: String!, element: String!, position: Int!): MutationResponse!
   editFileName(
     token: String!
     newName: String!
