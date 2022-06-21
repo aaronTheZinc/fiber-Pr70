@@ -22,6 +22,12 @@ func CreateUser(newUser model.NewUser, id string, hashedPassword string) (model.
 	return userModel.ToUser(), err
 }
 
+func GetUserModelByEmail(email string) (model.UserModel, error) {
+	var user model.UserModel
+	err := db.Where("email = ?", email).First(&user).Error
+	return user, err
+}
+
 //Retrieve User by ID
 func GetUser(id string) (model.User, error) {
 	wg := sync.WaitGroup{}
