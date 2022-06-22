@@ -6,19 +6,27 @@ import { useDispatch } from "react-redux";
 
 import { NavItemTypes } from "../MenuItems";
 import Styles from "./MenuItem.module.scss";
-
+import { gmenu, sp } from "src/components/Sections/Sections";
 const MenuTitle: React.FC<{
   item: NavItemTypes;
   isRightRound?: boolean;
   action: any;
-}> = ({ item, isRightRound, action }) => {
+  isAccount?: boolean;
+}> = ({ item, isRightRound, action, isAccount }) => {
   const dispatch = useDispatch();
   const router = useRouter();
   const isActive = item.href == router.pathname;
   return (
     <div
       onClick={() => {
-        router.push(item.href);
+        if (!isAccount) {
+          const no = gmenu.indexOf(item.title);
+          console.log({ no, sp });
+          if (sp) sp.slideTo(no);
+        } else {
+          router.push(item.href);
+        }
+
         dispatch(action());
       }}
       className={Styles.menuItemContainer}
@@ -34,7 +42,7 @@ const MenuTitle: React.FC<{
         <button
           className={clsx(isActive ? Styles.isActive : Styles.isDeactive)}
         >
-          {item.title}
+          {item.title.replaceAll("_", " ")}
         </button>
 
         {isRightRound && <span className={Styles.roundBall}></span>}

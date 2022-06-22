@@ -1,11 +1,9 @@
 import type { EditComponent, EditItem } from '../../types';
-import AccSettings from './components/AccountSettings/AccSettings/AccSettings';
-import PersonalInfo from './components/AccountSettings/PersonalInfo/PersonalInfo';
-import DisplayOptions from './components/DisplayOptions';
-import Elements from './components/Elements';
-import EditFiles from './components/Files/EditFiles/EditFiles';
-import NewsFeed from './components/NewsFeed';
-import Slides from './components/Slides/Slides/Slides';
+import AccountSettings from './AccountSettings/AccountSettings/AccountSettings';
+import DisplayOptions from './DisplayOptions/DisplayOptions';
+import Elements from './Elements/Elements';
+import EditFiles from './Files/EditFiles/EditFiles';
+import Slides from './Slides/Slides/Slides';
 
 export const regularOptions: Array<EditItem> = [
   {
@@ -113,6 +111,6 @@ export const components: Array<EditComponent> = [
   },
   {
     title: 'account',
-    component: AccSettings,
+    component: AccountSettings,
   },
 ];

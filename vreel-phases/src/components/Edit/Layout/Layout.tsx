@@ -1,4 +1,4 @@
-import withAuth from "src/components/WithAuth/WithAuth";
+import SecureRoute from "@auth/SecureRoute/SecureRoute";
 import DesktopDashboard from "./Desktop/DesktopDashboard";
 import MobileDashboard from "./Mobile/MobileDashboard";
 
@@ -11,4 +11,4 @@ const Layout: React.FC = () => {
   );
 };
 
-export default withAuth(Layout);
+export default SecureRoute(Layout);

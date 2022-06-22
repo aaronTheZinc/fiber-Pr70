@@ -1,12 +1,13 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import FormikControl from "src/components/formik/FormikControl";
+import FormikControl from "@formik/FormikControl";
 import {
   isDesktopShow,
   showAdvancedLogo,
   showMediaMobileSelector,
-} from "src/redux/createSlice/createMobileMediaSelector";
-import { RootState, useAppDispatch } from "src/redux/store/store";
+} from "@redux/createSlice/createMobileMediaSelector";
+
+import { RootState, useAppDispatch } from "@redux/store/store";
 import Styles from "./LogoBtn.module.scss";
 
 type Props = {};
@@ -25,6 +26,7 @@ const LogoBtn = (props: Props) => {
         type="image"
       />
       <button
+        type="button"
         className={Styles.imgContainer__addLogo}
         onClick={() => {
           dispatch(showMediaMobileSelector());

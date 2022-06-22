@@ -1,15 +1,9 @@
-import VreelSlider from "src/components/VreelSlider/VreelSlider";
-
+import { GetServerSideProps } from "next";
 import { useState } from "react";
-import { useRouter } from "next/router";
-import { GET_USER_BY_USER_NAME } from "src/components/graphql/query";
-import { useQuery } from "@apollo/client";
-import CommonSliders from "src/components/Shared/BottomSheet/CommonVideoImageSlider/CommonSliders";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, Mousewheel, Navigation, Pagination } from "swiper";
-import Links from "src/components/Shared/BottomSheet/Links/Links";
-import Socials from "src/components/Shared/BottomSheet/Socials/Socials";
-const vreel = {
+
+import Sections from "src/components/Sections/Sections";
+
+export const vreel = {
   author: "can7os223akuve30qlgg",
   elements: {
     socials: {
@@ -24,20 +18,25 @@ const vreel = {
     videos: {
       header: "",
       position: 2,
-      videos: [1, 2, 3, 4, 5, 6, 7].map((e) => {
+      videos: [
+        "https://res.cloudinary.com/klwebco/video/upload/v1655863954/samples/aiexplainer_optimized_o24q3q.mp4",
+        "https://res.cloudinary.com/klwebco/video/upload/v1655858114/samples/pexels-rodnae-productions-7895613_itn7mi.mp4",
+        "https://res.cloudinary.com/klwebco/video/upload/v1645686813/samples/elephants.mp4",
+        "https://res.cloudinary.com/klwebco/video/upload/v1645686811/samples/sea-turtle.mp4",
+      ].map((e) => {
         return {
           mobile: {
             start_time: 0,
             stop_time: 0,
             background_audio_uri: null,
-            uri: `/assets/videos/test-video-${e}.mp4`,
+            uri: e,
             content_type: "video",
           },
           desktop: {
             start_time: 0,
             stop_time: 0,
             background_audio_uri: null,
-            uri: `/assets/videos/test-video-${e}.mp4`,
+            uri: e,
             content_type: "video",
           },
           cta1: {
@@ -146,7 +145,12 @@ const vreel = {
       ],
     },
   },
-  slides: [6, 7].map((e) => {
+  slides: [
+    "https://res.cloudinary.com/klwebco/video/upload/v1655863954/samples/aiexplainer_optimized_o24q3q.mp4",
+    "https://res.cloudinary.com/klwebco/video/upload/v1655858114/samples/pexels-rodnae-productions-7895613_itn7mi.mp4",
+    "https://res.cloudinary.com/klwebco/video/upload/v1645686813/samples/elephants.mp4",
+    "https://res.cloudinary.com/klwebco/video/upload/v1645686811/samples/sea-turtle.mp4",
+  ].map((e) => {
     return {
       id: "canefb223akkasd8kg9g",
       slide_location: 1,
@@ -163,14 +167,14 @@ const vreel = {
         start_time: 0,
         stop_time: 0,
         background_audio_uri: null,
-        uri: `/assets/videos/test-video-${e}.mp4`,
+        uri: e,
         content_type: "video",
       },
       desktop: {
         start_time: 0,
         stop_time: 0,
         background_audio_uri: null,
-        uri: `/assets/videos/test-video-${e}.mp4`,
+        uri: e,
         content_type: "video",
       },
       cta1: {
@@ -186,7 +190,7 @@ const vreel = {
     };
   }),
 };
-export default function Home() {
+export default function Home({ data }) {
   // const router = useRouter();
   // const [currentSlide, setCurrentSlide] = useState(null);
   // const { username } = router?.query;
@@ -210,66 +214,13 @@ export default function Home() {
  */
   const [swiper, setSwiper] = useState(null);
 
-  console.log({ vreel });
+  console.log({ data });
 
-  return (
-    <Swiper
-      modules={[Pagination, Autoplay, Mousewheel, Navigation]}
-      slidesPerView={1}
-      mousewheel={true}
-      direction={"vertical"}
-      speed={1500}
-      style={{ height: "100vh" }}
-      onSwiper={(swiper) => {
-        setSwiper(swiper);
-      }}
-    >
-      <SwiperSlide>
-        <VreelSlider vreel={vreel} view="Mobile" parentSwiper={swiper} />
-      </SwiperSlide>
-      {vreel.elements.simple_links && (
-        <SwiperSlide>
-          <Links
-            links={vreel.elements.simple_links.links}
-            parentSwiper={swiper}
-          />
-        </SwiperSlide>
-      )}
-      {/* <SwiperSlide>
-        <VLinks parentSwiper={swiper} />
-      </SwiperSlide> */}
-      {/* <SwiperSlide>
-        <Events parentSwiper={swiper} />
-      </SwiperSlide> */}
-      {vreel.elements.socials && (
-        <SwiperSlide>
-          <Socials
-            socials={vreel.elements.socials.socials}
-            parentSwiper={swiper}
-          />
-        </SwiperSlide>
-      )}
-      {/* <SwiperSlide>
-        <ImagesSlider />
-      </SwiperSlide> */}
-      {vreel.elements.gallery.images.length && (
-        <SwiperSlide>
-          <CommonSliders
-            title="Image Gallery"
-            items={vreel.elements.gallery.images}
-            parentSwiper={swiper}
-          />
-        </SwiperSlide>
-      )}
-      {vreel.elements.videos.videos.length && (
-        <SwiperSlide>
-          <CommonSliders
-            title="Video Gallery"
-            items={vreel.elements.videos.videos}
-            parentSwiper={swiper}
-          />
-        </SwiperSlide>
-      )}
-    </Swiper>
-  );
+  return <Sections data={data} />;
 }
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  return {
+    props: { data: vreel },
+  };
+};

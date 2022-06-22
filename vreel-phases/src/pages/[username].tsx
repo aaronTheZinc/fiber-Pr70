@@ -1,9 +1,12 @@
-import { useQuery } from "@apollo/client";
+import React from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import React, { useState } from "react";
-import { GET_USER_BY_USER_NAME } from "src/components/graphql/query";
-import BottomSheetSlide from "src/components/Shared/BottomSheet/BottomSheetContainer/BottomSheetSlide";
+import { useQuery } from "@apollo/client";
+
+import { GET_USER_BY_USER_NAME } from "@graphql/query";
+// import BottomSheetSlide from '@shared/BottomSheet/BottomSheetContainer/BottomSheetSlide';
+import Sections from "src/components/Sections/Sections";
+import { Loader } from "@shared/Loader/Loader";
 
 const userPage = () => {
   const router = useRouter();
@@ -15,7 +18,10 @@ const userPage = () => {
     fetchPolicy: "cache-and-network",
   });
   // console.log({ data, username });
-  if (loading || error) return <div>Loading...</div>;
+  if (loading || error) return <Loader />;
+  if (error) {
+    console.log({ error });
+  }
   if (!data) {
     router.push("/");
   }
@@ -25,7 +31,7 @@ const userPage = () => {
       <Head>
         <title>{`${username}'s`} VReel</title>
       </Head>
-      <BottomSheetSlide data={data} />
+      <Sections data={data?.username?.vreel} />
     </div>
   );
 };

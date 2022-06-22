@@ -2,17 +2,18 @@ import "@sass/main.scss";
 import Head from "next/head";
 import { AppProps } from "next/app";
 import { Provider } from "react-redux";
-import { store } from "../redux/store/store";
-import { ApolloProvider } from "@apollo/client";
-import { client } from "../components/graphql";
-import GeneralMenu from "../components/Shared/Menu/GeneralMenu/GeneralMenu";
-import AccountMenu from "../components/Shared/Menu/AccountMenu/AccountMenu";
 import { CookiesProvider } from "react-cookie";
-import ToastNotification from "src/components/common/Toast/ToastNotification/ToastNotification";
-import QR from "src/components/Shared/QR";
-import AuthProvider from "src/components/WithAuth/AuthProvider";
-import Share from "src/components/Shared/Share";
-import Info from "src/components/Shared/BottomSheet/Info";
+import { ApolloProvider } from "@apollo/client";
+import { client } from "../services/graphql";
+
+import { store } from "@redux/store/store";
+import AuthProvider from "@auth/SecureRoute/AuthProvider";
+import GeneralMenu from "@shared/Menu/GeneralMenu/GeneralMenu";
+import AccountMenu from "@shared/Menu/AccountMenu/AccountMenu";
+import ToastNotification from "@shared/ToastNotification/ToastNotification";
+import QR from "@sections/Sliders/HeroSlider/HelperComps/QR";
+import Share from "@sections/Sliders/HeroSlider/HelperComps/Share";
+import Info from "@sections/Sliders/HeroSlider/HelperComps/Info";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -30,7 +31,7 @@ function MyApp({ Component, pageProps }: AppProps) {
               <ToastNotification />
               <QR />
               <Share />
-              <Info />
+              {/* <Info /> */}
               <Component {...pageProps} />
             </AuthProvider>
           </Provider>
