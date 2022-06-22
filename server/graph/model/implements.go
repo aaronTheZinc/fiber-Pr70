@@ -357,7 +357,7 @@ func (c VreelModel) ToVreel(slides []*Slide) (Vreel, error) {
 // 	}, err
 // }
 
-func CreateNewSlideModel() SlideModel {
+func CreateNewSlideModel(position int) SlideModel {
 	n := 0
 	title, _ := json.Marshal(Title{"", ""})
 	advanced, _ := json.Marshal(Advanced{})
@@ -365,7 +365,7 @@ func CreateNewSlideModel() SlideModel {
 	cta, _ := json.Marshal(Cta{"", "", ""})
 	return SlideModel{
 		ContentType:   "",
-		SlideLocation: 1,
+		SlideLocation: position,
 		URI:           "",
 		CTA1:          string(cta),
 		CTA2:          string(cta),

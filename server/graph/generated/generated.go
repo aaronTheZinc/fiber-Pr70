@@ -243,6 +243,7 @@ type ComplexityRoot struct {
 		CreateSlide                       func(childComplexity int, token string) int
 		DeleteFile                        func(childComplexity int, token string, fileID string) int
 		DeleteGroup                       func(childComplexity int, id string, token string) int
+		EditElementPosition               func(childComplexity int, token string, element string, position int) int
 		EditFileName                      func(childComplexity int, token string, newName string, fileID string) int
 		Follow                            func(childComplexity int, input model.AnalyticsMutation) int
 		LikeSlide                         func(childComplexity int, input model.AnalyticsMutation) int
@@ -256,6 +257,7 @@ type ComplexityRoot struct {
 		RemoveUser                        func(childComplexity int, id string) int
 		RemoveUserFromGroup               func(childComplexity int, token string, groupID string, member string) int
 		RemoveVideoFromVreel              func(childComplexity int, token string, videoID string) int
+		ResetElements                     func(childComplexity int, token string) int
 		ResolveResetPasswordRequestIntent func(childComplexity int, token string, password string) int
 		UnFollow                          func(childComplexity int, input model.AnalyticsMutation) int
 		UnLikeSlide                       func(childComplexity int, input model.AnalyticsMutation) int
@@ -322,8 +324,9 @@ type ComplexityRoot struct {
 	}
 
 	SimpleLinksElement struct {
-		Header func(childComplexity int) int
-		Links  func(childComplexity int) int
+		Header   func(childComplexity int) int
+		Links    func(childComplexity int) int
+		Position func(childComplexity int) int
 	}
 
 	Slide struct {
@@ -349,12 +352,14 @@ type ComplexityRoot struct {
 
 	Socials struct {
 		Platform func(childComplexity int) int
+		Position func(childComplexity int) int
 		Username func(childComplexity int) int
 	}
 
 	SocialsElement struct {
-		Header  func(childComplexity int) int
-		Socials func(childComplexity int) int
+		Header   func(childComplexity int) int
+		Position func(childComplexity int) int
+		Socials  func(childComplexity int) int
 	}
 
 	SuperLink struct {
@@ -457,6 +462,7 @@ type MutationResolver interface {
 	Register(ctx context.Context, input model.NewUser) (*model.User, error)
 	CreateEvent(ctx context.Context, token string, input model.NewEvent) (*model.Event, error)
 	RemoveUser(ctx context.Context, id string) (*model.MutationResponse, error)
+	ResetElements(ctx context.Context, token string) (*model.MutationResponse, error)
 	CreateEnterprise(ctx context.Context, input model.NewEnterprise) (*model.Enterprise, error)
 	CreateResetPasswordRequestIntent(ctx context.Context, email string) (*model.ResetPasswordResponse, error)
 	ResolveResetPasswordRequestIntent(ctx context.Context, token string, password string) (*model.ResolvedPasswordReset, error)
@@ -476,6 +482,7 @@ type MutationResolver interface {
 	Follow(ctx context.Context, input model.AnalyticsMutation) (*model.MutationResponse, error)
 	UnFollow(ctx context.Context, input model.AnalyticsMutation) (*model.MutationResponse, error)
 	LogPageLoad(ctx context.Context, vreelID string) (*model.MutationResponse, error)
+	EditElementPosition(ctx context.Context, token string, element string, position int) (*model.MutationResponse, error)
 	EditFileName(ctx context.Context, token string, newName string, fileID string) (*model.MutationResponse, error)
 	RemoveImageFromVreelGallery(ctx context.Context, token string, imageID string) (*model.MutationResponse, error)
 	DeleteFile(ctx context.Context, token string, fileID string) (*model.MutationResponse, error)
@@ -1512,6 +1519,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.DeleteGroup(childComplexity, args["id"].(string), args["token"].(string)), true
 
+	case "Mutation.editElementPosition":
+		if e.complexity.Mutation.EditElementPosition == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_editElementPosition_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.EditElementPosition(childComplexity, args["token"].(string), args["element"].(string), args["position"].(int)), true
+
 	case "Mutation.editFileName":
 		if e.complexity.Mutation.EditFileName == nil {
 			break
@@ -1667,6 +1686,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.RemoveVideoFromVreel(childComplexity, args["token"].(string), args["videoId"].(string)), true
+
+	case "Mutation.resetElements":
+		if e.complexity.Mutation.ResetElements == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_resetElements_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.ResetElements(childComplexity, args["token"].(string)), true
 
 	case "Mutation.resolveResetPasswordRequestIntent":
 		if e.complexity.Mutation.ResolveResetPasswordRequestIntent == nil {
@@ -2071,6 +2102,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.SimpleLinksElement.Links(childComplexity), true
 
+	case "SimpleLinksElement.position":
+		if e.complexity.SimpleLinksElement.Position == nil {
+			break
+		}
+
+		return e.complexity.SimpleLinksElement.Position(childComplexity), true
+
 	case "Slide.advanced":
 		if e.complexity.Slide.Advanced == nil {
 			break
@@ -2183,6 +2221,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Socials.Platform(childComplexity), true
 
+	case "Socials.position":
+		if e.complexity.Socials.Position == nil {
+			break
+		}
+
+		return e.complexity.Socials.Position(childComplexity), true
+
 	case "Socials.username":
 		if e.complexity.Socials.Username == nil {
 			break
@@ -2196,6 +2241,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.SocialsElement.Header(childComplexity), true
+
+	case "SocialsElement.position":
+		if e.complexity.SocialsElement.Position == nil {
+			break
+		}
+
+		return e.complexity.SocialsElement.Position(childComplexity), true
 
 	case "SocialsElement.socials":
 		if e.complexity.SocialsElement.Socials == nil {
@@ -3026,11 +3078,13 @@ type Gallery {
 }
 
 type Socials {
+  position: Int
   platform: String!
   username: String!
 }
 
 type SocialsElement {
+  position: Int!
   header: String!
   socials: [Socials]!
 }
@@ -3048,6 +3102,7 @@ type ContributionsElement {
 
 type SimpleLinksElement {
   header: String!
+  position: Int!
   links: [SimpleLink!]!
 }
 
@@ -3209,6 +3264,7 @@ input SuperLinkInput {
   description: String!
 }
 input SocialsInput {
+  position: Int!
   platform: String!
   username: String!
 }
@@ -3260,6 +3316,7 @@ type Mutation {
   register(input: NewUser!): User!
   createEvent(token: String!, input: NewEvent!): Event!
   removeUser(id: String!): MutationResponse!
+  resetElements(token: String!): MutationResponse!
   createEnterprise(input: NewEnterprise!): Enterprise!
   createResetPasswordRequestIntent(email: String!): ResetPasswordResponse!
   resolveResetPasswordRequestIntent(
@@ -3295,6 +3352,7 @@ type Mutation {
   follow(input: AnalyticsMutation!): MutationResponse!
   unFollow(input: AnalyticsMutation!): MutationResponse!
   logPageLoad(vreelId: String!): MutationResponse!
+  editElementPosition(token: String!, element: String!, position: Int!): MutationResponse!
   editFileName(
     token: String!
     newName: String!
@@ -3688,6 +3746,39 @@ func (ec *executionContext) field_Mutation_deleteGroup_args(ctx context.Context,
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_editElementPosition_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["token"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("token"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["token"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["element"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("element"))
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["element"] = arg1
+	var arg2 int
+	if tmp, ok := rawArgs["position"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("position"))
+		arg2, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["position"] = arg2
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_editFileName_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -3970,6 +4061,21 @@ func (ec *executionContext) field_Mutation_removeVideoFromVreel_args(ctx context
 		}
 	}
 	args["videoId"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_resetElements_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["token"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("token"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["token"] = arg0
 	return args, nil
 }
 
@@ -8451,6 +8557,48 @@ func (ec *executionContext) _Mutation_removeUser(ctx context.Context, field grap
 	return ec.marshalNMutationResponse2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐMutationResponse(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Mutation_resetElements(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_resetElements_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().ResetElements(rctx, args["token"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.MutationResponse)
+	fc.Result = res
+	return ec.marshalNMutationResponse2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐMutationResponse(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Mutation_createEnterprise(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -9233,6 +9381,48 @@ func (ec *executionContext) _Mutation_logPageLoad(ctx context.Context, field gra
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return ec.resolvers.Mutation().LogPageLoad(rctx, args["vreelId"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.MutationResponse)
+	fc.Result = res
+	return ec.marshalNMutationResponse2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐMutationResponse(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_editElementPosition(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_editElementPosition_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().EditElementPosition(rctx, args["token"].(string), args["element"].(string), args["position"].(int))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -11240,6 +11430,41 @@ func (ec *executionContext) _SimpleLinksElement_header(ctx context.Context, fiel
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _SimpleLinksElement_position(ctx context.Context, field graphql.CollectedField, obj *model.SimpleLinksElement) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "SimpleLinksElement",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Position, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _SimpleLinksElement_links(ctx context.Context, field graphql.CollectedField, obj *model.SimpleLinksElement) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -11794,6 +12019,38 @@ func (ec *executionContext) _SlideMetaData_size(ctx context.Context, field graph
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Socials_position(ctx context.Context, field graphql.CollectedField, obj *model.Socials) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Socials",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Position, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Socials_platform(ctx context.Context, field graphql.CollectedField, obj *model.Socials) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -11862,6 +12119,41 @@ func (ec *executionContext) _Socials_username(ctx context.Context, field graphql
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _SocialsElement_position(ctx context.Context, field graphql.CollectedField, obj *model.SocialsElement) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "SocialsElement",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Position, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _SocialsElement_header(ctx context.Context, field graphql.CollectedField, obj *model.SocialsElement) (ret graphql.Marshaler) {
@@ -16275,6 +16567,14 @@ func (ec *executionContext) unmarshalInputSocialsInput(ctx context.Context, obj 
 
 	for k, v := range asMap {
 		switch k {
+		case "position":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("position"))
+			it.Position, err = ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "platform":
 			var err error
 
@@ -17448,6 +17748,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "resetElements":
+			out.Values[i] = ec._Mutation_resetElements(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "createEnterprise":
 			out.Values[i] = ec._Mutation_createEnterprise(ctx, field)
 			if out.Values[i] == graphql.Null {
@@ -17540,6 +17845,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			}
 		case "logPageLoad":
 			out.Values[i] = ec._Mutation_logPageLoad(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "editElementPosition":
+			out.Values[i] = ec._Mutation_editElementPosition(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -18082,6 +18392,11 @@ func (ec *executionContext) _SimpleLinksElement(ctx context.Context, sel ast.Sel
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "position":
+			out.Values[i] = ec._SimpleLinksElement_position(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "links":
 			out.Values[i] = ec._SimpleLinksElement_links(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -18222,6 +18537,8 @@ func (ec *executionContext) _Socials(ctx context.Context, sel ast.SelectionSet, 
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Socials")
+		case "position":
+			out.Values[i] = ec._Socials_position(ctx, field, obj)
 		case "platform":
 			out.Values[i] = ec._Socials_platform(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -18254,6 +18571,11 @@ func (ec *executionContext) _SocialsElement(ctx context.Context, sel ast.Selecti
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("SocialsElement")
+		case "position":
+			out.Values[i] = ec._SocialsElement_position(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "header":
 			out.Values[i] = ec._SocialsElement_header(ctx, field, obj)
 			if out.Values[i] == graphql.Null {

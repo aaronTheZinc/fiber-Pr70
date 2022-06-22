@@ -591,3 +591,66 @@ func RemoveMusicLink(vreelId, musicLinkId string) error {
 	return err
 
 }
+
+func ResetUserEmployee(vreelId string) error {
+	elements, _ := utils.GetDefaultElementsString()
+	updateErr := db.Model(model.VreelModel{}).Where("id = ?", vreelId).Update("elements", elements).Error
+
+	return updateErr
+}
+
+func GetVreelSlideCount(vreelId string) (int, error) {
+	var vreel model.VreelModel
+	var err error
+	count := 0
+	if fetchErr := db.Where("id = ?", vreelId).Select("slides").First(&vreel).Error; err == nil {
+		count = len(vreel.Slides)
+	} else {
+		err = fetchErr
+	}
+
+	return count, err
+
+}
+
+//needs optimization
+func EditElementPosition(vreelId, element string, position int) error {
+	var err error
+	var vreel model.VreelModel
+	var elements model.VreelElements
+
+	if fetchErr := db.Where("id = ?", vreelId).First(&vreel).Error; fetchErr != nil {
+		err = e.VREEL_NOT_FOUND
+	} else {
+		parseErr := json.Unmarshal([]byte(vreel.Elements), &elements)
+		if parseErr != nil {
+			err = parseErr
+			return err
+		}
+		switch element {
+		case "simple_links":
+			elements.SimpleLinks.Position = position
+
+		case "socials":
+			elements.Socials.Position = position
+
+		default:
+			err = errors.New("invalid element: " + element)
+		}
+		if err == nil {
+			v, marshalErr := json.Marshal(&elements)
+
+			if marshalErr != nil {
+				err = marshalErr
+				return err
+			}
+			updateErr := db.Model(model.VreelModel{}).Where("id = ?", vreelId).Update("elements", string(v)).Error
+
+			if updateErr != nil {
+				err = updateErr
+			}
+		}
+	}
+
+	return err
+}

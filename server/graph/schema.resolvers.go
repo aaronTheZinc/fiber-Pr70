@@ -30,6 +30,12 @@ func (r *mutationResolver) RemoveUser(ctx context.Context, id string) (*model.Mu
 	return &resp, err
 }
 
+func (r *mutationResolver) ResetElements(ctx context.Context, token string) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeResetElements(token)
+
+	return &resp, err
+}
+
 func (r *mutationResolver) CreateEnterprise(ctx context.Context, input model.NewEnterprise) (*model.Enterprise, error) {
 	enterprise, err := auth.CreateNewEnterprise(input)
 
@@ -131,6 +137,12 @@ func (r *mutationResolver) UnFollow(ctx context.Context, input model.AnalyticsMu
 
 func (r *mutationResolver) LogPageLoad(ctx context.Context, vreelID string) (*model.MutationResponse, error) {
 	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *mutationResolver) EditElementPosition(ctx context.Context, token string, element string, position int) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeEditElementPosition(token, element, position)
+
+	return &resp, err
 }
 
 func (r *mutationResolver) EditFileName(ctx context.Context, token string, newName string, fileID string) (*model.MutationResponse, error) {
@@ -303,6 +315,9 @@ type queryResolver struct{ *Resolver }
 //  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
 //    it when you're done.
 //  - You have helper methods in this file. Move them out to keep these resolver files clean.
+func (r *mutationResolver) EditElementLocation(ctx context.Context, token string, element string, position int) (*model.MutationResponse, error) {
+	panic(fmt.Errorf("not implemented"))
+}
 func (r *mutationResolver) RemoveSimpleVreelLinkI(ctx context.Context, token string, linkID string) (*model.MutationResponse, error) {
 	panic(fmt.Errorf("not implemented"))
 }
