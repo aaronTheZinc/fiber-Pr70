@@ -8,27 +8,29 @@ import (
 )
 
 type UserModel struct {
-	ID              string         `gorm:"primaryKey"`
-	Username        string         `json:"username"`
-	AccountType     string         `json:"accont_type"`
-	MiddleInitial   string         `json:"middle_initial"`
-	CompanyName     string         `json:"company_name"`
-	ProfilePicture  string         `json:"profile_picture"`
-	FirstName       string         `json:"first_name"`
-	LastName        string         `json:"last_name"`
-	Email           string         `json:"email"`
-	HomePhone       string         `json:"home_phone"`
-	CellPhone       string         `json:"cell_number"`
-	WorkPhone       string         `json:"work_number"`
-	Password        string         `json:"password"`
-	BusinessAddress string         `json:"business_address"`
-	HomeAddress     string         `json:"billing_address"`
-	Website         string         `json:"website"`
-	JobTitle        string         `json:"job_title"`
-	Groups          pq.StringArray `gorm:"type:text[]"`
-	Following       pq.StringArray `gorm:"type:text[]"`
-	Liked           pq.StringArray `gorm:"type:text[]"`
-	LandingPage     string         `json:"landing_page"`
+	ID                 string         `gorm:"primaryKey"`
+	Username           string         `json:"username"`
+	AccountType        string         `json:"accont_type"`
+	MiddleInitial      string         `json:"middle_initial"`
+	CompanyName        string         `json:"company_name"`
+	ProfilePicture     string         `json:"profile_picture"`
+	SelfPortraitImage  string         `json:"self_portrait_image"`
+	SelfLandscapeImage string         `json:"self_landscape_image"`
+	FirstName          string         `json:"first_name"`
+	LastName           string         `json:"last_name"`
+	Email              string         `json:"email"`
+	HomePhone          string         `json:"home_phone"`
+	CellPhone          string         `json:"cell_number"`
+	WorkPhone          string         `json:"work_number"`
+	Password           string         `json:"password"`
+	BusinessAddress    string         `json:"business_address"`
+	HomeAddress        string         `json:"billing_address"`
+	Website            string         `json:"website"`
+	JobTitle           string         `json:"job_title"`
+	Groups             pq.StringArray `gorm:"type:text[]"`
+	Following          pq.StringArray `gorm:"type:text[]"`
+	Liked              pq.StringArray `gorm:"type:text[]"`
+	LandingPage        string         `json:"landing_page"`
 }
 type GroupModel struct {
 	ID          string         `json:"id"`
@@ -145,24 +147,26 @@ func (c *EnterpriseModel) ToEnterprise(employees []*User) Enterprise {
 func (c *NewUser) ToDatabaseModel() UserModel {
 	// var groups pq.StringArray
 	return UserModel{
-		Username:        c.Username,
-		FirstName:       "",
-		LastName:        "",
-		Email:           c.Email,
-		Password:        *c.Password,
-		AccountType:     c.AccountType,
-		HomePhone:       "",
-		WorkPhone:       "",
-		CellPhone:       "",
-		BusinessAddress: "",
-		HomeAddress:     "",
-		Website:         "",
-		JobTitle:        "",
-		LandingPage:     "",
-		MiddleInitial:   "",
-		Groups:          []string{},
-		Following:       []string{},
-		Liked:           []string{},
+		Username:           c.Username,
+		FirstName:          "",
+		LastName:           "",
+		Email:              c.Email,
+		Password:           *c.Password,
+		AccountType:        c.AccountType,
+		HomePhone:          "",
+		WorkPhone:          "",
+		CellPhone:          "",
+		BusinessAddress:    "",
+		HomeAddress:        "",
+		Website:            "",
+		JobTitle:           "",
+		LandingPage:        "",
+		MiddleInitial:      "",
+		Groups:             []string{},
+		Following:          []string{},
+		Liked:              []string{},
+		SelfPortraitImage:  "",
+		SelfLandscapeImage: "",
 	}
 
 }
@@ -186,26 +190,28 @@ func (c *UserModel) ToUser() User {
 		following = append(following, &o)
 	}
 	return User{
-		ID:              c.ID,
-		Username:        c.Username,
-		ProfilePicture:  c.ProfilePicture,
-		FirstName:       c.FirstName,
-		CompanyName:     c.CompanyName,
-		LastName:        c.LastName,
-		Email:           c.Email,
-		Password:        c.Password,
-		HomePhone:       c.HomePhone,
-		WorkPhone:       c.WorkPhone,
-		CellPhone:       c.CellPhone,
-		BusinessAddress: c.BusinessAddress,
-		HomeAddress:     c.HomeAddress,
-		Website:         c.Website,
-		JobTitle:        c.JobTitle,
-		AccountType:     c.AccountType,
-		Following:       following,
-		Liked:           liked,
-		MiddleInitial:   c.MiddleInitial,
-		LandingPage:     c.LandingPage,
+		ID:                 c.ID,
+		Username:           c.Username,
+		ProfilePicture:     c.ProfilePicture,
+		FirstName:          c.FirstName,
+		CompanyName:        c.CompanyName,
+		LastName:           c.LastName,
+		Email:              c.Email,
+		Password:           c.Password,
+		HomePhone:          c.HomePhone,
+		WorkPhone:          c.WorkPhone,
+		CellPhone:          c.CellPhone,
+		BusinessAddress:    c.BusinessAddress,
+		HomeAddress:        c.HomeAddress,
+		Website:            c.Website,
+		JobTitle:           c.JobTitle,
+		AccountType:        c.AccountType,
+		Following:          following,
+		Liked:              liked,
+		MiddleInitial:      c.MiddleInitial,
+		LandingPage:        c.LandingPage,
+		SelfPortraitImage:  &c.SelfPortraitImage,
+		SelfLandscapeImage: &c.SelfLandscapeImage,
 	}
 }
 

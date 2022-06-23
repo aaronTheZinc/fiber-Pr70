@@ -386,33 +386,35 @@ type ComplexityRoot struct {
 	}
 
 	User struct {
-		AccountType     func(childComplexity int) int
-		BusinessAddress func(childComplexity int) int
-		CellPhone       func(childComplexity int) int
-		CompanyName     func(childComplexity int) int
-		Email           func(childComplexity int) int
-		Files           func(childComplexity int) int
-		FirstName       func(childComplexity int) int
-		Following       func(childComplexity int) int
-		Groups          func(childComplexity int) int
-		HomeAddress     func(childComplexity int) int
-		HomePhone       func(childComplexity int) int
-		ID              func(childComplexity int) int
-		JobTitle        func(childComplexity int) int
-		LandingPage     func(childComplexity int) int
-		LastName        func(childComplexity int) int
-		Liked           func(childComplexity int) int
-		MiddleInitial   func(childComplexity int) int
-		News            func(childComplexity int) int
-		Password        func(childComplexity int) int
-		Prefix          func(childComplexity int) int
-		ProfilePicture  func(childComplexity int) int
-		Suffix          func(childComplexity int) int
-		Title           func(childComplexity int) int
-		Username        func(childComplexity int) int
-		Vreel           func(childComplexity int) int
-		Website         func(childComplexity int) int
-		WorkPhone       func(childComplexity int) int
+		AccountType        func(childComplexity int) int
+		BusinessAddress    func(childComplexity int) int
+		CellPhone          func(childComplexity int) int
+		CompanyName        func(childComplexity int) int
+		Email              func(childComplexity int) int
+		Files              func(childComplexity int) int
+		FirstName          func(childComplexity int) int
+		Following          func(childComplexity int) int
+		Groups             func(childComplexity int) int
+		HomeAddress        func(childComplexity int) int
+		HomePhone          func(childComplexity int) int
+		ID                 func(childComplexity int) int
+		JobTitle           func(childComplexity int) int
+		LandingPage        func(childComplexity int) int
+		LastName           func(childComplexity int) int
+		Liked              func(childComplexity int) int
+		MiddleInitial      func(childComplexity int) int
+		News               func(childComplexity int) int
+		Password           func(childComplexity int) int
+		Prefix             func(childComplexity int) int
+		ProfilePicture     func(childComplexity int) int
+		SelfLandscapeImage func(childComplexity int) int
+		SelfPortraitImage  func(childComplexity int) int
+		Suffix             func(childComplexity int) int
+		Title              func(childComplexity int) int
+		Username           func(childComplexity int) int
+		Vreel              func(childComplexity int) int
+		Website            func(childComplexity int) int
+		WorkPhone          func(childComplexity int) int
 	}
 
 	Video struct {
@@ -2508,6 +2510,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.User.ProfilePicture(childComplexity), true
 
+	case "User.selfLandscapeImage":
+		if e.complexity.User.SelfLandscapeImage == nil {
+			break
+		}
+
+		return e.complexity.User.SelfLandscapeImage(childComplexity), true
+
+	case "User.selfPortraitImage":
+		if e.complexity.User.SelfPortraitImage == nil {
+			break
+		}
+
+		return e.complexity.User.SelfPortraitImage(childComplexity), true
+
 	case "User.suffix":
 		if e.complexity.User.Suffix == nil {
 			break
@@ -2879,6 +2895,8 @@ type User {
   companyName: String!
   title: String!
   profilePicture: String!
+  selfPortraitImage: String
+  selfLandscapeImage: String
   following: [String]
   username: String!
   first_name: String!
@@ -12966,6 +12984,70 @@ func (ec *executionContext) _User_profilePicture(ctx context.Context, field grap
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _User_selfPortraitImage(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SelfPortraitImage, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _User_selfLandscapeImage(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SelfLandscapeImage, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _User_following(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -18849,6 +18931,10 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "selfPortraitImage":
+			out.Values[i] = ec._User_selfPortraitImage(ctx, field, obj)
+		case "selfLandscapeImage":
+			out.Values[i] = ec._User_selfLandscapeImage(ctx, field, obj)
 		case "following":
 			out.Values[i] = ec._User_following(ctx, field, obj)
 		case "username":
