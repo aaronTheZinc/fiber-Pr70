@@ -634,6 +634,12 @@ func EditElementPosition(vreelId, element string, position int) error {
 		case "socials":
 			elements.Socials.Position = position
 
+		case "gallery":
+			elements.Gallery.Position = position
+
+		case "video":
+			elements.Videos.Position = position
+
 		default:
 			err = errors.New("invalid element: " + element)
 		}
