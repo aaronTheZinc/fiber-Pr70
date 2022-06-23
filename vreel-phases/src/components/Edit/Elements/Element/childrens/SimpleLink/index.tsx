@@ -9,6 +9,8 @@ import AddTitleButton from '@shared/Buttons/AddTitleButton/AddTitleButton';
 const SimpleLink: React.FC = () => {
   const initialValues = {
     element_header: '',
+    background: '#b3bac3',
+    font: '#b3bac3',
   };
 
   const handleSubmit = async (values) => {
@@ -37,15 +39,34 @@ const SimpleLink: React.FC = () => {
               />
 
               <AddTitleButton title='Add Link' />
+
+              <LinkCard />
+              <LinkCard />
+              <LinkCard />
+              <LinkCard />
+
+              <div className={Styles.display__color}>
+                <span className={Styles.title}>Element Display Color</span>
+
+                <div className={Styles.inputWrapper}>
+                  <FormikControl
+                    control='input'
+                    type='color'
+                    name='background'
+                    colorInput={true}
+                  />
+                  <FormikControl
+                    control='input'
+                    type='color'
+                    name='font'
+                    colorInput={true}
+                  />
+                </div>
+              </div>
             </form>
           );
         }}
       </FormikContainer>
-
-      <LinkCard />
-      <LinkCard />
-      <LinkCard />
-      <LinkCard />
     </div>
   );
 };

@@ -1,14 +1,17 @@
-import useWindowDimensions from "@hooks/useWindowDimensions";
-import Events from "@sections/Events/Events";
-import VLinks from "@sections/VLinks/VLinks";
-import React from "react";
+import useWindowDimensions from '@hooks/useWindowDimensions';
+import Events from '@sections/Events/Events';
+import MainContainer from '@sections/MainContainer/MainContainer';
+import VLinks from '@sections/VLinks/VLinks';
+import React from 'react';
 
 function test3() {
   const { height } = useWindowDimensions();
 
   return (
     <div>
-      <Events />
+      <MainContainer>
+        <VLinks />
+      </MainContainer>
       {/* <VLinks /> */}
       {/* <div
         style={{
