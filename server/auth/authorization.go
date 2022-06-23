@@ -14,6 +14,30 @@ import (
 	"github.com/vreel/app/utils"
 )
 
+func AuthorizeEditVreelLogo(token, uri string) (model.MutationResponse, error) {
+	var err error
+	var resp model.MutationResponse
+	claims, isAuth, parseErr := ParseToken(token)
+	userId := claims.ID
+
+	if isAuth && parseErr == nil {
+		updateErr := database.EditVreelLogo(userId, uri)
+
+		if updateErr != nil {
+			err = updateErr
+		} else {
+			resp = model.MutationResponse{
+				Succeeded: true,
+				Message:   "successfully edited logo uri",
+			}
+		}
+	} else {
+
+	}
+
+	return resp, err
+}
+
 func AuthorizeEditElementPosition(token, element string, position int) (model.MutationResponse, error) {
 	var err error
 	var resp model.MutationResponse

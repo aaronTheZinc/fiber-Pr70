@@ -556,6 +556,7 @@ type Mutation {
     token: String!
     input: ContributionsInput!
   ): MutationResponse!
+  updateVreelLogo(token: String!, uri: String!): MutationResponse!
   addMusicLink(token: String!, input: MusicInput!): MutationResponse!
   removeMusicLink(token: String!, linkId: String!): MutationResponse
   removeContributionLink(token: String!, linkId: String!): MutationResponse!

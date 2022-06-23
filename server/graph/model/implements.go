@@ -60,6 +60,7 @@ type EventModel struct {
 type VreelModel struct {
 	ID              string         `json:"id"`
 	Author          string         `json:"author"`
+	LogoURI         string         `json:"logo_uri"`
 	PageTitle       string         `json:"page_title"`
 	ButtonURI       *string        `json:"button_uri"`
 	Slides          pq.StringArray `gorm:"type:text[]"`
@@ -327,6 +328,7 @@ func (c VreelModel) ToVreel(slides []*Slide) (Vreel, error) {
 		PageTitle:       c.PageTitle,
 		ButtonURI:       c.ButtonURI,
 		Slides:          slides,
+		LogoURI:         &c.LogoURI,
 		LastSlideEdited: &c.LastSlideEdited,
 		TimeLastEdited:  &c.TimeLastEdited,
 	}, err

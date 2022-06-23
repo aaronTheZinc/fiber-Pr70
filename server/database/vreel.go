@@ -660,3 +660,7 @@ func EditElementPosition(vreelId, element string, position int) error {
 
 	return err
 }
+
+func EditVreelLogo(vreelId, uri string) error {
+	return db.Model(model.VreelModel{}).Where("id = ?", vreelId).Update("logo_uri", uri).Error
+}
