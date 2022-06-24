@@ -51,7 +51,7 @@ func GetUsersFiles(id string) (model.Files, error) {
 				fmt.Println("files-" + fmt.Sprintf("%v", files_r))
 				for _, file := range files_r.Files {
 					f := file
-					f.URI = os.Getenv("MEDIA_SERVER_FILE_ENDPOINT") + file.ID
+					f.URI = os.Getenv("MEDIA_SERVER_FILE_ENDPOINT") + "/" + file.ID
 					files.Files = append(files.Files, &f)
 				}
 				files.FileCount = len(files_r.Files)
