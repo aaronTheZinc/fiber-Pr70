@@ -265,6 +265,7 @@ type ComplexityRoot struct {
 		UpdateSlide                       func(childComplexity int, token *string, slideID string, data string) int
 		UpdateUser                        func(childComplexity int, token string, fields []*model.VreelFields) int
 		UpdateVreelField                  func(childComplexity int, token string, fields []*model.VreelFields) int
+		UpdateVreelLogo                   func(childComplexity int, token string, uri string) int
 	}
 
 	MutationResponse struct {
@@ -385,33 +386,35 @@ type ComplexityRoot struct {
 	}
 
 	User struct {
-		AccountType     func(childComplexity int) int
-		BusinessAddress func(childComplexity int) int
-		CellPhone       func(childComplexity int) int
-		CompanyName     func(childComplexity int) int
-		Email           func(childComplexity int) int
-		Files           func(childComplexity int) int
-		FirstName       func(childComplexity int) int
-		Following       func(childComplexity int) int
-		Groups          func(childComplexity int) int
-		HomeAddress     func(childComplexity int) int
-		HomePhone       func(childComplexity int) int
-		ID              func(childComplexity int) int
-		JobTitle        func(childComplexity int) int
-		LandingPage     func(childComplexity int) int
-		LastName        func(childComplexity int) int
-		Liked           func(childComplexity int) int
-		MiddleInitial   func(childComplexity int) int
-		News            func(childComplexity int) int
-		Password        func(childComplexity int) int
-		Prefix          func(childComplexity int) int
-		ProfilePicture  func(childComplexity int) int
-		Suffix          func(childComplexity int) int
-		Title           func(childComplexity int) int
-		Username        func(childComplexity int) int
-		Vreel           func(childComplexity int) int
-		Website         func(childComplexity int) int
-		WorkPhone       func(childComplexity int) int
+		AccountType        func(childComplexity int) int
+		BusinessAddress    func(childComplexity int) int
+		CellPhone          func(childComplexity int) int
+		CompanyName        func(childComplexity int) int
+		Email              func(childComplexity int) int
+		Files              func(childComplexity int) int
+		FirstName          func(childComplexity int) int
+		Following          func(childComplexity int) int
+		Groups             func(childComplexity int) int
+		HomeAddress        func(childComplexity int) int
+		HomePhone          func(childComplexity int) int
+		ID                 func(childComplexity int) int
+		JobTitle           func(childComplexity int) int
+		LandingPage        func(childComplexity int) int
+		LastName           func(childComplexity int) int
+		Liked              func(childComplexity int) int
+		MiddleInitial      func(childComplexity int) int
+		News               func(childComplexity int) int
+		Password           func(childComplexity int) int
+		Prefix             func(childComplexity int) int
+		ProfilePicture     func(childComplexity int) int
+		SelfLandscapeImage func(childComplexity int) int
+		SelfPortraitImage  func(childComplexity int) int
+		Suffix             func(childComplexity int) int
+		Title              func(childComplexity int) int
+		Username           func(childComplexity int) int
+		Vreel              func(childComplexity int) int
+		Website            func(childComplexity int) int
+		WorkPhone          func(childComplexity int) int
 	}
 
 	Video struct {
@@ -492,6 +495,7 @@ type MutationResolver interface {
 	AddSocialMediaLink(ctx context.Context, token string, input model.SocialsInput) (*model.MutationResponse, error)
 	AddImageToVreelGallery(ctx context.Context, token string, input model.AddGalleryImageInput) (*model.MutationResponse, error)
 	AddContributionLink(ctx context.Context, token string, input model.ContributionsInput) (*model.MutationResponse, error)
+	UpdateVreelLogo(ctx context.Context, token string, uri string) (*model.MutationResponse, error)
 	AddMusicLink(ctx context.Context, token string, input model.MusicInput) (*model.MutationResponse, error)
 	RemoveMusicLink(ctx context.Context, token string, linkID string) (*model.MutationResponse, error)
 	RemoveContributionLink(ctx context.Context, token string, linkID string) (*model.MutationResponse, error)
@@ -1783,6 +1787,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.UpdateVreelField(childComplexity, args["token"].(string), args["fields"].([]*model.VreelFields)), true
 
+	case "Mutation.updateVreelLogo":
+		if e.complexity.Mutation.UpdateVreelLogo == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateVreelLogo_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateVreelLogo(childComplexity, args["token"].(string), args["uri"].(string)), true
+
 	case "MutationResponse.message":
 		if e.complexity.MutationResponse.Message == nil {
 			break
@@ -2494,6 +2510,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.User.ProfilePicture(childComplexity), true
 
+	case "User.selfLandscapeImage":
+		if e.complexity.User.SelfLandscapeImage == nil {
+			break
+		}
+
+		return e.complexity.User.SelfLandscapeImage(childComplexity), true
+
+	case "User.selfPortraitImage":
+		if e.complexity.User.SelfPortraitImage == nil {
+			break
+		}
+
+		return e.complexity.User.SelfPortraitImage(childComplexity), true
+
 	case "User.suffix":
 		if e.complexity.User.Suffix == nil {
 			break
@@ -2865,6 +2895,8 @@ type User {
   companyName: String!
   title: String!
   profilePicture: String!
+  selfPortraitImage: String
+  selfLandscapeImage: String
   following: [String]
   username: String!
   first_name: String!
@@ -3375,6 +3407,7 @@ type Mutation {
     token: String!
     input: ContributionsInput!
   ): MutationResponse!
+  updateVreelLogo(token: String!, uri: String!): MutationResponse!
   addMusicLink(token: String!, input: MusicInput!): MutationResponse!
   removeMusicLink(token: String!, linkId: String!): MutationResponse
   removeContributionLink(token: String!, linkId: String!): MutationResponse!
@@ -4244,6 +4277,30 @@ func (ec *executionContext) field_Mutation_updateVreelField_args(ctx context.Con
 		}
 	}
 	args["fields"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_updateVreelLogo_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["token"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("token"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["token"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["uri"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("uri"))
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["uri"] = arg1
 	return args, nil
 }
 
@@ -9817,6 +9874,48 @@ func (ec *executionContext) _Mutation_addContributionLink(ctx context.Context, f
 	return ec.marshalNMutationResponse2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐMutationResponse(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Mutation_updateVreelLogo(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_updateVreelLogo_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpdateVreelLogo(rctx, args["token"].(string), args["uri"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.MutationResponse)
+	fc.Result = res
+	return ec.marshalNMutationResponse2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐMutationResponse(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Mutation_addMusicLink(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -12883,6 +12982,70 @@ func (ec *executionContext) _User_profilePicture(ctx context.Context, field grap
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _User_selfPortraitImage(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SelfPortraitImage, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _User_selfLandscapeImage(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SelfLandscapeImage, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _User_following(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
@@ -17898,6 +18061,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "updateVreelLogo":
+			out.Values[i] = ec._Mutation_updateVreelLogo(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "addMusicLink":
 			out.Values[i] = ec._Mutation_addMusicLink(ctx, field)
 			if out.Values[i] == graphql.Null {
@@ -18763,6 +18931,10 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "selfPortraitImage":
+			out.Values[i] = ec._User_selfPortraitImage(ctx, field, obj)
+		case "selfLandscapeImage":
+			out.Values[i] = ec._User_selfLandscapeImage(ctx, field, obj)
 		case "following":
 			out.Values[i] = ec._User_following(ctx, field, obj)
 		case "username":

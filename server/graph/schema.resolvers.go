@@ -198,6 +198,12 @@ func (r *mutationResolver) AddContributionLink(ctx context.Context, token string
 	return &resp, err
 }
 
+func (r *mutationResolver) UpdateVreelLogo(ctx context.Context, token string, uri string) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeEditVreelLogo(token, uri)
+
+	return &resp, err
+}
+
 func (r *mutationResolver) AddMusicLink(ctx context.Context, token string, input model.MusicInput) (*model.MutationResponse, error) {
 	resp, err := auth.AuthorizeAddMusicLinkToVreel(token, input)
 

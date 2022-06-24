@@ -634,6 +634,12 @@ func EditElementPosition(vreelId, element string, position int) error {
 		case "socials":
 			elements.Socials.Position = position
 
+		case "gallery":
+			elements.Gallery.Position = position
+
+		case "video":
+			elements.Videos.Position = position
+
 		default:
 			err = errors.New("invalid element: " + element)
 		}
@@ -653,4 +659,8 @@ func EditElementPosition(vreelId, element string, position int) error {
 	}
 
 	return err
+}
+
+func EditVreelLogo(vreelId, uri string) error {
+	return db.Model(model.VreelModel{}).Where("id = ?", vreelId).Update("logo_uri", uri).Error
 }
