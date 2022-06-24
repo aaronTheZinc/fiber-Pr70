@@ -22,20 +22,39 @@ import { GET_USER_BY_USER_NAME } from "../../../../services/graphql/query";
 import { useRouter } from "next/router";
 import useWindowDimensions from "src/hooks/useWindowDimensions";
 import HeroSlide from "./HeroSlide";
+import { useSelector } from "react-redux";
+import { RootState } from "@redux/store/store";
 
 const HeroSlider: React.FC<{
   view: "Mobile" | "Desktop";
   slides?: any;
   parentSwiper?: any;
 }> = ({ view, slides, parentSwiper }) => {
+  const state = useSelector((state: RootState) => state.expandMenu);
   const { height, width } = useWindowDimensions();
   const isMobile = width < 500;
   const [currentSlide, setCurrentSlide] = useState(null);
   const [swiper, setSwiper] = useState(null);
   const router = useRouter();
   const [autoPlay, setautoPlay] = useState(true);
-  const { slide, username, section } = router.query;
+  const [mute, setMute] = useState<boolean>(true);
+  const { slide, username, section, employee } = router.query;
   console.log("Slides", { slides });
+  console.log(state);
+
+  useEffect(() => {
+    if (slide) {
+      if (username && employee)
+        router.push(
+          `/${username}/e/${employee}?slide=${slides?.map((e) => e.id)[0]}`
+        );
+      else if (username)
+        router.push(`/${username}?slide=${slides?.map((e) => e.id)[0]}`);
+      else {
+        router.push(`/?slide=${slides?.map((e) => e.id)[0]}`);
+      }
+    }
+  }, []);
 
   function setAutoPlay() {
     if (autoPlay) {
@@ -49,32 +68,37 @@ const HeroSlider: React.FC<{
   /*   if (swiper && section) {
     swiper.autoplay.stop();
   } */
-  const slidesData = slides?.filter((e) =>
+  const slidesData = slides.filter((e) =>
     isMobile ? e.mobile.uri : e.desktop.uri
   );
   // console.log({ slides });
-
-  const initialSlide = slide
-    ? slidesData
-        .sort((a, b) => a.slide_location - b.slide_location)
-        ?.map((e) => e.id)
-        .indexOf(slide)
-    : 0;
-  // console.log({ slides });
+  slidesData.sort((a, b) => a.slide_location - b.slide_location);
+  const initialSlide = slide ? slidesData?.map((e) => e.id).indexOf(slide) : 0;
+  console.log({ slidesData: slidesData.map((e) => e.id), slide, initialSlide });
 
   return (
-    <div className="vslider">
+    <div className="vslider" style={{ height: "100%", width: "100%" }}>
       <Swiper
         modules={[Navigation, Pagination, Autoplay]}
         loop
         navigation
-        pagination
+        pagination={{
+          clickable: true,
+        }}
         lazy={true}
         onLoad={() => {}}
         slidesPerView={1}
         initialSlide={initialSlide}
         onSlideChange={(s) => {
-          if (username)
+          console.log("on change called....................");
+
+          if (username && employee)
+            router.push(
+              `/${username}/e/${employee}?slide=${
+                slides?.map((e) => e.id)[s.realIndex]
+              }`
+            );
+          else if (username)
             router.push(
               `/${username}?slide=${slides?.map((e) => e.id)[s.realIndex]}`
             );
@@ -91,13 +115,7 @@ const HeroSlider: React.FC<{
           setSwiper(swiper);
         }}
         // effect='fade'
-        className={clsx(
-          Styles.vreelSlider,
-          view === "Desktop"
-            ? Styles.vreelSlider_desktop
-            : Styles.vreelSlider_mobile
-        )}
-        style={{ "--height": height / 100 } as CSSProperties}
+        className={clsx(Styles.vreelSlider)}
       >
         {slidesData.map((obj, index) => (
           <SwiperSlide key={index} className={Styles.vreelSlide}>
@@ -111,6 +129,8 @@ const HeroSlider: React.FC<{
               index={index}
               autoPlay={autoPlay}
               setAutoPlay={setAutoPlay}
+              setMute={setMute}
+              mute={mute}
             />
           </SwiperSlide>
         ))}
@@ -120,3 +140,4 @@ const HeroSlider: React.FC<{
 };
 
 export default HeroSlider;
+// interpriseid/e/employeeid
