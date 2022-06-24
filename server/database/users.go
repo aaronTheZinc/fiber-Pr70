@@ -249,9 +249,7 @@ func UpdateUserFields(id string, fields []*model.VreelFields) error {
 				fmt.Printf("field: %s, value: %s", o.Field, o.Value)
 				err := db.Model(&model.UserModel{}).Where("id = ?", id).Update(o.Field, o.Value).Error
 				if err != nil {
-					log.Printf(err.Error())
 					err = e.VreelFieldError(o.Field)
-					return
 				}
 			} else {
 				err = e.VreelFieldError(o.Field)

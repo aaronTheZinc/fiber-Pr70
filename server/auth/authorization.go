@@ -707,9 +707,9 @@ func AuthorizeEditSlide(token, slideId, data string) (model.Slide, error) {
 
 				if jErr := json.Unmarshal([]byte(data), &sl); jErr != nil {
 					err = e.FAILED_TO_PARSE_SLIDE
+					log.Println("slide update error ->", err.Error())
 				} else {
 					s := sl.ToDatabaseModel()
-					log.Println("[s] ->", s.CTA2)
 					v, slideUpdateErr := database.UpdateSlide(slideId, s)
 					if slideUpdateErr != nil {
 						err = e.FAILED_UPDATE_SLIDE
