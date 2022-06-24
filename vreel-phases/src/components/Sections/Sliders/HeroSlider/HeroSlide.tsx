@@ -61,8 +61,9 @@ const HeroSlide = ({
   setAutoPlay,
   parentSwiper,
   index,
+  mute,
+  setMute,
 }: VreelSlideProps): JSX.Element => {
-  const [mute, setMute] = useState<boolean>(true);
   const [following, setfollowing] = useState(false);
   const [like, setlike] = useState(false);
   const [cookies] = useCookies(["userAuthToken"]);
@@ -82,14 +83,14 @@ const HeroSlide = ({
   const isMobile = width < 500;
   const item = isMobile ? mobile : desktop;
   const isImage = item.content_type == "image";
-  const { username, section } = router?.query;
+  const { username, section, employee } = router?.query;
   console.log("hero slider renderd.....");
+  // console.log({ current, index });
 
   return (
     <div id={id ? id : slideId} className={Styles.vreelSlide__container}>
       {
         <div
-          className={Styles.image_container}
           style={{
             height: "100%",
             width: "100%",
@@ -112,7 +113,7 @@ const HeroSlide = ({
                   muted={mute}
                   url={item?.uri}
                   //   url="/assets/videos/test-video-3.mp4"
-                  playsinline={true}
+                  playsinline={current == index}
                   // stopOnUnmount={true}
                   onSeek={() => console.log(`${section} video ${index} seek`)}
                   onReady={() =>
@@ -129,12 +130,12 @@ const HeroSlide = ({
                   }
                   onEnded={() => {
                     console.log(`${section} video ${index} Ended`);
-                    parentSwiper.slideNext();
+                    swiper.slideNext();
                   }}
                   config={{
                     file: {
                       attributes: {
-                        autoPlay: true,
+                        autoPlay: current == index,
                         playsInline: true,
                         muted: mute,
                         type: "video",
@@ -154,18 +155,6 @@ const HeroSlide = ({
               )}
             </>
           )}
-
-          {/*  <div
-            style={{
-              height: "100%",
-              display: "flex",
-              justifyContent: "center",
-              justifyItems: "center",
-              alignContent: "center",
-            }}
-          >
-            
-          </div> */}
         </div>
       }
       {/* USER PROFILE */}
@@ -191,7 +180,7 @@ const HeroSlide = ({
                 {autoPlay ? <FaPause /> : <FaPlay />}
               </button>
 
-              <button onClick={() => setMute(!mute)}>
+              <button onClick={() => setMute(!mute)} style={{ height: "64px" }}>
                 <img
                   src={`/assets/${
                     mute ? "icons/audioOff.svg" : "icons/audioOn.svg"
@@ -341,8 +330,15 @@ const HeroSlide = ({
                   // console.log({ res });
                 }}
               >
-                <a href={`api/vcard?username=${username}`}>
-                  <img src="/assets/icons/icon-address.svg" alt="V-Card Icon" />
+                {/* &&interprise=&&employeeid= */}
+                <a
+                  href={
+                    employee
+                      ? `/api/vcard?username=${username}&employee=${employee}`
+                      : `/api/vcard?username=${username}`
+                  }
+                >
+                  <img src="/assets/icons/vcard.svg" alt="V-Card Icon" />
                 </a>
               </button>
             </div>
@@ -381,14 +377,17 @@ const HeroSlide = ({
                 }}
               >
                 <img
-                  src={`/assets/icons/icon-heart-${
-                    like ? "filled" : "not-filled"
-                  }.svg`}
+                  src={`/assets/icons/heart-${like ? "fill" : "empty"}.svg`}
                   alt="like Icon"
                 />
               </button>
-              <button onClick={() => dispatch(expandShare())}>
-                <img src="/assets/icons/icon-share.svg" alt="Share Icon" />
+              <button
+                onClick={() => {
+                  dispatch(expandShare());
+                  setAutoPlay(false);
+                }}
+              >
+                <img src="/assets/icons/share-plan.svg" alt="Share Icon" />
               </button>
               <button onClick={() => dispatch(expandQR())}>
                 <img src="/assets/icons/icon-qr.svg" alt="QR Icon" />
