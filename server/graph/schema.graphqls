@@ -535,7 +535,11 @@ type Mutation {
   follow(input: AnalyticsMutation!): MutationResponse!
   unFollow(input: AnalyticsMutation!): MutationResponse!
   logPageLoad(vreelId: String!): MutationResponse!
-  editElementPosition(token: String!, element: String!, position: Int!): MutationResponse!
+  editElementPosition(
+    token: String!
+    element: String!
+    position: Int!
+  ): MutationResponse!
   editFileName(
     token: String!
     newName: String!
@@ -564,4 +568,9 @@ type Mutation {
   removeContributionLink(token: String!, linkId: String!): MutationResponse!
   addVideoToVreel(token: String!, input: AddVideoInput!): MutationResponse!
   removeVideoFromVreel(token: String!, videoId: String!): MutationResponse!
+  updateSlideLocation(
+    token: String!
+    slideId: String
+    location: Int!
+  ): MutationResponse!
 }

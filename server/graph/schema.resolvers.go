@@ -234,6 +234,12 @@ func (r *mutationResolver) RemoveVideoFromVreel(ctx context.Context, token strin
 	return &resp, err
 }
 
+func (r *mutationResolver) UpdateSlideLocation(ctx context.Context, token string, slideID *string, location int) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeUpdateSlideLocation(token, *slideID, location)
+
+	return &resp, err
+}
+
 func (r *queryResolver) User(ctx context.Context, id *string) (*model.User, error) {
 	user, err := database.GetUser(*id)
 	return &user, err

@@ -94,3 +94,9 @@ func SlideExists(id string) (bool, error) {
 	err := db.Where("id = ? ", id).Find(&slides).Count(&count).Error
 	return count > 0, err
 }
+
+func UpdateSlideLocation(slideId, author string, location int) error {
+	err := db.Model(model.SlideModel{}).Where("id = ? AND author = ?", slideId, author).Update("slide_location", location).Error
+
+	return err
+}
