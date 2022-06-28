@@ -172,17 +172,20 @@ async function generateVcard(vCard, user) {
   vCard.nameSuffix = user.suffix;
   vCard.middleName = user?.middle_initial;
   vCard.lastName = user?.last_name;
-  vCard.email = user.email;
-  vCard.url = user.website;
+
+  vCard.workEmail = user.email;
+  // vCard.url.label = "Website";
+
   vCard.workPhone = user.work_phone;
   vCard.cellPhone = user.cell_phone;
 
   // vCard.homeAddress.street = user.home_address;
-  vCard.workAddress.label = "Address";
+
   vCard.workAddress.street = user.business_address;
 
   vCard.organization = user.companyName;
   vCard.title = user.job_title;
+  vCard.url = user.website;
   // vCard.note = "Notes for Kmos";
   return vCard;
 }
