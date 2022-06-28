@@ -6,6 +6,7 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 
+import dynamic from "next/dynamic";
 import Links from "./Links/Links";
 // import VLinks from "../VLinks/VLinks/VLinks";
 // import Events from "../Events/Events";
@@ -14,20 +15,22 @@ import Contribute from "./Contribute/Contribute";
 import MusicLinks from "./MusicLinks/MusicLinks";
 import GallerySlider from "./Sliders/GallerySlider/GallerySlider";
 import { useRouter } from "next/router";
-import HeroSlider from "@sections/Sliders/HeroSlider/HeroSlider";
 import { Loader } from "@shared/Loader/Loader";
 import MainContainer from "./MainContainer/MainContainer";
 // import Test2 from '../Test/Test2';
 export let gmenu = [];
 export let sp = null;
-const Sections: React.FC<{ data: any }> = ({ data }) => {
+
+const HeroSlider = dynamic(() => import("./Sliders/HeroSlider/HeroSlider"));
+
+const Sections: React.FC<{ vreel: any }> = ({ vreel }) => {
   const router = useRouter();
   const { username, section } = router?.query;
   const [swiper, setSwiper] = useState(null);
   const [currentSlide, setCurrentSlide] = useState(0);
   // console.log(data);
 
-  const { elements, slides } = data;
+  const { elements, slides } = vreel;
   const sections = Object.entries({ slides, ...elements }).filter(
     (e) => e[1] != null && e[0] != "__typename"
   );
@@ -36,16 +39,16 @@ const Sections: React.FC<{ data: any }> = ({ data }) => {
   );
 
   // console.log({ elements, slides });
-  console.log(
-    Object.entries({ slides, ...elements }).filter(
-      (e) => e[1] != null && e[0] != "__typename"
-    )
-  );
+  // console.log(
+  //   Object.entries({ slides, ...elements }).filter(
+  //     (e) => e[1] != null && e[0] != "__typename"
+  //   )
+  // );
 
   useEffect(() => {
     setinitialSlide(sections.map((e: any) => e[0]).indexOf(section));
     // if (swiper) swiper.slideTo(0);
-    console.log({ section, info: "section changes..." });
+    // console.log({ section, info: "section changes..." });
   }, [section]);
 
   gmenu = sections.map((e) => e[0]);

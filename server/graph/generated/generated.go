@@ -263,6 +263,7 @@ type ComplexityRoot struct {
 		UnLikeSlide                       func(childComplexity int, input model.AnalyticsMutation) int
 		UpdateEmployee                    func(childComplexity int, token string, employee string, fields []*model.VreelFields) int
 		UpdateSlide                       func(childComplexity int, token *string, slideID string, data string) int
+		UpdateSlideLocation               func(childComplexity int, token string, slideID *string, location int) int
 		UpdateUser                        func(childComplexity int, token string, fields []*model.VreelFields) int
 		UpdateVreelField                  func(childComplexity int, token string, fields []*model.VreelFields) int
 		UpdateVreelLogo                   func(childComplexity int, token string, uri string) int
@@ -501,6 +502,7 @@ type MutationResolver interface {
 	RemoveContributionLink(ctx context.Context, token string, linkID string) (*model.MutationResponse, error)
 	AddVideoToVreel(ctx context.Context, token string, input model.AddVideoInput) (*model.MutationResponse, error)
 	RemoveVideoFromVreel(ctx context.Context, token string, videoID string) (*model.MutationResponse, error)
+	UpdateSlideLocation(ctx context.Context, token string, slideID *string, location int) (*model.MutationResponse, error)
 }
 type QueryResolver interface {
 	User(ctx context.Context, id *string) (*model.User, error)
@@ -1762,6 +1764,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.UpdateSlide(childComplexity, args["token"].(*string), args["slideId"].(string), args["data"].(string)), true
+
+	case "Mutation.updateSlideLocation":
+		if e.complexity.Mutation.UpdateSlideLocation == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateSlideLocation_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateSlideLocation(childComplexity, args["token"].(string), args["slideId"].(*string), args["location"].(int)), true
 
 	case "Mutation.updateUser":
 		if e.complexity.Mutation.UpdateUser == nil {
@@ -3384,7 +3398,11 @@ type Mutation {
   follow(input: AnalyticsMutation!): MutationResponse!
   unFollow(input: AnalyticsMutation!): MutationResponse!
   logPageLoad(vreelId: String!): MutationResponse!
-  editElementPosition(token: String!, element: String!, position: Int!): MutationResponse!
+  editElementPosition(
+    token: String!
+    element: String!
+    position: Int!
+  ): MutationResponse!
   editFileName(
     token: String!
     newName: String!
@@ -3413,6 +3431,11 @@ type Mutation {
   removeContributionLink(token: String!, linkId: String!): MutationResponse!
   addVideoToVreel(token: String!, input: AddVideoInput!): MutationResponse!
   removeVideoFromVreel(token: String!, videoId: String!): MutationResponse!
+  updateSlideLocation(
+    token: String!
+    slideId: String
+    location: Int!
+  ): MutationResponse!
 }
 `, BuiltIn: false},
 }
@@ -4196,6 +4219,39 @@ func (ec *executionContext) field_Mutation_updateEmployee_args(ctx context.Conte
 		}
 	}
 	args["fields"] = arg2
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_updateSlideLocation_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["token"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("token"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["token"] = arg0
+	var arg1 *string
+	if tmp, ok := rawArgs["slideId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("slideId"))
+		arg1, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["slideId"] = arg1
+	var arg2 int
+	if tmp, ok := rawArgs["location"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("location"))
+		arg2, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["location"] = arg2
 	return args, nil
 }
 
@@ -10107,6 +10163,48 @@ func (ec *executionContext) _Mutation_removeVideoFromVreel(ctx context.Context, 
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return ec.resolvers.Mutation().RemoveVideoFromVreel(rctx, args["token"].(string), args["videoId"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.MutationResponse)
+	fc.Result = res
+	return ec.marshalNMutationResponse2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐMutationResponse(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_updateSlideLocation(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_updateSlideLocation_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpdateSlideLocation(rctx, args["token"].(string), args["slideId"].(*string), args["location"].(int))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -18085,6 +18183,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			}
 		case "removeVideoFromVreel":
 			out.Values[i] = ec._Mutation_removeVideoFromVreel(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "updateSlideLocation":
+			out.Values[i] = ec._Mutation_updateSlideLocation(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}

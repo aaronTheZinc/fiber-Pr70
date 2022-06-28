@@ -14,6 +14,28 @@ import (
 	"github.com/vreel/app/utils"
 )
 
+func AuthorizeUpdateSlideLocation(token, slideId string, location int) (model.MutationResponse, error) {
+	var err error
+	var resp model.MutationResponse
+	claims, isAuth, parseErr := ParseToken(token)
+	userId := claims.ID
+
+	if isAuth && parseErr == nil {
+		updateErr := database.UpdateSlideLocation(slideId, userId, location)
+		if updateErr != nil {
+			err = updateErr
+		} else {
+			resp = model.MutationResponse{
+				Succeeded: true,
+				Message:   "successfully updated slide location: " + slideId,
+			}
+		}
+	} else {
+		err = e.UNAUTHORIZED_ERROR
+	}
+	return resp, err
+}
+
 func AuthorizeEditVreelLogo(token, uri string) (model.MutationResponse, error) {
 	var err error
 	var resp model.MutationResponse
