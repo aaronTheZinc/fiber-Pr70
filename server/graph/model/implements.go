@@ -167,6 +167,7 @@ func (c *NewUser) ToDatabaseModel() UserModel {
 		Liked:              []string{},
 		SelfPortraitImage:  "",
 		SelfLandscapeImage: "",
+		CompanyName:        "",
 	}
 
 }

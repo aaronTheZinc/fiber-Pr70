@@ -627,6 +627,7 @@ func EditElementPosition(vreelId, element string, position int) error {
 			err = parseErr
 			return err
 		}
+		// links, photos, videos, socials
 		switch element {
 		case "simple_links":
 			elements.SimpleLinks.Position = position
