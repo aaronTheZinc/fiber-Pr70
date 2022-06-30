@@ -19,8 +19,6 @@ const { FollowMutation, unFollowMutation, likeMutation, unlikeMutation } =
 const SliderContent: React.FC<{
   item: any;
   slide: any;
-  autoPlay: boolean;
-  setAutoPlay: Function;
   mute: boolean;
   setMute: Function;
   isImage: boolean;
@@ -28,8 +26,6 @@ const SliderContent: React.FC<{
   playing: boolean;
   setPlaying: Function;
 }> = ({
-  autoPlay,
-  setAutoPlay,
   mute,
   setMute,
   isImage,
@@ -51,13 +47,12 @@ const SliderContent: React.FC<{
   const { username, section, employee } = router?.query;
   const vreel = useSelector((state: any) => state?.vreel?.vreel);
   const { title, id, cta1, cta2, advanced, desktop, mobile } = slide;
-  console.log({ playing });
 
   return (
-    <div className={Styles.vreelSlide__content}>
-      <div className={Styles.vreelSlide__content_wrapper}>
+    <div className={Styles.media__content}>
+      <div className={Styles.media__content_wrapper}>
         {/* logo */}
-        <div className={Styles.vreelSlide__content_wrapper__vreelLogo}>
+        <div className={Styles.media__content_wrapper__vreelLogo}>
           <img
             src={
               vreel?.logo_uri
@@ -68,18 +63,17 @@ const SliderContent: React.FC<{
           />
         </div>
         {/* LEFT SIDEBAR */}
-        <div className={Styles.vreelSlide__content_wrapper__left}>
+        <div className={Styles.media__content_wrapper__left}>
           <div></div>
 
-          <div className={Styles.vreelSlide__content_wrapper__left__bottom}>
-            {
+          <div className={Styles.media__content_wrapper__left__bottom}>
+            {!isImage && (
               <button
-                // onClick={videoPress}
                 onClick={() => {
                   setPlaying(!playing);
                 }}
                 className={
-                  Styles.vreelSlide__content_wrapper__left__bottom__pauseBtn
+                  Styles.media__content_wrapper__left__bottom__pauseBtn
                 }
               >
                 {playing ? (
@@ -87,7 +81,7 @@ const SliderContent: React.FC<{
                 ) : (
                   <div
                     className={
-                      Styles.vreelSlide__content_wrapper__left__bottom__pauseBtn__playIcon
+                      Styles.media__content_wrapper__left__bottom__pauseBtn__playIcon
                     }
                   >
                     <img
@@ -101,18 +95,17 @@ const SliderContent: React.FC<{
                   </div>
                 )}
               </button>
-            }
-
+            )}
             {(item.background_audio_uri || !isImage) && (
               <button
                 onClick={() => {
-                  setAutoPlay();
                   setMute(!mute);
+                  if (!playing) {
+                    setPlaying(true);
+                  }
                 }}
                 style={{ marginTop: "1rem" }}
-                className={
-                  Styles.vreelSlide__content_wrapper__left__bottom__muteBtn
-                }
+                className={Styles.media__content_wrapper__left__bottom__muteBtn}
               >
                 <img
                   src={`/assets/${
@@ -126,10 +119,8 @@ const SliderContent: React.FC<{
         </div>
 
         {/* CONTENT */}
-        <div className={Styles.vreelSlide__content_wrapper__middle}>
-          <div
-            className={Styles.vreelSlide__content_wrapper__middle__container}
-          >
+        <div className={Styles.media__content_wrapper__middle}>
+          <div className={Styles.media__content_wrapper__middle__container}>
             <h3>{title?.header ? title.header : "VREEL™"}</h3>
             <p>
               {title?.description
@@ -144,13 +135,14 @@ const SliderContent: React.FC<{
                       <button
                         className="btn-slide"
                         onClick={() => {
+                          console.log(cta1);
+
                           switch (cta1?.link_type) {
-                            case "URL":
-                              console.log(
-                                "url clicked..........",
-                                cta1?.link_url
-                              );
-                              router.push(cta1?.link_url);
+                            // case "URL":
+                            case "":
+                              if (cta1.link_url.includes("https://www"))
+                                window.open(cta1?.link_url, "_blank");
+                              else router.push(cta1?.link_url);
 
                               break;
 
@@ -167,13 +159,14 @@ const SliderContent: React.FC<{
                       <button
                         className="btn-slide"
                         onClick={() => {
+                          console.log(cta2);
+
                           switch (cta2.link_type) {
-                            case "URL":
-                              console.log(
-                                "url clicked..........",
-                                cta1?.link_url
-                              );
-                              router.push(cta2?.link_url);
+                            // case "URL":
+                            case "":
+                              if (cta2.link_url.includes("https://www"))
+                                window.open(cta2?.link_url, "_blank");
+                              else router.push(cta2?.link_url);
                               break;
 
                             default:
@@ -213,10 +206,8 @@ const SliderContent: React.FC<{
         </div>
 
         {/* RIGHT SIDEBAR */}
-        <div className={Styles.vreelSlide__content_wrapper__right}>
-          <div
-            className={Styles.vreelSlide__content_wrapper__right__topContainer}
-          >
+        <div className={Styles.media__content_wrapper__right}>
+          <div className={Styles.media__content_wrapper__right__topContainer}>
             <button onClick={() => dispatch(expandMenu())}>
               <img src="/assets/icons/menu.svg" alt="Menu Icons" />
             </button>
@@ -330,7 +321,7 @@ const SliderContent: React.FC<{
         </div>
       </div>
       <div
-        className={Styles.vreelSlide__content__bottomSheet}
+        className={Styles.media__content__bottomSheet}
         onClick={() => {
           parentSwiper.slideNext();
         }}
@@ -342,3 +333,19 @@ const SliderContent: React.FC<{
 };
 
 export default SliderContent;
+
+/* 
+else if (cta1.link_url.startsWith("/api/")) {
+                                console.log(cta1.link_url);
+
+                                const link = document.createElement("a");
+                                link.href = cta1?.link_url;
+                                // Append to html link element page
+                                document.body.appendChild(link);
+                                // Start download
+                                link.click();
+                                // Clean up and remove the link
+                                link.parentNode.removeChild(link);
+                              } 
+
+*/

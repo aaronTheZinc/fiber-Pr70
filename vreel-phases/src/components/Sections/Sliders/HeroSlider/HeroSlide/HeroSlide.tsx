@@ -5,10 +5,9 @@ import { useCookies } from "react-cookie";
 import ReactPlayer from "react-player";
 import Styles from "./HeroSlide.module.scss";
 
-import { RootState, useAppDispatch } from "@redux/store/store";
+import { RootState } from "@redux/store/store";
 import useWindowDimensions from "@hooks/useWindowDimensions";
 import UserProfile from "@shared/UserProfile/UserProfile";
-import { VreelSlideProps } from "../../../../../types";
 import SliderContent from "../HelperComps/SliderContent/SliderContent";
 import SliderVideo from "../HelperComps/SliderVideo/SliderVideo";
 import SliderImage from "../HelperComps/SliderImage/SliderImage";
@@ -18,8 +17,6 @@ const HeroSlide = ({
   currentSlide,
   slide,
   slideId,
-  autoPlay,
-  setAutoPlay,
   parentSwiper,
   index,
   mute,
@@ -41,45 +38,51 @@ const HeroSlide = ({
   const { username, section, employee } = router?.query;
   useState;
   const vreel = useSelector((state: any) => state?.vreel?.vreel);
-  const videoRef = useRef(null);
 
   return (
     <div id={id ? id : slideId} className={Styles.heroSlide}>
       {/* USER PROFILE */}
-      {cookies.userAuthToken && userAuthenticated && <UserProfile />}
-
-      {/* SLIDER CONTENT */}
-      <SliderContent
-        item={item}
-        slide={slide}
-        autoPlay={autoPlay}
-        playing={playing}
-        setPlaying={setPlaying}
-        setAutoPlay={setAutoPlay}
-        mute={mute}
-        setMute={setMute}
-        isImage={isImage}
-        parentSwiper={parentSwiper}
-      />
+      {cookies.userAuthToken && userAuthenticated && (
+        <div className={Styles.userProfile}>
+          <UserProfile />
+        </div>
+      )}
 
       {/* SLIDER MEDIA */}
       {
         <div className={Styles.media}>
           {isImage ? (
-            <SliderImage url={item.uri} />
+            <SliderImage
+              url={item.uri}
+              background_audio_uri={item.background_audio_uri}
+              mute={mute}
+              swiper={swiper}
+              currentSlide={currentSlide}
+              index={index}
+            />
           ) : (
             <SliderVideo
-              autoPlay={autoPlay}
               playing={playing}
               section={section}
               item={item}
               currentSlide={currentSlide}
               index={index}
-              url={item?.uri}
+              url={item.content_type !== "image" && item?.uri}
               mute={mute}
               swiper={swiper}
             />
           )}
+          {/* SLIDER CONTENT */}
+          <SliderContent
+            item={item}
+            slide={slide}
+            playing={playing}
+            setPlaying={setPlaying}
+            mute={mute}
+            setMute={setMute}
+            isImage={isImage}
+            parentSwiper={parentSwiper}
+          />
         </div>
       }
     </div>
