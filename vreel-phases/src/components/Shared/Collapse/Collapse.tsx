@@ -14,6 +14,7 @@ import { RootState, useAppDispatch } from "src/redux/store/store";
 
 import Styles from "./Collapse.module.scss";
 import ToggleButton from "@shared/Buttons/ToggleButton/ToggleButton";
+import { setActiveIndex } from "@redux/createSlice/previewSlice";
 
 function getChildHeight(
   level: number,
@@ -46,6 +47,7 @@ function getChildHeight(
 const Collapse = ({
   title,
   level,
+  index,
   children,
   level_1 = "",
   level_2 = "",
@@ -54,6 +56,8 @@ const Collapse = ({
   const dispatch = useAppDispatch();
   const { collupse } = useSelector((state: RootState) => state.collapse);
   const [height, setheight] = useState(0);
+  const [active, setActive] = useState(null || Number);
+
   const id =
     level == 1
       ? title
@@ -62,6 +66,7 @@ const Collapse = ({
       : `${level_1}_${level_2}_${title}`;
 
   const handleHeight = useCallback(() => {
+    // if (index === active) return;
     setheight(height == 0 ? ref.current.scrollHeight : 0);
     dispatch(
       height == 0
@@ -80,6 +85,7 @@ const Collapse = ({
   }, [height]);
 
   console.log(`render:${getCounter()} id: ${id}`);
+  console.log(index, active);
 
   return (
     <div
@@ -88,7 +94,7 @@ const Collapse = ({
         Styles.deActiveHeight
       )}
     >
-      <div className={Styles.collapse} onClick={handleHeight}>
+      <div className={Styles.collapse}>
         <div className={Styles.collapse__button}>
           <span>{title}</span>
           {/* <ToggleButton
@@ -103,7 +109,13 @@ const Collapse = ({
           deactiveIcon={<AiIcons.AiOutlineEyeInvisible />}
         /> */}
 
-          <span>
+          <span
+            onClick={() => {
+              dispatch(setActiveIndex(index));
+              setActive(index);
+              handleHeight();
+            }}
+          >
             {!height ? (
               <img
                 src="/assets/icons/down-arrow-light.svg"
@@ -129,12 +141,19 @@ const Collapse = ({
       </div>
       <div
         style={{
-          height: `${height + getChildHeight(level, collupse, id, height)}px`,
+          height: `${
+            active === index
+              ? height + getChildHeight(level, collupse, id, height)
+              : 0
+          }px`,
         }}
         className={Styles.slide}
       >
         <div className={Styles.slideBody} ref={ref}>
           {children}
+          <div className={Styles.slideBody__upArrows} onClick={handleHeight}>
+            <img src="/assets/icons/up-arrow-light.svg" alt="Up Arrow" />
+          </div>
         </div>
       </div>
     </div>

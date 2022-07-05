@@ -1,45 +1,46 @@
-import { getDuration } from "@redux/createSlice/vreelSlice";
-import { useAppDispatch } from "@redux/store/store";
-import React, { useCallback, useMemo, useRef, useState } from "react";
+import React, { useRef } from "react";
 import ReactPlayer from "react-player";
+import { useSwiperSlide } from "swiper/react";
 
 const SliderVideo: React.FC<{
   section: any;
   item: any;
-  currentSlide: number;
+  isActive: boolean;
   index: number;
   mute: boolean;
   url: string;
-  swiper: any;
+  swiper?: any;
   playing: boolean;
-}> = ({ section, currentSlide, index, url, mute, swiper, playing }) => {
+}> = ({ section, isActive, index, url, mute, swiper, playing }) => {
   const videoRef = useRef(null);
-  // console.log("slider video rendered...........");
-
+  const { isDuplicate } = useSwiperSlide();
+  // if (videoRef.current) return <div></div>;
   return (
     <>
       <ReactPlayer
         ref={videoRef}
-        playing={currentSlide == index && playing}
-        muted={mute}
+        playing={isActive && playing}
+        // volume={mute ? 0 : 1}
+        muted={isDuplicate || mute}
+        autoPlay
         url={url}
-        //   url="/assets/videos/test-video-3.mp4" // currentSlide == index
+        //   url="/assets/videos/test-video-3.mp4" // isActive == index
         playsinline={true}
         // stopOnUnmount={true}
         pip={false}
-        onSeek={() => console.log(`${section} video ${index} seek`)}
-        onReady={() => console.log(`${section} video ${index} ready to play`)}
+        onSeek={() => {}}
+        onReady={() => {
+          console.log(`Video ${index} ready to play`);
+        }}
         onPlay={() => {
           swiper.autoplay.stop();
-          console.log("autoplay stopped in......", currentSlide);
-          console.log(`${section} video ${index} playing`);
+          console.log(`Video ${index} is playing`);
         }}
         onStart={() => {}}
         onPause={() => {
-          if (currentSlide != index) videoRef.current.seekTo(0);
+          if (!isActive) videoRef.current.seekTo(0);
         }}
         onEnded={() => {
-          console.log(`${section} video ${index} Ended`);
           swiper.slideNext();
         }}
         config={{
@@ -63,3 +64,4 @@ const SliderVideo: React.FC<{
 };
 
 export default SliderVideo;
+// export default SliderVideo;

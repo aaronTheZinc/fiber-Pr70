@@ -87,7 +87,9 @@ const Slides = () => {
   console.log({ slides: data.getUserByToken.vreel.slides });
   return (
     <div className={Styles.slidesContainer}>
-      <div className={Styles.slidesContainer__leftSides}>
+      <div
+        className={clsx(Styles.slidesContainer__leftSides, Styles.scrollbar)}
+      >
         <div className={Styles.slidesContainer__leftSides__content}>
           <div
             className={Styles.slidesContainer__leftSides__content__addNewBtn}
@@ -124,11 +126,12 @@ const Slides = () => {
             />
           </div>
           <div className={Styles.slides}>
-            {data.getUserByToken.vreel.slides.map((e, l1_index) => (
+            {data.getUserByToken.vreel.slides.map((e, l1_index: number) => (
               <Collapse
                 key={l1_index}
                 title={`Slides ${l1_index + 1}`}
                 level={1}
+                index={l1_index}
               >
                 <Slide
                   level_1={`Slides ${l1_index + 1}`}

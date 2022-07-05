@@ -21,6 +21,16 @@ export interface FormikControlPropsTypes {
     title: string;
   };
   icon?: boolean;
+  advanced?:boolean;
+  contacts?:{
+    logo1:string,
+    logo2?:string,
+  };
+  search?:{
+    logo1:string
+  }
+  onChange?:Function
+
 }
 export interface FormikControlPropsTypes {
   control: string;
