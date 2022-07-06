@@ -236,7 +236,7 @@ func UpdateUserFields(id string, fields []*model.VreelFields) error {
 	userFields := []string{"first_name", "last_name", "email", "prefix",
 		"suffix", "work_phone", "cell_phone", "home_phone", "job_title", "profile_picture",
 		"company_name", "business_address", "home_address",
-		"landing_page", "middle_initial", "self_portrait_image", "self_landscape_image", "website"}
+		"landing_page", "middle_initial", "self_portrait_image", "self_landscape_image", "linkedin_url"}
 	var wg sync.WaitGroup
 	var err error
 	// fmt.Printf("input: %s", fields)
