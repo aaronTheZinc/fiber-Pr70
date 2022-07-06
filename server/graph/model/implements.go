@@ -31,6 +31,7 @@ type UserModel struct {
 	Following          pq.StringArray `gorm:"type:text[]"`
 	Liked              pq.StringArray `gorm:"type:text[]"`
 	LandingPage        string         `json:"landing_page"`
+	LinkedinUrl        string         `json:"linkedin_url"`
 }
 type GroupModel struct {
 	ID          string         `json:"id"`
@@ -167,6 +168,7 @@ func (c *NewUser) ToDatabaseModel() UserModel {
 		Liked:              []string{},
 		SelfPortraitImage:  "",
 		SelfLandscapeImage: "",
+		LinkedinUrl:        "",
 	}
 
 }
@@ -191,27 +193,35 @@ func (c *UserModel) ToUser() User {
 	}
 	return User{
 		ID:                 c.ID,
-		Username:           c.Username,
-		ProfilePicture:     c.ProfilePicture,
-		FirstName:          c.FirstName,
+		AccountType:        c.AccountType,
+		Liked:              liked,
 		CompanyName:        c.CompanyName,
+		Title:              "",
+		ProfilePicture:     c.ProfilePicture,
+		LinkedinURL:        &c.LinkedinUrl,
+		SelfPortraitImage:  &c.SelfPortraitImage,
+		SelfLandscapeImage: &c.SelfLandscapeImage,
+		Following:          following,
+		Username:           c.Username,
+		FirstName:          c.FirstName,
 		LastName:           c.LastName,
+		MiddleInitial:      c.MiddleInitial,
+		Prefix:             "",
+		Suffix:             "",
 		Email:              c.Email,
-		Password:           c.Password,
 		HomePhone:          c.HomePhone,
-		WorkPhone:          c.WorkPhone,
 		CellPhone:          c.CellPhone,
+		WorkPhone:          c.WorkPhone,
+		Password:           c.Password,
 		BusinessAddress:    c.BusinessAddress,
 		HomeAddress:        c.HomeAddress,
 		Website:            c.Website,
-		JobTitle:           c.JobTitle,
-		AccountType:        c.AccountType,
-		Following:          following,
-		Liked:              liked,
-		MiddleInitial:      c.MiddleInitial,
 		LandingPage:        c.LandingPage,
-		SelfPortraitImage:  &c.SelfPortraitImage,
-		SelfLandscapeImage: &c.SelfLandscapeImage,
+		JobTitle:           c.JobTitle,
+		Groups:             []*Group{},
+		Vreel:              &Vreel{},
+		Files:              &Files{},
+		News:               []*Slide{},
 	}
 }
 

@@ -96,7 +96,7 @@ func SlideExists(id string) (bool, error) {
 }
 
 func UpdateSlideLocation(slideId, author string, location int) error {
-	err := db.Model(model.SlideModel{}).Where("id = ? AND author = ?", slideId, author).Update("slide_location", location).Error
+	err := db.Model(model.SlideModel{}).Where("id = ?", slideId).Update("slide_location", location).Error
 
 	return err
 }
