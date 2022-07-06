@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
 import Styles from "./SliderContent.module.scss";
+import ReactHtmlParser from "react-html-parser";
 import { RootState, useAppDispatch } from "@redux/store/store";
 import {
   expandMenu,
@@ -46,7 +47,7 @@ const SliderContent: React.FC<{
   const [cookies] = useCookies(["userAuthToken"]);
   const { username, section, employee } = router?.query;
   const vreel = useSelector((state: any) => state?.vreel?.vreel);
-  const { title, id, cta1, cta2, advanced, desktop, mobile } = slide;
+  const { title, id, cta1, cta2, cta3, advanced, desktop, mobile } = slide;
   console.log("3. Slider content rendered...");
 
   return (
@@ -136,13 +137,13 @@ const SliderContent: React.FC<{
                 ? title.description
                 : "We make you look better! Our Web3 interface curates and displays your story amazingly."}
             </p>
-            {(cta1?.link_header || cta2?.link_header) && (
+            {cta1?.link_header && cta2?.link_header && cta3?.link_header ? (
               <div>
                 {
-                  <div className={Styles.button_container}>
+                  <div className={Styles.button_container_2}>
                     {cta1?.link_header && (
                       <button
-                        className="btn-slide"
+                        className="btn-employee"
                         onClick={() => {
                           console.log(cta1);
 
@@ -160,13 +161,17 @@ const SliderContent: React.FC<{
                           }
                         }}
                       >
-                        {cta1?.link_header}
+                        <img
+                          src="/assets/icons/vcard_small.svg"
+                          alt="Contact Logo"
+                        />
+                        <span> {ReactHtmlParser(cta1?.link_header)}</span>
                       </button>
                     )}
 
                     {cta2.link_header && (
                       <button
-                        className="btn-slide"
+                        className="btn-employee"
                         onClick={() => {
                           console.log(cta2);
 
@@ -183,12 +188,98 @@ const SliderContent: React.FC<{
                           }
                         }}
                       >
-                        {cta2.link_header}
+                        <img
+                          src="/assets/icons/socials/linkedin.svg"
+                          alt="LinkedIn Logo"
+                        />
+                        <span> {ReactHtmlParser(cta2?.link_header)}</span>
+                      </button>
+                    )}
+
+                    {cta3.link_header && (
+                      <button
+                        className="btn-employee"
+                        onClick={() => {
+                          console.log(cta2);
+
+                          switch (cta3.link_type) {
+                            // case "URL":
+                            case "":
+                              if (cta3.link_url.includes("https://www"))
+                                window.open(cta3?.link_url, "_blank");
+                              else router.push(cta3?.link_url);
+                              break;
+
+                            default:
+                              break;
+                          }
+                        }}
+                      >
+                        <img
+                          src="/assets/icons/share-plan.svg"
+                          alt="Share Icons"
+                        />
+                        <span> {ReactHtmlParser(cta3?.link_header)}</span>
                       </button>
                     )}
                   </div>
                 }
               </div>
+            ) : (
+              (cta1?.link_header || cta2?.link_header) && (
+                <div>
+                  {
+                    <div className={Styles.button_container}>
+                      {cta1?.link_header && (
+                        <button
+                          className="btn-slide"
+                          onClick={() => {
+                            console.log(cta1);
+
+                            switch (cta1?.link_type) {
+                              // case "URL":
+                              case "":
+                                if (cta1.link_url.includes("https://www"))
+                                  window.open(cta1?.link_url, "_blank");
+                                else router.push(cta1?.link_url);
+
+                                break;
+
+                              default:
+                                break;
+                            }
+                          }}
+                        >
+                          {cta1?.link_header}
+                        </button>
+                      )}
+
+                      {cta2.link_header && (
+                        <button
+                          className="btn-slide"
+                          onClick={() => {
+                            console.log(cta2);
+
+                            switch (cta2.link_type) {
+                              // case "URL":
+                              case "":
+                                if (cta2.link_url.includes("https://www"))
+                                  window.open(cta2?.link_url, "_blank");
+                                else router.push(cta2?.link_url);
+                                break;
+
+                              default:
+                                break;
+                            }
+                          }}
+                        >
+                          {cta2.link_header}
+                        </button>
+                      )}
+                    </div>
+                  }
+                </div>
+              )
             )}
             {!id && (
               <div>
