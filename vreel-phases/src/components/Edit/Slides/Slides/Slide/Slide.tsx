@@ -1,17 +1,18 @@
-import clsx from "clsx";
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { FormikContainer } from "src/services/formik/FormikContainer";
 import FormikControl from "src/services/formik/FormikControl";
 import SlideActionsBtn from "src/components/Shared/Buttons/SlidesBtn/SlideActionsBtn/SlideActionsBtn";
 import AdvancedSlide from "./AdvencedSlide/AdvancedSlide";
 import CallToActions from "./CallToActions/CallToActions";
-import Collapse from "src/components/Shared/Collapse/Collapse";
 import Styles from "./Slide.module.scss";
 import { gql, useMutation } from "@apollo/client";
 import { useCookies } from "react-cookie";
 import toast from "react-hot-toast";
 import SlidesToggleButton from "src/components/Shared/Buttons/SlidesBtn/SlidesToggleButton/SlidesToggleButton";
 import { useDispatch } from "react-redux";
+import { useAppDispatch } from "@redux/store/store";
+import { setPreviewObj } from "@redux/createSlice/previewSlice";
+import { ValuesOfCorrectTypeRule } from "graphql";
 const UPDATE_SLIDE = gql`
   mutation EditSlide($token: String!, $slideId: String!, $data: String!) {
     updateSlide(token: $token, slideId: $slideId, data: $data) {
@@ -32,6 +33,7 @@ const Slide = ({ initialValues, level_1, refetch }) => {
   const dispatch = useDispatch();
   const [updateSlide] = useMutation(UPDATE_SLIDE);
   const [removeSlide] = useMutation(REMOVE_SLIDE);
+
   const handleSubmit = async (values) => {
     console.log(values);
     updateSlide({
@@ -55,14 +57,13 @@ const Slide = ({ initialValues, level_1, refetch }) => {
   return (
     <FormikContainer initialValues={initialValues}>
       {(formik) => {
-        console.log(formik);
-
+        console.log(formik.values);
         return (
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              handleSubmit(formik.values);
-              // console.log(formik.values);
+              // handleSubmit(formik.values);
+              dispatch(setPreviewObj(formik.values));
             }}
           >
             <div className={Styles.slideBody__saveBtn}>
@@ -74,13 +75,16 @@ const Slide = ({ initialValues, level_1, refetch }) => {
                 type="submit"
               />
             </div>
-            <Collapse title="Title" level_1={level_1} level={2}>
+
+            <div className={Styles.slideBody__titleSection}>
+              <p style={{ paddingBottom: "18px" }}>Title</p>
               <FormikControl
                 control="input"
                 type="text"
                 name="title.header"
                 placeholder="Header"
                 slideinput={true}
+                onChange={formik.handleChange}
               />
               <FormikControl
                 control="textarea"
@@ -88,46 +92,55 @@ const Slide = ({ initialValues, level_1, refetch }) => {
                 name="title.description"
                 placeholder="Description"
               />
-            </Collapse>
-            <Collapse title="Media" level_1={level_1} level={2}>
-              <div className={Styles.slideBody__media}>
+            </div>
+
+            <div className={Styles.slideBody__media}>
+              <div className={Styles.slideBody__media__header}>
+                <p>Media</p>
+                <div className={Styles.slideBody__media__header__toggle}>
+                  <SlidesToggleButton
+                    bgColor="green"
+                    width={78}
+                    height={23}
+                    firstTitle="On"
+                    secondTitle="Mute"
+                    firstInnerText="Mute"
+                    secondInnertext="On"
+                    name="media_sound"
+                  />
+                  <span>Media File Sound</span>
+                </div>
+              </div>
+              <div className={Styles.slideBody__media__content}>
                 <FormikControl control="media" name="mobile" />
+              </div>
+              <div className={Styles.slideBody__media__content}>
                 <FormikControl control="media" name="desktop" />
               </div>
-              <div className={Styles.slideBody__toggleBtnContainer}>
-                <SlidesToggleButton
-                  bgColor="transparent"
-                  width={78}
-                  height={23}
-                  firstTitle="On"
-                  secondTitle="Off"
-                  name="media_sound"
-                />
-                <span>Media File Sound</span>
-              </div>
-            </Collapse>
-            <Collapse
-              title="Call-To-Action Button #1"
-              level_1={level_1}
-              level={2}
-            >
-              <CallToActions name="cta1" />
-            </Collapse>
-            <Collapse
-              title="Call-To-Action Button #2"
-              level_1={level_1}
-              level={2}
-            >
-              <CallToActions name="cta2" />
-            </Collapse>
-            <Collapse title="Advanced" level_1={level_1} level={2}>
-              <AdvancedSlide
-                level_1={level_1}
-                level_2={`${level_1}_Advanced`}
-              />
-            </Collapse>
+            </div>
 
-            <div className={Styles.delBtn}>
+            <div className={Styles.slideBody__callToActions}>
+              <div className={Styles.slideBody__callToActions__title}>
+                <p>Call-To-Action Button #1</p>
+              </div>
+              <CallToActions name="cta1" />
+            </div>
+
+            <div className={Styles.slideBody__callToActions}>
+              <div className={Styles.slideBody__callToActions__title}>
+                <p>Call-To-Action Button #2</p>
+              </div>
+              <CallToActions name="cta2" />
+            </div>
+
+            <div className={Styles.slideBody__advanced}>
+              <div className={Styles.slideBody__advanced__title}>
+                <p>Advanced</p>
+              </div>
+              <AdvancedSlide />
+            </div>
+
+            <div className={Styles.slideBody__delBtn}>
               <SlideActionsBtn
                 title="Delete Slide"
                 bgColor="red"

@@ -1,12 +1,14 @@
-import React from 'react';
-import { Field, ErrorMessage, useFormikContext } from 'formik';
-import clsx from 'clsx';
-import Styles from './Input.module.scss';
+import React from "react";
+import { Field, ErrorMessage, useFormikContext } from "formik";
+import clsx from "clsx";
+import Styles from "./Input.module.scss";
 
-import TextError from '../TextError/TextError';
-import ElementInput from '../ElementInput/ElementInput';
-import SocialInput from '../SocialInput/SocialInput';
-import ColorInput from '../ColorInput/ColorInput';
+import TextError from "../TextError/TextError";
+import ElementInput from "../ElementInput/ElementInput";
+import SocialInput from "../SocialInput/SocialInput";
+import ColorInput from "../ColorInput/ColorInput";
+import ContactsInput from "../ContactsInput/ContactsInput";
+import Search from "../ContactsInput/Search/Search";
 
 const Input = (props: any) => {
   const {
@@ -17,6 +19,9 @@ const Input = (props: any) => {
     icon,
     placeholder,
     name,
+    advanced,
+    contacts,
+    search,
     ...rest
   } = props;
   const { errors, setFieldValue } = useFormikContext();
@@ -28,7 +33,7 @@ const Input = (props: any) => {
           if (elementInput) {
             return (
               <ElementInput
-                type='text'
+                type="text"
                 placeholder={placeholder}
                 field={field}
                 rest={rest}
@@ -49,6 +54,29 @@ const Input = (props: any) => {
             );
           }
 
+          if (contacts) {
+            return (
+              <ContactsInput
+                logo1={contacts?.logo1}
+                logo2={contacts?.logo2}
+                placeholder={placeholder}
+                field={field}
+                rest={rest}
+              />
+            );
+          }
+
+          if (search) {
+            return (
+              <Search
+                logo1={search?.logo1}
+                placeholder={placeholder}
+                field={field}
+                rest={rest}
+              />
+            );
+          }
+
           if (colorInput) {
             return <ColorInput field={field} rest={rest} name={name} />;
           }
@@ -61,6 +89,10 @@ const Input = (props: any) => {
                 {...rest}
                 placeholder={`${placeholder} `}
                 className={clsx(slideinput ? Styles.slideinput : Styles.input)}
+                style={{
+                  padding: `${advanced && "10px"}`,
+                  fontSize: `${advanced && "10px"}`,
+                }}
               />
             </div>
           );

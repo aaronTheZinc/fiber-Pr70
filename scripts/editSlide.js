@@ -4,13 +4,13 @@ const endpoint = 'https://staging.vreel.page/graphql'
 const slide = {
     slide_location: 0,
     title: {
-        header: "Dow",
-        description: "Julie Zaniewski, Sustainability Director, Interviewed by GreenBiz",
+        header: "Avangard Innovative",
+        description: "Think Circular",
     },
     cta1: {
-        link_header: "THE AGREEMENT",
+        link_header: "WATCH FULL VIDEO",
         link_type: "url",
-        link_url: "www.yahoo.com/now/dow-dow-inks-pcr-supply-142302154.html?guccounter=1&guce_referrer=aHR0cHM6Ly93d3cuZ29vZ2xlLmNvbS8&guce_referrer_sig=AQAAAIb32w65np9VTxVMs6lF2gvqmmSpETMaqo4lSbQNptkDxIqRxldcUfkiYeECLLCNXCjibVJGyZRmOY1UGUqOBFaPs12kEcKpFRr_e8R53wBsLSbqIKIHpTQyvHzErDa43sXlWD-ih9TQiFN5o6U0M5xFHWX6I6bv6nM38KbCcNld",
+        link_url: "https://www.avaicg.com/",
     },
     // cta2: {
     //     link_header: "",
@@ -18,20 +18,25 @@ const slide = {
     //     link_url: "",
     // },
     advanced: {
-        info: "",
+        info: {
+            title: "",
+            descripton: "",
+            collaborators: [],
+            credits: []
+        },
         link_type: "",
         link_url: "",
     },
     mobile: {
         background_audio_uri: "",
         content_type: "video/mp4",
-        uri: "https://firebasestorage.googleapis.com/v0/b/clips-e8ad8.appspot.com/o/BBC_HICONE_FULL.mp4?alt=media&token=57595162-a52f-4939-b0cb-aedb32165054",
+        uri: "https://staging.vreel.page/files/c7a8583752d2c27c0376ccbad08dc886",
     },
     desktop: {
         background_audio_uri: "",
         content_type: "video/mp4",
-        uri: "https://firebasestorage.googleapis.com/v0/b/clips-e8ad8.appspot.com/o/BBC_HICONE_FULL.mp4?alt=media&token=57595162-a52f-4939-b0cb-aedb32165054",
-    }
+        uri: "https://staging.vreel.page/files/c7a8583752d2c27c0376ccbad08dc886",
+    },
 }
 const client = new GraphQLClient(endpoint, {
     headers: {
@@ -39,8 +44,8 @@ const client = new GraphQLClient(endpoint, {
     },
 })
 
-const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNhZmIwb3EyM2FrajlnNHFrMTlnIiwiYWNjb3VudF90eXBlIjoiZW50ZXJwcmlzZSIsImV4cCI6MTY1NTY5MzkzMX0.lpY_VPOkl3Y4BjLzLVEZuEqOVb8pguZm6DykkTHDKRQ"
-const slideId = "cajagfa23aktcaat7b30"
+const slideId = "cajag5223aktcaat7b20"
+const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNhZmIwb3EyM2FrajlnNHFrMTlnIiwiYWNjb3VudF90eXBlIjoiZW50ZXJwcmlzZSIsImV4cCI6MTY1NjY5NjA5OH0.StK2yvXIAl5WPV6gD5G0g8KmAM7YSS7hhinB6d-CKmg"
 const data = JSON.stringify(slide)
 
 const MUTATATION = gql`

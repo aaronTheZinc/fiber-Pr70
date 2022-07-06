@@ -1,3 +1,6 @@
+import Section from "@sections/Section";
+import HeroSlide from "@sections/Sliders/HeroSlider/HeroSlide/HeroSlide";
+import HeroSlider from "@sections/Sliders/HeroSlider/HeroSlider";
 import { GetServerSideProps } from "next";
 import { useState } from "react";
 
@@ -8,6 +11,7 @@ export const vreel = {
   elements: {
     socials: {
       header: "",
+      position: 5,
       socials: [
         {
           platform: "twitter",
@@ -17,7 +21,7 @@ export const vreel = {
     },
     videos: {
       header: "",
-      position: 2,
+      position: 3,
       videos: [
         "/assets/videos/waterfall.mp4",
         "/assets/videos/test-video-1.mp4",
@@ -60,8 +64,8 @@ export const vreel = {
     },
     gallery: {
       header: "",
-      position: 3,
-      images: [1, 2, 3, 4].map((e) => {
+      position: 4,
+      images: [1, 2, 3, 4, 5, 6].map((e) => {
         return {
           mobile: {
             start_time: 0,
@@ -79,12 +83,12 @@ export const vreel = {
           },
           cta1: {
             link_header: "Sign Up",
-            link_type: "URL",
+            link_type: "",
             link_url: "/register",
           },
           cta2: {
             link_header: "Login",
-            link_type: "URL",
+            link_type: "",
             link_url: "/login",
           },
         };
@@ -93,6 +97,7 @@ export const vreel = {
     },
     simple_links: {
       header: "",
+      position: 1,
       links: [
         {
           id: "candi5i23akkasd8kg6g",
@@ -152,9 +157,47 @@ export const vreel = {
     },
   },
   slides: [
-    "/assets/videos/waterfall.mp4",
-    "/assets/videos/test-video-1.mp4",
-    "https://res.cloudinary.com/klwebco/video/upload/v1645686813/samples/elephants.mp4",
+    // {
+    //   url: "https://vreel.page/users/avangardinnovative/videos/aiexplainer_optimized.mp4",
+    //   content_type: "video",
+    // },
+    // {
+    //   url: "https://vreel.page/users/avangardinnovative/videos/aiexplainer_optimized.mp4",
+    //   content_type: "video",
+    // },
+    {
+      url: "https://shaktisinghcheema.com/wp-content/uploads/2019/10/Laptop-63.mp4",
+      content_type: "video",
+    },
+    {
+      url: "https://res.cloudinary.com/klwebco/video/upload/v1656836002/samples/test-video-5_m2wxg1.mp4",
+      content_type: "video",
+    },
+
+    {
+      url: "https://res.cloudinary.com/klwebco/video/upload/v1656835997/samples/test-video-1_edlvu6.mp4",
+      content_type: "video",
+    },
+    {
+      url: "https://res.cloudinary.com/klwebco/video/upload/v1656835999/samples/test-video-2_sjox9x.mp4",
+      content_type: "video",
+    },
+    // {
+    //   url: "https://res.cloudinary.com/klwebco/image/upload/v1655998234/test-image_1_nhb5cc.jpg",
+    //   content_type: "image",
+    // },
+    // {
+    //   url: "https://res.cloudinary.com/klwebco/image/upload/v1645686802/samples/bike.jpg",
+    //   content_type: "image",
+    // },
+    // {
+    //   url: "https://res.cloudinary.com/klwebco/image/upload/v1645686800/samples/sheep.jpg",
+    //   content_type: "image",
+    // },
+
+    // "https://res.cloudinary.com/klwebco/video/upload/v1645686813/samples/elephants.mp4",
+    // "https://res.cloudinary.com/klwebco/video/upload/v1645686813/samples/elephants.mp4",
+    // "/assets/videos/test-video-1.mp4",
     /*     "/assets/videos/test-video-2.mp4",
     "/assets/videos/test-video-3.mp4",
     "/assets/videos/test-video-4.mp4",
@@ -166,7 +209,7 @@ export const vreel = {
     "/assets/videos/vreel-vid.mp4", */
   ].map((e, index) => {
     return {
-      id: e,
+      id: e.url,
       slide_location: index,
       content_type: "",
       uri: "",
@@ -182,25 +225,31 @@ export const vreel = {
       mobile: {
         start_time: 0,
         stop_time: 0,
-        background_audio_uri: null,
-        uri: e,
-        content_type: "video",
+        background_audio_uri:
+          index == 3
+            ? "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3"
+            : "",
+        uri: e.url,
+        content_type: e.content_type,
       },
       desktop: {
         start_time: 0,
         stop_time: 0,
-        background_audio_uri: null,
-        uri: e,
-        content_type: "video",
+        background_audio_uri:
+          index == 1
+            ? "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+            : "",
+        uri: e.url,
+        content_type: e.content_type,
       },
       cta1: {
         link_header: "Sign Up",
-        link_type: "URL",
+        link_type: "",
         link_url: "/register",
       },
       cta2: {
         link_header: "Login",
-        link_type: "URL",
+        link_type: "",
         link_url: "/login",
       },
     };
@@ -230,7 +279,8 @@ export default function Home({ data }) {
  */
   const [swiper, setSwiper] = useState(null);
 
-  console.log({ data });
+  // console.log({ vreel: vreel.slides });
 
+  // return <HeroSlider slides={vreel.slides} view='Mobile' />;
   return <Sections vreel={vreel} />;
 }

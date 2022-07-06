@@ -112,7 +112,7 @@ const VreelSlide = ({
               className="vreel-slide__background-video"
               autoPlay
               muted={isMuted}
-              playsInline
+              playsInline={true}
               onEnded={(e) => {
                 swiper.slideNext();
                 console.log("ended", currentSlide, slideId);

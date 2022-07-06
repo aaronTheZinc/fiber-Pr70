@@ -168,7 +168,11 @@ func (c *NewUser) ToDatabaseModel() UserModel {
 		Liked:              []string{},
 		SelfPortraitImage:  "",
 		SelfLandscapeImage: "",
+<<<<<<< HEAD
 		LinkedinUrl:        "",
+=======
+		CompanyName:        "",
+>>>>>>> refs/remotes/origin/main
 	}
 
 }

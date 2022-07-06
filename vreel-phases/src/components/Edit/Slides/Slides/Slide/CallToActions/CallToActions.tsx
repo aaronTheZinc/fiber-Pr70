@@ -1,14 +1,17 @@
-import clsx from 'clsx';
-import { useFormikContext } from 'formik';
-import React, { useCallback, useState } from 'react';
-import FormikControl from 'src/services/formik/FormikControl';
-import { callToActionsData, SlidesDataType } from '../../../SlidesData';
-import Styles from './CallToActions.module.scss';
+import { useSlideRefer } from "@hooks/useSlideRefer";
+import clsx from "clsx";
+import { useFormikContext } from "formik";
+import { useRouter } from "next/router";
+import React, { useCallback, useState } from "react";
+import FormikControl from "src/services/formik/FormikControl";
+import { callToActionsData, SlidesDataType } from "../../../SlidesData";
+import Styles from "./CallToActions.module.scss";
 
 const CallToActions = ({ name }) => {
   const [active, setActive] = useState(0);
   const [type, settype] = useState(callToActionsData[0].title);
   const { setFieldValue } = useFormikContext();
+  const router = useRouter();
 
   const handleActive = useCallback(
     (index: number, title) => {
@@ -18,16 +21,20 @@ const CallToActions = ({ name }) => {
     },
     [active]
   );
+  const { getSlidesData } = useSlideRefer();
+  const { menu, username, slidesContent } = getSlidesData();
+
+  const slide = active === 4 ? true : false;
+
   return (
     <div className={Styles.callToActionsContainer}>
       <FormikControl
         name={`${name}.link_header`}
-        control='input'
-        placeholder='Link Header'
-        type='text'
+        control="input"
+        placeholder="Link Header"
+        type="text"
         slideinput={true}
       />
-      <p>Link Type</p>
       <div className={Styles.callToActionsContainer__btnGrid}>
         {callToActionsData.map((item: SlidesDataType, index: number) => (
           <div
@@ -35,23 +42,50 @@ const CallToActions = ({ name }) => {
             className={clsx(active === index ? Styles.active : Styles.deactive)}
             onClick={() => handleActive(index, item.title)}
           >
-            <img src={item.src} alt='Call element Icon' />
+            <img src={item.src} alt="Call element Icon" />
             <span>{item.title}</span>
           </div>
         ))}
       </div>
-      <p>Link</p>
       {active === 4 || active === 5 ? (
-        <select>
-          <option value={1}>1</option>
+        <select
+          defaultValue="Select Slides"
+          onChange={(e) => {
+            router.push(e.target.value);
+          }}
+        >
+          <option value="none">
+            Select {!slide ? "Slide Number" : "Sections"}
+          </option>
+          {slide
+            ? menu.map((item, index) => (
+                <option
+                  key={index}
+                  value={`/${username}?${
+                    item.name === "slide" ? item.name : "section"
+                  }=${item.id}`}
+                >
+                  {item.name}
+                </option>
+              ))
+            : slidesContent.map((item, index) => (
+                <option key={index} value={`/${username}?slide=${item.id}`}>
+                  {index}
+                </option>
+              ))}
         </select>
       ) : (
         <FormikControl
           name={`${name}.link_url`}
-          control='input'
+          control="input"
           placeholder={type}
-          type='text'
+          type={
+            type.toLowerCase() === "email" || type.toLowerCase() === "url"
+              ? type.toLowerCase()
+              : "text"
+          }
           slideinput={true}
+          required
         />
       )}
     </div>

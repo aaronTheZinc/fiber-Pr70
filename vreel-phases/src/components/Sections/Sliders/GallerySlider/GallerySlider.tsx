@@ -10,37 +10,27 @@ import "swiper/css/pagination";
 import clsx from "clsx";
 import { useAppDispatch } from "src/redux/store/store";
 import { useRouter } from "next/router";
-import { FaPause, FaPlay } from "react-icons/fa";
-import ReactPlayer from "react-player";
-import { HiOutlineMenu } from "react-icons/hi";
 import { expandMenu } from "src/redux/createSlice/createMenuSlice";
 import useWindowDimensions from "src/hooks/useWindowDimensions";
 import MainContainer from "@sections/MainContainer/MainContainer";
+import SliderImage from "../HeroSlider/HelperComps/SliderImage/SliderImage";
+import SliderVideo from "../HeroSlider/HelperComps/SliderVideo/SliderVideo";
+import GalleryContent from "../HeroSlider/HelperComps/GalleryContent/GalleryContent";
 
 const GallerySlider: React.FC<{
   items: any;
   children?: ReactNode;
   parentSwiper: any;
   title?: String;
-}> = ({ items, children, parentSwiper, title }) => {
+}> = ({ items, parentSwiper, title }) => {
   const [mute, setMute] = useState<boolean>(true);
-  const [pause, setPause] = useState<boolean>(true);
-  const [current, setCurrent] = useState(0);
+  const [playing, setPlaying] = useState(false);
   const dispatch = useAppDispatch();
-  const { height, width } = useWindowDimensions();
+  const { width } = useWindowDimensions();
   const router = useRouter();
   const { username, section } = router?.query;
-  const [autoPlay, setautoPlay] = useState(true);
   const [swiper, setSwiper] = useState(null);
-
-  function setAutoPlay() {
-    if (autoPlay) {
-      swiper.autoplay.stop();
-    } else {
-      swiper.autoplay.start();
-    }
-    setautoPlay(!autoPlay);
-  }
+  const [currentSlide, setCurrentSlide] = useState(null);
 
   return (
     <div className="videoSlider" style={{ height: "100%", width: "100%" }}>
@@ -52,16 +42,34 @@ const GallerySlider: React.FC<{
         }}
         slidesPerView={1}
         speed={1500}
-        autoplay={{
-          delay: 10000,
-        }}
         onSlideChange={(s) => {
-          setCurrent(s.realIndex);
+          // console.log("on change called....................");
+
+          if (s.realIndex == 0 || currentSlide == 0) {
+            // setsliderPlay(sliderPlay);
+          } else if (s.realIndex < currentSlide) {
+            swiper.autoplay.stop();
+            console.log(
+              "onSlideChange -> auto play stopped for.....",
+              s.realIndex
+            );
+            // setSliderPlay(false);
+          } else {
+            console.log(
+              "onSlideChange -> auto play started for.....",
+              s.realIndex
+            );
+            swiper?.autoplay.start();
+          }
+          setMute(true);
+          setCurrentSlide(s.realIndex);
+        }}
+        autoplay={{
+          delay: 5000,
         }}
         onSwiper={(swiper) => {
           setSwiper(swiper);
         }}
-        className={clsx(Styles.vreelSlider, Styles.vreelSlider_mobile)}
       >
         {items.map((slide, index: number) => {
           const { cta1, cta2, desktop, mobile } = slide;
@@ -70,207 +78,59 @@ const GallerySlider: React.FC<{
           const isImage = item?.content_type == "image";
 
           return (
-            <SwiperSlide key={index} className={Styles.vreelSlide}>
+            <SwiperSlide key={index} className={Styles.gallerySlide}>
               <div className={Styles.menuContainer}>
                 <p>{title}</p>
-                <div
+                <button
                   className={Styles.menuContainer__menu}
                   onClick={() => dispatch(expandMenu())}
                 >
-                  <HiOutlineMenu />
-                </div>
+                  <img src="/assets/icons/menu.svg" alt="Menu Bar" />
+                </button>
               </div>
-              <div className={Styles.vreelSlide__container}>
-                <div
-                  className={Styles.image_container}
-                  style={{
-                    height: "100%",
-                    width: "100%",
-                    position: "absolute",
-                    zIndex: "10",
-                  }}
-                >
-                  {isImage ? (
-                    <img
-                      className={Styles.image}
-                      src={item?.uri}
-                      alt=""
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover",
-                      }}
-                    />
-                  ) : (
-                    <>
-                      {section == "videos" && current == index && (
-                        <ReactPlayer
-                          playing={section == "videos" && current == index}
-                          muted={mute}
-                          url={item?.uri}
-                          //   url="/assets/videos/test-video-3.mp4"
-                          playsinline={true}
-                          stopOnUnmount={true}
-                          onReady={() =>
-                            console.log(
-                              `Section: ${section}, Video ${index} ready to play`
-                            )
-                          }
-                          onPlay={() =>
-                            console.log(
-                              `Section: ${section}, Video ${index} playing`
-                            )
-                          }
-                          onStart={() =>
-                            console.log(
-                              `Section: ${section}, Video ${index} started`
-                            )
-                          }
-                          onPause={() =>
-                            console.log(
-                              `Section: ${section}, Video ${index} Paused`
-                            )
-                          }
-                          onEnded={() => {
-                            console.log(`${section} video ${index} Ended`);
-                            parentSwiper.slideNext();
-                          }}
-                          config={{
-                            file: {
-                              attributes: {
-                                autoPlay: true,
-                                playsInline: true,
-                                muted: mute,
-                                type: "video",
-                                style: {
-                                  position: "absolute",
-                                  top: 0,
-                                  left: 0,
-                                  zIndex: -2,
-                                  height: "100%",
-                                  width: "100%",
-                                  objectFit: "cover",
-                                },
-                              },
-                            },
-                          }}
-                        />
-                      )}
-                    </>
-                  )}
-                </div>
+              <div
+                className={Styles.carrotDown}
+                onClick={() => {
+                  parentSwiper?.slideNext();
+                }}
+              >
+                <img
+                  src="/assets/icons/carrot-down.svg"
+                  alt="Carrot Down images"
+                />
+              </div>
 
-                <div className={Styles.vreelSlide__content}>
-                  <div className={Styles.vreelSlide__content_wrapper}>
-                    {/* LEFT SIDEBAR */}
-                    <div className={Styles.vreelSlide__content_wrapper__left}>
-                      <div></div>
+              <div className={Styles.galleryMedia}>
+                {isImage ? (
+                  <SliderImage
+                    url={item.uri}
+                    background_audio_uri={item.background_audio_uri}
+                    mute={mute}
+                    swiper={swiper}
+                    isActive={false}
+                    index={index}
+                  />
+                ) : (
+                  <SliderVideo
+                    section={section}
+                    item={item}
+                    isActive={false}
+                    index={index}
+                    url={item?.uri}
+                    mute={mute}
+                    swiper={swiper}
+                    playing={playing}
+                  />
+                )}
 
-                      <div
-                        className={
-                          Styles.vreelSlide__content_wrapper__left__bottom
-                        }
-                      >
-                        <button
-                          onClick={() => setAutoPlay()}
-                          className={
-                            Styles.vreelSlide__content_wrapper__left__bottom__pauseBtn
-                          }
-                        >
-                          {autoPlay ? (
-                            <img
-                              src="/assets/icons/pause.svg"
-                              alt="Pause Icons"
-                            />
-                          ) : (
-                            <div
-                              className={
-                                Styles.vreelSlide__content_wrapper__left__bottom__pauseBtn__playIcon
-                              }
-                            >
-                              <img
-                                style={{
-                                  width: "100%",
-                                  height: "100%",
-                                }}
-                                src="/assets/icons/play.svg"
-                                alt="Play Icons"
-                              />
-                            </div>
-                          )}
-                        </button>
-
-                        <button
-                          style={{ marginTop: "1rem" }}
-                          onClick={() => setMute(!mute)}
-                        >
-                          <img
-                            src={`/assets/${
-                              mute ? "icons/audioOff.svg" : "icons/audioOn.svg"
-                            }`}
-                            alt="Mute Icon"
-                          />
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* CONTENT */}
-                    <div
-                      className={clsx(
-                        Styles.vreelSlide__content_wrapper__middle
-                      )}
-                      id={Styles.middle}
-                    >
-                      <div
-                        className={
-                          Styles.vreelSlide__content_wrapper__middle__container
-                        }
-                      >
-                        <h3>{item?.header ? item.header : "VREEL™"}</h3>
-                        <p>
-                          {item?.description
-                            ? item.description
-                            : "We make you look better! Our Web3 interface curates and displays your story amazingly."}
-                        </p>
-
-                        {
-                          <div>
-                            {
-                              <div className={Styles.button_container}>
-                                <button
-                                  className="btn-slide"
-                                  onClick={() => router.push("/register")}
-                                >
-                                  Sign Up
-                                </button>
-                                <button
-                                  className="btn-slide"
-                                  onClick={() => {}}
-                                >
-                                  Learn More
-                                </button>
-                              </div>
-                            }
-                          </div>
-                        }
-                      </div>
-                    </div>
-                    <div
-                      className={Styles.carrotDown}
-                      onClick={() => {
-                        parentSwiper?.slideNext();
-                      }}
-                    >
-                      <img
-                        src="/assets/icons/carrot-down.svg"
-                        alt="Carrot Down images"
-                      />
-                    </div>
-                    {/* RIGHT SIDEBAR */}
-                    <div style={{ width: "32px" }}></div>
-                  </div>
-                </div>
-                {/* VIDEO PLAYER */}
+                <GalleryContent
+                  setPlaying={setPlaying}
+                  playing={playing}
+                  isImage={isImage}
+                  setMute={setMute}
+                  mute={mute}
+                  item={item}
+                />
               </div>
             </SwiperSlide>
           );
