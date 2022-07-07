@@ -638,7 +638,7 @@ func EditElementPosition(vreelId, element string, position int) error {
 		case "gallery":
 			elements.Gallery.Position = position
 
-		case "video":
+		case "videos":
 			elements.Videos.Position = position
 
 		default:
@@ -664,4 +664,55 @@ func EditElementPosition(vreelId, element string, position int) error {
 
 func EditVreelLogo(vreelId, uri string) error {
 	return db.Model(model.VreelModel{}).Where("id = ?", vreelId).Update("logo_uri", uri).Error
+}
+
+func SetElementIsHidden(vreelId string, element string, state bool) error {
+	var err error
+	var vreel model.VreelModel
+	var elements model.VreelElements
+
+	if fetchErr := db.Where("id = ?", vreelId).First(&vreel).Error; fetchErr != nil {
+		err = e.VREEL_NOT_FOUND
+	} else {
+		parseErr := json.Unmarshal([]byte(vreel.Elements), &elements)
+		if parseErr != nil {
+			err = parseErr
+			return err
+		}
+
+		switch element {
+		case "simple_links":
+			elements.SimpleLinks.Hidden = state
+
+		case "socials":
+			elements.Socials.Hidden = state
+
+		case "gallery":
+			elements.Gallery.Hidden = state
+
+		case "videos":
+			elements.Videos.Hidden = state
+
+		default:
+			err = errors.New("invalid element: " + element)
+		}
+
+		if err == nil {
+			v, marshalErr := json.Marshal(&elements)
+
+			if marshalErr != nil {
+				err = marshalErr
+				return err
+			}
+			updateErr := db.Model(model.VreelModel{}).Where("id = ?", vreelId).Update("elements", string(v)).Error
+
+			if updateErr != nil {
+				err = updateErr
+			}
+		}
+
+	}
+
+	return err
+
 }

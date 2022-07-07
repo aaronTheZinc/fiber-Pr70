@@ -17,12 +17,12 @@ func GetDefaultElementsString() (string, error) {
 	videos := model.Videos{
 		Position: 2,
 		Videos:   []*model.Video{},
-		Hidden:   &f,
+		Hidden:   f,
 	}
 	gallery := model.Gallery{
 		Position: 3,
 		Images:   []*model.GalleryImage{},
-		Hidden:   &f,
+		Hidden:   f,
 	}
 	services := model.Service{
 		Position: 4,
@@ -48,6 +48,7 @@ func GetDefaultElementsString() (string, error) {
 		Links:  []*model.SimpleLink{},
 		Header: "",
 	}
+	socials := model.SocialsElement{}
 
 	elements := model.VreelElements{
 		TextArea:    &textArea,
@@ -56,6 +57,7 @@ func GetDefaultElementsString() (string, error) {
 		Services:    &services,
 		Music:       &music,
 		SimpleLinks: &simpleLinks,
+		Socials:     &model.SocialsElement{},
 		// SimpleLinks: []*model.SimpleLink{},
 		Contributions: &contributions,
 		SuperLinks:    []*model.SuperLink{},

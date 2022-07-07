@@ -324,16 +324,33 @@ func (c VreelModel) ToVreel(slides []*Slide) (Vreel, error) {
 	var err error
 	var e VreelElements
 
-	// for _, sl := range c.Slides {
-	// 	t, e := database.GetSlide(sl)
-	// 	if e != nil {
-	// 		err = e
-	// 	}
-	// 	s = append(s, &t)
-	// }
 	gErr := json.Unmarshal([]byte(c.Elements), &e)
 	if gErr != nil {
 		log.Println("im the problem!! ")
+	} else {
+		if e.SimpleLinks != nil {
+
+			if e.SimpleLinks.Hidden {
+				e.SimpleLinks = nil
+			}
+		}
+
+		if e.Socials != nil {
+			if e.Socials.Hidden {
+				e.Socials = nil
+			}
+		}
+
+		if e.Gallery != nil {
+			if e.Gallery.Hidden {
+				e.Gallery = nil
+			}
+		}
+		if e.Videos != nil {
+			if e.Videos.Hidden {
+				e.Videos = nil
+			}
+		}
 	}
 	if gErr != nil {
 		err = gErr
