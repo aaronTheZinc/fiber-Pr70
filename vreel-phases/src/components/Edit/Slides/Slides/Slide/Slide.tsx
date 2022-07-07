@@ -51,6 +51,7 @@ const Slide = ({
     } else {
       setHeight(0);
     }
+    handleActive(index);
   };
 
   const handleSubmit = async (values) => {
@@ -72,40 +73,43 @@ const Slide = ({
         console.log(err);
       });
   };
+  console.log(initialValues);
 
   return (
     <FormikContainer initialValues={initialValues}>
       {(formik) => {
-        // console.log(formik.values);
+        console.log(formik.values);
         return (
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              // handleSubmit(formik.values);
-              dispatch(setPreviewObj(formik.values));
+              handleSubmit(formik.values);
+              // dispatch(setPreviewObj(formik.values));
             }}
           >
             <div className={clsx(Styles.slideContainer)}>
               <div className={Styles.slideContainer__collapse}>
                 <div className={Styles.slideContainer__collapse__button}>
                   <span>{title}</span>
-                  <ToggleButton
-                    name="show"
-                    backgroundColor="white"
-                    height="23"
-                    activeTitle="Hide"
-                    activeBackground="#61FF00"
-                    activeIcon={<AiIcons.AiOutlineEye />}
-                    deactiveTitle="Show"
-                    deactiveBackground="#a3a1a1"
-                    deactiveIcon={<AiIcons.AiOutlineEyeInvisible />}
-                    color="black"
-                  />
+                  <span>
+                    <ToggleButton
+                      name="show"
+                      backgroundColor="white"
+                      height="23"
+                      activeTitle="Hide"
+                      activeBackground="#61FF00"
+                      activeIcon={<AiIcons.AiOutlineEye />}
+                      deactiveTitle="Show"
+                      deactiveBackground="#a3a1a1"
+                      deactiveIcon={<AiIcons.AiOutlineEyeInvisible />}
+                      color="black"
+                    />
+                  </span>
 
                   <span
+                    style={{ cursor: "pointer" }}
                     onClick={() => {
                       dispatch(setActiveIndex(index));
-                      handleActive(index);
                       handleHeight();
                     }}
                   >
@@ -126,7 +130,13 @@ const Slide = ({
 
                 <div className={Styles.slideContainer__collapse__text}>
                   <span></span>
-                  <span>Think Circular</span>
+                  <span
+                    className={Styles.slideContainer__collapse__text__title}
+                  >
+                    {initialValues.title.header
+                      ? initialValues.title.header
+                      : "Think circular"}
+                  </span>
                   <button>
                     <img src="/assets/icons/dots.svg" alt="Dots" />
                   </button>
@@ -197,14 +207,28 @@ const Slide = ({
                     <div className={Styles.slideBody__callToActions__title}>
                       <p>Call-To-Action Button #1</p>
                     </div>
-                    <CallToActions name="cta1" />
+                    <CallToActions
+                      name="cta1"
+                      link_type={
+                        formik.values.cta1.link_type
+                          ? formik.values.cta1.link_type
+                          : "URL"
+                      }
+                    />
                   </div>
 
                   <div className={Styles.slideBody__callToActions}>
                     <div className={Styles.slideBody__callToActions__title}>
                       <p>Call-To-Action Button #2</p>
                     </div>
-                    <CallToActions name="cta2" />
+                    <CallToActions
+                      name="cta2"
+                      link_type={
+                        formik.values.cta2.link_type
+                          ? formik.values.cta1.link_type
+                          : "URL"
+                      }
+                    />
                   </div>
 
                   <div className={Styles.slideBody__advanced}>

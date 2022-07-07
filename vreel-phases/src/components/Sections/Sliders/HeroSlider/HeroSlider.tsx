@@ -110,10 +110,10 @@ const HeroSlider: React.FC<{
             if (s.realIndex > currentSlide) {
               if (!s.autoplay.running) s?.autoplay.start();
             } else {
-              if (s.autoplay.running) s.autoplay.stop();
+              s.autoplay.stop();
             }
           } else if (s.realIndex < currentSlide) {
-            if (s.autoplay.running) s.autoplay.stop();
+            s.autoplay.stop();
           } else {
             if (!s.autoplay.running) s?.autoplay.start();
             setsliderPlay(true);
