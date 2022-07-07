@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { CSSProperties, useEffect, useRef, useState } from "react";
 // Import Swiper React components
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Autoplay } from "swiper";
@@ -75,7 +75,21 @@ const HeroSlider: React.FC<{
   // }, []);
 
   return (
-    <div className="vslider" style={{ height: "100%", width: "100%" }}>
+    <div
+      className="vslider"
+      style={
+        {
+          width: "100%",
+          height: "100%",
+          "--bottom": `${
+            parentSwiper?.activeIndex !==
+            parseInt(parentSwiper?.slides?.length) - 1
+              ? 25
+              : 10
+          }px`,
+        } as CSSProperties
+      }
+    >
       <Swiper
         modules={[Navigation, Pagination, Autoplay]}
         navigation
@@ -111,9 +125,11 @@ const HeroSlider: React.FC<{
               if (!s.autoplay.running) s?.autoplay.start();
             } else {
               if (s.autoplay.running) s.autoplay.stop();
+              setsliderPlay(false);
             }
           } else if (s.realIndex < currentSlide) {
             if (s.autoplay.running) s.autoplay.stop();
+            setsliderPlay(false);
           } else {
             if (!s.autoplay.running) s?.autoplay.start();
             setsliderPlay(true);
@@ -152,6 +168,7 @@ const HeroSlider: React.FC<{
                     swiper={swiper}
                     parentSwiper={parentSwiper}
                     slideId={index}
+                    sliderPlay={sliderPlay}
                     index={index}
                     setMute={setMute}
                     mute={mute}
