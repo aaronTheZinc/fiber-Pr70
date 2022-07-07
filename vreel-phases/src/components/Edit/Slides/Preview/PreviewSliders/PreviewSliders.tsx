@@ -14,11 +14,12 @@ import Styles from "./PreviewSlider.module.scss";
 import { useSelector } from "react-redux";
 import { RootState } from "src/redux/store/store";
 import clsx from "clsx";
+import { useSlideRefer } from "@hooks/useSlideRefer";
 
 const fakeData = [
-  { type: "video", link: "/assets/videos/test-video-1.mp4", alt: "slide-1" },
-  { type: "video", link: "/assets/videos/test-video-2.mp4", alt: "slide-2" },
-  { type: "video", link: "/assets/videos/test-video-3.mp4", alt: "slide-3" },
+  { type: "video", uri: "/assets/videos/test-video-1.mp4", alt: "slide-1" },
+  { type: "video", uri: "/assets/videos/test-video-2.mp4", alt: "slide-2" },
+  { type: "video", uri: "/assets/videos/test-video-3.mp4", alt: "slide-3" },
   // { src: '/assets/videos/test-video-4.mp4', alt: 'slide-4' },
   // { src: '/assets/videos/test-video-5.mp4', alt: 'slide-5' },
 ];
@@ -33,46 +34,67 @@ const PreviewSliders: React.FC<{
     (state: RootState) => state.mobileMediaSelector
   );
 
-  const previewData =
+  const previewDat =
     view === "Desktop" ? mediaSlidePreviewLink : mediaMobileSlidePreviewLink;
-  const slideData = previewData.length ? previewData : fakeData;
+  const [mute, setMute] = useState(false);
+  const [playing, setPlaying] = useState(false);
+  const { activeIndex } = useSelector((state: RootState) => state.previewSlice);
+  const { getSlidesData } = useSlideRefer();
+  const { slidesContent } = getSlidesData();
+  const data = slidesContent ? slidesContent : fakeData;
+
+  useEffect(() => {
+    if (swiper) {
+      swiper.slideTo(activeIndex + 1);
+    }
+  }, [activeIndex]);
 
   return (
-    <Swiper
-      modules={[Navigation, Pagination, Autoplay]}
-      loop
-      navigation
-      pagination
-      slidesPerView={1}
-      onSlideChange={(slide) => {
-        setCurrentSlide(slide.realIndex);
-      }}
-      speed={1500}
-      autoplay={{
-        delay: 10000,
-      }}
-      onSwiper={(swiper) => {
-        setSwiper(swiper);
-      }}
-      // effect='fade'
-      className={clsx(
-        Styles.vreelSlider,
-        view === "Desktop"
-          ? Styles.vreelSlider__Desktop
-          : Styles.vreelSlider__Mobile
-      )}
-    >
-      {slideData.map((obj, index) => (
-        <SwiperSlide key={index} className={Styles.vreelSlide}>
-          <PreviewSlider
-            slide={obj}
-            currentSlide={currentSlide}
-            swiper={swiper}
-            slideId={index}
-          />
-        </SwiperSlide>
-      ))}
-    </Swiper>
+    <div className="vslider">
+      <Swiper
+        modules={[Navigation, Pagination, Autoplay]}
+        loop
+        navigation
+        pagination={{
+          clickable: true,
+        }}
+        slidesPerView={1}
+        initialSlide={0}
+        onSlideChange={(slide) => {
+          setCurrentSlide(slide.realIndex);
+        }}
+        speed={1500}
+        autoplay={{
+          delay: 10000,
+        }}
+        onSwiper={(swiper) => {
+          setSwiper(swiper);
+        }}
+        // effect='fade'
+        className={clsx(
+          Styles.vreelSlider,
+          view === "Desktop"
+            ? Styles.vreelSlider__Desktop
+            : Styles.vreelSlider__Mobile
+        )}
+      >
+        {data.map((obj, index) => (
+          <SwiperSlide key={index}>
+            <PreviewSlider
+              slide={obj}
+              currentSlide={currentSlide}
+              swiper={swiper}
+              slideId={index}
+              mute={mute}
+              setMute={setMute}
+              playing={playing}
+              setPlaying={setPlaying}
+              index={index}
+            />
+          </SwiperSlide>
+        ))}
+      </Swiper>
+    </div>
   );
 };
 

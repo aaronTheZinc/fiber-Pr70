@@ -1,17 +1,21 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import clsx from 'clsx';
-import { title } from 'process';
-import { BsPlusCircle, BsX } from 'react-icons/bs';
-import { FiMinusCircle } from 'react-icons/fi';
-import { useSelector } from 'react-redux';
-import { getCounter, RENDER_COUNTER } from '../globalCounter';
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import clsx from "clsx";
+import { title } from "process";
+import { BsPlusCircle, BsX } from "react-icons/bs";
+import { FiMinusCircle } from "react-icons/fi";
+import { useSelector } from "react-redux";
+import { getCounter, RENDER_COUNTER } from "../globalCounter";
+import * as AiIcons from "react-icons/ai";
 import {
   addCollupse,
   removeCollupse,
-} from 'src/redux/createSlice/createCollapseSlice';
-import { RootState, useAppDispatch } from 'src/redux/store/store';
+} from "src/redux/createSlice/createCollapseSlice";
+import { RootState, useAppDispatch } from "src/redux/store/store";
 
-import Styles from './Collapse.module.scss';
+import Styles from "./Collapse.module.scss";
+import ToggleButton from "@shared/Buttons/ToggleButton/ToggleButton";
+import { setActiveIndex } from "@redux/createSlice/previewSlice";
+
 function getChildHeight(
   level: number,
   collupse: any,
@@ -43,14 +47,17 @@ function getChildHeight(
 const Collapse = ({
   title,
   level,
+  index,
   children,
-  level_1 = '',
-  level_2 = '',
+  level_1 = "",
+  level_2 = "",
 }: any) => {
   const ref = useRef(null);
   const dispatch = useAppDispatch();
   const { collupse } = useSelector((state: RootState) => state.collapse);
   const [height, setheight] = useState(0);
+  const [active, setActive] = useState(null || Number);
+
   const id =
     level == 1
       ? title
@@ -59,6 +66,7 @@ const Collapse = ({
       : `${level_1}_${level_2}_${title}`;
 
   const handleHeight = useCallback(() => {
+    // if (index === active) return;
     setheight(height == 0 ? ref.current.scrollHeight : 0);
     dispatch(
       height == 0
@@ -77,6 +85,7 @@ const Collapse = ({
   }, [height]);
 
   console.log(`render:${getCounter()} id: ${id}`);
+  console.log(index, active);
 
   return (
     <div
@@ -85,18 +94,66 @@ const Collapse = ({
         Styles.deActiveHeight
       )}
     >
-      <button type='button' className={Styles.button} onClick={handleHeight}>
-        <span>{title}</span>
-        <span>{!height ? <BsPlusCircle /> : <FiMinusCircle />}</span>
-      </button>
+      <div className={Styles.collapse}>
+        <div className={Styles.collapse__button}>
+          <span>{title}</span>
+          {/* <ToggleButton
+          name="show"
+          backgroundColor="white"
+          height="30"
+          activeTitle="Hide"
+          activeBackground="#61FF00"
+          activeIcon={<AiIcons.AiOutlineEye />}
+          deactiveTitle="Show"
+          deactiveBackground="#a3a1a1"
+          deactiveIcon={<AiIcons.AiOutlineEyeInvisible />}
+        /> */}
+
+          <span
+            onClick={() => {
+              dispatch(setActiveIndex(index));
+              setActive(index);
+              handleHeight();
+            }}
+          >
+            {!height ? (
+              <img
+                src="/assets/icons/down-arrow-light.svg"
+                alt="Down Arrow Icon"
+              />
+            ) : (
+              <img
+                src="/assets/icons/up-arrow-light.svg"
+                alt="Up Arrow Icon"
+                className={Styles.collapseIcon}
+              />
+            )}
+          </span>
+        </div>
+
+        <div className={Styles.collapse__text}>
+          <span></span>
+          <span>Think Circular</span>
+          <button>
+            <img src="/assets/icons/dots.svg" alt="Dots" />
+          </button>
+        </div>
+      </div>
       <div
         style={{
-          height: `${height + getChildHeight(level, collupse, id, height)}px`,
+          height: `${
+            active === index
+              ? height + getChildHeight(level, collupse, id, height)
+              : 0
+          }px`,
         }}
         className={Styles.slide}
       >
         <div className={Styles.slideBody} ref={ref}>
           {children}
+          <div className={Styles.slideBody__upArrows} onClick={handleHeight}>
+            <img src="/assets/icons/up-arrow-light.svg" alt="Up Arrow" />
+          </div>
         </div>
       </div>
     </div>

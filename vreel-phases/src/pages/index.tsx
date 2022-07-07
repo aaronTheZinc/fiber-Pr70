@@ -1,3 +1,6 @@
+import Section from "@sections/Section";
+import HeroSlide from "@sections/Sliders/HeroSlider/HeroSlide/HeroSlide";
+import HeroSlider from "@sections/Sliders/HeroSlider/HeroSlider";
 import { GetServerSideProps } from "next";
 import { useState } from "react";
 
@@ -8,6 +11,7 @@ export const vreel = {
   elements: {
     socials: {
       header: "",
+      position: 5,
       socials: [
         {
           platform: "twitter",
@@ -15,9 +19,85 @@ export const vreel = {
         },
       ],
     },
-
+    videos: {
+      header: "",
+      position: 3,
+      videos: [
+        "/assets/videos/waterfall.mp4",
+        "/assets/videos/test-video-1.mp4",
+        "/assets/videos/test-video-2.mp4",
+        /*    "/assets/videos/test-video-3.mp4",
+        "/assets/videos/test-video-4.mp4",
+        "/assets/videos/test-video-5.mp4",
+        "/assets/videos/test-video-6.mp4",
+        "/assets/videos/waterfall2.mp4",
+        "/assets/videos/test-video-7.mp4",
+        "/assets/videos/vreel-vid.mp4", */
+      ].map((e) => {
+        return {
+          mobile: {
+            start_time: 0,
+            stop_time: 0,
+            background_audio_uri: null,
+            uri: e,
+            content_type: "video",
+          },
+          desktop: {
+            start_time: 0,
+            stop_time: 0,
+            background_audio_uri: null,
+            uri: e,
+            content_type: "video",
+          },
+          cta1: {
+            link_header: "Sign Up Sign Up",
+            link_type: "URL",
+            link_url: "/register",
+          },
+          cta2: {
+            link_header: "Login",
+            link_type: "URL",
+            link_url: "/login",
+          },
+        };
+      }),
+    },
+    gallery: {
+      header: "",
+      position: 4,
+      images: [1, 2, 3, 4, 5, 6].map((e) => {
+        return {
+          mobile: {
+            start_time: 0,
+            stop_time: 0,
+            background_audio_uri: null,
+            uri: `/assets/images/test-image (${e}).jpg`,
+            content_type: "image",
+          },
+          desktop: {
+            start_time: 0,
+            stop_time: 0,
+            background_audio_uri: null,
+            uri: `/assets/images/test-image (${e}).jpg`,
+            content_type: "image",
+          },
+          cta1: {
+            link_header: "Sign Up",
+            link_type: "",
+            link_url: "/register",
+          },
+          cta2: {
+            link_header: "Login",
+            link_type: "",
+            link_url: "/login",
+          },
+        };
+      }),
+      hidden: false,
+    },
     simple_links: {
       header: "",
+      position: 1,
       links: [
         {
           id: "candi5i23akkasd8kg6g",
@@ -78,32 +158,45 @@ export const vreel = {
   },
   slides: [
     // {
-    //   url: "https://res.cloudinary.com/klwebco/image/upload/v1645686808/samples/cloudinary-group.jpg",
-    //   content_type: "image",
+    //   url: "https://vreel.page/users/avangardinnovative/videos/aiexplainer_optimized.mp4",
+    //   content_type: "video",
     // },
     // {
-    //   url: "https://res.cloudinary.com/klwebco/image/upload/v1645686802/samples/bike.jpg",
-    //   content_type: "image",
+    //   url: "https://vreel.page/users/avangardinnovative/videos/aiexplainer_optimized.mp4",
+    //   content_type: "video",
     // },
+    // {
+    //   url: "https://staging.vreel.page/files/04923aaa9dbb37bd49b050bde398ecec",
+    //   content_type: "video/mp4",
+    // },
+    {
+      url: "https://shaktisinghcheema.com/wp-content/uploads/2019/10/Laptop-63.mp4",
+      content_type: "video/mp4",
+    },
+    {
+      url: "https://res.cloudinary.com/klwebco/video/upload/v1656836002/samples/test-video-5_m2wxg1.mp4",
+      content_type: "video/mp4",
+    },
+
+    {
+      url: "https://res.cloudinary.com/klwebco/video/upload/v1656835997/samples/test-video-1_edlvu6.mp4",
+      content_type: "video/mp4",
+    },
+    {
+      url: "https://res.cloudinary.com/klwebco/video/upload/v1656835999/samples/test-video-2_sjox9x.mp4",
+      content_type: "video/mp4",
+    },
+    {
+      url: "https://res.cloudinary.com/klwebco/image/upload/v1655998234/test-image_1_nhb5cc.jpg",
+      content_type: "image/jpeg",
+    },
+    {
+      url: "https://res.cloudinary.com/klwebco/image/upload/v1645686802/samples/bike.jpg",
+      content_type: "image/jpeg",
+    },
     // {
     //   url: "https://res.cloudinary.com/klwebco/image/upload/v1645686800/samples/sheep.jpg",
     //   content_type: "image",
-    // },
-    // {
-    //   url: "https://staging.vreel.page/files/fb810ba2f9e8a108e0363521d8c752e8",
-    //   content_type: "video",
-    // },
-    // {
-    //   url: "https://res.cloudinary.com/klwebco/video/upload/v1655863954/samples/aiexplainer_optimized_o24q3q.mp4",
-    //   content_type: "video",
-    // },
-    {
-      url: "https://stephon-transcoded-video.s3.amazonaws.com/waterfall.mp4",
-      content_type: "video",
-    },
-    // {
-    //   url: "/assets/videos/test-video-3.mp4",
-    //   content_type: "video",
     // },
 
     // "https://res.cloudinary.com/klwebco/video/upload/v1645686813/samples/elephants.mp4",
@@ -137,7 +230,7 @@ export const vreel = {
         start_time: 0,
         stop_time: 0,
         background_audio_uri:
-          index == 1
+          index == 3
             ? "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3"
             : "",
         uri: e.url,
@@ -155,12 +248,12 @@ export const vreel = {
       },
       cta1: {
         link_header: "Sign Up",
-        link_type: "URL",
+        link_type: "",
         link_url: "/register",
       },
       cta2: {
         link_header: "Login",
-        link_type: "URL",
+        link_type: "",
         link_url: "/login",
       },
     };
@@ -190,7 +283,8 @@ export default function Home({ data }) {
  */
   const [swiper, setSwiper] = useState(null);
 
-  console.log({ vreel: vreel.slides });
+  // console.log({ vreel: vreel.slides });
 
+  // return <HeroSlider slides={vreel.slides} view='Mobile' />;
   return <Sections vreel={vreel} />;
 }

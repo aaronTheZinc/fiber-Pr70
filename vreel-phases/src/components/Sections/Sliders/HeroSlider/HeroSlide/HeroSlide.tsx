@@ -5,21 +5,19 @@ import { useCookies } from "react-cookie";
 import ReactPlayer from "react-player";
 import Styles from "./HeroSlide.module.scss";
 
-import { RootState, useAppDispatch } from "@redux/store/store";
+import { RootState } from "@redux/store/store";
 import useWindowDimensions from "@hooks/useWindowDimensions";
 import UserProfile from "@shared/UserProfile/UserProfile";
-import { VreelSlideProps } from "../../../../../types";
 import SliderContent from "../HelperComps/SliderContent/SliderContent";
 import SliderVideo from "../HelperComps/SliderVideo/SliderVideo";
 import SliderImage from "../HelperComps/SliderImage/SliderImage";
+import { useSwiperSlide } from "swiper/react";
 
 const HeroSlide = ({
   swiper,
-  currentSlide,
+  isActive,
   slide,
   slideId,
-  autoPlay,
-  setAutoPlay,
   parentSwiper,
   index,
   mute,
@@ -36,54 +34,74 @@ const HeroSlide = ({
   const { title, id, cta1, cta2, advanced, desktop, mobile } = slide;
   const { height, width } = useWindowDimensions();
   const isMobile = width < 500;
+  const [progress, setProgress] = useState(0);
   const item = isMobile ? mobile : desktop;
-  const isImage = item.content_type == "image";
+  const isImage = item.content_type.split("/")[0] == "image";
   const { username, section, employee } = router?.query;
   useState;
   const vreel = useSelector((state: any) => state?.vreel?.vreel);
-  const videoRef = useRef(null);
+  console.log("2. HeroSlide rendered for..", index, { isActive });
+  console.log(progress);
 
+  // return <div></div>;
   return (
     <div id={id ? id : slideId} className={Styles.heroSlide}>
+      <div
+        style={{
+          borderBottom: "1px solid #ff7a00",
+          width: `${progress * 100}%`,
+          position: "absolute",
+          bottom: "0",
+          zIndex: "2",
+        }}
+      ></div>
       {/* USER PROFILE */}
-      {cookies.userAuthToken && userAuthenticated && <UserProfile />}
-
-      {/* SLIDER CONTENT */}
-      <SliderContent
-        item={item}
-        slide={slide}
-        autoPlay={autoPlay}
-        playing={playing}
-        setPlaying={setPlaying}
-        setAutoPlay={setAutoPlay}
-        mute={mute}
-        setMute={setMute}
-        isImage={isImage}
-        parentSwiper={parentSwiper}
-      />
+      {cookies.userAuthToken && userAuthenticated && (
+        <div className={Styles.userProfile}>
+          <UserProfile />
+        </div>
+      )}
 
       {/* SLIDER MEDIA */}
       {
         <div className={Styles.media}>
           {isImage ? (
-            <SliderImage url={item.uri} />
+            <SliderImage
+              url={item.uri}
+              background_audio_uri={item.background_audio_uri}
+              mute={mute}
+              swiper={swiper}
+              isActive={isActive}
+              index={index}
+            />
           ) : (
             <SliderVideo
-              autoPlay={autoPlay}
               playing={playing}
               section={section}
               item={item}
-              currentSlide={currentSlide}
+              isActive={isActive}
               index={index}
-              url={item?.uri}
+              url={item.content_type !== "image" && item?.uri}
               mute={mute}
               swiper={swiper}
+              setProgress={setProgress}
             />
           )}
+          {/* SLIDER CONTENT */}
+          <SliderContent
+            item={item}
+            slide={slide}
+            playing={playing}
+            setPlaying={setPlaying}
+            mute={mute}
+            setMute={setMute}
+            isImage={isImage}
+            parentSwiper={parentSwiper}
+          />
         </div>
       }
     </div>
   );
 };
 
-export default HeroSlide;
+export default React.memo(HeroSlide);

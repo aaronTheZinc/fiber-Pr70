@@ -1,15 +1,15 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import Slide from "./Slide/Slide";
 import { BsPlus } from "react-icons/bs";
 import Styles from "./Slides.module.scss";
 import SlideActionsBtn from "src/components/Shared/Buttons/SlidesBtn/SlideActionsBtn/SlideActionsBtn";
 import clsx from "clsx";
 import PreviewSliders from "../Preview/PreviewSliders/PreviewSliders";
-import Collapse from "src/components/Shared/Collapse/Collapse";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { useCookies } from "react-cookie";
 import toast from "react-hot-toast";
 import ToggleButtonPreview from "src/components/Shared/Buttons/SlidesBtn/SlidesToggleButton/ToggleButtonPreview";
+
 const GET_SLIDES = gql`
   query User($token: String!) {
     getUserByToken(token: $token) {
@@ -22,6 +22,15 @@ const GET_SLIDES = gql`
           title {
             header
             description
+          }
+          info {
+            title
+            description
+            collaborators
+            credits {
+              credit_type
+              accredited_id
+            }
           }
           mobile {
             start_time
@@ -73,6 +82,7 @@ const CREATE_SLIDE = gql`
 `;
 const Slides = () => {
   const [preview, setPreview] = useState(false);
+  const [active, setActive] = useState(null || Number);
   const [cookies, setCookie] = useCookies(["userAuthToken"]);
   const [createSlide] = useMutation(CREATE_SLIDE);
   const { loading, error, data, refetch } = useQuery(GET_SLIDES, {
@@ -81,19 +91,43 @@ const Slides = () => {
     },
   });
 
+  const handleCollapse = (index: number) => {
+    if (active === index) return;
+    setActive(index);
+  };
+  const handleActive = useCallback(
+    (index: number) => handleCollapse(index),
+    [active]
+  );
+  const slideData = data?.getUserByToken?.vreel?.slides
+    .map((item: any) => item)
+    .sort((a: any, b: any) => {
+      return a.slide_location - b.slide_location;
+    });
+
   if (loading || error || !data) return <div></div>;
-  console.log({ slides: data.getUserByToken.vreel.slides });
+
   return (
     <div className={Styles.slidesContainer}>
-      <div className={Styles.slidesContainer__leftSides}>
-        <div className={Styles.slides}>
-          <div className={Styles.slides__addSlides}>
-            <span>Slides</span>
+      <div
+        className={clsx(Styles.slidesContainer__leftSides, Styles.scrollbar)}
+      >
+        <div className={Styles.slidesContainer__leftSides__content}>
+          <div
+            className={Styles.slidesContainer__leftSides__content__addNewBtn}
+          >
+            <span
+              className={
+                Styles.slidesContainer__leftSides__content__addNewBtn__span
+              }
+            >
+              VReel Background Audio
+            </span>
             <SlideActionsBtn
               Icon={BsPlus}
               title="Add Slide"
               padding="8px 20px"
-              bgColor="green"
+              bgColor="#ff7a00"
               actions={() => {
                 const nextNo = data.getUserByToken.vreel.slides.length + 1;
                 createSlide({
@@ -113,16 +147,19 @@ const Slides = () => {
               }}
             />
           </div>
-
-          {data.getUserByToken.vreel.slides.map((e, l1_index) => (
-            <Collapse key={l1_index} title={`Slides ${l1_index + 1}`} level={1}>
+          <div className={Styles.slides}>
+            {slideData.map((e: any, index: number) => (
               <Slide
-                level_1={`Slides ${l1_index + 1}`}
+                key={index}
+                title={`Slides ${index + 1}`}
                 initialValues={e}
                 refetch={refetch}
+                index={index}
+                active={active}
+                handleActive={handleActive}
               />
-            </Collapse>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
       {/* Right side  */}
@@ -144,7 +181,7 @@ const Slides = () => {
               <p>Toggle For {!preview ? "Desktop" : "Mobile"} View</p>
             </div>
           </div>
-          {/* <div>{preview ? <DesktopPreview /> : <MobilePreview />}</div> */}
+
           <div>
             {preview ? (
               <PreviewSliders view="Desktop" />
@@ -158,4 +195,4 @@ const Slides = () => {
   );
 };
 
-export default Slides;
+export default React.memo(Slides);

@@ -408,6 +408,7 @@ type ComplexityRoot struct {
 		LandingPage        func(childComplexity int) int
 		LastName           func(childComplexity int) int
 		Liked              func(childComplexity int) int
+		LinkedinURL        func(childComplexity int) int
 		MiddleInitial      func(childComplexity int) int
 		News               func(childComplexity int) int
 		Password           func(childComplexity int) int
@@ -2535,6 +2536,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.User.Liked(childComplexity), true
 
+	case "User.linkedinUrl":
+		if e.complexity.User.LinkedinURL == nil {
+			break
+		}
+
+		return e.complexity.User.LinkedinURL(childComplexity), true
+
 	case "User.middle_initial":
 		if e.complexity.User.MiddleInitial == nil {
 			break
@@ -2955,6 +2963,7 @@ type User {
   companyName: String!
   title: String!
   profilePicture: String!
+  linkedinUrl: String
   selfPortraitImage: String
   selfLandscapeImage: String
   following: [String]
@@ -13351,6 +13360,38 @@ func (ec *executionContext) _User_profilePicture(ctx context.Context, field grap
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _User_linkedinUrl(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LinkedinURL, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _User_selfPortraitImage(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -19334,6 +19375,8 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "linkedinUrl":
+			out.Values[i] = ec._User_linkedinUrl(ctx, field, obj)
 		case "selfPortraitImage":
 			out.Values[i] = ec._User_selfPortraitImage(ctx, field, obj)
 		case "selfLandscapeImage":
