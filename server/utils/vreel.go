@@ -48,6 +48,7 @@ func GetDefaultElementsString() (string, error) {
 		Links:  []*model.SimpleLink{},
 		Header: "",
 	}
+	socials := model.SocialsElement{}
 
 	elements := model.VreelElements{
 		TextArea:    &textArea,
@@ -56,6 +57,7 @@ func GetDefaultElementsString() (string, error) {
 		Services:    &services,
 		Music:       &music,
 		SimpleLinks: &simpleLinks,
+		Socials:     &model.SocialsElement{},
 		// SimpleLinks: []*model.SimpleLink{},
 		Contributions: &contributions,
 		SuperLinks:    []*model.SuperLink{},
