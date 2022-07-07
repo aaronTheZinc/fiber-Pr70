@@ -315,6 +315,21 @@ func (c VreelModel) ToVreel(slides []*Slide) (Vreel, error) {
 	var err error
 	var e VreelElements
 
+	if e.SimpleLinks.Hidden {
+		e.SimpleLinks = nil
+	}
+	if e.Socials.Hidden {
+		e.Socials = nil
+	}
+
+	if e.Gallery.Hidden {
+		e.Gallery = nil
+	}
+
+	if e.Videos.Hidden {
+		e.Videos = nil
+	}
+
 	// for _, sl := range c.Slides {
 	// 	t, e := database.GetSlide(sl)
 	// 	if e != nil {

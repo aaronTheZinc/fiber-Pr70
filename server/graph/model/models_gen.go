@@ -165,11 +165,12 @@ type Gallery struct {
 	Header   string          `json:"header"`
 	Position int             `json:"position"`
 	Images   []*GalleryImage `json:"images"`
-	Hidden   *bool           `json:"hidden"`
+	Hidden   bool            `json:"hidden"`
 }
 
 type GalleryImage struct {
 	ID          string   `json:"id"`
+	Hidden      bool     `json:"hidden"`
 	Position    *int     `json:"position"`
 	Cta1        *Cta     `json:"cta1"`
 	Cta2        *Cta     `json:"cta2"`
@@ -323,6 +324,7 @@ type Service struct {
 
 type SimpleLink struct {
 	ID         string `json:"id"`
+	Hidden     bool   `json:"hidden"`
 	Position   int    `json:"position"`
 	Thumbnail  string `json:"thumbnail"`
 	LinkHeader string `json:"link_header"`
@@ -342,6 +344,7 @@ type SimpleLinkInput struct {
 
 type SimpleLinksElement struct {
 	Header   string        `json:"header"`
+	Hidden   bool          `json:"hidden"`
 	Position int           `json:"position"`
 	Links    []*SimpleLink `json:"links"`
 }
@@ -375,6 +378,7 @@ type Socials struct {
 
 type SocialsElement struct {
 	Position int        `json:"position"`
+	Hidden   bool       `json:"hidden"`
 	Header   string     `json:"header"`
 	Socials  []*Socials `json:"socials"`
 }
@@ -463,7 +467,7 @@ type Videos struct {
 	Header   string   `json:"header"`
 	Position int      `json:"position"`
 	Videos   []*Video `json:"videos"`
-	Hidden   *bool    `json:"hidden"`
+	Hidden   bool     `json:"hidden"`
 }
 
 type Vreel struct {

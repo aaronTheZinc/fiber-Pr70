@@ -164,6 +164,7 @@ type ComplexityRoot struct {
 		Cta2        func(childComplexity int) int
 		Description func(childComplexity int) int
 		Desktop     func(childComplexity int) int
+		Hidden      func(childComplexity int) int
 		ID          func(childComplexity int) int
 		ImageHeader func(childComplexity int) int
 		Mobile      func(childComplexity int) int
@@ -259,6 +260,7 @@ type ComplexityRoot struct {
 		RemoveVideoFromVreel              func(childComplexity int, token string, videoID string) int
 		ResetElements                     func(childComplexity int, token string) int
 		ResolveResetPasswordRequestIntent func(childComplexity int, token string, password string) int
+		SetElementIsHidden                func(childComplexity int, token string, element string, state bool) int
 		UnFollow                          func(childComplexity int, input model.AnalyticsMutation) int
 		UnLikeSlide                       func(childComplexity int, input model.AnalyticsMutation) int
 		UpdateEmployee                    func(childComplexity int, token string, employee string, fields []*model.VreelFields) int
@@ -316,6 +318,7 @@ type ComplexityRoot struct {
 	}
 
 	SimpleLink struct {
+		Hidden     func(childComplexity int) int
 		ID         func(childComplexity int) int
 		LinkHeader func(childComplexity int) int
 		LinkType   func(childComplexity int) int
@@ -327,6 +330,7 @@ type ComplexityRoot struct {
 
 	SimpleLinksElement struct {
 		Header   func(childComplexity int) int
+		Hidden   func(childComplexity int) int
 		Links    func(childComplexity int) int
 		Position func(childComplexity int) int
 	}
@@ -360,6 +364,7 @@ type ComplexityRoot struct {
 
 	SocialsElement struct {
 		Header   func(childComplexity int) int
+		Hidden   func(childComplexity int) int
 		Position func(childComplexity int) int
 		Socials  func(childComplexity int) int
 	}
@@ -503,6 +508,7 @@ type MutationResolver interface {
 	AddVideoToVreel(ctx context.Context, token string, input model.AddVideoInput) (*model.MutationResponse, error)
 	RemoveVideoFromVreel(ctx context.Context, token string, videoID string) (*model.MutationResponse, error)
 	UpdateSlideLocation(ctx context.Context, token string, slideID *string, location int) (*model.MutationResponse, error)
+	SetElementIsHidden(ctx context.Context, token string, element string, state bool) (*model.MutationResponse, error)
 }
 type QueryResolver interface {
 	User(ctx context.Context, id *string) (*model.User, error)
@@ -1059,6 +1065,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.GalleryImage.Desktop(childComplexity), true
+
+	case "GalleryImage.hidden":
+		if e.complexity.GalleryImage.Hidden == nil {
+			break
+		}
+
+		return e.complexity.GalleryImage.Hidden(childComplexity), true
 
 	case "GalleryImage.id":
 		if e.complexity.GalleryImage.ID == nil {
@@ -1717,6 +1730,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.ResolveResetPasswordRequestIntent(childComplexity, args["token"].(string), args["password"].(string)), true
 
+	case "Mutation.setElementIsHidden":
+		if e.complexity.Mutation.SetElementIsHidden == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_setElementIsHidden_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.SetElementIsHidden(childComplexity, args["token"].(string), args["element"].(string), args["state"].(bool)), true
+
 	case "Mutation.unFollow":
 		if e.complexity.Mutation.UnFollow == nil {
 			break
@@ -2069,6 +2094,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Service.Position(childComplexity), true
 
+	case "SimpleLink.hidden":
+		if e.complexity.SimpleLink.Hidden == nil {
+			break
+		}
+
+		return e.complexity.SimpleLink.Hidden(childComplexity), true
+
 	case "SimpleLink.id":
 		if e.complexity.SimpleLink.ID == nil {
 			break
@@ -2124,6 +2156,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.SimpleLinksElement.Header(childComplexity), true
+
+	case "SimpleLinksElement.hidden":
+		if e.complexity.SimpleLinksElement.Hidden == nil {
+			break
+		}
+
+		return e.complexity.SimpleLinksElement.Hidden(childComplexity), true
 
 	case "SimpleLinksElement.links":
 		if e.complexity.SimpleLinksElement.Links == nil {
@@ -2271,6 +2310,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.SocialsElement.Header(childComplexity), true
+
+	case "SocialsElement.hidden":
+		if e.complexity.SocialsElement.Hidden == nil {
+			break
+		}
+
+		return e.complexity.SocialsElement.Hidden(childComplexity), true
 
 	case "SocialsElement.position":
 		if e.complexity.SocialsElement.Position == nil {
@@ -3063,6 +3109,7 @@ type Link {
 
 type SimpleLink {
   id: String!
+  hidden: Boolean!
   position: Int!
   thumbnail: String!
   link_header: String!
@@ -3091,7 +3138,7 @@ type Videos {
   header: String!
   position: Int!
   videos: [Video!]!
-  hidden: Boolean
+  hidden: Boolean!
 }
 
 type Video {
@@ -3107,6 +3154,7 @@ type Video {
 
 type GalleryImage {
   id: String!
+  hidden: Boolean!
   position: Int
   cta1: CTA!
   cta2: CTA!
@@ -3120,7 +3168,7 @@ type Gallery {
   header: String!
   position: Int!
   images: [GalleryImage!]!
-  hidden: Boolean
+  hidden: Boolean!
 }
 
 type Socials {
@@ -3131,6 +3179,7 @@ type Socials {
 
 type SocialsElement {
   position: Int!
+  hidden: Boolean!
   header: String!
   socials: [Socials]!
 }
@@ -3148,6 +3197,7 @@ type ContributionsElement {
 
 type SimpleLinksElement {
   header: String!
+  hidden: Boolean!
   position: Int!
   links: [SimpleLink!]!
 }
@@ -3436,6 +3486,7 @@ type Mutation {
     slideId: String
     location: Int!
   ): MutationResponse!
+  setElementIsHidden(token: String!, element: String!, state: Boolean!): MutationResponse!
 }
 `, BuiltIn: false},
 }
@@ -4156,6 +4207,39 @@ func (ec *executionContext) field_Mutation_resolveResetPasswordRequestIntent_arg
 		}
 	}
 	args["password"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_setElementIsHidden_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["token"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("token"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["token"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["element"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("element"))
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["element"] = arg1
+	var arg2 bool
+	if tmp, ok := rawArgs["state"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("state"))
+		arg2, err = ec.unmarshalNBoolean2bool(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["state"] = arg2
 	return args, nil
 }
 
@@ -7062,11 +7146,14 @@ func (ec *executionContext) _Gallery_hidden(ctx context.Context, field graphql.C
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
-	res := resTmp.(*bool)
+	res := resTmp.(bool)
 	fc.Result = res
-	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _GalleryImage_id(ctx context.Context, field graphql.CollectedField, obj *model.GalleryImage) (ret graphql.Marshaler) {
@@ -7102,6 +7189,41 @@ func (ec *executionContext) _GalleryImage_id(ctx context.Context, field graphql.
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _GalleryImage_hidden(ctx context.Context, field graphql.CollectedField, obj *model.GalleryImage) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "GalleryImage",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Hidden, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _GalleryImage_position(ctx context.Context, field graphql.CollectedField, obj *model.GalleryImage) (ret graphql.Marshaler) {
@@ -10221,6 +10343,48 @@ func (ec *executionContext) _Mutation_updateSlideLocation(ctx context.Context, f
 	return ec.marshalNMutationResponse2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐMutationResponse(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Mutation_setElementIsHidden(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_setElementIsHidden_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().SetElementIsHidden(rctx, args["token"].(string), args["element"].(string), args["state"].(bool))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.MutationResponse)
+	fc.Result = res
+	return ec.marshalNMutationResponse2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐMutationResponse(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _MutationResponse_succeeded(ctx context.Context, field graphql.CollectedField, obj *model.MutationResponse) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -11382,6 +11546,41 @@ func (ec *executionContext) _SimpleLink_id(ctx context.Context, field graphql.Co
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _SimpleLink_hidden(ctx context.Context, field graphql.CollectedField, obj *model.SimpleLink) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "SimpleLink",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Hidden, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _SimpleLink_position(ctx context.Context, field graphql.CollectedField, obj *model.SimpleLink) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -11625,6 +11824,41 @@ func (ec *executionContext) _SimpleLinksElement_header(ctx context.Context, fiel
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _SimpleLinksElement_hidden(ctx context.Context, field graphql.CollectedField, obj *model.SimpleLinksElement) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "SimpleLinksElement",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Hidden, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _SimpleLinksElement_position(ctx context.Context, field graphql.CollectedField, obj *model.SimpleLinksElement) (ret graphql.Marshaler) {
@@ -12351,6 +12585,41 @@ func (ec *executionContext) _SocialsElement_position(ctx context.Context, field 
 	res := resTmp.(int)
 	fc.Result = res
 	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _SocialsElement_hidden(ctx context.Context, field graphql.CollectedField, obj *model.SocialsElement) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "SocialsElement",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Hidden, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _SocialsElement_header(ctx context.Context, field graphql.CollectedField, obj *model.SocialsElement) (ret graphql.Marshaler) {
@@ -14285,11 +14554,14 @@ func (ec *executionContext) _Videos_hidden(ctx context.Context, field graphql.Co
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
-	res := resTmp.(*bool)
+	res := resTmp.(bool)
 	fc.Result = res
-	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Vreel_author(ctx context.Context, field graphql.CollectedField, obj *model.Vreel) (ret graphql.Marshaler) {
@@ -17607,6 +17879,9 @@ func (ec *executionContext) _Gallery(ctx context.Context, sel ast.SelectionSet, 
 			}
 		case "hidden":
 			out.Values[i] = ec._Gallery_hidden(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -17631,6 +17906,11 @@ func (ec *executionContext) _GalleryImage(ctx context.Context, sel ast.Selection
 			out.Values[i] = graphql.MarshalString("GalleryImage")
 		case "id":
 			out.Values[i] = ec._GalleryImage_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "hidden":
+			out.Values[i] = ec._GalleryImage_hidden(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -18191,6 +18471,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "setElementIsHidden":
+			out.Values[i] = ec._Mutation_setElementIsHidden(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -18606,6 +18891,11 @@ func (ec *executionContext) _SimpleLink(ctx context.Context, sel ast.SelectionSe
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "hidden":
+			out.Values[i] = ec._SimpleLink_hidden(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "position":
 			out.Values[i] = ec._SimpleLink_position(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -18660,6 +18950,11 @@ func (ec *executionContext) _SimpleLinksElement(ctx context.Context, sel ast.Sel
 			out.Values[i] = graphql.MarshalString("SimpleLinksElement")
 		case "header":
 			out.Values[i] = ec._SimpleLinksElement_header(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "hidden":
+			out.Values[i] = ec._SimpleLinksElement_hidden(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -18844,6 +19139,11 @@ func (ec *executionContext) _SocialsElement(ctx context.Context, sel ast.Selecti
 			out.Values[i] = graphql.MarshalString("SocialsElement")
 		case "position":
 			out.Values[i] = ec._SocialsElement_position(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "hidden":
+			out.Values[i] = ec._SocialsElement_hidden(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -19238,6 +19538,9 @@ func (ec *executionContext) _Videos(ctx context.Context, sel ast.SelectionSet, o
 			}
 		case "hidden":
 			out.Values[i] = ec._Videos_hidden(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}

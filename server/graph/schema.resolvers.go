@@ -240,6 +240,12 @@ func (r *mutationResolver) UpdateSlideLocation(ctx context.Context, token string
 	return &resp, err
 }
 
+func (r *mutationResolver) SetElementIsHidden(ctx context.Context, token string, element string, state bool) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeUpdateElementVisibility(token, element, state)
+
+	return &resp, err
+}
+
 func (r *queryResolver) User(ctx context.Context, id *string) (*model.User, error) {
 	user, err := database.GetUser(*id)
 	return &user, err

@@ -17,12 +17,12 @@ func GetDefaultElementsString() (string, error) {
 	videos := model.Videos{
 		Position: 2,
 		Videos:   []*model.Video{},
-		Hidden:   &f,
+		Hidden:   f,
 	}
 	gallery := model.Gallery{
 		Position: 3,
 		Images:   []*model.GalleryImage{},
-		Hidden:   &f,
+		Hidden:   f,
 	}
 	services := model.Service{
 		Position: 4,

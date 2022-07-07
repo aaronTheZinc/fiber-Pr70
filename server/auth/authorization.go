@@ -14,6 +14,29 @@ import (
 	"github.com/vreel/app/utils"
 )
 
+func AuthorizeUpdateElementVisibility(token, element string, state bool) (model.MutationResponse, error) {
+	var err error
+	var resp model.MutationResponse
+	claims, isAuth, parseErr := ParseToken(token)
+	userId := claims.ID
+
+	if isAuth && parseErr == nil {
+		updateErr := database.SetElementIsHidden(userId, element, state)
+
+		if updateErr != nil {
+			err = updateErr
+		}
+		resp = model.MutationResponse{
+			Succeeded: true,
+			Message:   "Successfully changed element state",
+		}
+	} else {
+		err = e.UNAUTHORIZED_ERROR
+	}
+
+	return resp, err
+}
+
 func AuthorizeUpdateSlideLocation(token, slideId string, location int) (model.MutationResponse, error) {
 	var err error
 	var resp model.MutationResponse

@@ -200,6 +200,7 @@ type Link {
 
 type SimpleLink {
   id: String!
+  hidden: Boolean!
   position: Int!
   thumbnail: String!
   link_header: String!
@@ -228,7 +229,7 @@ type Videos {
   header: String!
   position: Int!
   videos: [Video!]!
-  hidden: Boolean
+  hidden: Boolean!
 }
 
 type Video {
@@ -244,6 +245,7 @@ type Video {
 
 type GalleryImage {
   id: String!
+  hidden: Boolean!
   position: Int
   cta1: CTA!
   cta2: CTA!
@@ -257,7 +259,7 @@ type Gallery {
   header: String!
   position: Int!
   images: [GalleryImage!]!
-  hidden: Boolean
+  hidden: Boolean!
 }
 
 type Socials {
@@ -268,6 +270,7 @@ type Socials {
 
 type SocialsElement {
   position: Int!
+  hidden: Boolean!
   header: String!
   socials: [Socials]!
 }
@@ -285,6 +288,7 @@ type ContributionsElement {
 
 type SimpleLinksElement {
   header: String!
+  hidden: Boolean!
   position: Int!
   links: [SimpleLink!]!
 }
@@ -573,4 +577,5 @@ type Mutation {
     slideId: String
     location: Int!
   ): MutationResponse!
+  setElementIsHidden(token: String!, element: String!, state: Boolean!): MutationResponse!
 }
