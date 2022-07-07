@@ -48,8 +48,6 @@ func GetDefaultElementsString() (string, error) {
 		Links:  []*model.SimpleLink{},
 		Header: "",
 	}
-	socials := model.SocialsElement{}
-
 	elements := model.VreelElements{
 		TextArea:    &textArea,
 		Videos:      &videos,
