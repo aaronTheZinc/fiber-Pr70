@@ -411,6 +411,7 @@ type ComplexityRoot struct {
 		LinkedinURL        func(childComplexity int) int
 		MiddleInitial      func(childComplexity int) int
 		News               func(childComplexity int) int
+		Note               func(childComplexity int) int
 		Password           func(childComplexity int) int
 		Prefix             func(childComplexity int) int
 		ProfilePicture     func(childComplexity int) int
@@ -2557,6 +2558,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.User.News(childComplexity), true
 
+	case "User.note":
+		if e.complexity.User.Note == nil {
+			break
+		}
+
+		return e.complexity.User.Note(childComplexity), true
+
 	case "User.password":
 		if e.complexity.User.Password == nil {
 			break
@@ -2987,6 +2995,7 @@ type User {
   vreel: Vreel!
   files: Files!
   news: [Slide]
+  note: String!
 }
 
 type Enterprise {
@@ -14185,6 +14194,41 @@ func (ec *executionContext) _User_news(ctx context.Context, field graphql.Collec
 	return ec.marshalOSlide2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐSlide(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _User_note(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Note, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Video_id(ctx context.Context, field graphql.CollectedField, obj *model.Video) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -19480,6 +19524,11 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			}
 		case "news":
 			out.Values[i] = ec._User_news(ctx, field, obj)
+		case "note":
+			out.Values[i] = ec._User_note(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}

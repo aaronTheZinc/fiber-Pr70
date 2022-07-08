@@ -32,6 +32,7 @@ type UserModel struct {
 	Liked              pq.StringArray `gorm:"type:text[]"`
 	LandingPage        string         `json:"landing_page"`
 	LinkedinUrl        string         `json:"linkedin_url"`
+	Note               string         `json:"note"`
 }
 type GroupModel struct {
 	ID          string         `json:"id"`
@@ -169,6 +170,7 @@ func (c *NewUser) ToDatabaseModel() UserModel {
 		SelfPortraitImage:  "",
 		SelfLandscapeImage: "",
 		LinkedinUrl:        "",
+		Note:               "",
 	}
 
 }
@@ -222,6 +224,7 @@ func (c *UserModel) ToUser() User {
 		Vreel:              &Vreel{},
 		Files:              &Files{},
 		News:               []*Slide{},
+		Note:               c.Note,
 	}
 }
 

@@ -24,6 +24,7 @@ query User($username: String!) {
     website
     landing_page
     job_title
+    note
   }
 }
   `;
@@ -51,6 +52,7 @@ query enterprise($enterpriseName: String!,$employeeId:String!) {
       website
       landing_page
       job_title
+      note
     }
   }}
 `;
@@ -188,6 +190,7 @@ async function generateVcard(vCard, user) {
   vCard.organization = user.companyName;
   vCard.title = user.job_title;
   vCard.url = user.website;
+  vCard.note = user?.note
   return vCard;
   // vCard.note = "Notes for Kmos";
   return vCard;

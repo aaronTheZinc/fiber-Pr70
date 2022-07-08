@@ -451,6 +451,7 @@ type User struct {
 	Vreel              *Vreel    `json:"vreel"`
 	Files              *Files    `json:"files"`
 	News               []*Slide  `json:"news"`
+	Note               string    `json:"note"`
 }
 
 type Video struct {

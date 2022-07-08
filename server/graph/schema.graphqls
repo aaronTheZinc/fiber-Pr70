@@ -70,6 +70,7 @@ type User {
   vreel: Vreel!
   files: Files!
   news: [Slide]
+  note: String!
 }
 
 type Enterprise {
