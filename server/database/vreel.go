@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"log"
+	"sync"
 	"time"
 
 	e "github.com/vreel/app/err"
@@ -11,21 +12,22 @@ import (
 	"github.com/vreel/app/utils"
 )
 
+func CreateVreelFromModel(vreel model.VreelModel) error {
+	return db.Create(&vreel).Error
+}
+
 //creates  when new account is created
 func CreateNewVreel(author string) error {
 	log.Println("[vreel] created")
 	var err error
 	buttonUri := "https://vreel.page"
-	e, gErr := utils.GetDefaultElementsString()
+	e := utils.GetDefaultElementsString()
 	vreel := model.VreelModel{
 		ID:        author,
 		Author:    author,
 		PageTitle: "Your Vreel",
 		ButtonURI: &buttonUri,
 		Elements:  e,
-	}
-	if gErr != nil {
-		err = errors.New("failed to create vreel")
 	}
 	cErr := db.Create(&vreel).Error
 
@@ -35,6 +37,26 @@ func CreateNewVreel(author string) error {
 
 	return err
 
+}
+
+func GetVreels(ids []string) *[]*model.Vreel {
+	wg := sync.WaitGroup{}
+	var vreels []*model.Vreel = []*model.Vreel{}
+	for _, id := range ids {
+		o := id
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			vreel, err := GetVreel(o)
+			if err == nil {
+				vreels = append(vreels, &vreel)
+			}
+		}()
+	}
+
+	wg.Wait()
+
+	return &vreels
 }
 
 func GetVreel(id string) (model.Vreel, error) {
@@ -593,7 +615,7 @@ func RemoveMusicLink(vreelId, musicLinkId string) error {
 }
 
 func ResetUserEmployee(vreelId string) error {
-	elements, _ := utils.GetDefaultElementsString()
+	elements := utils.GetDefaultElementsString()
 	updateErr := db.Model(model.VreelModel{}).Where("id = ?", vreelId).Update("elements", elements).Error
 
 	return updateErr

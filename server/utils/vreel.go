@@ -6,7 +6,7 @@ import (
 	"github.com/vreel/app/graph/model"
 )
 
-func GetDefaultElementsString() (string, error) {
+func GetDefaultElementsString() string {
 	emptyString := ""
 	f := false
 	textArea := model.TextArea{
@@ -62,7 +62,7 @@ func GetDefaultElementsString() (string, error) {
 		Contact:       &contact,
 	}
 
-	o, err := json.Marshal(elements)
+	o, _ := json.Marshal(elements)
 
-	return string(o), err
+	return string(o)
 }

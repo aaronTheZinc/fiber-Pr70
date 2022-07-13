@@ -33,6 +33,8 @@ type UserModel struct {
 	LandingPage        string         `json:"landing_page"`
 	LinkedinUrl        string         `json:"linkedin_url"`
 	Note               string         `json:"note"`
+	Pages              pq.StringArray `gorm:"type:text[]"`
+	PagesRef           string         `json:"pagesRef"`
 }
 type GroupModel struct {
 	ID          string         `json:"id"`
@@ -225,6 +227,7 @@ func (c *UserModel) ToUser() User {
 		Files:              &Files{},
 		News:               []*Slide{},
 		Note:               c.Note,
+		PagesRef:           &c.PagesRef,
 	}
 }
 
@@ -359,6 +362,7 @@ func (c VreelModel) ToVreel(slides []*Slide) (Vreel, error) {
 		err = gErr
 	}
 	return Vreel{
+		ID:              c.ID,
 		Author:          c.Author,
 		Elements:        &e,
 		PageTitle:       c.PageTitle,

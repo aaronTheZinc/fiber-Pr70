@@ -14,6 +14,30 @@ import (
 	"github.com/vreel/app/utils"
 )
 
+func AuthorizeAddPage(token string) (model.MutationResponse, error) {
+	var err error
+	var resp model.MutationResponse
+	claims, isAuth, parseErr := ParseToken(token)
+	userId := claims.ID
+
+	if isAuth && parseErr == nil {
+		updateErr := database.CreatePage(userId)
+
+		if updateErr != nil {
+			err = updateErr
+		} else {
+			resp = model.MutationResponse{
+				Succeeded: true,
+				Message:   "successfully created page.",
+			}
+		}
+	} else {
+		err = e.UNAUTHORIZED_ERROR
+	}
+
+	return resp, err
+}
+
 func AuthorizeUpdateElementVisibility(token, element string, state bool) (model.MutationResponse, error) {
 	var err error
 	var resp model.MutationResponse
@@ -222,14 +246,18 @@ func AuthorizeRemoveContributionLinkFromVreel(token, contributionLinkId string) 
 	return resp, err
 }
 
-func AuthorizeRemoveVideoFromVreel(token, videoId string) (model.MutationResponse, error) {
+func AuthorizeRemoveVideoFromVreel(token, videoId string, vreelId *string) (model.MutationResponse, error) {
 	var err error
 	var resp model.MutationResponse
 	claims, isAuth, parseErr := ParseToken(token)
 	userId := claims.ID
 
 	if isAuth && parseErr == nil {
-		updateErr := database.RemoveVideoFromVreel(userId, videoId)
+		vId := userId
+		if vreelId != nil {
+			vId = *vreelId
+		}
+		updateErr := database.RemoveVideoFromVreel(vId, videoId)
 		if updateErr != nil {
 			err = updateErr
 		} else {
@@ -244,13 +272,17 @@ func AuthorizeRemoveVideoFromVreel(token, videoId string) (model.MutationRespons
 	return resp, err
 }
 
-func AuthorizeAddVideoToVreel(token string, video model.Video) (model.MutationResponse, error) {
+func AuthorizeAddVideoToVreel(token string, video model.Video, vreelId *string) (model.MutationResponse, error) {
 	var err error
 	var resp model.MutationResponse
 	claims, isAuth, parseErr := ParseToken(token)
 	userId := claims.ID
 	if isAuth && parseErr == nil {
-		updateErr := database.AddVideoToVreel(userId, video)
+		vId := userId
+		if vreelId != nil {
+			vId = *vreelId
+		}
+		updateErr := database.AddVideoToVreel(vId, video)
 		if updateErr != nil {
 			err = updateErr
 		} else {
@@ -266,14 +298,18 @@ func AuthorizeAddVideoToVreel(token string, video model.Video) (model.MutationRe
 	return resp, err
 }
 
-func AuthorizeAddImageToGallery(token string, input model.AddGalleryImageInput) (model.MutationResponse, error) {
+func AuthorizeAddImageToGallery(token string, input model.AddGalleryImageInput, vreelId *string) (model.MutationResponse, error) {
 	var err error
 	var resp model.MutationResponse
 	claims, isAuth, parseErr := ParseToken(token)
 	userId := claims.ID
 
 	if isAuth && parseErr == nil {
-		if updateErr := database.AddImageToVreelGallery(userId, input); updateErr != nil {
+		vId := userId
+		if vreelId != nil {
+			vId = *vreelId
+		}
+		if updateErr := database.AddImageToVreelGallery(vId, input); updateErr != nil {
 			err = updateErr
 		} else {
 			resp = model.MutationResponse{
@@ -287,14 +323,18 @@ func AuthorizeAddImageToGallery(token string, input model.AddGalleryImageInput) 
 
 	return resp, err
 }
-func AuthorizeRemoveImageFromGallery(token, imageId string) (model.MutationResponse, error) {
+func AuthorizeRemoveImageFromGallery(token, imageId string, vreelId *string) (model.MutationResponse, error) {
 	var err error
 	var resp model.MutationResponse
 	claims, isAuth, parseErr := ParseToken(token)
 	userId := claims.ID
 
 	if isAuth && parseErr == nil {
-		if updateErr := database.RemoveImageFromGallery(userId, imageId); updateErr != nil {
+		vId := userId
+		if vreelId != nil {
+			vId = *vreelId
+		}
+		if updateErr := database.RemoveImageFromGallery(vId, imageId); updateErr != nil {
 			err = updateErr
 		} else {
 			resp = model.MutationResponse{
@@ -333,14 +373,18 @@ func AuthorizeAddSocialsLink(token string, input model.SocialsInput) (model.Muta
 	return resp, err
 }
 
-func AuthorizeRemoveSimpleLinkFromVreel(token, linkId string) (model.MutationResponse, error) {
+func AuthorizeRemoveSimpleLinkFromVreel(token, linkId string, vreelId *string) (model.MutationResponse, error) {
 	var err error
 	var resp model.MutationResponse
 	claims, isAuth, parseErr := ParseToken(token)
 	userId := claims.ID
 
 	if isAuth && parseErr == nil {
-		updateErr := database.RemoveSimpleLink(userId, linkId)
+		vId := userId
+		if vreelId != nil {
+			vId = *vreelId
+		}
+		updateErr := database.RemoveSimpleLink(vId, linkId)
 
 		if updateErr != nil {
 			err = updateErr
@@ -356,14 +400,18 @@ func AuthorizeRemoveSimpleLinkFromVreel(token, linkId string) (model.MutationRes
 	return resp, err
 }
 
-func AuthorizeAddSimpleLinkToVreel(token string, link model.SimpleLink) (model.MutationResponse, error) {
+func AuthorizeAddSimpleLinkToVreel(token string, link model.SimpleLink, vreelId *string) (model.MutationResponse, error) {
 	var err error
 	var resp model.MutationResponse
 	claims, isAuth, parseErr := ParseToken(token)
 	userId := claims.ID
 
 	if isAuth && parseErr == nil {
-		linkAddErr := database.AddSimpleLinkToVreel(userId, link)
+		vId := userId
+		if vreelId != nil {
+			vId = *vreelId
+		}
+		linkAddErr := database.AddSimpleLinkToVreel(vId, link)
 		if linkAddErr != nil {
 			err = errors.New("fialed to add link")
 		}

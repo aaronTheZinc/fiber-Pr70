@@ -1,7 +1,6 @@
 package database
 
 import (
-	"fmt"
 	"log"
 	"sync"
 
@@ -182,44 +181,36 @@ func GetAllEnterprises() ([]model.Enterprise, error) {
 func GetEenterpriseEmployee(enterpriseName, employeeId string) (model.EnterpriseEmployee, error) {
 	var employee model.EnterpriseEmployee
 	var err error
-	var user model.User
-	var vreel model.Vreel
 
-	wg := sync.WaitGroup{}
+	// wg := sync.WaitGroup{}
 
 	if entId, fetchErr := GetEnterpriseOwnerByName(enterpriseName); fetchErr != nil {
 		err = e.ENTERPRISE_NOT_FOUND
 	} else {
 		//get vreel
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			log.Println("@[enterprise id]", entId)
 
-			if v, fetchErr := GetVreel(entId); fetchErr != nil {
-				err = fetchErr
-			} else {
-				log.Println(fmt.Sprintf("%v", len(v.Slides)))
-				vreel = v
-			}
-		}()
-		//get user
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			if u, fetchErr := GetUser(employeeId); fetchErr != nil {
-				err = fetchErr
-			} else {
-				user = u
-			}
+		log.Println("@[enterprise id]", entId)
 
-		}()
-		wg.Wait()
+		u, getUserErr := GetUser(employeeId)
+
+		if getUserErr != nil {
+			return model.EnterpriseEmployee{}, getUserErr
+		}
+
+		vreelId := entId
+		if u.PagesRef != nil && *u.PagesRef != "" {
+			vreelId = *u.PagesRef
+		}
+		v, getVreelErr := GetVreel(vreelId)
+
+		if getVreelErr != nil {
+			return model.EnterpriseEmployee{}, getVreelErr
+		}
 
 		if err == nil {
 			employee = model.EnterpriseEmployee{
-				Employee: &user,
-				Vreel:    &vreel,
+				Employee: &u,
+				Vreel:    &v,
 			}
 		}
 

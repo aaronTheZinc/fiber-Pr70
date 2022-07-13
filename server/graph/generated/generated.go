@@ -228,15 +228,16 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		AddContributionLink               func(childComplexity int, token string, input model.ContributionsInput) int
+		AddContributionLink               func(childComplexity int, token string, input model.ContributionsInput, vreelID *string) int
 		AddEmployeeToEnterprise           func(childComplexity int, token string, newUser model.NewUser) int
-		AddImageToVreelGallery            func(childComplexity int, token string, input model.AddGalleryImageInput) int
-		AddMusicLink                      func(childComplexity int, token string, input model.MusicInput) int
-		AddSimpleVreelLink                func(childComplexity int, token string, link model.SimpleLinkInput) int
-		AddSocialMediaLink                func(childComplexity int, token string, input model.SocialsInput) int
-		AddSuperVreelLink                 func(childComplexity int, token string, link *model.SuperLinkInput) int
+		AddImageToVreelGallery            func(childComplexity int, token string, input model.AddGalleryImageInput, vreelID *string) int
+		AddMusicLink                      func(childComplexity int, token string, input model.MusicInput, vreelID *string) int
+		AddPage                           func(childComplexity int, token string) int
+		AddSimpleVreelLink                func(childComplexity int, token string, link model.SimpleLinkInput, vreelID *string) int
+		AddSocialMediaLink                func(childComplexity int, token string, input model.SocialsInput, vreelID *string) int
+		AddSuperVreelLink                 func(childComplexity int, token string, link *model.SuperLinkInput, vreelID *string) int
 		AddUserToGroup                    func(childComplexity int, token string, groupID string, userID string) int
-		AddVideoToVreel                   func(childComplexity int, token string, input model.AddVideoInput) int
+		AddVideoToVreel                   func(childComplexity int, token string, input model.AddVideoInput, vreelID *string) int
 		CreateEnterprise                  func(childComplexity int, input model.NewEnterprise) int
 		CreateEvent                       func(childComplexity int, token string, input model.NewEvent) int
 		CreateGroup                       func(childComplexity int, input *model.NewGroup) int
@@ -244,23 +245,23 @@ type ComplexityRoot struct {
 		CreateSlide                       func(childComplexity int, token string) int
 		DeleteFile                        func(childComplexity int, token string, fileID string) int
 		DeleteGroup                       func(childComplexity int, id string, token string) int
-		EditElementPosition               func(childComplexity int, token string, element string, position int) int
+		EditElementPosition               func(childComplexity int, token string, element string, position int, vreelID *string) int
 		EditFileName                      func(childComplexity int, token string, newName string, fileID string) int
 		Follow                            func(childComplexity int, input model.AnalyticsMutation) int
 		LikeSlide                         func(childComplexity int, input model.AnalyticsMutation) int
 		LogPageLoad                       func(childComplexity int, vreelID string) int
 		Register                          func(childComplexity int, input model.NewUser) int
-		RemoveContributionLink            func(childComplexity int, token string, linkID string) int
-		RemoveImageFromVreelGallery       func(childComplexity int, token string, imageID string) int
-		RemoveMusicLink                   func(childComplexity int, token string, linkID string) int
-		RemoveSimpleVreelLink             func(childComplexity int, token string, linkID string) int
+		RemoveContributionLink            func(childComplexity int, token string, linkID string, vreelID *string) int
+		RemoveImageFromVreelGallery       func(childComplexity int, token string, imageID string, vreelID *string) int
+		RemoveMusicLink                   func(childComplexity int, token string, linkID string, vreelID *string) int
+		RemoveSimpleVreelLink             func(childComplexity int, token string, linkID string, vreelID *string) int
 		RemoveSlide                       func(childComplexity int, token string, slideID *string) int
 		RemoveUser                        func(childComplexity int, id string) int
 		RemoveUserFromGroup               func(childComplexity int, token string, groupID string, member string) int
-		RemoveVideoFromVreel              func(childComplexity int, token string, videoID string) int
+		RemoveVideoFromVreel              func(childComplexity int, token string, videoID string, vreelID *string) int
 		ResetElements                     func(childComplexity int, token string) int
 		ResolveResetPasswordRequestIntent func(childComplexity int, token string, password string) int
-		SetElementIsHidden                func(childComplexity int, token string, element string, state bool) int
+		SetElementIsHidden                func(childComplexity int, token string, element string, state bool, vreelID *string) int
 		UnFollow                          func(childComplexity int, input model.AnalyticsMutation) int
 		UnLikeSlide                       func(childComplexity int, input model.AnalyticsMutation) int
 		UpdateEmployee                    func(childComplexity int, token string, employee string, fields []*model.VreelFields) int
@@ -412,6 +413,8 @@ type ComplexityRoot struct {
 		MiddleInitial      func(childComplexity int) int
 		News               func(childComplexity int) int
 		Note               func(childComplexity int) int
+		Pages              func(childComplexity int) int
+		PagesRef           func(childComplexity int) int
 		Password           func(childComplexity int) int
 		Prefix             func(childComplexity int) int
 		ProfilePicture     func(childComplexity int) int
@@ -447,6 +450,7 @@ type ComplexityRoot struct {
 		Author          func(childComplexity int) int
 		ButtonURI       func(childComplexity int) int
 		Elements        func(childComplexity int) int
+		ID              func(childComplexity int) int
 		LastSlideEdited func(childComplexity int) int
 		LogoURI         func(childComplexity int) int
 		PageTitle       func(childComplexity int) int
@@ -493,24 +497,25 @@ type MutationResolver interface {
 	Follow(ctx context.Context, input model.AnalyticsMutation) (*model.MutationResponse, error)
 	UnFollow(ctx context.Context, input model.AnalyticsMutation) (*model.MutationResponse, error)
 	LogPageLoad(ctx context.Context, vreelID string) (*model.MutationResponse, error)
-	EditElementPosition(ctx context.Context, token string, element string, position int) (*model.MutationResponse, error)
+	EditElementPosition(ctx context.Context, token string, element string, position int, vreelID *string) (*model.MutationResponse, error)
 	EditFileName(ctx context.Context, token string, newName string, fileID string) (*model.MutationResponse, error)
-	RemoveImageFromVreelGallery(ctx context.Context, token string, imageID string) (*model.MutationResponse, error)
+	RemoveImageFromVreelGallery(ctx context.Context, token string, imageID string, vreelID *string) (*model.MutationResponse, error)
 	DeleteFile(ctx context.Context, token string, fileID string) (*model.MutationResponse, error)
-	AddSimpleVreelLink(ctx context.Context, token string, link model.SimpleLinkInput) (*model.MutationResponse, error)
-	RemoveSimpleVreelLink(ctx context.Context, token string, linkID string) (*model.MutationResponse, error)
-	AddSuperVreelLink(ctx context.Context, token string, link *model.SuperLinkInput) (*model.MutationResponse, error)
-	AddSocialMediaLink(ctx context.Context, token string, input model.SocialsInput) (*model.MutationResponse, error)
-	AddImageToVreelGallery(ctx context.Context, token string, input model.AddGalleryImageInput) (*model.MutationResponse, error)
-	AddContributionLink(ctx context.Context, token string, input model.ContributionsInput) (*model.MutationResponse, error)
+	AddSimpleVreelLink(ctx context.Context, token string, link model.SimpleLinkInput, vreelID *string) (*model.MutationResponse, error)
+	RemoveSimpleVreelLink(ctx context.Context, token string, linkID string, vreelID *string) (*model.MutationResponse, error)
+	AddSuperVreelLink(ctx context.Context, token string, link *model.SuperLinkInput, vreelID *string) (*model.MutationResponse, error)
+	AddSocialMediaLink(ctx context.Context, token string, input model.SocialsInput, vreelID *string) (*model.MutationResponse, error)
+	AddImageToVreelGallery(ctx context.Context, token string, input model.AddGalleryImageInput, vreelID *string) (*model.MutationResponse, error)
+	AddContributionLink(ctx context.Context, token string, input model.ContributionsInput, vreelID *string) (*model.MutationResponse, error)
 	UpdateVreelLogo(ctx context.Context, token string, uri string) (*model.MutationResponse, error)
-	AddMusicLink(ctx context.Context, token string, input model.MusicInput) (*model.MutationResponse, error)
-	RemoveMusicLink(ctx context.Context, token string, linkID string) (*model.MutationResponse, error)
-	RemoveContributionLink(ctx context.Context, token string, linkID string) (*model.MutationResponse, error)
-	AddVideoToVreel(ctx context.Context, token string, input model.AddVideoInput) (*model.MutationResponse, error)
-	RemoveVideoFromVreel(ctx context.Context, token string, videoID string) (*model.MutationResponse, error)
+	AddMusicLink(ctx context.Context, token string, input model.MusicInput, vreelID *string) (*model.MutationResponse, error)
+	RemoveMusicLink(ctx context.Context, token string, linkID string, vreelID *string) (*model.MutationResponse, error)
+	RemoveContributionLink(ctx context.Context, token string, linkID string, vreelID *string) (*model.MutationResponse, error)
+	AddVideoToVreel(ctx context.Context, token string, input model.AddVideoInput, vreelID *string) (*model.MutationResponse, error)
+	RemoveVideoFromVreel(ctx context.Context, token string, videoID string, vreelID *string) (*model.MutationResponse, error)
 	UpdateSlideLocation(ctx context.Context, token string, slideID *string, location int) (*model.MutationResponse, error)
-	SetElementIsHidden(ctx context.Context, token string, element string, state bool) (*model.MutationResponse, error)
+	SetElementIsHidden(ctx context.Context, token string, element string, state bool, vreelID *string) (*model.MutationResponse, error)
+	AddPage(ctx context.Context, token string) (*model.MutationResponse, error)
 }
 type QueryResolver interface {
 	User(ctx context.Context, id *string) (*model.User, error)
@@ -1358,7 +1363,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.AddContributionLink(childComplexity, args["token"].(string), args["input"].(model.ContributionsInput)), true
+		return e.complexity.Mutation.AddContributionLink(childComplexity, args["token"].(string), args["input"].(model.ContributionsInput), args["vreelId"].(*string)), true
 
 	case "Mutation.addEmployeeToEnterprise":
 		if e.complexity.Mutation.AddEmployeeToEnterprise == nil {
@@ -1382,7 +1387,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.AddImageToVreelGallery(childComplexity, args["token"].(string), args["input"].(model.AddGalleryImageInput)), true
+		return e.complexity.Mutation.AddImageToVreelGallery(childComplexity, args["token"].(string), args["input"].(model.AddGalleryImageInput), args["vreelId"].(*string)), true
 
 	case "Mutation.addMusicLink":
 		if e.complexity.Mutation.AddMusicLink == nil {
@@ -1394,7 +1399,19 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.AddMusicLink(childComplexity, args["token"].(string), args["input"].(model.MusicInput)), true
+		return e.complexity.Mutation.AddMusicLink(childComplexity, args["token"].(string), args["input"].(model.MusicInput), args["vreelId"].(*string)), true
+
+	case "Mutation.addPage":
+		if e.complexity.Mutation.AddPage == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_addPage_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.AddPage(childComplexity, args["token"].(string)), true
 
 	case "Mutation.addSimpleVreelLink":
 		if e.complexity.Mutation.AddSimpleVreelLink == nil {
@@ -1406,7 +1423,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.AddSimpleVreelLink(childComplexity, args["token"].(string), args["link"].(model.SimpleLinkInput)), true
+		return e.complexity.Mutation.AddSimpleVreelLink(childComplexity, args["token"].(string), args["link"].(model.SimpleLinkInput), args["vreelId"].(*string)), true
 
 	case "Mutation.addSocialMediaLink":
 		if e.complexity.Mutation.AddSocialMediaLink == nil {
@@ -1418,7 +1435,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.AddSocialMediaLink(childComplexity, args["token"].(string), args["input"].(model.SocialsInput)), true
+		return e.complexity.Mutation.AddSocialMediaLink(childComplexity, args["token"].(string), args["input"].(model.SocialsInput), args["vreelId"].(*string)), true
 
 	case "Mutation.addSuperVreelLink":
 		if e.complexity.Mutation.AddSuperVreelLink == nil {
@@ -1430,7 +1447,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.AddSuperVreelLink(childComplexity, args["token"].(string), args["link"].(*model.SuperLinkInput)), true
+		return e.complexity.Mutation.AddSuperVreelLink(childComplexity, args["token"].(string), args["link"].(*model.SuperLinkInput), args["vreelId"].(*string)), true
 
 	case "Mutation.addUserToGroup":
 		if e.complexity.Mutation.AddUserToGroup == nil {
@@ -1454,7 +1471,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.AddVideoToVreel(childComplexity, args["token"].(string), args["input"].(model.AddVideoInput)), true
+		return e.complexity.Mutation.AddVideoToVreel(childComplexity, args["token"].(string), args["input"].(model.AddVideoInput), args["vreelId"].(*string)), true
 
 	case "Mutation.createEnterprise":
 		if e.complexity.Mutation.CreateEnterprise == nil {
@@ -1550,7 +1567,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.EditElementPosition(childComplexity, args["token"].(string), args["element"].(string), args["position"].(int)), true
+		return e.complexity.Mutation.EditElementPosition(childComplexity, args["token"].(string), args["element"].(string), args["position"].(int), args["vreelId"].(*string)), true
 
 	case "Mutation.editFileName":
 		if e.complexity.Mutation.EditFileName == nil {
@@ -1622,7 +1639,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.RemoveContributionLink(childComplexity, args["token"].(string), args["linkId"].(string)), true
+		return e.complexity.Mutation.RemoveContributionLink(childComplexity, args["token"].(string), args["linkId"].(string), args["vreelId"].(*string)), true
 
 	case "Mutation.removeImageFromVreelGallery":
 		if e.complexity.Mutation.RemoveImageFromVreelGallery == nil {
@@ -1634,7 +1651,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.RemoveImageFromVreelGallery(childComplexity, args["token"].(string), args["imageId"].(string)), true
+		return e.complexity.Mutation.RemoveImageFromVreelGallery(childComplexity, args["token"].(string), args["imageId"].(string), args["vreelId"].(*string)), true
 
 	case "Mutation.removeMusicLink":
 		if e.complexity.Mutation.RemoveMusicLink == nil {
@@ -1646,7 +1663,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.RemoveMusicLink(childComplexity, args["token"].(string), args["linkId"].(string)), true
+		return e.complexity.Mutation.RemoveMusicLink(childComplexity, args["token"].(string), args["linkId"].(string), args["vreelId"].(*string)), true
 
 	case "Mutation.removeSimpleVreelLink":
 		if e.complexity.Mutation.RemoveSimpleVreelLink == nil {
@@ -1658,7 +1675,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.RemoveSimpleVreelLink(childComplexity, args["token"].(string), args["linkId"].(string)), true
+		return e.complexity.Mutation.RemoveSimpleVreelLink(childComplexity, args["token"].(string), args["linkId"].(string), args["vreelId"].(*string)), true
 
 	case "Mutation.removeSlide":
 		if e.complexity.Mutation.RemoveSlide == nil {
@@ -1706,7 +1723,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.RemoveVideoFromVreel(childComplexity, args["token"].(string), args["videoId"].(string)), true
+		return e.complexity.Mutation.RemoveVideoFromVreel(childComplexity, args["token"].(string), args["videoId"].(string), args["vreelId"].(*string)), true
 
 	case "Mutation.resetElements":
 		if e.complexity.Mutation.ResetElements == nil {
@@ -1742,7 +1759,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.SetElementIsHidden(childComplexity, args["token"].(string), args["element"].(string), args["state"].(bool)), true
+		return e.complexity.Mutation.SetElementIsHidden(childComplexity, args["token"].(string), args["element"].(string), args["state"].(bool), args["vreelId"].(*string)), true
 
 	case "Mutation.unFollow":
 		if e.complexity.Mutation.UnFollow == nil {
@@ -2565,6 +2582,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.User.Note(childComplexity), true
 
+	case "User.pages":
+		if e.complexity.User.Pages == nil {
+			break
+		}
+
+		return e.complexity.User.Pages(childComplexity), true
+
+	case "User.pagesRef":
+		if e.complexity.User.PagesRef == nil {
+			break
+		}
+
+		return e.complexity.User.PagesRef(childComplexity), true
+
 	case "User.password":
 		if e.complexity.User.Password == nil {
 			break
@@ -2746,6 +2777,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Vreel.Elements(childComplexity), true
+
+	case "Vreel.id":
+		if e.complexity.Vreel.ID == nil {
+			break
+		}
+
+		return e.complexity.Vreel.ID(childComplexity), true
 
 	case "Vreel.LastSlideEdited":
 		if e.complexity.Vreel.LastSlideEdited == nil {
@@ -2979,6 +3017,7 @@ type User {
   first_name: String!
   last_name: String!
   middle_initial: String!
+  pagesRef: String
   prefix: String!
   suffix: String!
   email: String!
@@ -2996,6 +3035,7 @@ type User {
   files: Files!
   news: [Slide]
   note: String!
+  pages: [Vreel!]!
 }
 
 type Enterprise {
@@ -3244,6 +3284,7 @@ type VreelElements {
   contributions: ContributionsElement
 }
 type Vreel {
+  id: String!
   author: String!
   logo_uri: String
   page_title: String!
@@ -3470,6 +3511,7 @@ type Mutation {
     token: String!
     element: String!
     position: Int!
+    vreelId: String
   ): MutationResponse!
   editFileName(
     token: String!
@@ -3479,32 +3521,77 @@ type Mutation {
   removeImageFromVreelGallery(
     token: String!
     imageId: String!
+    vreelId: String
   ): MutationResponse!
   deleteFile(token: String!, fileId: String!): MutationResponse!
-  addSimpleVreelLink(token: String!, link: SimpleLinkInput!): MutationResponse!
-  removeSimpleVreelLink(token: String!, linkId: String!): MutationResponse!
-  addSuperVreelLink(token: String!, link: SuperLinkInput): MutationResponse!
-  addSocialMediaLink(token: String!, input: SocialsInput!): MutationResponse!
+  addSimpleVreelLink(
+    token: String!
+    link: SimpleLinkInput!
+    vreelId: String
+  ): MutationResponse!
+  removeSimpleVreelLink(
+    token: String!
+    linkId: String!
+    vreelId: String
+  ): MutationResponse!
+  addSuperVreelLink(
+    token: String!
+    link: SuperLinkInput
+    vreelId: String
+  ): MutationResponse!
+  addSocialMediaLink(
+    token: String!
+    input: SocialsInput!
+    vreelId: String
+  ): MutationResponse!
   addImageToVreelGallery(
     token: String!
     input: AddGalleryImageInput!
+    vreelId: String
   ): MutationResponse!
   addContributionLink(
     token: String!
     input: ContributionsInput!
+    vreelId: String
   ): MutationResponse!
   updateVreelLogo(token: String!, uri: String!): MutationResponse!
-  addMusicLink(token: String!, input: MusicInput!): MutationResponse!
-  removeMusicLink(token: String!, linkId: String!): MutationResponse
-  removeContributionLink(token: String!, linkId: String!): MutationResponse!
-  addVideoToVreel(token: String!, input: AddVideoInput!): MutationResponse!
-  removeVideoFromVreel(token: String!, videoId: String!): MutationResponse!
+  addMusicLink(
+    token: String!
+    input: MusicInput!
+    vreelId: String
+  ): MutationResponse!
+  removeMusicLink(
+    token: String!
+    linkId: String!
+    vreelId: String
+  ): MutationResponse
+  removeContributionLink(
+    token: String!
+    linkId: String!
+    vreelId: String
+  ): MutationResponse!
+  addVideoToVreel(
+    token: String!
+    input: AddVideoInput!
+    vreelId: String
+  ): MutationResponse!
+  removeVideoFromVreel(
+    token: String!
+    videoId: String!
+    vreelId: String
+  ): MutationResponse!
   updateSlideLocation(
     token: String!
     slideId: String
     location: Int!
   ): MutationResponse!
-  setElementIsHidden(token: String!, element: String!, state: Boolean!): MutationResponse!
+  setElementIsHidden(
+    token: String!
+    element: String!
+    state: Boolean!
+    vreelId: String
+  ): MutationResponse!
+  addPage(token: String!): MutationResponse!
 }
 `, BuiltIn: false},
 }
@@ -3535,6 +3622,15 @@ func (ec *executionContext) field_Mutation_addContributionLink_args(ctx context.
 		}
 	}
 	args["input"] = arg1
+	var arg2 *string
+	if tmp, ok := rawArgs["vreelId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("vreelId"))
+		arg2, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["vreelId"] = arg2
 	return args, nil
 }
 
@@ -3583,6 +3679,15 @@ func (ec *executionContext) field_Mutation_addImageToVreelGallery_args(ctx conte
 		}
 	}
 	args["input"] = arg1
+	var arg2 *string
+	if tmp, ok := rawArgs["vreelId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("vreelId"))
+		arg2, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["vreelId"] = arg2
 	return args, nil
 }
 
@@ -3607,6 +3712,30 @@ func (ec *executionContext) field_Mutation_addMusicLink_args(ctx context.Context
 		}
 	}
 	args["input"] = arg1
+	var arg2 *string
+	if tmp, ok := rawArgs["vreelId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("vreelId"))
+		arg2, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["vreelId"] = arg2
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_addPage_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["token"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("token"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["token"] = arg0
 	return args, nil
 }
 
@@ -3631,6 +3760,15 @@ func (ec *executionContext) field_Mutation_addSimpleVreelLink_args(ctx context.C
 		}
 	}
 	args["link"] = arg1
+	var arg2 *string
+	if tmp, ok := rawArgs["vreelId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("vreelId"))
+		arg2, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["vreelId"] = arg2
 	return args, nil
 }
 
@@ -3655,6 +3793,15 @@ func (ec *executionContext) field_Mutation_addSocialMediaLink_args(ctx context.C
 		}
 	}
 	args["input"] = arg1
+	var arg2 *string
+	if tmp, ok := rawArgs["vreelId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("vreelId"))
+		arg2, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["vreelId"] = arg2
 	return args, nil
 }
 
@@ -3679,6 +3826,15 @@ func (ec *executionContext) field_Mutation_addSuperVreelLink_args(ctx context.Co
 		}
 	}
 	args["link"] = arg1
+	var arg2 *string
+	if tmp, ok := rawArgs["vreelId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("vreelId"))
+		arg2, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["vreelId"] = arg2
 	return args, nil
 }
 
@@ -3736,6 +3892,15 @@ func (ec *executionContext) field_Mutation_addVideoToVreel_args(ctx context.Cont
 		}
 	}
 	args["input"] = arg1
+	var arg2 *string
+	if tmp, ok := rawArgs["vreelId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("vreelId"))
+		arg2, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["vreelId"] = arg2
 	return args, nil
 }
 
@@ -3901,6 +4066,15 @@ func (ec *executionContext) field_Mutation_editElementPosition_args(ctx context.
 		}
 	}
 	args["position"] = arg2
+	var arg3 *string
+	if tmp, ok := rawArgs["vreelId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("vreelId"))
+		arg3, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["vreelId"] = arg3
 	return args, nil
 }
 
@@ -4018,6 +4192,15 @@ func (ec *executionContext) field_Mutation_removeContributionLink_args(ctx conte
 		}
 	}
 	args["linkId"] = arg1
+	var arg2 *string
+	if tmp, ok := rawArgs["vreelId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("vreelId"))
+		arg2, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["vreelId"] = arg2
 	return args, nil
 }
 
@@ -4042,6 +4225,15 @@ func (ec *executionContext) field_Mutation_removeImageFromVreelGallery_args(ctx 
 		}
 	}
 	args["imageId"] = arg1
+	var arg2 *string
+	if tmp, ok := rawArgs["vreelId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("vreelId"))
+		arg2, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["vreelId"] = arg2
 	return args, nil
 }
 
@@ -4066,6 +4258,15 @@ func (ec *executionContext) field_Mutation_removeMusicLink_args(ctx context.Cont
 		}
 	}
 	args["linkId"] = arg1
+	var arg2 *string
+	if tmp, ok := rawArgs["vreelId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("vreelId"))
+		arg2, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["vreelId"] = arg2
 	return args, nil
 }
 
@@ -4090,6 +4291,15 @@ func (ec *executionContext) field_Mutation_removeSimpleVreelLink_args(ctx contex
 		}
 	}
 	args["linkId"] = arg1
+	var arg2 *string
+	if tmp, ok := rawArgs["vreelId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("vreelId"))
+		arg2, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["vreelId"] = arg2
 	return args, nil
 }
 
@@ -4186,6 +4396,15 @@ func (ec *executionContext) field_Mutation_removeVideoFromVreel_args(ctx context
 		}
 	}
 	args["videoId"] = arg1
+	var arg2 *string
+	if tmp, ok := rawArgs["vreelId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("vreelId"))
+		arg2, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["vreelId"] = arg2
 	return args, nil
 }
 
@@ -4258,6 +4477,15 @@ func (ec *executionContext) field_Mutation_setElementIsHidden_args(ctx context.C
 		}
 	}
 	args["state"] = arg2
+	var arg3 *string
+	if tmp, ok := rawArgs["vreelId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("vreelId"))
+		arg3, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["vreelId"] = arg3
 	return args, nil
 }
 
@@ -9675,7 +9903,7 @@ func (ec *executionContext) _Mutation_editElementPosition(ctx context.Context, f
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().EditElementPosition(rctx, args["token"].(string), args["element"].(string), args["position"].(int))
+		return ec.resolvers.Mutation().EditElementPosition(rctx, args["token"].(string), args["element"].(string), args["position"].(int), args["vreelId"].(*string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -9759,7 +9987,7 @@ func (ec *executionContext) _Mutation_removeImageFromVreelGallery(ctx context.Co
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().RemoveImageFromVreelGallery(rctx, args["token"].(string), args["imageId"].(string))
+		return ec.resolvers.Mutation().RemoveImageFromVreelGallery(rctx, args["token"].(string), args["imageId"].(string), args["vreelId"].(*string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -9843,7 +10071,7 @@ func (ec *executionContext) _Mutation_addSimpleVreelLink(ctx context.Context, fi
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().AddSimpleVreelLink(rctx, args["token"].(string), args["link"].(model.SimpleLinkInput))
+		return ec.resolvers.Mutation().AddSimpleVreelLink(rctx, args["token"].(string), args["link"].(model.SimpleLinkInput), args["vreelId"].(*string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -9885,7 +10113,7 @@ func (ec *executionContext) _Mutation_removeSimpleVreelLink(ctx context.Context,
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().RemoveSimpleVreelLink(rctx, args["token"].(string), args["linkId"].(string))
+		return ec.resolvers.Mutation().RemoveSimpleVreelLink(rctx, args["token"].(string), args["linkId"].(string), args["vreelId"].(*string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -9927,7 +10155,7 @@ func (ec *executionContext) _Mutation_addSuperVreelLink(ctx context.Context, fie
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().AddSuperVreelLink(rctx, args["token"].(string), args["link"].(*model.SuperLinkInput))
+		return ec.resolvers.Mutation().AddSuperVreelLink(rctx, args["token"].(string), args["link"].(*model.SuperLinkInput), args["vreelId"].(*string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -9969,7 +10197,7 @@ func (ec *executionContext) _Mutation_addSocialMediaLink(ctx context.Context, fi
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().AddSocialMediaLink(rctx, args["token"].(string), args["input"].(model.SocialsInput))
+		return ec.resolvers.Mutation().AddSocialMediaLink(rctx, args["token"].(string), args["input"].(model.SocialsInput), args["vreelId"].(*string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -10011,7 +10239,7 @@ func (ec *executionContext) _Mutation_addImageToVreelGallery(ctx context.Context
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().AddImageToVreelGallery(rctx, args["token"].(string), args["input"].(model.AddGalleryImageInput))
+		return ec.resolvers.Mutation().AddImageToVreelGallery(rctx, args["token"].(string), args["input"].(model.AddGalleryImageInput), args["vreelId"].(*string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -10053,7 +10281,7 @@ func (ec *executionContext) _Mutation_addContributionLink(ctx context.Context, f
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().AddContributionLink(rctx, args["token"].(string), args["input"].(model.ContributionsInput))
+		return ec.resolvers.Mutation().AddContributionLink(rctx, args["token"].(string), args["input"].(model.ContributionsInput), args["vreelId"].(*string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -10137,7 +10365,7 @@ func (ec *executionContext) _Mutation_addMusicLink(ctx context.Context, field gr
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().AddMusicLink(rctx, args["token"].(string), args["input"].(model.MusicInput))
+		return ec.resolvers.Mutation().AddMusicLink(rctx, args["token"].(string), args["input"].(model.MusicInput), args["vreelId"].(*string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -10179,7 +10407,7 @@ func (ec *executionContext) _Mutation_removeMusicLink(ctx context.Context, field
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().RemoveMusicLink(rctx, args["token"].(string), args["linkId"].(string))
+		return ec.resolvers.Mutation().RemoveMusicLink(rctx, args["token"].(string), args["linkId"].(string), args["vreelId"].(*string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -10218,7 +10446,7 @@ func (ec *executionContext) _Mutation_removeContributionLink(ctx context.Context
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().RemoveContributionLink(rctx, args["token"].(string), args["linkId"].(string))
+		return ec.resolvers.Mutation().RemoveContributionLink(rctx, args["token"].(string), args["linkId"].(string), args["vreelId"].(*string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -10260,7 +10488,7 @@ func (ec *executionContext) _Mutation_addVideoToVreel(ctx context.Context, field
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().AddVideoToVreel(rctx, args["token"].(string), args["input"].(model.AddVideoInput))
+		return ec.resolvers.Mutation().AddVideoToVreel(rctx, args["token"].(string), args["input"].(model.AddVideoInput), args["vreelId"].(*string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -10302,7 +10530,7 @@ func (ec *executionContext) _Mutation_removeVideoFromVreel(ctx context.Context, 
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().RemoveVideoFromVreel(rctx, args["token"].(string), args["videoId"].(string))
+		return ec.resolvers.Mutation().RemoveVideoFromVreel(rctx, args["token"].(string), args["videoId"].(string), args["vreelId"].(*string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -10386,7 +10614,49 @@ func (ec *executionContext) _Mutation_setElementIsHidden(ctx context.Context, fi
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().SetElementIsHidden(rctx, args["token"].(string), args["element"].(string), args["state"].(bool))
+		return ec.resolvers.Mutation().SetElementIsHidden(rctx, args["token"].(string), args["element"].(string), args["state"].(bool), args["vreelId"].(*string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.MutationResponse)
+	fc.Result = res
+	return ec.marshalNMutationResponse2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐMutationResponse(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_addPage(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_addPage_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().AddPage(rctx, args["token"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -13637,6 +13907,38 @@ func (ec *executionContext) _User_middle_initial(ctx context.Context, field grap
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _User_pagesRef(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PagesRef, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _User_prefix(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -14229,6 +14531,41 @@ func (ec *executionContext) _User_note(ctx context.Context, field graphql.Collec
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _User_pages(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Pages, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Vreel)
+	fc.Result = res
+	return ec.marshalNVreel2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐVreelᚄ(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Video_id(ctx context.Context, field graphql.CollectedField, obj *model.Video) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -14647,6 +14984,41 @@ func (ec *executionContext) _Videos_hidden(ctx context.Context, field graphql.Co
 	res := resTmp.(bool)
 	fc.Result = res
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Vreel_id(ctx context.Context, field graphql.CollectedField, obj *model.Vreel) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Vreel",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Vreel_author(ctx context.Context, field graphql.CollectedField, obj *model.Vreel) (ret graphql.Marshaler) {
@@ -18561,6 +18933,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "addPage":
+			out.Values[i] = ec._Mutation_addPage(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -19447,6 +19824,8 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "pagesRef":
+			out.Values[i] = ec._User_pagesRef(ctx, field, obj)
 		case "prefix":
 			out.Values[i] = ec._User_prefix(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -19526,6 +19905,11 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			out.Values[i] = ec._User_news(ctx, field, obj)
 		case "note":
 			out.Values[i] = ec._User_note(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "pages":
+			out.Values[i] = ec._User_pages(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -19655,6 +20039,11 @@ func (ec *executionContext) _Vreel(ctx context.Context, sel ast.SelectionSet, ob
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Vreel")
+		case "id":
+			out.Values[i] = ec._Vreel_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "author":
 			out.Values[i] = ec._Vreel_author(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -20931,6 +21320,50 @@ func (ec *executionContext) marshalNVideo2ᚖgithubᚗcomᚋvreelᚋappᚋgraph�
 		return graphql.Null
 	}
 	return ec._Video(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNVreel2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐVreelᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Vreel) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNVreel2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐVreel(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
 }
 
 func (ec *executionContext) marshalNVreel2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐVreel(ctx context.Context, sel ast.SelectionSet, v *model.Vreel) graphql.Marshaler {
