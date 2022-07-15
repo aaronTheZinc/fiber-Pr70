@@ -50,6 +50,8 @@ export const GET_USER_BY_TOKEN = gql`
             uri
             content_type
           }
+          image_header
+          description
           cta1 {
             link_header
             link_type
@@ -101,6 +103,29 @@ export const GET_USER_BY_USER_NAME = gql`
               username
             }
           }
+          gallery {
+          header
+          images {
+            id
+            image_header
+            mobile {
+              uri
+            }
+            desktop{
+              uri
+            }
+            cta1 {
+              link_url
+              link_type
+              link_header
+            }
+                        cta2 {
+              link_url
+              link_type
+              link_header
+            }
+          }
+        }
         }
         slides {
           id
