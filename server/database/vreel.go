@@ -738,3 +738,47 @@ func SetElementIsHidden(vreelId string, element string, state bool) error {
 	return err
 
 }
+
+func RemoveSocialLink(vreelId, platform string) error {
+	var err error
+	var vreel model.VreelModel
+	var elements model.VreelElements
+
+	if fetchErr := db.Where("id = ?", vreelId).First(&vreel).Error; fetchErr != nil {
+		err = e.VREEL_NOT_FOUND
+	} else {
+		parseErr := json.Unmarshal([]byte(vreel.Elements), &elements)
+		if parseErr != nil {
+			err = parseErr
+			return err
+		}
+		socials := elements.Socials.Socials
+		linkWasFound := false
+
+		for idx, link := range socials {
+			if link.Platform == platform {
+				socials = append(socials[:idx], socials[idx+1:]...)
+				linkWasFound = true
+				break
+			}
+		}
+		if !linkWasFound {
+			err = errors.New("platform:  " + platform + " not found.")
+		} else {
+			elements.Socials.Socials = socials
+			v, marshalErr := json.Marshal(&elements)
+
+			if marshalErr != nil {
+				err = marshalErr
+				return err
+			}
+			updateErr := db.Model(model.VreelModel{}).Where("id = ?", vreelId).Update("elements", string(v)).Error
+
+			if updateErr != nil {
+				err = updateErr
+			}
+		}
+	}
+
+	return err
+}

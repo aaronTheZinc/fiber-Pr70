@@ -14,6 +14,30 @@ import (
 	"github.com/vreel/app/utils"
 )
 
+func AuthorizeRemoveSocialsLink(token, platform string, vreelId *string) (model.MutationResponse, error) {
+	var err error
+	var resp model.MutationResponse
+	claims, isAuth, parseErr := ParseToken(token)
+	userId := claims.ID
+
+	if isAuth && parseErr == nil {
+		updateErr := database.RemoveSocialLink(userId, platform)
+
+		if updateErr != nil {
+			err = updateErr
+		} else {
+			resp = model.MutationResponse{
+				Succeeded: true,
+				Message:   "successfully removed platdform",
+			}
+		}
+	} else {
+		err = e.UNAUTHORIZED_ERROR
+	}
+
+	return resp, err
+}
+
 func AuthorizeAddPage(token string) (model.MutationResponse, error) {
 	var err error
 	var resp model.MutationResponse

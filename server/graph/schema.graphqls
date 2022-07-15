@@ -517,7 +517,7 @@ type Mutation {
   ): ResolvedPasswordReset!
   createGroup(input: NewGroup): Group!
   createSlide(token: String!): Slide!
-
+  removeSocialLink(token: String!, platform: String!, vreelId: String): MutationResponse!
   deleteGroup(id: String!, token: String!): MutationResponse!
   addUserToGroup(
     token: String!

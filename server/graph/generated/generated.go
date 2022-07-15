@@ -256,6 +256,7 @@ type ComplexityRoot struct {
 		RemoveMusicLink                   func(childComplexity int, token string, linkID string, vreelID *string) int
 		RemoveSimpleVreelLink             func(childComplexity int, token string, linkID string, vreelID *string) int
 		RemoveSlide                       func(childComplexity int, token string, slideID *string) int
+		RemoveSocialLink                  func(childComplexity int, token string, platform string, vreelID *string) int
 		RemoveUser                        func(childComplexity int, id string) int
 		RemoveUserFromGroup               func(childComplexity int, token string, groupID string, member string) int
 		RemoveVideoFromVreel              func(childComplexity int, token string, videoID string, vreelID *string) int
@@ -483,6 +484,7 @@ type MutationResolver interface {
 	ResolveResetPasswordRequestIntent(ctx context.Context, token string, password string) (*model.ResolvedPasswordReset, error)
 	CreateGroup(ctx context.Context, input *model.NewGroup) (*model.Group, error)
 	CreateSlide(ctx context.Context, token string) (*model.Slide, error)
+	RemoveSocialLink(ctx context.Context, token string, platform string, vreelID *string) (*model.MutationResponse, error)
 	DeleteGroup(ctx context.Context, id string, token string) (*model.MutationResponse, error)
 	AddUserToGroup(ctx context.Context, token string, groupID string, userID string) (*model.MutationResponse, error)
 	AddEmployeeToEnterprise(ctx context.Context, token string, newUser model.NewUser) (*model.User, error)
@@ -1688,6 +1690,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.RemoveSlide(childComplexity, args["token"].(string), args["slideId"].(*string)), true
+
+	case "Mutation.removeSocialLink":
+		if e.complexity.Mutation.RemoveSocialLink == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_removeSocialLink_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.RemoveSocialLink(childComplexity, args["token"].(string), args["platform"].(string), args["vreelId"].(*string)), true
 
 	case "Mutation.removeUser":
 		if e.complexity.Mutation.RemoveUser == nil {
@@ -3480,7 +3494,7 @@ type Mutation {
   ): ResolvedPasswordReset!
   createGroup(input: NewGroup): Group!
   createSlide(token: String!): Slide!
-
+  removeSocialLink(token: String!, platform: String!, vreelId: String): MutationResponse!
   deleteGroup(id: String!, token: String!): MutationResponse!
   addUserToGroup(
     token: String!
@@ -4324,6 +4338,39 @@ func (ec *executionContext) field_Mutation_removeSlide_args(ctx context.Context,
 		}
 	}
 	args["slideId"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_removeSocialLink_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["token"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("token"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["token"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["platform"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("platform"))
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["platform"] = arg1
+	var arg2 *string
+	if tmp, ok := rawArgs["vreelId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("vreelId"))
+		arg2, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["vreelId"] = arg2
 	return args, nil
 }
 
@@ -9288,6 +9335,48 @@ func (ec *executionContext) _Mutation_createSlide(ctx context.Context, field gra
 	res := resTmp.(*model.Slide)
 	fc.Result = res
 	return ec.marshalNSlide2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐSlide(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_removeSocialLink(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_removeSocialLink_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().RemoveSocialLink(rctx, args["token"].(string), args["platform"].(string), args["vreelId"].(*string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.MutationResponse)
+	fc.Result = res
+	return ec.marshalNMutationResponse2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐMutationResponse(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_deleteGroup(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -18773,6 +18862,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			}
 		case "createSlide":
 			out.Values[i] = ec._Mutation_createSlide(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "removeSocialLink":
+			out.Values[i] = ec._Mutation_removeSocialLink(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}

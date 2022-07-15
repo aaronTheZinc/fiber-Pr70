@@ -64,6 +64,12 @@ func (r *mutationResolver) CreateSlide(ctx context.Context, token string) (*mode
 	return &resp, err
 }
 
+func (r *mutationResolver) RemoveSocialLink(ctx context.Context, token string, platform string, vreelID *string) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeRemoveSocialsLink(token, platform, vreelID)
+
+	return &resp, err
+}
+
 func (r *mutationResolver) DeleteGroup(ctx context.Context, id string, token string) (*model.MutationResponse, error) {
 	resp, err := auth.AuthorizeDeleteGroup(token, id)
 	return &resp, err
