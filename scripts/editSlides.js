@@ -21,12 +21,12 @@ const slides = [{
     },
     "mobile": {
         "content_type": "video/mp4",
-        "uri": "https://staging.vreel.page/files/057cd262bdd012ff2ced91be7156cfb3",
+        "uri": "https://staging.vreel.page/files/ec03787b5ca63bc1ca22e5ee9426e2c8",
         "background_audio_uri": ""
     },
     "desktop": {
         "content_type": "video/mp4",
-        "uri": "https://staging.vreel.page/files/057cd262bdd012ff2ced91be7156cfb3",
+        "uri": "https://staging.vreel.page/files/ec03787b5ca63bc1ca22e5ee9426e2c8",
         "background_audio_uri": ""
 
     }
@@ -36,7 +36,7 @@ const slides = [{
     "slide_location": 1,
     "title": {
         "header": "Gucci X Adidas",
-        "description": "The collection expands on the sartorial streetwear creations with a spectrum of sport-inspired pieces in which the heritage of both brands is encoded in a trio of lines."
+        "description": "  "
     },
     "cta1": {
         "link_url": "https://www.gucci.com/us/en/st/capsule/adidas-gucci",

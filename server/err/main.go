@@ -36,6 +36,8 @@ var ANALYTICS_FRAGMENT_NOT_FOUND = errors.New("analytics fragment not found")
 var FAILED_REMOVE_LIKE = errors.New("failed to remove like")
 var FAILED_UPDATE_PAGES = errors.New("failed to update pages")
 var FAILED_CREATE_PAGE = errors.New("failed to create page")
+var SIMPLELINK_NOT_FOUND = errors.New("simple link not found")
+var SOCIALSLINK_NOT_FOUND = errors.New("socials link not found")
 
 func VreelFieldError(field string) error {
 	return errors.New("vreel field: " + field)

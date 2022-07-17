@@ -12,6 +12,137 @@ import (
 	"github.com/vreel/app/utils"
 )
 
+type VreelContainer struct {
+	M     *sync.Mutex
+	Vreel model.VreelModel
+}
+
+type VreelLockStruct struct {
+	cache map[string]VreelContainer
+}
+
+var VreelEditLock = VreelLockStruct{
+	cache: make(map[string]VreelContainer),
+}
+
+func (lock *VreelLockStruct) GetVreel(id string) (model.VreelModel, bool) {
+	// var vreel model.VreelModel
+	val, ok := lock.cache[id]
+
+	return val.Vreel, ok
+}
+
+func (lock *VreelLockStruct) SaveVreel(id string, v model.VreelModel) {
+	//kill cached data in one minute after creation
+	defer time.AfterFunc(time.Second*15, func() {
+		delete(lock.cache, id)
+	})
+
+	mutex := lock.cache[id].M
+	if mutex == nil {
+		mutex = &sync.Mutex{}
+	}
+	lock.cache[id] = VreelContainer{
+		M:     mutex,
+		Vreel: v,
+	}
+
+}
+
+//Handle Updating Elements
+func (lock *VreelLockStruct) EditVreelElements(id string, exec func(model.VreelElements) (string, error)) error {
+	// var err error
+	defer func() {
+		mutex, ok := lock.cache[id]
+		if ok {
+			mutex.M.Unlock()
+		}
+	}()
+
+	vreel, ok := lock.GetVreel(id)
+	if !ok {
+		gErr := db.Where("id = ?", id).First(&vreel).Error
+		if gErr == nil {
+			lock.SaveVreel(id, vreel)
+		} else {
+			// err = gErr
+		}
+
+	}
+
+	lock.cache[id].M.Lock()
+	log.Println("locked mutex")
+	elements := model.VreelElements{}
+	json.Unmarshal([]byte(vreel.Elements), &elements)
+	elStr, modifyErr := exec(elements)
+	if modifyErr != nil {
+		return modifyErr
+	}
+	updateErr := db.Model(model.VreelModel{}).Where("id = ?", id).Update("elements", elStr).Error
+	if updateErr != nil {
+		return updateErr
+	}
+
+	vreel.Elements = elStr
+
+	lock.SaveVreel(id, vreel)
+	return nil
+}
+
+func EditSocialLinks(vreelId, platform string, social model.Socials) error {
+	editErr := VreelEditLock.EditVreelElements(vreelId, func(elements model.VreelElements) (string, error) {
+		var err error
+		socials := elements.Socials.Socials
+		wasFound := false
+		for idx, s := range socials {
+			if s.Platform == platform {
+				wasFound = true
+				socials[idx] = &social
+			}
+		}
+		if !wasFound {
+			err = e.SOCIALSLINK_NOT_FOUND
+		}
+
+		elements.Socials.Socials = socials
+
+		str, marshalErr := json.Marshal(elements)
+		if marshalErr != nil {
+			err = marshalErr
+		}
+		return string(str), err
+	})
+	return editErr
+}
+
+func EditSimpleLink(vreelId string, linkId string, newLink model.SimpleLink) error {
+
+	editErr := VreelEditLock.EditVreelElements(vreelId, func(elements model.VreelElements) (string, error) {
+		var err error
+		simpleLinks := elements.SimpleLinks.Links
+		wasFound := false
+		for idx, link := range simpleLinks {
+			if link.ID == linkId {
+				simpleLinks[idx] = &newLink
+				wasFound = true
+				println(link)
+			}
+		}
+		println("in callback!")
+		if !wasFound {
+			err = e.SIMPLELINK_NOT_FOUND
+		}
+		elements.SimpleLinks.Links = simpleLinks
+		str, marshalErr := json.Marshal(elements)
+		if marshalErr != nil {
+			err = e.FAILED_TO_SAVE
+		}
+		return string(str), err
+	})
+
+	return editErr
+}
+
 func CreateVreelFromModel(vreel model.VreelModel) error {
 	return db.Create(&vreel).Error
 }

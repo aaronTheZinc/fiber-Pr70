@@ -452,8 +452,9 @@ func (c *SlideModel) ToSlide() Slide {
 	}
 }
 
-func (c *SimpleLinkInput) ToLink() SimpleLink {
+func (c *SimpleLinkInput) ToLink(id string) SimpleLink {
 	return SimpleLink{
+		ID:         id,
 		Position:   c.Position,
 		Thumbnail:  c.Thumbnail,
 		LinkHeader: c.LinkHeader,
@@ -481,6 +482,14 @@ func (c *AddVideoInput) ToVideo() Video {
 		Description: c.Description,
 		Cta1:        (*Cta)(c.Cta1),
 		Cta2:        (*Cta)(c.Cta2),
+	}
+}
+
+func (s *SocialsInput) ToLink() Socials {
+	return Socials{
+		Platform: s.Platform,
+		Username: s.Username,
+		Position: &s.Position,
 	}
 }
 

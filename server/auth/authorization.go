@@ -14,6 +14,51 @@ import (
 	"github.com/vreel/app/utils"
 )
 
+func AuthorizeEditSocialsLink(token, platform string, social model.SocialsInput, vreelId *string) (model.MutationResponse, error) {
+
+	var err error
+	var resp model.MutationResponse
+	claims, isAuth, parseErr := ParseToken(token)
+	userId := claims.ID
+	if isAuth && parseErr == nil {
+		editErr := database.EditSocialLinks(userId, platform, social.ToLink())
+		if editErr != nil {
+			err = editErr
+		} else {
+			resp = model.MutationResponse{
+				Message:   "successfully updated  socials",
+				Succeeded: true,
+			}
+		}
+	} else {
+		err = e.UNAUTHORIZED_ERROR
+	}
+
+	return resp, err
+}
+
+func AuthorizeEditSimpleLink(token, linkId string, link model.SimpleLinkInput, vreelId *string) (model.MutationResponse, error) {
+	var err error
+	var resp model.MutationResponse
+	claims, isAuth, parseErr := ParseToken(token)
+	userId := claims.ID
+	if isAuth && parseErr == nil {
+		editErr := database.EditSimpleLink(userId, linkId, link.ToLink(linkId))
+		if editErr != nil {
+			err = editErr
+		} else {
+			resp = model.MutationResponse{
+				Succeeded: true,
+				Message:   "successfully edited simple link",
+			}
+		}
+
+	} else {
+		err = e.UNAUTHORIZED_ERROR
+	}
+
+	return resp, err
+}
 func AuthorizeRemoveSocialsLink(token, platform string, vreelId *string) (model.MutationResponse, error) {
 	var err error
 	var resp model.MutationResponse

@@ -169,7 +169,7 @@ func (r *mutationResolver) DeleteFile(ctx context.Context, token string, fileID 
 }
 
 func (r *mutationResolver) AddSimpleVreelLink(ctx context.Context, token string, link model.SimpleLinkInput, vreelID *string) (*model.MutationResponse, error) {
-	resp, err := auth.AuthorizeAddSimpleLinkToVreel(token, link.ToLink(), vreelID)
+	resp, err := auth.AuthorizeAddSimpleLinkToVreel(token, link.ToLink(""), vreelID)
 
 	return &resp, err
 }
@@ -254,6 +254,18 @@ func (r *mutationResolver) SetElementIsHidden(ctx context.Context, token string,
 
 func (r *mutationResolver) AddPage(ctx context.Context, token string) (*model.MutationResponse, error) {
 	resp, err := auth.AuthorizeAddPage(token)
+
+	return &resp, err
+}
+
+func (r *mutationResolver) EditSimpleLink(ctx context.Context, token string, linkID string, link model.SimpleLinkInput, vreelID *string) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeEditSimpleLink(token, linkID, link, nil)
+
+	return &resp, err
+}
+
+func (r *mutationResolver) EditSocialsInput(ctx context.Context, token string, platform string, social model.SocialsInput, vreelID *string) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeEditSocialsLink(token, platform, social, vreelID)
 
 	return &resp, err
 }

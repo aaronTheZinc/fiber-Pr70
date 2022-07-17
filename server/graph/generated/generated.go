@@ -247,6 +247,8 @@ type ComplexityRoot struct {
 		DeleteGroup                       func(childComplexity int, id string, token string) int
 		EditElementPosition               func(childComplexity int, token string, element string, position int, vreelID *string) int
 		EditFileName                      func(childComplexity int, token string, newName string, fileID string) int
+		EditSimpleLink                    func(childComplexity int, token string, linkID string, link model.SimpleLinkInput, vreelID *string) int
+		EditSocialsInput                  func(childComplexity int, token string, platform string, social model.SocialsInput, vreelID *string) int
 		Follow                            func(childComplexity int, input model.AnalyticsMutation) int
 		LikeSlide                         func(childComplexity int, input model.AnalyticsMutation) int
 		LogPageLoad                       func(childComplexity int, vreelID string) int
@@ -518,6 +520,8 @@ type MutationResolver interface {
 	UpdateSlideLocation(ctx context.Context, token string, slideID *string, location int) (*model.MutationResponse, error)
 	SetElementIsHidden(ctx context.Context, token string, element string, state bool, vreelID *string) (*model.MutationResponse, error)
 	AddPage(ctx context.Context, token string) (*model.MutationResponse, error)
+	EditSimpleLink(ctx context.Context, token string, linkID string, link model.SimpleLinkInput, vreelID *string) (*model.MutationResponse, error)
+	EditSocialsInput(ctx context.Context, token string, platform string, social model.SocialsInput, vreelID *string) (*model.MutationResponse, error)
 }
 type QueryResolver interface {
 	User(ctx context.Context, id *string) (*model.User, error)
@@ -1582,6 +1586,30 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.EditFileName(childComplexity, args["token"].(string), args["newName"].(string), args["fileId"].(string)), true
+
+	case "Mutation.editSimpleLink":
+		if e.complexity.Mutation.EditSimpleLink == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_editSimpleLink_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.EditSimpleLink(childComplexity, args["token"].(string), args["linkId"].(string), args["link"].(model.SimpleLinkInput), args["vreelId"].(*string)), true
+
+	case "Mutation.editSocialsInput":
+		if e.complexity.Mutation.EditSocialsInput == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_editSocialsInput_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.EditSocialsInput(childComplexity, args["token"].(string), args["platform"].(string), args["social"].(model.SocialsInput), args["vreelId"].(*string)), true
 
 	case "Mutation.follow":
 		if e.complexity.Mutation.Follow == nil {
@@ -3494,7 +3522,11 @@ type Mutation {
   ): ResolvedPasswordReset!
   createGroup(input: NewGroup): Group!
   createSlide(token: String!): Slide!
-  removeSocialLink(token: String!, platform: String!, vreelId: String): MutationResponse!
+  removeSocialLink(
+    token: String!
+    platform: String!
+    vreelId: String
+  ): MutationResponse!
   deleteGroup(id: String!, token: String!): MutationResponse!
   addUserToGroup(
     token: String!
@@ -3606,6 +3638,18 @@ type Mutation {
     vreelId: String
   ): MutationResponse!
   addPage(token: String!): MutationResponse!
+  editSimpleLink(
+    token: String!
+    linkId: String!
+    link: SimpleLinkInput!
+    vreelId: String
+  ): MutationResponse!
+  editSocialsInput(
+    token: String!
+    platform: String!
+    social: SocialsInput!
+    vreelId: String
+  ): MutationResponse!
 }
 `, BuiltIn: false},
 }
@@ -4122,6 +4166,90 @@ func (ec *executionContext) field_Mutation_editFileName_args(ctx context.Context
 		}
 	}
 	args["fileId"] = arg2
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_editSimpleLink_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["token"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("token"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["token"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["linkId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("linkId"))
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["linkId"] = arg1
+	var arg2 model.SimpleLinkInput
+	if tmp, ok := rawArgs["link"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("link"))
+		arg2, err = ec.unmarshalNSimpleLinkInput2githubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐSimpleLinkInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["link"] = arg2
+	var arg3 *string
+	if tmp, ok := rawArgs["vreelId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("vreelId"))
+		arg3, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["vreelId"] = arg3
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_editSocialsInput_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["token"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("token"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["token"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["platform"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("platform"))
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["platform"] = arg1
+	var arg2 model.SocialsInput
+	if tmp, ok := rawArgs["social"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("social"))
+		arg2, err = ec.unmarshalNSocialsInput2githubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐSocialsInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["social"] = arg2
+	var arg3 *string
+	if tmp, ok := rawArgs["vreelId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("vreelId"))
+		arg3, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["vreelId"] = arg3
 	return args, nil
 }
 
@@ -10746,6 +10874,90 @@ func (ec *executionContext) _Mutation_addPage(ctx context.Context, field graphql
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return ec.resolvers.Mutation().AddPage(rctx, args["token"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.MutationResponse)
+	fc.Result = res
+	return ec.marshalNMutationResponse2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐMutationResponse(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_editSimpleLink(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_editSimpleLink_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().EditSimpleLink(rctx, args["token"].(string), args["linkId"].(string), args["link"].(model.SimpleLinkInput), args["vreelId"].(*string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.MutationResponse)
+	fc.Result = res
+	return ec.marshalNMutationResponse2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐMutationResponse(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_editSocialsInput(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_editSocialsInput_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().EditSocialsInput(rctx, args["token"].(string), args["platform"].(string), args["social"].(model.SocialsInput), args["vreelId"].(*string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -19029,6 +19241,16 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			}
 		case "addPage":
 			out.Values[i] = ec._Mutation_addPage(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "editSimpleLink":
+			out.Values[i] = ec._Mutation_editSimpleLink(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "editSocialsInput":
+			out.Values[i] = ec._Mutation_editSocialsInput(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}

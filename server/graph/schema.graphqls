@@ -517,7 +517,11 @@ type Mutation {
   ): ResolvedPasswordReset!
   createGroup(input: NewGroup): Group!
   createSlide(token: String!): Slide!
-  removeSocialLink(token: String!, platform: String!, vreelId: String): MutationResponse!
+  removeSocialLink(
+    token: String!
+    platform: String!
+    vreelId: String
+  ): MutationResponse!
   deleteGroup(id: String!, token: String!): MutationResponse!
   addUserToGroup(
     token: String!
@@ -629,4 +633,16 @@ type Mutation {
     vreelId: String
   ): MutationResponse!
   addPage(token: String!): MutationResponse!
+  editSimpleLink(
+    token: String!
+    linkId: String!
+    link: SimpleLinkInput!
+    vreelId: String
+  ): MutationResponse!
+  editSocialsInput(
+    token: String!
+    platform: String!
+    social: SocialsInput!
+    vreelId: String
+  ): MutationResponse!
 }
