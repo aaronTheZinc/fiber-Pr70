@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { CSSProperties, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Styles from "./SliderContent.module.scss";
 import ReactHtmlParser from "react-html-parser";
@@ -45,10 +45,21 @@ const SliderContent: React.FC<{
   const [like_fun] = useMutation(likeMutation);
   const [unlike_fun] = useMutation(unlikeMutation);
   const [cookies] = useCookies(["userAuthToken"]);
+  const [text, setText] = useState(0);
   const { username, section, employee } = router?.query;
   const vreel = useSelector((state: any) => state?.vreel?.vreel);
   const { title, id, cta1, cta2, cta3, advanced, desktop, mobile } = slide;
   console.log("3. Slider content rendered...");
+
+  useEffect(() => {
+    if (cta1 || cta2) {
+      if (cta1?.link_header.length > 12 || cta2?.link_header.length > 12) {
+        setText(13);
+      } else {
+        setText(10);
+      }
+    }
+  }, [text]);
 
   return (
     <div className={Styles.media__content}>
@@ -233,7 +244,16 @@ const SliderContent: React.FC<{
               (cta1?.link_header || cta2?.link_header) && (
                 <div>
                   {
-                    <div className={Styles.button_container}>
+                    <div
+                      className={Styles.button_container}
+                      style={
+                        {
+                          "--direction": `${text > 12 ? "column" : "row"}`,
+                          "--marginBottom": `${text > 12 ? ".5" : "0"}rem`,
+                          "--marginRight": `${text > 12 ? "0" : "1"}rem`,
+                        } as CSSProperties
+                      }
+                    >
                       {cta1?.link_header && (
                         <button
                           className="btn-slide"
@@ -292,7 +312,16 @@ const SliderContent: React.FC<{
             {!id && (
               <div>
                 {
-                  <div className={Styles.button_container}>
+                  <div
+                    className={Styles.button_container}
+                    style={
+                      {
+                        "--direction": `${text > 12 ? "column" : "row"}`,
+                        "--marginBottom": `${text > 12 ? ".5" : "0"}rem`,
+                        "--marginRight": `${text > 12 ? "0" : "1"}rem`,
+                      } as CSSProperties
+                    }
+                  >
                     <button
                       className="btn-slide"
                       onClick={() => router.push("/login")}
@@ -367,8 +396,10 @@ const SliderContent: React.FC<{
               <a
                 href={
                   employee
-                    ? `/api/vcard?username=${username}&employee=${employee}`
-                    : `/api/vcard?username=${username}`
+                    ? `/api/vcard?username=${
+                        username ? username : ""
+                      }&employee=${employee}`
+                    : `/api/vcard?username=${username ? username : ""}`
                 }
               >
                 <img src="/assets/icons/add_contact.svg" alt="V-Card Icon" />
@@ -425,7 +456,7 @@ const SliderContent: React.FC<{
             </button>
 
             <button onClick={() => dispatch(expandQR())}>
-              <img src="/assets/icons/icon-qr.svg" alt="QR Icon" />
+              <img src="/assets/icons/icons-qr-code.svg" alt="QR Icon" />
             </button>
           </div>
         </div>

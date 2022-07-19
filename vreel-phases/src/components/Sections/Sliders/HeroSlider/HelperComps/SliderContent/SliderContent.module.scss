@@ -17,7 +17,7 @@
     position: fixed;
     left: 50%;
     bottom: -25px;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%) rotate(180deg);
     cursor: pointer;
     img {
       width: 40px;
@@ -119,7 +119,7 @@
       h3 {
         font-size: $text-md;
         font-weight: $font-bold;
-        margin-bottom: 0;
+        margin-bottom: .2rem;
       }
 
       p {
@@ -129,13 +129,21 @@
       }
 
       .button_container {
-        @include displayFlex2(auto, flex, center, center, row);
+        @include displayFlex(auto, flex, center, center);
+        flex-direction: var(--direction);
 
-        & > *:not(:last-child) {
-          margin-right: 0.5rem;
+        &>*:not(:last-child) {
+            margin-bottom: var(--marginBottom);
+            margin-right: var(--marginRight);
+          }
+      
+          @media only screen and (min-width: 642px) {
+              @include displayFlex2(100%, flex, center, center, row);
+              
+              &>*:not(:last-child) {
+                margin-right: 2.5rem;
+                margin-bottom: 0;
 
-          @media (min-width: 1020px) {
-            margin-right: 2.5rem;
           }
         }
       }

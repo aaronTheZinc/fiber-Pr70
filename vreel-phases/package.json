@@ -13,6 +13,7 @@
     "@reduxjs/toolkit": "^1.8.1",
     "@tailwindcss/forms": "^0.5.2",
     "@types/vcards-js": "^2.10.2",
+    "@uppy/aws-s3": "^2.2.1",
     "@uppy/core": "^2.2.0",
     "@uppy/dashboard": "^2.3.0",
     "@uppy/dropbox": "^2.0.6",
@@ -50,13 +51,14 @@
     "sass": "^1.52.1",
     "slick-carousel": "^1.8.1",
     "swiper": "^8.2.4",
+    "url": "^0.11.0",
     "vcards-js": "^2.10.0",
     "yup": "^0.32.11"
   },
   "devDependencies": {
     "@types/node": "^17.0.0",
     "@types/react": "^17.0.37",
-    "@types/react-beautiful-dnd": "13.1.2",
+    "@types/react-beautiful-dnd": "^13.1.2",
     "autoprefixer": "^10.4.0",
     "postcss": "^8.4.5",
     "postcss-import": "^14.0.2",
