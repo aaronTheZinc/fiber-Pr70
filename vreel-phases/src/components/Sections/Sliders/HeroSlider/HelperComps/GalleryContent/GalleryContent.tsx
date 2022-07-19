@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { CSSProperties } from "react";
 import Styles from "./GalleryContent.module.scss";
 
 const GalleryContent = ({
@@ -12,12 +12,6 @@ const GalleryContent = ({
   item,
 }) => {
   const router = useRouter();
-  const {
-    image_header,
-    description,
-    cta1,
-    cta2
-  } = item
   return (
     <div className={Styles.media__content}>
       <div className={Styles.media__content_wrapper}>
@@ -59,8 +53,9 @@ const GalleryContent = ({
                 className={Styles.media__content_wrapper__left__bottom__muteBtn}
               >
                 <img
-                  src={`/assets/${mute ? "icons/audioOff.svg" : "icons/audioOn.svg"
-                    }`}
+                  src={`/assets/${
+                    mute ? "icons/audioOff.svg" : "icons/audioOn.svg"
+                  }`}
                   alt="Mute Icon"
                 />
               </button>
@@ -74,30 +69,35 @@ const GalleryContent = ({
           id={Styles.middle}
         >
           <div className={Styles.media__content_wrapper__middle__container}>
-            <h3>{image_header}</h3>
-            <p>{item.description}</p>
+            <h3>{item?.header ? item.header : "VREEL™"}</h3>
+            <p>
+              {item?.description
+                ? item.description
+                : "We make you look better! Our Web3 interface curates and displays your story amazingly."}
+            </p>
 
             {
               <div>
                 {
-                  <div className={Styles.button_container}>
-                    {cta1 ? (
-                      <button
-                        className="btn-slide"
-                        onClick={() => window.open(cta1?.link_url)}
-                      >
-                        {cta1.link_header}
-                      </button>
-                    ) : <></>
+                  <div
+                    className={Styles.button_container}
+                    style={
+                      {
+                        "--direction": `row`,
+                        "--marginBottom": `0`,
+                        "--marginRight": `1rem`,
+                      } as CSSProperties
                     }
-                    {
-                      cta2 ? (
-                        <button className="btn-slide" onClick={() => window.open(cta2?.link_url)}>
-                          {cta2.link_header}
-                        </button>
-                      ) : <></>
-                    }
-
+                  >
+                    <button
+                      className="btn-slide"
+                      onClick={() => router.push("/register")}
+                    >
+                      Sign Up
+                    </button>
+                    <button className="btn-slide" onClick={() => {}}>
+                      Learn More
+                    </button>
                   </div>
                 }
               </div>

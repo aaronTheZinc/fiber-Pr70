@@ -15,31 +15,6 @@ export const GET_USER_BY_TOKEN = gql`
       email
       username
       vreel {
-        elements {
-          gallery {
-            header
-            images {
-              id
-              image_header
-              mobile {
-                uri
-              }
-              desktop {
-                uri
-              }
-              cta1 {
-                link_url
-                link_type
-                link_header
-              }
-              cta2 {
-                link_url
-                link_type
-                link_header
-              }
-            }
-          }
-        }
         author
         slides {
           id
@@ -124,29 +99,6 @@ export const GET_USER_BY_USER_NAME = gql`
             socials {
               platform
               username
-            }
-          }
-          gallery {
-            header
-            images {
-              id
-              image_header
-              mobile {
-                uri
-              }
-              desktop {
-                uri
-              }
-              cta1 {
-                link_url
-                link_type
-                link_header
-              }
-              cta2 {
-                link_url
-                link_type
-                link_header
-              }
             }
           }
         }

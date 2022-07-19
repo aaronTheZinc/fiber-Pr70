@@ -72,18 +72,11 @@ const GallerySlider: React.FC<{
         }}
       >
         {items.map((slide, index: number) => {
-          const { cta1, cta2, desktop, mobile, image_header, description } = slide;
+          const { cta1, cta2, desktop, mobile } = slide;
           const isMobile = width < 500;
           const item = isMobile ? mobile : desktop;
-          const isImage = true
-          const textContent = {
-            image_header,
-            description,
-            cta1,
-            cta2
-          }
+          const isImage = item?.content_type == "image";
 
-          console.log(textContent)
           return (
             <SwiperSlide key={index} className={Styles.gallerySlide}>
               <div className={Styles.menuContainer}>
@@ -136,7 +129,7 @@ const GallerySlider: React.FC<{
                   isImage={isImage}
                   setMute={setMute}
                   mute={mute}
-                  item={textContent}
+                  item={item}
                 />
               </div>
             </SwiperSlide>
