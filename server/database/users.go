@@ -60,6 +60,13 @@ func GetUser(id string) (model.User, error) {
 		news, _ := CreateNewsFeed(id, user.Following)
 		r.News = news
 	}()
+
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		pages := GetVreels(user.Pages)
+		r.Pages = *pages
+	}()
 	wg.Wait()
 	//add query for fetching news feed
 
@@ -233,10 +240,10 @@ func GetAllUsernames() ([]model.UserModel, error) {
 }
 
 func UpdateUserFields(id string, fields []*model.VreelFields) error {
-	userFields := []string{"first_name", "last_name", "email", "prefix",
+	userFields := []string{"first_name", "last_name", "email", "prefix", "website",
 		"suffix", "work_phone", "cell_phone", "home_phone", "job_title", "profile_picture",
 		"company_name", "business_address", "home_address",
-		"landing_page", "middle_initial", "self_portrait_image", "self_landscape_image", "linkedin_url"}
+		"landing_page", "middle_initial", "self_portrait_image", "self_landscape_image", "linkedin_url", "note", "pages_ref", "pages"}
 	var wg sync.WaitGroup
 	var err error
 	// fmt.Printf("input: %s", fields)

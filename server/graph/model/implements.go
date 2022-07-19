@@ -32,6 +32,9 @@ type UserModel struct {
 	Liked              pq.StringArray `gorm:"type:text[]"`
 	LandingPage        string         `json:"landing_page"`
 	LinkedinUrl        string         `json:"linkedin_url"`
+	Note               string         `json:"note"`
+	Pages              pq.StringArray `gorm:"type:text[]"`
+	PagesRef           string         `json:"pagesRef"`
 }
 type GroupModel struct {
 	ID          string         `json:"id"`
@@ -169,6 +172,7 @@ func (c *NewUser) ToDatabaseModel() UserModel {
 		SelfPortraitImage:  "",
 		SelfLandscapeImage: "",
 		LinkedinUrl:        "",
+		Note:               "",
 	}
 
 }
@@ -222,6 +226,8 @@ func (c *UserModel) ToUser() User {
 		Vreel:              &Vreel{},
 		Files:              &Files{},
 		News:               []*Slide{},
+		Note:               c.Note,
+		PagesRef:           &c.PagesRef,
 	}
 }
 
@@ -356,6 +362,7 @@ func (c VreelModel) ToVreel(slides []*Slide) (Vreel, error) {
 		err = gErr
 	}
 	return Vreel{
+		ID:              c.ID,
 		Author:          c.Author,
 		Elements:        &e,
 		PageTitle:       c.PageTitle,
@@ -445,8 +452,9 @@ func (c *SlideModel) ToSlide() Slide {
 	}
 }
 
-func (c *SimpleLinkInput) ToLink() SimpleLink {
+func (c *SimpleLinkInput) ToLink(id string) SimpleLink {
 	return SimpleLink{
+		ID:         id,
 		Position:   c.Position,
 		Thumbnail:  c.Thumbnail,
 		LinkHeader: c.LinkHeader,
@@ -474,6 +482,14 @@ func (c *AddVideoInput) ToVideo() Video {
 		Description: c.Description,
 		Cta1:        (*Cta)(c.Cta1),
 		Cta2:        (*Cta)(c.Cta2),
+	}
+}
+
+func (s *SocialsInput) ToLink() Socials {
+	return Socials{
+		Platform: s.Platform,
+		Username: s.Username,
+		Position: &s.Position,
 	}
 }
 

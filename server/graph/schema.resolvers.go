@@ -64,6 +64,12 @@ func (r *mutationResolver) CreateSlide(ctx context.Context, token string) (*mode
 	return &resp, err
 }
 
+func (r *mutationResolver) RemoveSocialLink(ctx context.Context, token string, platform string, vreelID *string) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeRemoveSocialsLink(token, platform, vreelID)
+
+	return &resp, err
+}
+
 func (r *mutationResolver) DeleteGroup(ctx context.Context, id string, token string) (*model.MutationResponse, error) {
 	resp, err := auth.AuthorizeDeleteGroup(token, id)
 	return &resp, err
@@ -139,7 +145,7 @@ func (r *mutationResolver) LogPageLoad(ctx context.Context, vreelID string) (*mo
 	panic(fmt.Errorf("not implemented"))
 }
 
-func (r *mutationResolver) EditElementPosition(ctx context.Context, token string, element string, position int) (*model.MutationResponse, error) {
+func (r *mutationResolver) EditElementPosition(ctx context.Context, token string, element string, position int, vreelID *string) (*model.MutationResponse, error) {
 	resp, err := auth.AuthorizeEditElementPosition(token, element, position)
 
 	return &resp, err
@@ -150,8 +156,8 @@ func (r *mutationResolver) EditFileName(ctx context.Context, token string, newNa
 	return &resp, err
 }
 
-func (r *mutationResolver) RemoveImageFromVreelGallery(ctx context.Context, token string, imageID string) (*model.MutationResponse, error) {
-	resp, err := auth.AuthorizeRemoveImageFromGallery(token, imageID)
+func (r *mutationResolver) RemoveImageFromVreelGallery(ctx context.Context, token string, imageID string, vreelID *string) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeRemoveImageFromGallery(token, imageID, vreelID)
 
 	return &resp, err
 }
@@ -162,37 +168,37 @@ func (r *mutationResolver) DeleteFile(ctx context.Context, token string, fileID 
 	return &resp, err
 }
 
-func (r *mutationResolver) AddSimpleVreelLink(ctx context.Context, token string, link model.SimpleLinkInput) (*model.MutationResponse, error) {
-	resp, err := auth.AuthorizeAddSimpleLinkToVreel(token, link.ToLink())
+func (r *mutationResolver) AddSimpleVreelLink(ctx context.Context, token string, link model.SimpleLinkInput, vreelID *string) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeAddSimpleLinkToVreel(token, link.ToLink(""), vreelID)
 
 	return &resp, err
 }
 
-func (r *mutationResolver) RemoveSimpleVreelLink(ctx context.Context, token string, linkID string) (*model.MutationResponse, error) {
-	resp, err := auth.AuthorizeRemoveSimpleLinkFromVreel(token, linkID)
+func (r *mutationResolver) RemoveSimpleVreelLink(ctx context.Context, token string, linkID string, vreelID *string) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeRemoveSimpleLinkFromVreel(token, linkID, vreelID)
 
 	return &resp, err
 }
 
-func (r *mutationResolver) AddSuperVreelLink(ctx context.Context, token string, link *model.SuperLinkInput) (*model.MutationResponse, error) {
+func (r *mutationResolver) AddSuperVreelLink(ctx context.Context, token string, link *model.SuperLinkInput, vreelID *string) (*model.MutationResponse, error) {
 	resp, err := auth.AuthorizeAddSuperLinkToVreel(token, link.ToLink())
 
 	return &resp, err
 }
 
-func (r *mutationResolver) AddSocialMediaLink(ctx context.Context, token string, input model.SocialsInput) (*model.MutationResponse, error) {
+func (r *mutationResolver) AddSocialMediaLink(ctx context.Context, token string, input model.SocialsInput, vreelID *string) (*model.MutationResponse, error) {
 	resp, err := auth.AuthorizeAddSocialsLink(token, input)
 
 	return &resp, err
 }
 
-func (r *mutationResolver) AddImageToVreelGallery(ctx context.Context, token string, input model.AddGalleryImageInput) (*model.MutationResponse, error) {
-	resp, err := auth.AuthorizeAddImageToGallery(token, input)
+func (r *mutationResolver) AddImageToVreelGallery(ctx context.Context, token string, input model.AddGalleryImageInput, vreelID *string) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeAddImageToGallery(token, input, vreelID)
 
 	return &resp, err
 }
 
-func (r *mutationResolver) AddContributionLink(ctx context.Context, token string, input model.ContributionsInput) (*model.MutationResponse, error) {
+func (r *mutationResolver) AddContributionLink(ctx context.Context, token string, input model.ContributionsInput, vreelID *string) (*model.MutationResponse, error) {
 	resp, err := auth.AuthorizeAddContributionLinkToVreel(token, input)
 
 	return &resp, err
@@ -204,32 +210,32 @@ func (r *mutationResolver) UpdateVreelLogo(ctx context.Context, token string, ur
 	return &resp, err
 }
 
-func (r *mutationResolver) AddMusicLink(ctx context.Context, token string, input model.MusicInput) (*model.MutationResponse, error) {
+func (r *mutationResolver) AddMusicLink(ctx context.Context, token string, input model.MusicInput, vreelID *string) (*model.MutationResponse, error) {
 	resp, err := auth.AuthorizeAddMusicLinkToVreel(token, input)
 
 	return &resp, err
 }
 
-func (r *mutationResolver) RemoveMusicLink(ctx context.Context, token string, linkID string) (*model.MutationResponse, error) {
+func (r *mutationResolver) RemoveMusicLink(ctx context.Context, token string, linkID string, vreelID *string) (*model.MutationResponse, error) {
 	resp, err := auth.AuthorizeRemoveMusicLinkFromVreel(token, linkID)
 
 	return &resp, err
 }
 
-func (r *mutationResolver) RemoveContributionLink(ctx context.Context, token string, linkID string) (*model.MutationResponse, error) {
+func (r *mutationResolver) RemoveContributionLink(ctx context.Context, token string, linkID string, vreelID *string) (*model.MutationResponse, error) {
 	resp, err := auth.AuthorizeRemoveContributionLinkFromVreel(token, linkID)
 
 	return &resp, err
 }
 
-func (r *mutationResolver) AddVideoToVreel(ctx context.Context, token string, input model.AddVideoInput) (*model.MutationResponse, error) {
-	resp, err := auth.AuthorizeAddVideoToVreel(token, input.ToVideo())
+func (r *mutationResolver) AddVideoToVreel(ctx context.Context, token string, input model.AddVideoInput, vreelID *string) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeAddVideoToVreel(token, input.ToVideo(), vreelID)
 
 	return &resp, err
 }
 
-func (r *mutationResolver) RemoveVideoFromVreel(ctx context.Context, token string, videoID string) (*model.MutationResponse, error) {
-	resp, err := auth.AuthorizeRemoveVideoFromVreel(token, videoID)
+func (r *mutationResolver) RemoveVideoFromVreel(ctx context.Context, token string, videoID string, vreelID *string) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeRemoveVideoFromVreel(token, videoID, vreelID)
 
 	return &resp, err
 }
@@ -240,8 +246,26 @@ func (r *mutationResolver) UpdateSlideLocation(ctx context.Context, token string
 	return &resp, err
 }
 
-func (r *mutationResolver) SetElementIsHidden(ctx context.Context, token string, element string, state bool) (*model.MutationResponse, error) {
+func (r *mutationResolver) SetElementIsHidden(ctx context.Context, token string, element string, state bool, vreelID *string) (*model.MutationResponse, error) {
 	resp, err := auth.AuthorizeUpdateElementVisibility(token, element, state)
+
+	return &resp, err
+}
+
+func (r *mutationResolver) AddPage(ctx context.Context, token string) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeAddPage(token)
+
+	return &resp, err
+}
+
+func (r *mutationResolver) EditSimpleLink(ctx context.Context, token string, linkID string, link model.SimpleLinkInput, vreelID *string) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeEditSimpleLink(token, linkID, link, nil)
+
+	return &resp, err
+}
+
+func (r *mutationResolver) EditSocialsInput(ctx context.Context, token string, platform string, social model.SocialsInput, vreelID *string) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeEditSocialsLink(token, platform, social, vreelID)
 
 	return &resp, err
 }

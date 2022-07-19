@@ -60,55 +60,53 @@ const Sections: React.FC<{ vreel: any; user?: any }> = ({ vreel, user }) => {
       author: "cafbvma23akm6314a11g",
     },
   }; */
-  const name = `${user?.prefix ? user?.prefix + " " : ""}${
-    user?.first_name ? user?.first_name + " " : ""
-  }${user?.middle_initial ? user?.middle_initial + " " : ""}${
-    user?.last_name ? user?.last_name + " " : ""
-  }${user?.suffix ? user?.suffix + " " : ""}`;
+  const name = `${user?.prefix ? user?.prefix + " " : ""}${user?.first_name ? user?.first_name + " " : ""
+    }${user?.middle_initial ? user?.middle_initial + " " : ""}${user?.last_name ? user?.last_name + " " : ""
+    }${user?.suffix ? user?.suffix + " " : ""}`;
   const employeeSlide = employee
     ? {
-        id: user.id,
-        slide_location: 0,
-        content_type: "",
-        uri: "",
-        title: {
-          header: name,
-          description: user?.job_title,
-        },
-        advanced: {
-          header:
-            "We make you look better! Our Web3 interface curates and displays your story amazingly.",
-        },
-        mobile: {
-          start_time: 0,
-          stop_time: 0,
-          background_audio_uri: "",
-          uri: user.selfPortraitImage,
-          content_type: "image",
-        },
-        desktop: {
-          start_time: 0,
-          stop_time: 0,
-          background_audio_uri: "",
-          uri: user.selfLandscapeImage,
-          content_type: "image",
-        },
-        cta1: {
-          link_header: "Add Contact",
-          link_type: "",
-          link_url: `/api/vcard?username=${username}&employee=${employee}`,
-        },
-        cta2: {
-          link_header: "Linkedin",
-          link_type: "",
-          link_url: user.linkedinUrl,
-        },
-        cta3: {
-          link_header: "Share <br/>Contact",
-          link_type: "",
-          link_url: "#",
-        },
-      }
+      id: user.id,
+      slide_location: 0,
+      content_type: "",
+      uri: "",
+      title: {
+        header: name,
+        description: user?.job_title,
+      },
+      advanced: {
+        header:
+          "We make you look better! Our Web3 interface curates and displays your story amazingly.",
+      },
+      mobile: {
+        start_time: 0,
+        stop_time: 0,
+        background_audio_uri: "",
+        uri: user.selfPortraitImage,
+        content_type: "image",
+      },
+      desktop: {
+        start_time: 0,
+        stop_time: 0,
+        background_audio_uri: "",
+        uri: user.selfLandscapeImage,
+        content_type: "image",
+      },
+      cta1: {
+        link_header: "Add Contact",
+        link_type: "",
+        link_url: `/api/vcard?username=${username}&employee=${employee}`,
+      },
+      cta2: {
+        link_header: "Linkedin",
+        link_type: "",
+        link_url: user.linkedinUrl,
+      },
+      cta3: {
+        link_header: "Share <br/>Contact",
+        link_type: "",
+        link_url: "#",
+      },
+    }
     : {};
 
   const { elements, slides: inititalSlide } = vreel;
@@ -174,6 +172,7 @@ const Sections: React.FC<{ vreel: any; user?: any }> = ({ vreel, user }) => {
       }}
     >
       {sections.map((sec: any, index: number) => {
+        console.log(sec)
         // console.log({ sec, 0: sec[0], 1: sec[1] });
 
         switch (sec[0]) {
@@ -214,9 +213,10 @@ const Sections: React.FC<{ vreel: any; user?: any }> = ({ vreel, user }) => {
             return (
               <SwiperSlide key={index}>
                 {index == currentSlide && (
+
                   <MainContainer>
                     <GallerySlider
-                      title="Image Gallery"
+                      title={sec[1].header || "Gallery"}
                       items={sec[1].images}
                       parentSwiper={swiper}
                     />

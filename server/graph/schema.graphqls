@@ -54,6 +54,7 @@ type User {
   first_name: String!
   last_name: String!
   middle_initial: String!
+  pagesRef: String
   prefix: String!
   suffix: String!
   email: String!
@@ -70,6 +71,8 @@ type User {
   vreel: Vreel!
   files: Files!
   news: [Slide]
+  note: String!
+  pages: [Vreel!]!
 }
 
 type Enterprise {
@@ -318,6 +321,7 @@ type VreelElements {
   contributions: ContributionsElement
 }
 type Vreel {
+  id: String!
   author: String!
   logo_uri: String
   page_title: String!
@@ -513,7 +517,11 @@ type Mutation {
   ): ResolvedPasswordReset!
   createGroup(input: NewGroup): Group!
   createSlide(token: String!): Slide!
-
+  removeSocialLink(
+    token: String!
+    platform: String!
+    vreelId: String
+  ): MutationResponse!
   deleteGroup(id: String!, token: String!): MutationResponse!
   addUserToGroup(
     token: String!
@@ -544,6 +552,7 @@ type Mutation {
     token: String!
     element: String!
     position: Int!
+    vreelId: String
   ): MutationResponse!
   editFileName(
     token: String!
@@ -553,30 +562,87 @@ type Mutation {
   removeImageFromVreelGallery(
     token: String!
     imageId: String!
+    vreelId: String
   ): MutationResponse!
   deleteFile(token: String!, fileId: String!): MutationResponse!
-  addSimpleVreelLink(token: String!, link: SimpleLinkInput!): MutationResponse!
-  removeSimpleVreelLink(token: String!, linkId: String!): MutationResponse!
-  addSuperVreelLink(token: String!, link: SuperLinkInput): MutationResponse!
-  addSocialMediaLink(token: String!, input: SocialsInput!): MutationResponse!
+  addSimpleVreelLink(
+    token: String!
+    link: SimpleLinkInput!
+    vreelId: String
+  ): MutationResponse!
+  removeSimpleVreelLink(
+    token: String!
+    linkId: String!
+    vreelId: String
+  ): MutationResponse!
+  addSuperVreelLink(
+    token: String!
+    link: SuperLinkInput
+    vreelId: String
+  ): MutationResponse!
+  addSocialMediaLink(
+    token: String!
+    input: SocialsInput!
+    vreelId: String
+  ): MutationResponse!
   addImageToVreelGallery(
     token: String!
     input: AddGalleryImageInput!
+    vreelId: String
   ): MutationResponse!
   addContributionLink(
     token: String!
     input: ContributionsInput!
+    vreelId: String
   ): MutationResponse!
   updateVreelLogo(token: String!, uri: String!): MutationResponse!
-  addMusicLink(token: String!, input: MusicInput!): MutationResponse!
-  removeMusicLink(token: String!, linkId: String!): MutationResponse
-  removeContributionLink(token: String!, linkId: String!): MutationResponse!
-  addVideoToVreel(token: String!, input: AddVideoInput!): MutationResponse!
-  removeVideoFromVreel(token: String!, videoId: String!): MutationResponse!
+  addMusicLink(
+    token: String!
+    input: MusicInput!
+    vreelId: String
+  ): MutationResponse!
+  removeMusicLink(
+    token: String!
+    linkId: String!
+    vreelId: String
+  ): MutationResponse
+  removeContributionLink(
+    token: String!
+    linkId: String!
+    vreelId: String
+  ): MutationResponse!
+  addVideoToVreel(
+    token: String!
+    input: AddVideoInput!
+    vreelId: String
+  ): MutationResponse!
+  removeVideoFromVreel(
+    token: String!
+    videoId: String!
+    vreelId: String
+  ): MutationResponse!
   updateSlideLocation(
     token: String!
     slideId: String
     location: Int!
   ): MutationResponse!
-  setElementIsHidden(token: String!, element: String!, state: Boolean!): MutationResponse!
+  setElementIsHidden(
+    token: String!
+    element: String!
+    state: Boolean!
+    vreelId: String
+  ): MutationResponse!
+  addPage(token: String!): MutationResponse!
+  editSimpleLink(
+    token: String!
+    linkId: String!
+    link: SimpleLinkInput!
+    vreelId: String
+  ): MutationResponse!
+  editSocialsInput(
+    token: String!
+    platform: String!
+    social: SocialsInput!
+    vreelId: String
+  ): MutationResponse!
 }

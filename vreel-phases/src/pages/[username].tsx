@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useQuery } from "@apollo/client";
@@ -20,6 +20,10 @@ const userPage = () => {
     },
     fetchPolicy: "cache-and-network",
   });
+
+  useEffect(() => {
+    console.log(data?.username?.vreel)
+  }, [data])
   // console.log({ data, username });
   if (loading || error) return <Loader />;
   console.log(error);
@@ -32,6 +36,8 @@ const userPage = () => {
   } else {
     dispatch(setVreel(data?.username?.vreel));
   }
+
+
 
   return (
     <div>

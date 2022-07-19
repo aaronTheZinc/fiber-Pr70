@@ -435,6 +435,7 @@ type User struct {
 	FirstName          string    `json:"first_name"`
 	LastName           string    `json:"last_name"`
 	MiddleInitial      string    `json:"middle_initial"`
+	PagesRef           *string   `json:"pagesRef"`
 	Prefix             string    `json:"prefix"`
 	Suffix             string    `json:"suffix"`
 	Email              string    `json:"email"`
@@ -451,6 +452,8 @@ type User struct {
 	Vreel              *Vreel    `json:"vreel"`
 	Files              *Files    `json:"files"`
 	News               []*Slide  `json:"news"`
+	Note               string    `json:"note"`
+	Pages              []*Vreel  `json:"pages"`
 }
 
 type Video struct {
@@ -472,6 +475,7 @@ type Videos struct {
 }
 
 type Vreel struct {
+	ID              string         `json:"id"`
 	Author          string         `json:"author"`
 	LogoURI         *string        `json:"logo_uri"`
 	PageTitle       string         `json:"page_title"`

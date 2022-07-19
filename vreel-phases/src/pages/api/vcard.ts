@@ -24,6 +24,7 @@ query User($username: String!) {
     website
     landing_page
     job_title
+    note
   }
 }
   `;
@@ -51,6 +52,7 @@ query enterprise($enterpriseName: String!,$employeeId:String!) {
       website
       landing_page
       job_title
+      note
     }
   }}
 `;

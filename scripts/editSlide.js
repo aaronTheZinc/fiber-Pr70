@@ -1,51 +1,42 @@
 
 const { request, gql, GraphQLClient } = require('graphql-request');
 const endpoint = 'https://staging.vreel.page/graphql'
-const slide = {
-    slide_location: 0,
-    title: {
-        header: "Avangard Innovative",
-        description: "Think Circular",
+const slide =  {
+    "slide_location": 0,
+    "title": {
+      "header": "VREEL, Co-Founders",
+      "description": "Donta' Bell (CEO), Alisha Bell, JeVon Bell (CMO), Jaden Bell (COO), Jared Bell"
     },
-    cta1: {
-        link_header: "WATCH FULL VIDEO",
-        link_type: "url",
-        link_url: "https://www.avaicg.com/",
+    "cta1": {
+      "link_url": "https://vreel.page",
+      "link_type": "url",
+      "link_header": "Learn More"
     },
-    // cta2: {
-    //     link_header: "",
-    //     link_type: "",
-    //     link_url: "",
-    // },
-    advanced: {
-        info: {
-            title: "",
-            descripton: "",
-            collaborators: [],
-            credits: []
-        },
-        link_type: "",
-        link_url: "",
+    "cta2": {
+      "link_url": "",
+      "link_type": "",
+      "link_header": ""
     },
-    mobile: {
-        background_audio_uri: "",
-        content_type: "video/mp4",
-        uri: "https://staging.vreel.page/files/c7a8583752d2c27c0376ccbad08dc886",
+    "mobile": {
+      "content_type": "image/jpeg",
+      "background_audio_uri": "",
+      "uri": "https://staging.vreel.page/files/015413124e778f79960cdeb46854e5d8"
     },
-    desktop: {
-        background_audio_uri: "",
-        content_type: "video/mp4",
-        uri: "https://staging.vreel.page/files/c7a8583752d2c27c0376ccbad08dc886",
-    },
-}
+    "desktop": {
+      "content_type": "image/jpeg",
+      "background_audio_uri": "",
+      "uri": "https://staging.vreel.page/files/e66d1b19bfe538f0e7dd19151aa3d142"
+    }
+  }
+
 const client = new GraphQLClient(endpoint, {
     headers: {
         authorization: 'Bearer MY_TOKEN',
     },
 })
 
-const slideId = "cajag5223aktcaat7b20"
-const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNhZmIwb3EyM2FrajlnNHFrMTlnIiwiYWNjb3VudF90eXBlIjoiZW50ZXJwcmlzZSIsImV4cCI6MTY1NjY5NjA5OH0.StK2yvXIAl5WPV6gD5G0g8KmAM7YSS7hhinB6d-CKmg"
+const slideId = "cb7jj0223akrshkitkvg"
+const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNiN2pqMDIyM2FrcnNoa2l0a3YwIiwiYWNjb3VudF90eXBlIjoiZW50ZXJwcmlzZSIsImV4cCI6MTY1ODM1NjgzNX0.kNU6Bb8U_avBdKTzbnmIUyKSoysPaHN8YXbsPwC9jH0"
 const data = JSON.stringify(slide)
 
 const MUTATATION = gql`

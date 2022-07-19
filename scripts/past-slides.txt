@@ -1,0 +1,42 @@
+onst slide = {
+    slide_location: 0,
+    title: {
+        header: "Vreel",
+        description: "Co-Founders",
+    },
+    // cta1: {
+    //     link_header: "WATCH FULL VIDEO",
+    //     link_type: "url",
+    //     link_url: "https://www.avaicg.com/",
+    // },
+    // cta2: {
+    //     link_header: "",
+    //     link_type: "",
+    //     link_url: "",
+    // },
+    advanced: {
+        info: {
+            title: "",
+            descripton: "",
+            collaborators: [],
+            credits: []
+        },
+        link_type: "",
+        link_url: "",
+    },
+    mobile: {
+        background_audio_uri: "",
+        content_type: "image/jpeg",
+        uri: "https://staging.vreel.page/files/015413124e778f79960cdeb46854e5d8",
+    },
+    desktop: {
+        background_audio_uri: "",
+        content_type: "image/jpeg",
+        uri: "https://staging.vreel.page/files/e66d1b19bfe538f0e7dd19151aa3d142",
+    },
+}
+const client = new GraphQLClient(endpoint, {
+    headers: {
+        authorization: 'Bearer MY_TOKEN',
+    },
+})

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"log"
+	"sync"
 	"time"
 
 	e "github.com/vreel/app/err"
@@ -11,21 +12,153 @@ import (
 	"github.com/vreel/app/utils"
 )
 
+type VreelContainer struct {
+	M     *sync.Mutex
+	Vreel model.VreelModel
+}
+
+type VreelLockStruct struct {
+	cache map[string]VreelContainer
+}
+
+var VreelEditLock = VreelLockStruct{
+	cache: make(map[string]VreelContainer),
+}
+
+func (lock *VreelLockStruct) GetVreel(id string) (model.VreelModel, bool) {
+	// var vreel model.VreelModel
+	val, ok := lock.cache[id]
+
+	return val.Vreel, ok
+}
+
+func (lock *VreelLockStruct) SaveVreel(id string, v model.VreelModel) {
+	//kill cached data in one minute after creation
+	defer time.AfterFunc(time.Second*15, func() {
+		delete(lock.cache, id)
+	})
+
+	mutex := lock.cache[id].M
+	if mutex == nil {
+		mutex = &sync.Mutex{}
+	}
+	lock.cache[id] = VreelContainer{
+		M:     mutex,
+		Vreel: v,
+	}
+
+}
+
+//Handle Updating Elements
+func (lock *VreelLockStruct) EditVreelElements(id string, exec func(model.VreelElements) (string, error)) error {
+	// var err error
+	defer func() {
+		mutex, ok := lock.cache[id]
+		if ok {
+			mutex.M.Unlock()
+		}
+	}()
+
+	vreel, ok := lock.GetVreel(id)
+	if !ok {
+		gErr := db.Where("id = ?", id).First(&vreel).Error
+		if gErr == nil {
+			lock.SaveVreel(id, vreel)
+		} else {
+			// err = gErr
+		}
+
+	}
+
+	lock.cache[id].M.Lock()
+	log.Println("locked mutex")
+	elements := model.VreelElements{}
+	json.Unmarshal([]byte(vreel.Elements), &elements)
+	elStr, modifyErr := exec(elements)
+	if modifyErr != nil {
+		return modifyErr
+	}
+	updateErr := db.Model(model.VreelModel{}).Where("id = ?", id).Update("elements", elStr).Error
+	if updateErr != nil {
+		return updateErr
+	}
+
+	vreel.Elements = elStr
+
+	lock.SaveVreel(id, vreel)
+	return nil
+}
+
+func EditSocialLinks(vreelId, platform string, social model.Socials) error {
+	editErr := VreelEditLock.EditVreelElements(vreelId, func(elements model.VreelElements) (string, error) {
+		var err error
+		socials := elements.Socials.Socials
+		wasFound := false
+		for idx, s := range socials {
+			if s.Platform == platform {
+				wasFound = true
+				socials[idx] = &social
+			}
+		}
+		if !wasFound {
+			err = e.SOCIALSLINK_NOT_FOUND
+		}
+
+		elements.Socials.Socials = socials
+
+		str, marshalErr := json.Marshal(elements)
+		if marshalErr != nil {
+			err = marshalErr
+		}
+		return string(str), err
+	})
+	return editErr
+}
+
+func EditSimpleLink(vreelId string, linkId string, newLink model.SimpleLink) error {
+
+	editErr := VreelEditLock.EditVreelElements(vreelId, func(elements model.VreelElements) (string, error) {
+		var err error
+		simpleLinks := elements.SimpleLinks.Links
+		wasFound := false
+		for idx, link := range simpleLinks {
+			if link.ID == linkId {
+				simpleLinks[idx] = &newLink
+				wasFound = true
+				println(link)
+			}
+		}
+		println("in callback!")
+		if !wasFound {
+			err = e.SIMPLELINK_NOT_FOUND
+		}
+		elements.SimpleLinks.Links = simpleLinks
+		str, marshalErr := json.Marshal(elements)
+		if marshalErr != nil {
+			err = e.FAILED_TO_SAVE
+		}
+		return string(str), err
+	})
+
+	return editErr
+}
+
+func CreateVreelFromModel(vreel model.VreelModel) error {
+	return db.Create(&vreel).Error
+}
+
 //creates  when new account is created
 func CreateNewVreel(author string) error {
 	log.Println("[vreel] created")
 	var err error
 	buttonUri := "https://vreel.page"
-	e, gErr := utils.GetDefaultElementsString()
+	e := utils.GetDefaultElementsString()
 	vreel := model.VreelModel{
 		ID:        author,
 		Author:    author,
 		PageTitle: "Your Vreel",
 		ButtonURI: &buttonUri,
 		Elements:  e,
-	}
-	if gErr != nil {
-		err = errors.New("failed to create vreel")
 	}
 	cErr := db.Create(&vreel).Error
 
@@ -35,6 +168,26 @@ func CreateNewVreel(author string) error {
 
 	return err
 
+}
+
+func GetVreels(ids []string) *[]*model.Vreel {
+	wg := sync.WaitGroup{}
+	var vreels []*model.Vreel = []*model.Vreel{}
+	for _, id := range ids {
+		o := id
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			vreel, err := GetVreel(o)
+			if err == nil {
+				vreels = append(vreels, &vreel)
+			}
+		}()
+	}
+
+	wg.Wait()
+
+	return &vreels
 }
 
 func GetVreel(id string) (model.Vreel, error) {
@@ -593,7 +746,7 @@ func RemoveMusicLink(vreelId, musicLinkId string) error {
 }
 
 func ResetUserEmployee(vreelId string) error {
-	elements, _ := utils.GetDefaultElementsString()
+	elements := utils.GetDefaultElementsString()
 	updateErr := db.Model(model.VreelModel{}).Where("id = ?", vreelId).Update("elements", elements).Error
 
 	return updateErr
@@ -715,4 +868,48 @@ func SetElementIsHidden(vreelId string, element string, state bool) error {
 
 	return err
 
+}
+
+func RemoveSocialLink(vreelId, platform string) error {
+	var err error
+	var vreel model.VreelModel
+	var elements model.VreelElements
+
+	if fetchErr := db.Where("id = ?", vreelId).First(&vreel).Error; fetchErr != nil {
+		err = e.VREEL_NOT_FOUND
+	} else {
+		parseErr := json.Unmarshal([]byte(vreel.Elements), &elements)
+		if parseErr != nil {
+			err = parseErr
+			return err
+		}
+		socials := elements.Socials.Socials
+		linkWasFound := false
+
+		for idx, link := range socials {
+			if link.Platform == platform {
+				socials = append(socials[:idx], socials[idx+1:]...)
+				linkWasFound = true
+				break
+			}
+		}
+		if !linkWasFound {
+			err = errors.New("platform:  " + platform + " not found.")
+		} else {
+			elements.Socials.Socials = socials
+			v, marshalErr := json.Marshal(&elements)
+
+			if marshalErr != nil {
+				err = marshalErr
+				return err
+			}
+			updateErr := db.Model(model.VreelModel{}).Where("id = ?", vreelId).Update("elements", string(v)).Error
+
+			if updateErr != nil {
+				err = updateErr
+			}
+		}
+	}
+
+	return err
 }
