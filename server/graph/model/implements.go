@@ -19,6 +19,7 @@ type UserModel struct {
 	FirstName          string         `json:"first_name"`
 	LastName           string         `json:"last_name"`
 	Email              string         `json:"email"`
+	VEmail             string         `json:"v_email"`
 	HomePhone          string         `json:"home_phone"`
 	CellPhone          string         `json:"cell_number"`
 	WorkPhone          string         `json:"work_number"`
@@ -154,6 +155,7 @@ func (c *NewUser) ToDatabaseModel() UserModel {
 		Username:           c.Username,
 		FirstName:          "",
 		LastName:           "",
+		VEmail:             c.Email,
 		Email:              c.Email,
 		Password:           *c.Password,
 		AccountType:        c.AccountType,
@@ -197,6 +199,7 @@ func (c *UserModel) ToUser() User {
 	}
 	return User{
 		ID:                 c.ID,
+		VEmail:             &c.VEmail,
 		AccountType:        c.AccountType,
 		Liked:              liked,
 		CompanyName:        c.CompanyName,

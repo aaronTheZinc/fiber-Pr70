@@ -426,6 +426,7 @@ type ComplexityRoot struct {
 		Suffix             func(childComplexity int) int
 		Title              func(childComplexity int) int
 		Username           func(childComplexity int) int
+		VEmail             func(childComplexity int) int
 		Vreel              func(childComplexity int) int
 		Website            func(childComplexity int) int
 		WorkPhone          func(childComplexity int) int
@@ -2694,6 +2695,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.User.Username(childComplexity), true
 
+	case "User.v_email":
+		if e.complexity.User.VEmail == nil {
+			break
+		}
+
+		return e.complexity.User.VEmail(childComplexity), true
+
 	case "User.vreel":
 		if e.complexity.User.Vreel == nil {
 			break
@@ -3063,6 +3071,7 @@ type User {
   prefix: String!
   suffix: String!
   email: String!
+  v_email: String
   home_phone: String!
   cell_phone: String!
   work_phone: String!
@@ -14345,6 +14354,38 @@ func (ec *executionContext) _User_email(ctx context.Context, field graphql.Colle
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _User_v_email(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.VEmail, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _User_home_phone(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -20157,6 +20198,8 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "v_email":
+			out.Values[i] = ec._User_v_email(ctx, field, obj)
 		case "home_phone":
 			out.Values[i] = ec._User_home_phone(ctx, field, obj)
 			if out.Values[i] == graphql.Null {

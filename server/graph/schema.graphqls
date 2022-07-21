@@ -58,6 +58,7 @@ type User {
   prefix: String!
   suffix: String!
   email: String!
+  v_email: String
   home_phone: String!
   cell_phone: String!
   work_phone: String!

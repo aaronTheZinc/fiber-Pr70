@@ -439,6 +439,7 @@ type User struct {
 	Prefix             string    `json:"prefix"`
 	Suffix             string    `json:"suffix"`
 	Email              string    `json:"email"`
+	VEmail             *string   `json:"v_email"`
 	HomePhone          string    `json:"home_phone"`
 	CellPhone          string    `json:"cell_phone"`
 	WorkPhone          string    `json:"work_phone"`
