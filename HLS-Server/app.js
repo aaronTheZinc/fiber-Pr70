@@ -1,25 +1,54 @@
-const app = require("express")();
+const express = require("express")
 const multer = require("multer");
-const path = require("path")
+const hls = require("hls-server")
+const path = require("path");
+const { TranscodeVideo } = require("./server/transcode");
 const storage = multer.diskStorage({
     destination: `${__dirname}/uploads`,
     filename: (req, file, cb) => {
-        const nameSections = file.filename.split()
-        const isImage = nameSections[nameSections.length -1].includes('image');
+
+        // console.log(req)
+        // const nameSections = file.filename.split()
+        // const isImage = nameSections[nameSections.length - 1].includes('image');
 
         cb(null, `${Date.now()}${path.extname(file.originalname)}`)
     }
 })
 
-const uploadMedia = multer({ storage }).single("media")
+const app = express();
+
+const uploadMedia = multer({ storage }).single("content")
+
+app.use(express.static('dist'))
+
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname + '/dist/index.html'))
+})
 
 app.post('/upload', uploadMedia, (req, res) => {
-    if(req.file) return res.json({msg: "uploaded!"});
-
+    console.log(req.file.filename)
+    if (req.file) {
+        const fileType = req.body.type
+        const fileName = req.file.filename
+        console.log('[fileType]', fileType)
+        const isVideo = fileType.includes("video")
+        console.log(isVideo === "video/mp4")
+        if (isVideo) {
+            const dir = `${__dirname}/uploads/${fileName}`
+            try {
+                TranscodeVideo({ fileDir: dir, username: 'aaron' })
+            } catch (e) {
+                console.log(e.message)
+            }
+        }
+        return res.json({ msg: "uploaded!" });
+    }
     res.json({
         err: 'failed upload'
     })
-})
+});
+
+app.listen(9000, () => console.log('[hls server started]'))
 
 new hls(app, {
     provider: {
