@@ -74,11 +74,18 @@ app.post("/upload", uploadMedia, (req: Request, res: Response) => {
     console.log(isVideo === "video/mp4");
     if (isVideo) {
       const dir = `${rootDir}/uploads/${fileName}`;
+      //stop uppy from timing out (25 seconds)
+      const responseTimeout = setTimeout(() => {
+        res.json({
+          msg: "[currently transcoding]",
+        });
+      }, 25000);
       try {
         transcodeVideo({
           fileDir: dir,
           username: res.locals["username"],
           cb: (response) => {
+            clearTimeout(responseTimeout);
             console.log("[transcoding completed]", response);
             console.log(response);
             res.json(response);
