@@ -7,7 +7,8 @@ import cors from "cors";
 import { transcodeVideo } from "./lib/transcode";
 import { findRootDir } from "./utils/dir";
 import { authorizeToken } from "./client/auth";
-
+import * as dotenv from "dotenv";
+dotenv.config();
 export const rootDir = findRootDir(__dirname);
 console.log(rootDir);
 
