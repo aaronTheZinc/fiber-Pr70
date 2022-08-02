@@ -1,5 +1,5 @@
 export type AuthResponse = {
   id: string;
   username: string;
-  authorized: boolean;
+  is_authorized: boolean;
 };

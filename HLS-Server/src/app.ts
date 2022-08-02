@@ -35,8 +35,8 @@ app.use("/", async (req: Request, res: Response, next: NextFunction) => {
   if (req.path === "/upload") {
     const token = req.headers["token"]?.toString();
     try {
-      const { authorized, username } = await authorizeToken(token);
-      if (!authorized) {
+      const { is_authorized, username } = await authorizeToken(token);
+      if (!is_authorized) {
         res.status(401).json({ err: "user unauthorized" });
         return;
       } else {
@@ -66,7 +66,6 @@ app.get("/view", (req: Request, res: Response) => {
 });
 
 app.post("/upload", uploadMedia, (req: Request, res: Response) => {
-  console.log(res.locals);
   if (req.file) {
     const fileType = req.body.type;
     const fileName = req.file.filename;
@@ -78,7 +77,7 @@ app.post("/upload", uploadMedia, (req: Request, res: Response) => {
       try {
         transcodeVideo({
           fileDir: dir,
-          username: "aaron",
+          username: res.locals["username"],
           cb: (response) => {
             console.log("[transcoding completed]", response);
             console.log(response);
