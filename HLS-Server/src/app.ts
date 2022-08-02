@@ -35,14 +35,18 @@ app.use("/", async (req: Request, res: Response, next: NextFunction) => {
     const token = req.headers["token"]?.toString();
     try {
       const { authorized, username } = await authorizeToken(token);
-      if (!authorized) res.status(401).json({ err: "user unauthorized" });
-      res.locals.username = username;
+      if (!authorized) {
+        res.status(401).json({ err: "user unauthorized" });
+        return;
+      } else {
+        res.locals.username = username;
+        next();
+      }
     } catch (e) {
       res.status(500).json({
         err: "Internal Server Error While Authorizing",
       });
     }
-    next();
   } else {
     next();
   }
