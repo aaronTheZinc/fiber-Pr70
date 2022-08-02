@@ -2,8 +2,9 @@ const Uppy = require("@uppy/core");
 const Dashboard = require("@uppy/dashboard");
 const XHRUpload = require("@uppy/xhr-upload");
 const WebCam = require("@uppy/webcam");
-
 const video = document.getElementById("video");
+
+const token = prompt("token");
 
 const uppy = new Uppy()
   .use(Dashboard, {
@@ -14,6 +15,9 @@ const uppy = new Uppy()
     endpoint: "/upload",
     fieldName: "content",
     formData: true,
+    headers: {
+      token,
+    },
   });
 
 uppy.on("upload-success", (file, response) => {
