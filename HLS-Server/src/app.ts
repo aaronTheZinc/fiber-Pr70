@@ -1,13 +1,14 @@
+import "reflect-metadata"
 import express, { NextFunction, Request, Response } from "express";
 import multer from "multer";
-import hls from "hls-server";
 import path from "path";
-import fs from "fs";
 import cors from "cors";
 import { transcodeVideo } from "./lib/transcode";
 import { findRootDir } from "./utils/dir";
 import { authorizeToken } from "./client/auth";
+
 import * as dotenv from "dotenv";
+import { AppDataSource } from "./db";
 dotenv.config();
 export const rootDir = findRootDir(__dirname);
 console.log(rootDir);
@@ -20,7 +21,7 @@ const storage = multer.diskStorage({
 });
 
 const app = express();
-
+app.use(express.json())
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header(
@@ -30,12 +31,20 @@ app.use(function (req, res, next) {
   next();
 });
 
+app.use(express.static(rootDir));
+
+
 app.use("/", async (req: Request, res: Response, next: NextFunction) => {
   console.log(req.path);
   if (req.path === "/upload") {
     const token = req.headers["token"]?.toString();
+    if (!token) {
+      res.status(401).json({
+        err: "token is required"
+      })
+    }
     try {
-      const { is_authorized, username } = await authorizeToken(token);
+      const { is_authorized, username } = await authorizeToken(token!);
       if (!is_authorized) {
         res.status(401).json({ err: "user unauthorized" });
         return;
@@ -98,32 +107,41 @@ app.post("/upload", uploadMedia, (req: Request, res: Response) => {
   }
 });
 
-const server = app.listen(9000, () => console.log("[hls server started]"));
+const server = app.listen(9000, async () => {
+  AppDataSource.initialize()
+    .then(done => console.log('[database started]'))
+    .catch(err => {
+      console.log(err)
+      throw new Error("[database failed to start]")
+    });
 
-new hls(server, {
-  provider: {
-    exists: (req, cb) => {
-      const ext = req.url.split(".").pop();
-
-      if (ext !== "m3u8" && ext !== "ts") {
-        return cb(null, true);
-      }
-
-      fs.access(rootDir + req.url, fs.constants.F_OK, function (err) {
-        if (err) {
-          console.log("File not exist");
-          return cb(null, false);
-        }
-        cb(null, true);
-      });
-    },
-    getManifestStream: (req, cb) => {
-      const stream = fs.createReadStream(rootDir + req.url);
-      cb(null, stream);
-    },
-    getSegmentStream: (req, cb) => {
-      const stream = fs.createReadStream(rootDir + req.url);
-      cb(null, stream);
-    },
-  },
+  console.log('[HLS Server Started]')
 });
+
+// new hls(server, {
+//   provider: {
+//     exists: (req, cb) => {
+//       const ext = req.url.split(".").pop();
+
+//       if (ext !== "m3u8" && ext !== "ts") {
+//         return cb(null, true);
+//       }
+
+//       fs.access(rootDir + req.url, fs.constants.F_OK, function (err) {
+//         if (err) {
+//           console.log("File not exist");
+//           return cb(null, false);
+//         }
+//         cb(null, true);
+//       });
+//     },
+//     getManifestStream: (req, cb) => {
+//       const stream = fs.createReadStream(rootDir + req.url);
+//       cb(null, stream);
+//     },
+//     getSegmentStream: (req, cb) => {
+//       const stream = fs.createReadStream(rootDir + req.url);
+//       cb(null, stream);
+//     },
+//   },
+// });

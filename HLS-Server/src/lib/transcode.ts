@@ -5,7 +5,7 @@ import { rootDir } from "../app";
 type TranscodeVideoRequest = {
   fileDir: string;
   username: string;
-  cb: (r: { error?: Error; urlExt: string }) => void;
+  cb: (r: { error?: Error; urlExt: string | null }) => void;
 };
 
 export const transcodeVideo = ({
