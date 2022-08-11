@@ -353,6 +353,8 @@ type Slide struct {
 	ID            string         `json:"id"`
 	Author        string         `json:"author"`
 	ContentType   string         `json:"content_type"`
+	LogoURI       *string        `json:"logo_uri"`
+	LogoVisible   *bool          `json:"logo_visible"`
 	URI           string         `json:"uri"`
 	SlideLocation int            `json:"slide_location"`
 	Title         *Title         `json:"title"`

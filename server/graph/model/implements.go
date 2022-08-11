@@ -79,6 +79,8 @@ type VreelModel struct {
 type SlideModel struct {
 	ID            string `json:"id"`
 	ContentType   string `json:"content_type"`
+	LogoURI       string `json:"logo_uri"`
+	LogoVisible   bool   `jsonc:"logo_visible"`
 	Author        string `json:"author"`
 	URI           string `json:"uri"`
 	SlideLocation int    `json:"slide_location"`
@@ -441,6 +443,8 @@ func (c *SlideModel) ToSlide() Slide {
 	return Slide{
 		ID:            c.ID,
 		URI:           c.URI,
+		LogoURI:       &c.LogoURI,
+		LogoVisible:   &c.LogoVisible,
 		Author:        c.Author,
 		SlideLocation: c.SlideLocation,
 		ContentType:   c.ContentType,

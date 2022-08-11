@@ -348,6 +348,8 @@ type ComplexityRoot struct {
 		Desktop       func(childComplexity int) int
 		ID            func(childComplexity int) int
 		Info          func(childComplexity int) int
+		LogoURI       func(childComplexity int) int
+		LogoVisible   func(childComplexity int) int
 		Metadata      func(childComplexity int) int
 		Mobile        func(childComplexity int) int
 		SlideLocation func(childComplexity int) int
@@ -2296,6 +2298,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Slide.Info(childComplexity), true
 
+	case "Slide.logo_uri":
+		if e.complexity.Slide.LogoURI == nil {
+			break
+		}
+
+		return e.complexity.Slide.LogoURI(childComplexity), true
+
+	case "Slide.logo_visible":
+		if e.complexity.Slide.LogoVisible == nil {
+			break
+		}
+
+		return e.complexity.Slide.LogoVisible(childComplexity), true
+
 	case "Slide.metadata":
 		if e.complexity.Slide.Metadata == nil {
 			break
@@ -3180,6 +3196,8 @@ type Slide {
   id: String!
   author: String!
   content_type: String!
+  logo_uri: String
+  logo_visible: Boolean
   uri: String!
   slide_location: Int!
   title: Title!
@@ -12634,6 +12652,70 @@ func (ec *executionContext) _Slide_content_type(ctx context.Context, field graph
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Slide_logo_uri(ctx context.Context, field graphql.CollectedField, obj *model.Slide) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Slide",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LogoURI, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Slide_logo_visible(ctx context.Context, field graphql.CollectedField, obj *model.Slide) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Slide",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LogoVisible, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*bool)
+	fc.Result = res
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Slide_uri(ctx context.Context, field graphql.CollectedField, obj *model.Slide) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -19824,6 +19906,10 @@ func (ec *executionContext) _Slide(ctx context.Context, sel ast.SelectionSet, ob
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "logo_uri":
+			out.Values[i] = ec._Slide_logo_uri(ctx, field, obj)
+		case "logo_visible":
+			out.Values[i] = ec._Slide_logo_visible(ctx, field, obj)
 		case "uri":
 			out.Values[i] = ec._Slide_uri(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
