@@ -327,6 +327,8 @@ func (c *Slide) ToDatabaseModel() SlideModel {
 		Mobile:        string(m_cotent),
 		Desktop:       string(d_content),
 		MoreInfo:      string(more_info),
+		LogoURI:       *c.LogoURI,
+		LogoVisible:   *c.LogoVisible,
 		// Metadata:      *c.Metadata,
 	}
 }
@@ -414,6 +416,7 @@ func CreateNewSlideModel(position int) SlideModel {
 		ContentType:   "",
 		SlideLocation: position,
 		URI:           "",
+		LogoVisible:   true,
 		CTA1:          string(cta),
 		CTA2:          string(cta),
 		Title:         string(title),
