@@ -11,6 +11,12 @@ import (
 	"github.com/vreel/app/utils"
 )
 
+func EditSlide(slideId string, slide *model.SlideInput) {
+
+	// err := db.Model(model.SlideModel{}).Where("id = ?", slideId).Update(slide.ToDatabaseModel()).Error
+
+}
+
 func CreateSlide(author string) (model.Slide, error) {
 	var err error
 	var _slide model.SlideModel

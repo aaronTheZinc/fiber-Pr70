@@ -367,6 +367,13 @@ type Slide struct {
 	Info          *MoreInfo      `json:"info"`
 }
 
+type SlideInput struct {
+	SlideLocation *int        `json:"slide_location"`
+	Title         *TitleInput `json:"title"`
+	Mobile        *CTAInput   `json:"mobile"`
+	Desktop       *CTAInput   `json:"desktop"`
+}
+
 type SlideMetaData struct {
 	Created string `json:"created"`
 	Size    string `json:"size"`
@@ -420,6 +427,11 @@ type TextArea struct {
 type Title struct {
 	Header      string `json:"header"`
 	Description string `json:"description"`
+}
+
+type TitleInput struct {
+	Header      *string `json:"header"`
+	Description *string `json:"description"`
 }
 
 type User struct {

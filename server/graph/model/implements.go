@@ -300,6 +300,17 @@ func (c *UserModel) ToUser() User {
 	}
 }
 
+// func(c *SlideInput) ToDatabaseModel() SlideModel {
+// 	var title string = nil
+// 	if c.Title != nil {
+// 		r, _ := json.Marshal(c.Title)
+// 		title =
+// 	}
+// 	return SlideModel{
+
+// 	}
+// }
+
 func (c *Group) ToDatabaseModel() GroupModel {
 	return GroupModel{
 		ID:          c.ID,
@@ -378,6 +389,14 @@ func (c *Slide) ToDatabaseModel() SlideModel {
 	m_cotent, _ := json.Marshal(c.Mobile)
 	d_content, _ := json.Marshal(c.Desktop)
 	more_info, _ := json.Marshal(c.Info)
+	if c.LogoURI == nil {
+		str := ""
+		c.LogoURI = &str
+	}
+	if c.LogoVisible == nil {
+		b := true
+		c.LogoVisible = &b
+	}
 	return SlideModel{
 		ID:            c.ID,
 		Author:        c.Author,

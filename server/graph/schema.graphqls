@@ -508,8 +508,25 @@ input AddGalleryImageInput {
   description: String!
 }
 
+input TitleInput {
+  header: String
+  description: String
+}
+
+input SlideInput {
+  slide_location: Int
+  title: TitleInput
+  mobile: CTAInput
+  desktop: CTAInput
+}
+
 type Mutation {
   register(input: NewUser!): User!
+  editSlide(
+    token: String!
+    slideId: String!
+    slide: SlideInput!
+  ): MutationResponse!
   createEvent(token: String!, input: NewEvent!): Event!
   removeUser(id: String!): MutationResponse!
   resetElements(token: String!): MutationResponse!

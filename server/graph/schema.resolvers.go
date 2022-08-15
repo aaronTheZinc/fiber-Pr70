@@ -19,6 +19,10 @@ func (r *mutationResolver) Register(ctx context.Context, input model.NewUser) (*
 	return &user, err
 }
 
+func (r *mutationResolver) EditSlide(ctx context.Context, token string, slideID string, slide model.SlideInput) (*model.MutationResponse, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
 func (r *mutationResolver) CreateEvent(ctx context.Context, token string, input model.NewEvent) (*model.Event, error) {
 	event, err := auth.CreateEvent(token, input)
 	return &event, err

@@ -249,6 +249,7 @@ type ComplexityRoot struct {
 		EditElementPosition               func(childComplexity int, token string, element string, position int, vreelID *string) int
 		EditFileName                      func(childComplexity int, token string, newName string, fileID string) int
 		EditSimpleLink                    func(childComplexity int, token string, linkID string, link model.SimpleLinkInput, vreelID *string) int
+		EditSlide                         func(childComplexity int, token string, slideID string, slide model.SlideInput) int
 		EditSocialsInput                  func(childComplexity int, token string, platform string, social model.SocialsInput, vreelID *string) int
 		Follow                            func(childComplexity int, input model.AnalyticsMutation) int
 		LikeSlide                         func(childComplexity int, input model.AnalyticsMutation) int
@@ -483,6 +484,7 @@ type ComplexityRoot struct {
 
 type MutationResolver interface {
 	Register(ctx context.Context, input model.NewUser) (*model.User, error)
+	EditSlide(ctx context.Context, token string, slideID string, slide model.SlideInput) (*model.MutationResponse, error)
 	CreateEvent(ctx context.Context, token string, input model.NewEvent) (*model.Event, error)
 	RemoveUser(ctx context.Context, id string) (*model.MutationResponse, error)
 	ResetElements(ctx context.Context, token string) (*model.MutationResponse, error)
@@ -1616,6 +1618,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.EditSimpleLink(childComplexity, args["token"].(string), args["linkId"].(string), args["link"].(model.SimpleLinkInput), args["vreelId"].(*string)), true
+
+	case "Mutation.editSlide":
+		if e.complexity.Mutation.EditSlide == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_editSlide_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.EditSlide(childComplexity, args["token"].(string), args["slideId"].(string), args["slide"].(model.SlideInput)), true
 
 	case "Mutation.editSocialsInput":
 		if e.complexity.Mutation.EditSocialsInput == nil {
@@ -3559,8 +3573,25 @@ input AddGalleryImageInput {
   description: String!
 }
 
+input TitleInput {
+  header: String
+  description: String
+}
+
+input SlideInput {
+  slide_location: Int
+  title: TitleInput
+  mobile: CTAInput
+  desktop: CTAInput
+}
+
 type Mutation {
   register(input: NewUser!): User!
+  editSlide(
+    token: String!
+    slideId: String!
+    slide: SlideInput!
+  ): MutationResponse!
   createEvent(token: String!, input: NewEvent!): Event!
   removeUser(id: String!): MutationResponse!
   resetElements(token: String!): MutationResponse!
@@ -4283,6 +4314,39 @@ func (ec *executionContext) field_Mutation_editSimpleLink_args(ctx context.Conte
 		}
 	}
 	args["vreelId"] = arg3
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_editSlide_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["token"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("token"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["token"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["slideId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("slideId"))
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["slideId"] = arg1
+	var arg2 model.SlideInput
+	if tmp, ok := rawArgs["slide"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("slide"))
+		arg2, err = ec.unmarshalNSlideInput2githubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐSlideInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["slide"] = arg2
 	return args, nil
 }
 
@@ -9202,6 +9266,48 @@ func (ec *executionContext) _Mutation_register(ctx context.Context, field graphq
 	res := resTmp.(*model.User)
 	fc.Result = res
 	return ec.marshalNUser2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_editSlide(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_editSlide_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().EditSlide(rctx, args["token"].(string), args["slideId"].(string), args["slide"].(model.SlideInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.MutationResponse)
+	fc.Result = res
+	return ec.marshalNMutationResponse2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐMutationResponse(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_createEvent(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -18097,6 +18203,53 @@ func (ec *executionContext) unmarshalInputSimpleLinkInput(ctx context.Context, o
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputSlideInput(ctx context.Context, obj interface{}) (model.SlideInput, error) {
+	var it model.SlideInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "slide_location":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("slide_location"))
+			it.SlideLocation, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "title":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("title"))
+			it.Title, err = ec.unmarshalOTitleInput2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐTitleInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "mobile":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("mobile"))
+			it.Mobile, err = ec.unmarshalOCTAInput2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐCTAInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "desktop":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("desktop"))
+			it.Desktop, err = ec.unmarshalOCTAInput2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐCTAInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputSocialsInput(ctx context.Context, obj interface{}) (model.SocialsInput, error) {
 	var it model.SocialsInput
 	asMap := map[string]interface{}{}
@@ -18190,6 +18343,37 @@ func (ec *executionContext) unmarshalInputSuperLinkInput(ctx context.Context, ob
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("description"))
 			it.Description, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputTitleInput(ctx context.Context, obj interface{}) (model.TitleInput, error) {
+	var it model.TitleInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "header":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("header"))
+			it.Header, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "description":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("description"))
+			it.Description, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -19282,6 +19466,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			out.Values[i] = graphql.MarshalString("Mutation")
 		case "register":
 			out.Values[i] = ec._Mutation_register(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "editSlide":
+			out.Values[i] = ec._Mutation_editSlide(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -21690,6 +21879,11 @@ func (ec *executionContext) marshalNSlide2ᚖgithubᚗcomᚋvreelᚋappᚋgraph�
 	return ec._Slide(ctx, sel, v)
 }
 
+func (ec *executionContext) unmarshalNSlideInput2githubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐSlideInput(ctx context.Context, v interface{}) (model.SlideInput, error) {
+	res, err := ec.unmarshalInputSlideInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) marshalNSlideMetaData2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐSlideMetaData(ctx context.Context, sel ast.SelectionSet, v *model.SlideMetaData) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -22313,6 +22507,14 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	return graphql.MarshalBoolean(*v)
 }
 
+func (ec *executionContext) unmarshalOCTAInput2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐCTAInput(ctx context.Context, v interface{}) (*model.CTAInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputCTAInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) marshalOContact2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐContact(ctx context.Context, sel ast.SelectionSet, v *model.Contact) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
@@ -22780,6 +22982,14 @@ func (ec *executionContext) marshalOTextArea2ᚖgithubᚗcomᚋvreelᚋappᚋgra
 		return graphql.Null
 	}
 	return ec._TextArea(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOTitleInput2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐTitleInput(ctx context.Context, v interface{}) (*model.TitleInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputTitleInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalOVideos2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐVideos(ctx context.Context, sel ast.SelectionSet, v *model.Videos) graphql.Marshaler {
