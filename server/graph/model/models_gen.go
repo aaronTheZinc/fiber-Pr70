@@ -478,16 +478,17 @@ type Videos struct {
 }
 
 type Vreel struct {
-	ID              string         `json:"id"`
-	Author          string         `json:"author"`
-	LogoURI         *string        `json:"logo_uri"`
-	PageTitle       string         `json:"page_title"`
-	ButtonURI       *string        `json:"button_uri"`
-	Slides          []*Slide       `json:"slides"`
-	Elements        *VreelElements `json:"elements"`
-	SlideCount      *int           `json:"slide_count"`
-	LastSlideEdited *string        `json:"LastSlideEdited"`
-	TimeLastEdited  *int           `json:"TimeLastEdited"`
+	ID              string                `json:"id"`
+	Author          string                `json:"author"`
+	LogoURI         *string               `json:"logo_uri"`
+	PageTitle       string                `json:"page_title"`
+	ButtonURI       *string               `json:"button_uri"`
+	Slides          []*Slide              `json:"slides"`
+	Elements        *VreelElements        `json:"elements"`
+	SimpleLinks     []*SimpleLinksElement `json:"simple_links"`
+	SlideCount      *int                  `json:"slide_count"`
+	LastSlideEdited *string               `json:"LastSlideEdited"`
+	TimeLastEdited  *int                  `json:"TimeLastEdited"`
 }
 
 type VreelElements struct {

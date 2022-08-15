@@ -331,6 +331,7 @@ type Vreel {
   button_uri: String
   slides: [Slide]!
   elements: VreelElements!
+  simple_links: [SimpleLinksElement!]!
   slide_count: Int
   LastSlideEdited: String
   TimeLastEdited: Int
@@ -648,4 +649,5 @@ type Mutation {
     social: SocialsInput!
     vreelId: String
   ): MutationResponse!
+  createSimpleLinkElement(token: String!, vreelId: String): MutationResponse!
 }

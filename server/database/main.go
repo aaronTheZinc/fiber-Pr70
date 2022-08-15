@@ -39,6 +39,7 @@ func IsConnected() bool {
 
 func Migrate() {
 	log.Println("Migrating...")
+	db.AutoMigrate(model.SimpleLinksElementModel{}, model.SimpleLinkModel{})
 	db.AutoMigrate(model.UserModel{})
 	db.AutoMigrate(model.GroupModel{})
 	db.AutoMigrate(model.EventModel{})

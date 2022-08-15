@@ -242,6 +242,7 @@ type ComplexityRoot struct {
 		CreateEvent                       func(childComplexity int, token string, input model.NewEvent) int
 		CreateGroup                       func(childComplexity int, input *model.NewGroup) int
 		CreateResetPasswordRequestIntent  func(childComplexity int, email string) int
+		CreateSimpleLinkElement           func(childComplexity int, token string, vreelID *string) int
 		CreateSlide                       func(childComplexity int, token string) int
 		DeleteFile                        func(childComplexity int, token string, fileID string) int
 		DeleteGroup                       func(childComplexity int, id string, token string) int
@@ -460,6 +461,7 @@ type ComplexityRoot struct {
 		LastSlideEdited func(childComplexity int) int
 		LogoURI         func(childComplexity int) int
 		PageTitle       func(childComplexity int) int
+		SimpleLinks     func(childComplexity int) int
 		SlideCount      func(childComplexity int) int
 		Slides          func(childComplexity int) int
 		TimeLastEdited  func(childComplexity int) int
@@ -525,6 +527,7 @@ type MutationResolver interface {
 	AddPage(ctx context.Context, token string) (*model.MutationResponse, error)
 	EditSimpleLink(ctx context.Context, token string, linkID string, link model.SimpleLinkInput, vreelID *string) (*model.MutationResponse, error)
 	EditSocialsInput(ctx context.Context, token string, platform string, social model.SocialsInput, vreelID *string) (*model.MutationResponse, error)
+	CreateSimpleLinkElement(ctx context.Context, token string, vreelID *string) (*model.MutationResponse, error)
 }
 type QueryResolver interface {
 	User(ctx context.Context, id *string) (*model.User, error)
@@ -1529,6 +1532,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.CreateResetPasswordRequestIntent(childComplexity, args["email"].(string)), true
+
+	case "Mutation.createSimpleLinkElement":
+		if e.complexity.Mutation.CreateSimpleLinkElement == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createSimpleLinkElement_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateSimpleLinkElement(childComplexity, args["token"].(string), args["vreelId"].(*string)), true
 
 	case "Mutation.createSlide":
 		if e.complexity.Mutation.CreateSlide == nil {
@@ -2872,6 +2887,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Vreel.PageTitle(childComplexity), true
 
+	case "Vreel.simple_links":
+		if e.complexity.Vreel.SimpleLinks == nil {
+			break
+		}
+
+		return e.complexity.Vreel.SimpleLinks(childComplexity), true
+
 	case "Vreel.slide_count":
 		if e.complexity.Vreel.SlideCount == nil {
 			break
@@ -3360,6 +3382,7 @@ type Vreel {
   button_uri: String
   slides: [Slide]!
   elements: VreelElements!
+  simple_links: [SimpleLinksElement!]!
   slide_count: Int
   LastSlideEdited: String
   TimeLastEdited: Int
@@ -3677,6 +3700,7 @@ type Mutation {
     social: SocialsInput!
     vreelId: String
   ): MutationResponse!
+  createSimpleLinkElement(token: String!, vreelId: String): MutationResponse!
 }
 `, BuiltIn: false},
 }
@@ -4055,6 +4079,30 @@ func (ec *executionContext) field_Mutation_createResetPasswordRequestIntent_args
 		}
 	}
 	args["email"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_createSimpleLinkElement_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["token"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("token"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["token"] = arg0
+	var arg1 *string
+	if tmp, ok := rawArgs["vreelId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("vreelId"))
+		arg1, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["vreelId"] = arg1
 	return args, nil
 }
 
@@ -11001,6 +11049,48 @@ func (ec *executionContext) _Mutation_editSocialsInput(ctx context.Context, fiel
 	return ec.marshalNMutationResponse2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐMutationResponse(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Mutation_createSimpleLinkElement(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_createSimpleLinkElement_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().CreateSimpleLinkElement(rctx, args["token"].(string), args["vreelId"].(*string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.MutationResponse)
+	fc.Result = res
+	return ec.marshalNMutationResponse2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐMutationResponse(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _MutationResponse_succeeded(ctx context.Context, field graphql.CollectedField, obj *model.MutationResponse) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -15649,6 +15739,41 @@ func (ec *executionContext) _Vreel_elements(ctx context.Context, field graphql.C
 	return ec.marshalNVreelElements2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐVreelElements(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Vreel_simple_links(ctx context.Context, field graphql.CollectedField, obj *model.Vreel) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Vreel",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SimpleLinks, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.SimpleLinksElement)
+	fc.Result = res
+	return ec.marshalNSimpleLinksElement2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐSimpleLinksElementᚄ(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Vreel_slide_count(ctx context.Context, field graphql.CollectedField, obj *model.Vreel) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -19377,6 +19502,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "createSimpleLinkElement":
+			out.Values[i] = ec._Mutation_createSimpleLinkElement(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -20513,6 +20643,11 @@ func (ec *executionContext) _Vreel(ctx context.Context, sel ast.SelectionSet, ob
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "simple_links":
+			out.Values[i] = ec._Vreel_simple_links(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "slide_count":
 			out.Values[i] = ec._Vreel_slide_count(ctx, field, obj)
 		case "LastSlideEdited":
@@ -21447,6 +21582,60 @@ func (ec *executionContext) marshalNSimpleLink2ᚖgithubᚗcomᚋvreelᚋappᚋg
 func (ec *executionContext) unmarshalNSimpleLinkInput2githubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐSimpleLinkInput(ctx context.Context, v interface{}) (model.SimpleLinkInput, error) {
 	res, err := ec.unmarshalInputSimpleLinkInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNSimpleLinksElement2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐSimpleLinksElementᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.SimpleLinksElement) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNSimpleLinksElement2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐSimpleLinksElement(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNSimpleLinksElement2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐSimpleLinksElement(ctx context.Context, sel ast.SelectionSet, v *model.SimpleLinksElement) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._SimpleLinksElement(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNSlide2githubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐSlide(ctx context.Context, sel ast.SelectionSet, v model.Slide) graphql.Marshaler {

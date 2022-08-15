@@ -3,6 +3,7 @@ package database
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"log"
 	"sync"
 	"time"
@@ -191,13 +192,15 @@ func GetVreels(ids []string) *[]*model.Vreel {
 }
 
 func GetVreel(id string) (model.Vreel, error) {
-	log.Println("id ->", id)
 	var vreel model.VreelModel
 	var r model.Vreel
 	var err error
-	if f := db.Where("id = ? ", id).First(&vreel).Error; f != nil {
+
+	if f := db.Model(&model.VreelModel{}).Where("id = ? ", id).First(&vreel).Error; f != nil {
 		err = e.VREEL_NOT_FOUND
 	} else {
+		// wg := sync.WaitGroup{}
+		fmt.Println(vreel.SimpleLinks)
 		slides, slidesErr := GetSlides(vreel.Slides)
 		if slidesErr != nil {
 			err = slidesErr
@@ -206,6 +209,7 @@ func GetVreel(id string) (model.Vreel, error) {
 			if conversionErr != nil {
 				err = conversionErr
 			} else {
+
 				r = v
 			}
 

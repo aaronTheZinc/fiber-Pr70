@@ -270,6 +270,12 @@ func (r *mutationResolver) EditSocialsInput(ctx context.Context, token string, p
 	return &resp, err
 }
 
+func (r *mutationResolver) CreateSimpleLinkElement(ctx context.Context, token string, vreelID *string) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeCreateSimpleLinkElement(token, vreelID)
+
+	return &resp, err
+}
+
 func (r *queryResolver) User(ctx context.Context, id *string) (*model.User, error) {
 	user, err := database.GetUser(*id)
 	return &user, err

@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/lib/pq"
+	"gorm.io/gorm"
 )
 
 type UserModel struct {
@@ -65,6 +66,7 @@ type EventModel struct {
 }
 
 type VreelModel struct {
+	gorm.Model
 	ID              string         `json:"id"`
 	Author          string         `json:"author"`
 	LogoURI         string         `json:"logo_uri"`
@@ -72,6 +74,7 @@ type VreelModel struct {
 	ButtonURI       *string        `json:"button_uri"`
 	Slides          pq.StringArray `gorm:"type:text[]"`
 	Elements        string         `json:"elements"`
+	SimpleLinks     pq.StringArray `gorm:"type:text[]"`
 	TimeLastEdited  int            `json:"time_last_edited"`
 	LastSlideEdited string         `json:"last_slide_edited"`
 }
@@ -104,6 +107,27 @@ type AnalyticsFragmentModel struct {
 	TimeStamp int64  `json:"time_stamp"`
 }
 
+type SimpleLinksElementModel struct {
+	gorm.Model
+	ID       string
+	Header   string         `json:"header"`
+	Hidden   bool           `json:"hidden"`
+	Position int            `json:"position"`
+	Links    pq.StringArray `gorm:"type:text[]"`
+}
+
+type SimpleLinkModel struct {
+	gorm.Model
+	ID         string `gorm:"primaryKey"`
+	Hidden     bool   `json:"hidden"`
+	Position   int    `json:"position"`
+	Thumbnail  string `json:"thumbnail"`
+	LinkHeader string `json:"link_header"`
+	URL        string `json:"url"`
+	LinkType   string `json:"link_type"`
+	Tag        string `json:"tag"`
+}
+
 type AnalyticsModel struct {
 	Likes pq.StringArray `gorm:"type:text[]"`
 }
@@ -114,6 +138,46 @@ type AnalyticsModel struct {
 // 	ThisYear AnalyticsChunkModel
 // }
 
+func (c *SimpleLinksElementModel) ToSimpleLinksElement() SimpleLinksElement {
+	linksList := []*SimpleLink{}
+	// for _, l := range c.Links {
+	// 	t := l.ToSimpleLink()
+
+	// 	linksList = append(linksList, &t)
+
+	// }
+	return SimpleLinksElement{
+		Header:   c.Header,
+		Hidden:   false,
+		Position: 0,
+		Links:    linksList,
+	}
+}
+
+func (c *SimpleLinkModel) ToSimpleLink() SimpleLink {
+	return SimpleLink{
+		ID:         c.ID,
+		Hidden:     c.Hidden,
+		Position:   c.Position,
+		Thumbnail:  c.Thumbnail,
+		LinkHeader: c.LinkHeader,
+		URL:        c.URL,
+		LinkType:   c.LinkType,
+		Tag:        c.Tag,
+	}
+}
+
+func (c *SimpleLinkInput) ToDatabaseModel() SimpleLinkModel {
+	return SimpleLinkModel{
+		Hidden:     false,
+		Position:   0,
+		Thumbnail:  c.Thumbnail,
+		LinkHeader: c.LinkHeader,
+		URL:        c.URL,
+		LinkType:   c.LinkType,
+		Tag:        c.Tag,
+	}
+}
 func (c *AnalyticsFragmentModel) ToAnalyticsFragment() AnalyticFragment {
 	return AnalyticFragment{
 		ID:        c.ID,
@@ -336,7 +400,13 @@ func (c *Slide) ToDatabaseModel() SlideModel {
 func (c VreelModel) ToVreel(slides []*Slide) (Vreel, error) {
 	var err error
 	var e VreelElements
+	var simpleLinks []*SimpleLinksElement
 
+	// for _, l := range c.SimpleLinks {
+	// 	t := l.ToSimpleLinksElement()
+	// 	fmt.Println("existsssssss")
+	// 	simpleLinks = append(simpleLinks, &t)
+	// }
 	gErr := json.Unmarshal([]byte(c.Elements), &e)
 	if gErr != nil {
 		log.Println("im the problem!! ")
@@ -378,6 +448,7 @@ func (c VreelModel) ToVreel(slides []*Slide) (Vreel, error) {
 		LogoURI:         &c.LogoURI,
 		LastSlideEdited: &c.LastSlideEdited,
 		TimeLastEdited:  &c.TimeLastEdited,
+		SimpleLinks:     simpleLinks,
 	}, err
 }
 
