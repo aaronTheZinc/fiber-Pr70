@@ -324,6 +324,7 @@ type Service struct {
 
 type SimpleLink struct {
 	ID         string `json:"id"`
+	Parent     string `json:"parent"`
 	Hidden     bool   `json:"hidden"`
 	Position   int    `json:"position"`
 	Thumbnail  string `json:"thumbnail"`
@@ -343,6 +344,7 @@ type SimpleLinkInput struct {
 }
 
 type SimpleLinksElement struct {
+	ID       string        `json:"id"`
 	Header   string        `json:"header"`
 	Hidden   bool          `json:"hidden"`
 	Position int           `json:"position"`

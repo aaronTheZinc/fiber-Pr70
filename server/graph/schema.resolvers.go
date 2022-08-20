@@ -280,6 +280,18 @@ func (r *mutationResolver) CreateSimpleLinkElement(ctx context.Context, token st
 	return &resp, err
 }
 
+func (r *mutationResolver) AppendSimpleLink(ctx context.Context, token string, elementID string, link model.SimpleLinkInput) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeAppendSimpleLink(token, elementID, link)
+
+	return &resp, err
+}
+
+func (r *mutationResolver) RemoveSimpleLink(ctx context.Context, token string, linkID *string) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeRemoveSimpleLink(token, *linkID)
+
+	return &resp, err
+}
+
 func (r *queryResolver) User(ctx context.Context, id *string) (*model.User, error) {
 	user, err := database.GetUser(*id)
 	return &user, err

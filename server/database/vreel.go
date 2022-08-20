@@ -202,6 +202,8 @@ func GetVreel(id string) (model.Vreel, error) {
 		// wg := sync.WaitGroup{}
 		fmt.Println(vreel.SimpleLinks)
 		slides, slidesErr := GetSlides(vreel.Slides)
+		// l := GetAllSimpleLinksElements(vreel.SimpleLinks)
+
 		if slidesErr != nil {
 			err = slidesErr
 		} else {
@@ -211,6 +213,7 @@ func GetVreel(id string) (model.Vreel, error) {
 			} else {
 
 				r = v
+				// r.SimpleLinks = l
 			}
 
 		}
@@ -313,39 +316,39 @@ func AddSimpleLinkToVreel(vreelId string, newLink model.SimpleLink) error {
 
 }
 
-func RemoveSimpleLink(vreelId, linkId string) error {
-	var vreel model.VreelModel
-	var err error
-	var elements model.VreelElements
-	if fetchErr := db.Where("id = ?", vreelId).First(&vreel).Error; fetchErr == nil {
-		parseErr := json.Unmarshal([]byte(vreel.Elements), &elements)
-		if parseErr != nil {
-			return parseErr
-		}
-		links := elements.SimpleLinks.Links
-		linkWasFound := false
+// func RemoveSimpleLink(vreelId, linkId string) error {
+// 	var vreel model.VreelModel
+// 	var err error
+// 	var elements model.VreelElements
+// 	if fetchErr := db.Where("id = ?", vreelId).First(&vreel).Error; fetchErr == nil {
+// 		parseErr := json.Unmarshal([]byte(vreel.Elements), &elements)
+// 		if parseErr != nil {
+// 			return parseErr
+// 		}
+// 		links := elements.SimpleLinks.Links
+// 		linkWasFound := false
 
-		for idx, link := range links {
-			if link.ID == linkId {
-				linkWasFound = true
-				links = append(links[:idx], links[idx+1:]...)
-				break
-			}
-		}
-		if !linkWasFound {
-			err = errors.New("gallery image: " + linkId + " not found")
-		} else {
-			elements.SimpleLinks.Links = links
-			v, marshalErr := json.Marshal(&elements)
-			if marshalErr == nil {
-				return db.Model(model.VreelModel{}).Where("id = ?", vreelId).Update("elements", string(v)).Error
-			} else {
-				return marshalErr
-			}
-		}
-	}
-	return err
-}
+// 		for idx, link := range links {
+// 			if link.ID == linkId {
+// 				linkWasFound = true
+// 				links = append(links[:idx], links[idx+1:]...)
+// 				break
+// 			}
+// 		}
+// 		if !linkWasFound {
+// 			err = errors.New("gallery image: " + linkId + " not found")
+// 		} else {
+// 			elements.SimpleLinks.Links = links
+// 			v, marshalErr := json.Marshal(&elements)
+// 			if marshalErr == nil {
+// 				return db.Model(model.VreelModel{}).Where("id = ?", vreelId).Update("elements", string(v)).Error
+// 			} else {
+// 				return marshalErr
+// 			}
+// 		}
+// 	}
+// 	return err
+// }
 
 func AddSuperLinkToVreel(vreelId string, newLink model.SuperLink) error {
 	var vreel model.VreelModel

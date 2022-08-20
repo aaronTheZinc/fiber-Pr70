@@ -238,6 +238,7 @@ type ComplexityRoot struct {
 		AddSuperVreelLink                 func(childComplexity int, token string, link *model.SuperLinkInput, vreelID *string) int
 		AddUserToGroup                    func(childComplexity int, token string, groupID string, userID string) int
 		AddVideoToVreel                   func(childComplexity int, token string, input model.AddVideoInput, vreelID *string) int
+		AppendSimpleLink                  func(childComplexity int, token string, elementID string, link model.SimpleLinkInput) int
 		CreateEnterprise                  func(childComplexity int, input model.NewEnterprise) int
 		CreateEvent                       func(childComplexity int, token string, input model.NewEvent) int
 		CreateGroup                       func(childComplexity int, input *model.NewGroup) int
@@ -258,6 +259,7 @@ type ComplexityRoot struct {
 		RemoveContributionLink            func(childComplexity int, token string, linkID string, vreelID *string) int
 		RemoveImageFromVreelGallery       func(childComplexity int, token string, imageID string, vreelID *string) int
 		RemoveMusicLink                   func(childComplexity int, token string, linkID string, vreelID *string) int
+		RemoveSimpleLink                  func(childComplexity int, token string, linkID *string) int
 		RemoveSimpleVreelLink             func(childComplexity int, token string, linkID string, vreelID *string) int
 		RemoveSlide                       func(childComplexity int, token string, slideID *string) int
 		RemoveSocialLink                  func(childComplexity int, token string, platform string, vreelID *string) int
@@ -328,6 +330,7 @@ type ComplexityRoot struct {
 		ID         func(childComplexity int) int
 		LinkHeader func(childComplexity int) int
 		LinkType   func(childComplexity int) int
+		Parent     func(childComplexity int) int
 		Position   func(childComplexity int) int
 		Tag        func(childComplexity int) int
 		Thumbnail  func(childComplexity int) int
@@ -337,6 +340,7 @@ type ComplexityRoot struct {
 	SimpleLinksElement struct {
 		Header   func(childComplexity int) int
 		Hidden   func(childComplexity int) int
+		ID       func(childComplexity int) int
 		Links    func(childComplexity int) int
 		Position func(childComplexity int) int
 	}
@@ -530,6 +534,8 @@ type MutationResolver interface {
 	EditSimpleLink(ctx context.Context, token string, linkID string, link model.SimpleLinkInput, vreelID *string) (*model.MutationResponse, error)
 	EditSocialsInput(ctx context.Context, token string, platform string, social model.SocialsInput, vreelID *string) (*model.MutationResponse, error)
 	CreateSimpleLinkElement(ctx context.Context, token string, vreelID *string) (*model.MutationResponse, error)
+	AppendSimpleLink(ctx context.Context, token string, elementID string, link model.SimpleLinkInput) (*model.MutationResponse, error)
+	RemoveSimpleLink(ctx context.Context, token string, linkID *string) (*model.MutationResponse, error)
 }
 type QueryResolver interface {
 	User(ctx context.Context, id *string) (*model.User, error)
@@ -1487,6 +1493,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.AddVideoToVreel(childComplexity, args["token"].(string), args["input"].(model.AddVideoInput), args["vreelId"].(*string)), true
 
+	case "Mutation.appendSimpleLink":
+		if e.complexity.Mutation.AppendSimpleLink == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_appendSimpleLink_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.AppendSimpleLink(childComplexity, args["token"].(string), args["elementId"].(string), args["link"].(model.SimpleLinkInput)), true
+
 	case "Mutation.createEnterprise":
 		if e.complexity.Mutation.CreateEnterprise == nil {
 			break
@@ -1726,6 +1744,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.RemoveMusicLink(childComplexity, args["token"].(string), args["linkId"].(string), args["vreelId"].(*string)), true
+
+	case "Mutation.removeSimpleLink":
+		if e.complexity.Mutation.RemoveSimpleLink == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_removeSimpleLink_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.RemoveSimpleLink(childComplexity, args["token"].(string), args["linkId"].(*string)), true
 
 	case "Mutation.removeSimpleVreelLink":
 		if e.complexity.Mutation.RemoveSimpleVreelLink == nil {
@@ -2215,6 +2245,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.SimpleLink.LinkType(childComplexity), true
 
+	case "SimpleLink.parent":
+		if e.complexity.SimpleLink.Parent == nil {
+			break
+		}
+
+		return e.complexity.SimpleLink.Parent(childComplexity), true
+
 	case "SimpleLink.position":
 		if e.complexity.SimpleLink.Position == nil {
 			break
@@ -2256,6 +2293,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.SimpleLinksElement.Hidden(childComplexity), true
+
+	case "SimpleLinksElement.id":
+		if e.complexity.SimpleLinksElement.ID == nil {
+			break
+		}
+
+		return e.complexity.SimpleLinksElement.ID(childComplexity), true
 
 	case "SimpleLinksElement.links":
 		if e.complexity.SimpleLinksElement.Links == nil {
@@ -3272,6 +3316,7 @@ type Link {
 
 type SimpleLink {
   id: String!
+  parent: String!
   hidden: Boolean!
   position: Int!
   thumbnail: String!
@@ -3359,6 +3404,7 @@ type ContributionsElement {
 }
 
 type SimpleLinksElement {
+  id: String!
   header: String!
   hidden: Boolean!
   position: Int!
@@ -3732,6 +3778,12 @@ type Mutation {
     vreelId: String
   ): MutationResponse!
   createSimpleLinkElement(token: String!, vreelId: String): MutationResponse!
+  appendSimpleLink(
+    token: String!
+    elementId: String!
+    link: SimpleLinkInput!
+  ): MutationResponse!
+  removeSimpleLink(token: String!, linkId: String): MutationResponse!
 }
 `, BuiltIn: false},
 }
@@ -4041,6 +4093,39 @@ func (ec *executionContext) field_Mutation_addVideoToVreel_args(ctx context.Cont
 		}
 	}
 	args["vreelId"] = arg2
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_appendSimpleLink_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["token"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("token"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["token"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["elementId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("elementId"))
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["elementId"] = arg1
+	var arg2 model.SimpleLinkInput
+	if tmp, ok := rawArgs["link"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("link"))
+		arg2, err = ec.unmarshalNSimpleLinkInput2githubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐSimpleLinkInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["link"] = arg2
 	return args, nil
 }
 
@@ -4548,6 +4633,30 @@ func (ec *executionContext) field_Mutation_removeMusicLink_args(ctx context.Cont
 		}
 	}
 	args["vreelId"] = arg2
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_removeSimpleLink_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["token"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("token"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["token"] = arg0
+	var arg1 *string
+	if tmp, ok := rawArgs["linkId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("linkId"))
+		arg1, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["linkId"] = arg1
 	return args, nil
 }
 
@@ -11197,6 +11306,90 @@ func (ec *executionContext) _Mutation_createSimpleLinkElement(ctx context.Contex
 	return ec.marshalNMutationResponse2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐMutationResponse(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Mutation_appendSimpleLink(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_appendSimpleLink_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().AppendSimpleLink(rctx, args["token"].(string), args["elementId"].(string), args["link"].(model.SimpleLinkInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.MutationResponse)
+	fc.Result = res
+	return ec.marshalNMutationResponse2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐMutationResponse(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_removeSimpleLink(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_removeSimpleLink_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().RemoveSimpleLink(rctx, args["token"].(string), args["linkId"].(*string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.MutationResponse)
+	fc.Result = res
+	return ec.marshalNMutationResponse2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐMutationResponse(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _MutationResponse_succeeded(ctx context.Context, field graphql.CollectedField, obj *model.MutationResponse) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -12358,6 +12551,41 @@ func (ec *executionContext) _SimpleLink_id(ctx context.Context, field graphql.Co
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _SimpleLink_parent(ctx context.Context, field graphql.CollectedField, obj *model.SimpleLink) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "SimpleLink",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Parent, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _SimpleLink_hidden(ctx context.Context, field graphql.CollectedField, obj *model.SimpleLink) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -12587,6 +12815,41 @@ func (ec *executionContext) _SimpleLink_tag(ctx context.Context, field graphql.C
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return obj.Tag, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _SimpleLinksElement_id(ctx context.Context, field graphql.CollectedField, obj *model.SimpleLinksElement) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "SimpleLinksElement",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -19696,6 +19959,16 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "appendSimpleLink":
+			out.Values[i] = ec._Mutation_appendSimpleLink(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "removeSimpleLink":
+			out.Values[i] = ec._Mutation_removeSimpleLink(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -20111,6 +20384,11 @@ func (ec *executionContext) _SimpleLink(ctx context.Context, sel ast.SelectionSe
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "parent":
+			out.Values[i] = ec._SimpleLink_parent(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "hidden":
 			out.Values[i] = ec._SimpleLink_hidden(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -20168,6 +20446,11 @@ func (ec *executionContext) _SimpleLinksElement(ctx context.Context, sel ast.Sel
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("SimpleLinksElement")
+		case "id":
+			out.Values[i] = ec._SimpleLinksElement_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "header":
 			out.Values[i] = ec._SimpleLinksElement_header(ctx, field, obj)
 			if out.Values[i] == graphql.Null {

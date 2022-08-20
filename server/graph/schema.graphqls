@@ -207,6 +207,7 @@ type Link {
 
 type SimpleLink {
   id: String!
+  parent: String!
   hidden: Boolean!
   position: Int!
   thumbnail: String!
@@ -294,6 +295,7 @@ type ContributionsElement {
 }
 
 type SimpleLinksElement {
+  id: String!
   header: String!
   hidden: Boolean!
   position: Int!
@@ -667,4 +669,9 @@ type Mutation {
     vreelId: String
   ): MutationResponse!
   createSimpleLinkElement(token: String!, vreelId: String): MutationResponse!
+  appendSimpleLink(
+    token: String!
+    elementId: String!
+    link: SimpleLinkInput!
+  ): MutationResponse!
 }

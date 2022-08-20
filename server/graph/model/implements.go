@@ -119,6 +119,7 @@ type SimpleLinksElementModel struct {
 type SimpleLinkModel struct {
 	gorm.Model
 	ID         string `gorm:"primaryKey"`
+	Parent     string `json:"parent"`
 	Hidden     bool   `json:"hidden"`
 	Position   int    `json:"position"`
 	Thumbnail  string `json:"thumbnail"`
@@ -147,6 +148,7 @@ func (c *SimpleLinksElementModel) ToSimpleLinksElement() SimpleLinksElement {
 
 	// }
 	return SimpleLinksElement{
+		ID:       c.ID,
 		Header:   c.Header,
 		Hidden:   false,
 		Position: 0,
