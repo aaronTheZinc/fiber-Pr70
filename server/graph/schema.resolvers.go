@@ -280,6 +280,12 @@ func (r *mutationResolver) CreateSimpleLinkElement(ctx context.Context, token st
 	return &resp, err
 }
 
+func (r *mutationResolver) DeleteSimpleLinkElement(ctx context.Context, token string, vreelID *string, elementID string) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeDeleteSimpleLinkElement(token, elementID, vreelID)
+
+	return &resp, err
+}
+
 func (r *mutationResolver) AppendSimpleLink(ctx context.Context, token string, elementID string, link model.SimpleLinkInput) (*model.MutationResponse, error) {
 	resp, err := auth.AuthorizeAppendSimpleLink(token, elementID, link)
 
@@ -290,6 +296,38 @@ func (r *mutationResolver) RemoveSimpleLink(ctx context.Context, token string, l
 	resp, err := auth.AuthorizeRemoveSimpleLink(token, *linkID)
 
 	return &resp, err
+}
+
+func (r *mutationResolver) CreateGalleryElement(ctx context.Context, token string, vreelID *string) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeCreateGalleryElement(token, vreelID)
+
+	return &resp, err
+}
+
+func (r *mutationResolver) DeleteGalleryElement(ctx context.Context, token string, elementID string) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeDeleteGalleryElement(token, elementID, nil)
+
+	return &resp, err
+}
+
+func (r *mutationResolver) AppendImageToGallery(ctx context.Context, token string, elementID string, image model.AddGalleryImageInput) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeAppendImageToGallery(token, elementID, image)
+
+	return &resp, err
+}
+
+func (r *mutationResolver) RemoveGalleryImage(ctx context.Context, token string, imageID string) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeRemoveGalleryImage(token, imageID)
+
+	return &resp, err
+}
+
+func (r *mutationResolver) CreateVideoElement(ctx context.Context, token string, vreelID *string) (*model.MutationResponse, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *mutationResolver) AppendVideoToVideoGallery(ctx context.Context, token string, elementID *string, video model.AddVideoInput) (*model.MutationResponse, error) {
+	panic(fmt.Errorf("not implemented"))
 }
 
 func (r *queryResolver) User(ctx context.Context, id *string) (*model.User, error) {

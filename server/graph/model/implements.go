@@ -75,12 +75,15 @@ type VreelModel struct {
 	Slides          pq.StringArray `gorm:"type:text[]"`
 	Elements        string         `json:"elements"`
 	SimpleLinks     pq.StringArray `gorm:"type:text[]"`
+	Gallery         pq.StringArray `gorm:"type:text[]"`
+	VideoGallery    pq.StringArray `gorm:"type:text[]"`
 	TimeLastEdited  int            `json:"time_last_edited"`
 	LastSlideEdited string         `json:"last_slide_edited"`
 }
 
 type SlideModel struct {
 	ID            string `json:"id"`
+	Hidden        bool   `json:"hidden"`
 	ContentType   string `json:"content_type"`
 	LogoURI       string `json:"logo_uri"`
 	LogoVisible   bool   `jsonc:"logo_visible"`
@@ -110,6 +113,7 @@ type AnalyticsFragmentModel struct {
 type SimpleLinksElementModel struct {
 	gorm.Model
 	ID       string
+	Parent   string
 	Header   string         `json:"header"`
 	Hidden   bool           `json:"hidden"`
 	Position int            `json:"position"`
@@ -117,7 +121,7 @@ type SimpleLinksElementModel struct {
 }
 
 type SimpleLinkModel struct {
-	gorm.Model
+	// gorm.Model
 	ID         string `gorm:"primaryKey"`
 	Parent     string `json:"parent"`
 	Hidden     bool   `json:"hidden"`
@@ -129,8 +133,105 @@ type SimpleLinkModel struct {
 	Tag        string `json:"tag"`
 }
 
+type GalleryElementModel struct {
+	ID       string         `json:"id"`
+	Parent   string         `json:"parent"`
+	Header   string         `json:"header"`
+	Position int            `json:"position"`
+	Images   pq.StringArray `gorm:"type:text[]"`
+	Hidden   bool           `json:"hidden"`
+}
+
+type GalleryImageModel struct {
+	ID          string `json:"id"`
+	Parent      string `json:"parent"`
+	Hidden      bool   `json:"hidden"`
+	Position    *int   `json:"position"`
+	Cta1        string `json:"cta1"`
+	Cta2        string `json:"cta2"`
+	Desktop     string `json:"desktop"`
+	Mobile      string `json:"mobile"`
+	ImageHeader string `json:"image_header"`
+	Description string `json:"description"`
+}
+
+type VideoGalleryElementModel struct {
+	ID       string         `json:"id"`
+	Header   string         `json:"header"`
+	Parent   string         `json:"parent"`
+	Position int            `json:"position"`
+	Videos   pq.StringArray `gorm:"type:text[]"`
+	Hidden   bool           `json:"hidden"`
+}
+
+type VideoModel struct {
+	ID          string `json:"id"`
+	Hidden      bool   `json:"hidden"`
+	Parent      string `json:"parent"`
+	Position    int    `json:"position"`
+	Cta1        string `json:"cta1"`
+	Cta2        string `json:"cta2"`
+	Desktop     string `json:"desktop"`
+	Mobile      string `json:"mobile"`
+	VideoHeader string `json:"video_header"`
+	Description string `json:"description"`
+}
+
 type AnalyticsModel struct {
 	Likes pq.StringArray `gorm:"type:text[]"`
+}
+
+func (c *AddVideoInput) ToDatabaseModel() VideoModel {
+	cta1, _ := json.Marshal(c.Cta1)
+	cta2, _ := json.Marshal(c.Cta2)
+
+	desktop, _ := json.Marshal(c.Desktop)
+	mobile, _ := json.Marshal(c.Mobile)
+	return VideoModel{
+		Position:    *c.Position,
+		Hidden:      false,
+		Cta1:        string(cta1),
+		Cta2:        string(cta2),
+		Desktop:     string(desktop),
+		Mobile:      string(mobile),
+		VideoHeader: c.VideoHeader,
+		Description: c.Description,
+	}
+}
+
+func (c *VideoGalleryElementModel) ToVideoGalleryElement() VideoGalleryElement {
+	return VideoGalleryElement{
+		ID:       c.ID,
+		Header:   c.Header,
+		Parent:   c.Parent,
+		Position: c.Position,
+		Hidden:   c.Hidden,
+	}
+}
+
+func (c *VideoModel) ToVideo() Video {
+	cta1 := Cta{}
+	cta2 := Cta{}
+
+	desktop := Content{}
+	mobile := Content{}
+
+	json.Unmarshal([]byte(c.Cta1), &cta1)
+	json.Unmarshal([]byte(c.Cta2), &cta2)
+
+	json.Unmarshal([]byte(c.Desktop), &desktop)
+	json.Unmarshal([]byte(c.Mobile), &mobile)
+	return Video{
+		ID:          c.ID,
+		Parent:      c.Parent,
+		Position:    0,
+		Cta1:        &Cta{},
+		Cta2:        &Cta{},
+		Desktop:     &Content{},
+		Mobile:      &Content{},
+		VideoHeader: c.VideoHeader,
+		Description: c.Description,
+	}
 }
 
 // type Analytics struct {
@@ -138,6 +239,64 @@ type AnalyticsModel struct {
 // 	LastWeek AnalyticsChunkModel
 // 	ThisYear AnalyticsChunkModel
 // }
+// Position    *int          `json:"position"`
+// Cta1        *CTAInput     `json:"cta1"`
+// Cta2        *CTAInput     `json:"cta2"`
+// Desktop     *ContentInput `json:"desktop"`
+// Mobile      *ContentInput `json:"mobile"`
+// ImageHeader string        `json:"image_header"`
+// Description string        `json:"description"`
+
+func (c *GalleryImageModel) ToGalleryImage() GalleryImage {
+	cta1 := Cta{}
+	cta2 := Cta{}
+
+	desktop := Content{}
+	mobile := Content{}
+
+	json.Unmarshal([]byte(c.Cta1), &cta1)
+	json.Unmarshal([]byte(c.Cta2), &cta2)
+
+	json.Unmarshal([]byte(c.Desktop), &desktop)
+	json.Unmarshal([]byte(c.Mobile), &mobile)
+	return GalleryImage{
+		ID:       c.ID,
+		Position: c.Position,
+		Parent:   c.Parent,
+		Desktop:  &desktop,
+		Mobile:   &mobile,
+		Cta1:     &cta1,
+		Cta2:     &cta2,
+	}
+}
+
+func (c *GalleryElementModel) ToGalleryElement() GalleryElement {
+	return GalleryElement{
+		ID:       c.ID,
+		Hidden:   c.Hidden,
+		Header:   c.Header,
+		Position: c.Position,
+		Parent:   c.Parent,
+	}
+}
+func (c *AddGalleryImageInput) ToDatabaseModel() GalleryImageModel {
+	cta1, _ := json.Marshal(c.Cta1)
+	cta2, _ := json.Marshal(c.Cta2)
+
+	desktop, _ := json.Marshal(c.Desktop)
+	mobile, _ := json.Marshal(c.Mobile)
+	return GalleryImageModel{
+		ID:          "",
+		Hidden:      false,
+		Position:    c.Position,
+		Cta1:        string(cta1),
+		Cta2:        string(cta2),
+		Desktop:     string(desktop),
+		Mobile:      string(mobile),
+		ImageHeader: c.ImageHeader,
+		Description: c.Description,
+	}
+}
 
 func (c *SimpleLinksElementModel) ToSimpleLinksElement() SimpleLinksElement {
 	linksList := []*SimpleLink{}
@@ -150,6 +309,7 @@ func (c *SimpleLinksElementModel) ToSimpleLinksElement() SimpleLinksElement {
 	return SimpleLinksElement{
 		ID:       c.ID,
 		Header:   c.Header,
+		Parent:   c.Parent,
 		Hidden:   false,
 		Position: 0,
 		Links:    linksList,
@@ -166,6 +326,7 @@ func (c *SimpleLinkModel) ToSimpleLink() SimpleLink {
 		URL:        c.URL,
 		LinkType:   c.LinkType,
 		Tag:        c.Tag,
+		Parent:     c.Parent,
 	}
 }
 
@@ -538,6 +699,7 @@ func (c *SlideModel) ToSlide() Slide {
 	return Slide{
 		ID:            c.ID,
 		URI:           c.URI,
+		Hidden:        c.Hidden,
 		LogoURI:       &c.LogoURI,
 		LogoVisible:   &c.LogoVisible,
 		Author:        c.Author,

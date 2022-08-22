@@ -168,9 +168,19 @@ type Gallery struct {
 	Hidden   bool            `json:"hidden"`
 }
 
+type GalleryElement struct {
+	ID       string          `json:"id"`
+	Parent   string          `json:"parent"`
+	Header   string          `json:"header"`
+	Position int             `json:"position"`
+	Images   []*GalleryImage `json:"images"`
+	Hidden   bool            `json:"hidden"`
+}
+
 type GalleryImage struct {
 	ID          string   `json:"id"`
 	Hidden      bool     `json:"hidden"`
+	Parent      string   `json:"parent"`
 	Position    *int     `json:"position"`
 	Cta1        *Cta     `json:"cta1"`
 	Cta2        *Cta     `json:"cta2"`
@@ -345,6 +355,7 @@ type SimpleLinkInput struct {
 
 type SimpleLinksElement struct {
 	ID       string        `json:"id"`
+	Parent   string        `json:"parent"`
 	Header   string        `json:"header"`
 	Hidden   bool          `json:"hidden"`
 	Position int           `json:"position"`
@@ -354,6 +365,7 @@ type SimpleLinksElement struct {
 type Slide struct {
 	ID            string         `json:"id"`
 	Author        string         `json:"author"`
+	Hidden        bool           `json:"hidden"`
 	ContentType   string         `json:"content_type"`
 	LogoURI       *string        `json:"logo_uri"`
 	LogoVisible   *bool          `json:"logo_visible"`
@@ -475,6 +487,8 @@ type User struct {
 
 type Video struct {
 	ID          string   `json:"id"`
+	Hidden      bool     `json:"hidden"`
+	Parent      string   `json:"parent"`
 	Position    int      `json:"position"`
 	Cta1        *Cta     `json:"cta1"`
 	Cta2        *Cta     `json:"cta2"`
@@ -482,6 +496,15 @@ type Video struct {
 	Mobile      *Content `json:"mobile"`
 	VideoHeader string   `json:"video_header"`
 	Description string   `json:"description"`
+}
+
+type VideoGalleryElement struct {
+	ID       string   `json:"id"`
+	Header   string   `json:"header"`
+	Parent   string   `json:"parent"`
+	Position int      `json:"position"`
+	Videos   []*Video `json:"videos"`
+	Hidden   bool     `json:"hidden"`
 }
 
 type Videos struct {
@@ -492,17 +515,19 @@ type Videos struct {
 }
 
 type Vreel struct {
-	ID              string                `json:"id"`
-	Author          string                `json:"author"`
-	LogoURI         *string               `json:"logo_uri"`
-	PageTitle       string                `json:"page_title"`
-	ButtonURI       *string               `json:"button_uri"`
-	Slides          []*Slide              `json:"slides"`
-	Elements        *VreelElements        `json:"elements"`
-	SimpleLinks     []*SimpleLinksElement `json:"simple_links"`
-	SlideCount      *int                  `json:"slide_count"`
-	LastSlideEdited *string               `json:"LastSlideEdited"`
-	TimeLastEdited  *int                  `json:"TimeLastEdited"`
+	ID              string                 `json:"id"`
+	Author          string                 `json:"author"`
+	LogoURI         *string                `json:"logo_uri"`
+	PageTitle       string                 `json:"page_title"`
+	ButtonURI       *string                `json:"button_uri"`
+	Slides          []*Slide               `json:"slides"`
+	Elements        *VreelElements         `json:"elements"`
+	SimpleLinks     []*SimpleLinksElement  `json:"simple_links"`
+	Gallery         []*GalleryElement      `json:"gallery"`
+	VideoGallery    []*VideoGalleryElement `json:"video_gallery"`
+	SlideCount      *int                   `json:"slide_count"`
+	LastSlideEdited *string                `json:"LastSlideEdited"`
+	TimeLastEdited  *int                   `json:"TimeLastEdited"`
 }
 
 type VreelElements struct {

@@ -2,7 +2,6 @@ package database
 
 import (
 	"errors"
-	"fmt"
 	"sync"
 
 	"github.com/lib/pq"
@@ -16,7 +15,6 @@ func CreateGroup(author string, newGroup model.NewGroup) (model.Group, error) {
 	group.ID = utils.GenerateId()
 	group.Author = author
 
-	fmt.Println("passed in id: " + author)
 	err := db.Create(&group)
 	return group.ToGroup(), err.Error
 }

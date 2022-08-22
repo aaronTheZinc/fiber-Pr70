@@ -166,6 +166,7 @@ type MoreInfo {
 type Slide {
   id: String!
   author: String!
+  hidden: Boolean!
   content_type: String!
   logo_uri: String
   logo_visible: Boolean
@@ -242,6 +243,8 @@ type Videos {
 
 type Video {
   id: String!
+  hidden: Boolean!
+  parent: String!
   position: Int!
   cta1: CTA!
   cta2: CTA!
@@ -251,9 +254,20 @@ type Video {
   description: String!
 }
 
+type VideoGalleryElement {
+  id: String!
+  header: String!
+  parent: String!
+  position: Int!
+  videos: [Video!]!
+  hidden: Boolean!
+
+}
+
 type GalleryImage {
   id: String!
   hidden: Boolean!
+  parent: String!
   position: Int
   cta1: CTA!
   cta2: CTA!
@@ -264,6 +278,15 @@ type GalleryImage {
 }
 
 type Gallery {
+  header: String!
+  position: Int!
+  images: [GalleryImage!]!
+  hidden: Boolean!
+}
+
+type GalleryElement {
+  id: String!
+  parent: String!
   header: String!
   position: Int!
   images: [GalleryImage!]!
@@ -296,6 +319,7 @@ type ContributionsElement {
 
 type SimpleLinksElement {
   id: String!
+  parent: String!
   header: String!
   hidden: Boolean!
   position: Int!
@@ -334,6 +358,8 @@ type Vreel {
   slides: [Slide]!
   elements: VreelElements!
   simple_links: [SimpleLinksElement!]!
+  gallery: [GalleryElement!]!
+  video_gallery: [VideoGalleryElement!]!
   slide_count: Int
   LastSlideEdited: String
   TimeLastEdited: Int
@@ -669,9 +695,17 @@ type Mutation {
     vreelId: String
   ): MutationResponse!
   createSimpleLinkElement(token: String!, vreelId: String): MutationResponse!
+  deleteSimpleLinkElement(token: String!, vreelId: String, elementId: String!): MutationResponse!
   appendSimpleLink(
     token: String!
     elementId: String!
     link: SimpleLinkInput!
   ): MutationResponse!
+  removeSimpleLink(token: String!, linkId: String): MutationResponse!
+  createGalleryElement(token: String!, vreelId: String): MutationResponse!
+  deleteGalleryElement(token: String!, elementId: String!): MutationResponse!
+  appendImageToGallery(token: String!, elementId: String!, image: AddGalleryImageInput!): MutationResponse!
+  removeGalleryImage(token: String!, imageId: String!): MutationResponse!
+  createVideoElement(token: String!, vreelId: String): MutationResponse!
+  appendVideoToVideoGallery(token: String!, elementId: String, video: AddVideoInput!): MutationResponse!
 }

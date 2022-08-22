@@ -202,8 +202,8 @@ func GetVreel(id string) (model.Vreel, error) {
 		// wg := sync.WaitGroup{}
 		fmt.Println(vreel.SimpleLinks)
 		slides, slidesErr := GetSlides(vreel.Slides)
-		// l := GetAllSimpleLinksElements(vreel.SimpleLinks)
-
+		l := GetAllSimpleLinksElements(vreel.SimpleLinks)
+		g := GetAllGalleryElements(vreel.Gallery)
 		if slidesErr != nil {
 			err = slidesErr
 		} else {
@@ -213,7 +213,8 @@ func GetVreel(id string) (model.Vreel, error) {
 			} else {
 
 				r = v
-				// r.SimpleLinks = l
+				r.SimpleLinks = l
+				r.Gallery = g
 			}
 
 		}
