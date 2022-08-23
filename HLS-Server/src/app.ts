@@ -39,9 +39,11 @@ app.use("/", async (req: Request, res: Response, next: NextFunction) => {
   if (req.path === "/upload") {
     const token = req.headers["token"]?.toString();
     if (!token) {
+      console.log("no token provided")
       res.status(401).json({
         err: "token is required"
       })
+      return
     }
     try {
       const { is_authorized, username } = await authorizeToken(token!);
@@ -73,7 +75,7 @@ app.get("/uploader", (req: Request, res: Response) => {
 app.get("/view", (req: Request, res: Response) => {
   res.sendFile(path.join(`${rootDir}/client.html`));
 });
-
+app.options('*', cors<Request>())
 app.post("/upload", uploadMedia, (req: Request, res: Response) => {
   if (req.file) {
     const fileType = req.body.type;
