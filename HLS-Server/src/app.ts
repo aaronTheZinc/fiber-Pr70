@@ -63,7 +63,7 @@ app.use("/", async (req: Request, res: Response, next: NextFunction) => {
 });
 
 const uploadMedia = multer({ storage }).single("content");
-app.use(cors({ origin: "*" }));
+app.use(cors({ origin: "*", credentials: true }));
 app.use(express.static("dist"));
 
 app.get("/uploader", (req: Request, res: Response) => {
