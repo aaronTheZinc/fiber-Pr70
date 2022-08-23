@@ -16,20 +16,21 @@ console.log(rootDir);
 const storage = multer.diskStorage({
   destination: `${rootDir}/uploads`,
   filename: async (req, file, cb) => {
+    console.log("hit storage")
     cb(null, `${Date.now()}${path.extname(file.originalname)}`);
   },
 });
 
 const app = express();
 app.use(express.json())
-app.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
-  );
-  next();
-});
+// app.use(function (req, res, next) {
+//   res.header("Access-Control-Allow-Origin", "*");
+//   res.header(
+//     "Access-Control-Allow-Headers",
+//     "Origin, X-Requested-With, Content-Type, Accept"
+//   );
+//   next();
+// });
 
 app.use(express.static(rootDir));
 
@@ -77,6 +78,7 @@ app.get("/view", (req: Request, res: Response) => {
 });
 app.options('*', cors<Request>())
 app.post("/upload", uploadMedia, (req: Request, res: Response) => {
+  console.log("hit upload!")
   if (req.file) {
     const fileType = req.body.type;
     const fileName = req.file.filename;
