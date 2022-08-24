@@ -86,7 +86,7 @@ type SlideModel struct {
 	Active        bool   `json:"active"`
 	ContentType   string `json:"content_type"`
 	LogoURI       string `json:"logo_uri"`
-	LogoVisible   bool   `jsonc:"logo_visible"`
+	LogoVisible   bool   `json:"logo_visible"`
 	Author        string `json:"author"`
 	URI           string `json:"uri"`
 	SlideLocation int    `json:"slide_location"`
