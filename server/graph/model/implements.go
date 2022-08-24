@@ -83,7 +83,7 @@ type VreelModel struct {
 
 type SlideModel struct {
 	ID            string `json:"id"`
-	Active        bool   `json:"hidden"`
+	Active        bool   `json:"active"`
 	ContentType   string `json:"content_type"`
 	LogoURI       string `json:"logo_uri"`
 	LogoVisible   bool   `jsonc:"logo_visible"`
