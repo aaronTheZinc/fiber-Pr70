@@ -39,7 +39,7 @@ func IsConnected() bool {
 
 func Migrate() {
 	log.Println("Migrating...")
-	db.Session(&gorm.Session{AllowGlobalUpdate: true}).Model(&model.SlideModel{}).Update("active", true)
+	// db.Session(&gorm.Session{AllowGlobalUpdate: true}).Model(&model.SlideModel{}).Update("active", true)
 	db.AutoMigrate(model.GalleryElementModel{})
 	db.AutoMigrate(model.GalleryImageModel{})
 	db.AutoMigrate(model.SimpleLinksElementModel{})
