@@ -107,6 +107,10 @@ app.post("/upload", uploadMedia, (req: Request, res: Response) => {
       } catch (e) {
         console.log(e);
       }
+    } else {
+      res.json({
+        msg: "image successfully uploaded"
+      })
     }
   }
 });
