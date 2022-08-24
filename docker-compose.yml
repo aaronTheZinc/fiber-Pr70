@@ -38,18 +38,18 @@ services:
   #   environment:
   #     - DB_HOST=db
 
-  # server:
-  #   build:
-  #     context: ./server
-  #     dockerfile: dockerfile
-  #   network_mode: "host"
-  #   ports:
-  #     - "8080:8080"
-  #     - "8081:8081"
-  #   depends_on:
-  #     - db
-  #   environment:
-  #     - DB_HOST=db
+  server:
+    build:
+      context: ./server
+      dockerfile: dockerfile
+    network_mode: "host"
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=db
 
   cache:
     image: redis:6.2-alpine
