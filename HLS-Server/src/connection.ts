@@ -1,5 +1,6 @@
+import "reflect-metadata"
 import { DataSource } from "typeorm"
-import { File } from "./files"
+import { UserFile } from "./entity/UserFile"
 
 export const AppDataSource = new DataSource({
     type: "postgres",
@@ -8,7 +9,9 @@ export const AppDataSource = new DataSource({
     username: "gorm",
     password: "gorm",
     database: "gorm",
-    entities: [File],
     synchronize: true,
     logging: false,
+    entities: [UserFile],
+    migrations: [],
+    subscribers: [],
 })

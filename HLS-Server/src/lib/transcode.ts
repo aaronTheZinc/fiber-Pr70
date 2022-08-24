@@ -1,6 +1,6 @@
 import ffmpeg from "fluent-ffmpeg";
 import fs from "fs";
-import { rootDir } from "../app";
+import { rootDir } from "../";
 
 type TranscodeVideoRequest = {
   fileDir: string;
@@ -28,8 +28,6 @@ export const transcodeVideo = ({
 
   try {
     const command = ffmpeg(fileDir)
-      .audioCodec("libopus")
-      .audioBitrate(96)
       .size("1920x1080")
       .outputOptions([
         "-profile:v baseline", // baseline profile (level 3.0) for H264 video codec

@@ -1,5 +1,5 @@
 import { Response, Request, Router } from "express"
-import { deleteFile, updateFileName } from "../db/files";
+import { deleteFile, getUserFiles, updateFileName } from "../entity/UserFile";
 
 const router = Router();
 
@@ -12,6 +12,15 @@ type FileEditResponseType = {
 router.get('/', async (req: Request, res: Response) => {
 
 });
+
+router.get('/files', async (req: Request, res: Response) => {
+    const { id } = req.query;
+    if (!id) { res.json({ err: "must provide id" }); return }
+    const files = await getUserFiles(id?.toString());
+
+    res.json(files);
+    return
+})
 
 router.post('filename/edit', async (req: Request, res: Response) => {
     const { user_id, file_id, new_file_name } = req.body;

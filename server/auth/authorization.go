@@ -871,6 +871,7 @@ func AuthorizeEditSlide(token, slideId, data string) (model.Slide, error) {
 					err = e.FAILED_TO_PARSE_SLIDE
 					log.Println("slide update error ->", jErr.Error())
 				} else {
+					fmt.Println("edited slide object ->", s)
 					s := sl.ToDatabaseModel()
 					v, slideUpdateErr := database.UpdateSlide(slideId, s)
 					if slideUpdateErr != nil {
