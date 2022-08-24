@@ -39,7 +39,7 @@ func IsConnected() bool {
 
 func Migrate() {
 	log.Println("Migrating...")
-	db.Model(&model.SlideModel{}).Where("active = ?", nil).Update("active", true)
+	db.Exec("UPDATE slide_model SET active = ?", true)
 	db.AutoMigrate(model.GalleryElementModel{})
 	db.AutoMigrate(model.GalleryImageModel{})
 	db.AutoMigrate(model.SimpleLinksElementModel{})
