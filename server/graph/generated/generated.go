@@ -364,13 +364,13 @@ type ComplexityRoot struct {
 	}
 
 	Slide struct {
+		Active        func(childComplexity int) int
 		Advanced      func(childComplexity int) int
 		Author        func(childComplexity int) int
 		ContentType   func(childComplexity int) int
 		Cta1          func(childComplexity int) int
 		Cta2          func(childComplexity int) int
 		Desktop       func(childComplexity int) int
-		Hidden        func(childComplexity int) int
 		ID            func(childComplexity int) int
 		Info          func(childComplexity int) int
 		LogoURI       func(childComplexity int) int
@@ -2494,6 +2494,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.SimpleLinksElement.Position(childComplexity), true
 
+	case "Slide.active":
+		if e.complexity.Slide.Active == nil {
+			break
+		}
+
+		return e.complexity.Slide.Active(childComplexity), true
+
 	case "Slide.advanced":
 		if e.complexity.Slide.Advanced == nil {
 			break
@@ -2535,13 +2542,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Slide.Desktop(childComplexity), true
-
-	case "Slide.hidden":
-		if e.complexity.Slide.Hidden == nil {
-			break
-		}
-
-		return e.complexity.Slide.Hidden(childComplexity), true
 
 	case "Slide.id":
 		if e.complexity.Slide.ID == nil {
@@ -3531,7 +3531,7 @@ type MoreInfo {
 type Slide {
   id: String!
   author: String!
-  hidden: Boolean!
+  active: Boolean!
   content_type: String!
   logo_uri: String
   logo_visible: Boolean
@@ -14134,7 +14134,7 @@ func (ec *executionContext) _Slide_author(ctx context.Context, field graphql.Col
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Slide_hidden(ctx context.Context, field graphql.CollectedField, obj *model.Slide) (ret graphql.Marshaler) {
+func (ec *executionContext) _Slide_active(ctx context.Context, field graphql.CollectedField, obj *model.Slide) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -14152,7 +14152,7 @@ func (ec *executionContext) _Slide_hidden(ctx context.Context, field graphql.Col
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Hidden, nil
+		return obj.Active, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -22043,8 +22043,8 @@ func (ec *executionContext) _Slide(ctx context.Context, sel ast.SelectionSet, ob
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "hidden":
-			out.Values[i] = ec._Slide_hidden(ctx, field, obj)
+		case "active":
+			out.Values[i] = ec._Slide_active(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}

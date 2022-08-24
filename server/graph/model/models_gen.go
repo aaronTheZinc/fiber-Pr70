@@ -365,7 +365,7 @@ type SimpleLinksElement struct {
 type Slide struct {
 	ID            string         `json:"id"`
 	Author        string         `json:"author"`
-	Hidden        bool           `json:"hidden"`
+	Active        bool           `json:"active"`
 	ContentType   string         `json:"content_type"`
 	LogoURI       *string        `json:"logo_uri"`
 	LogoVisible   *bool          `json:"logo_visible"`

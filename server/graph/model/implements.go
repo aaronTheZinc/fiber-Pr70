@@ -83,7 +83,7 @@ type VreelModel struct {
 
 type SlideModel struct {
 	ID            string `json:"id"`
-	Hidden        bool   `json:"hidden"`
+	Active        bool   `json:"hidden"`
 	ContentType   string `json:"content_type"`
 	LogoURI       string `json:"logo_uri"`
 	LogoVisible   bool   `jsonc:"logo_visible"`
@@ -565,6 +565,7 @@ func (c *Slide) ToDatabaseModel() SlideModel {
 		Author:        c.Author,
 		ContentType:   c.ContentType,
 		URI:           c.URI,
+		Active:        c.Active,
 		SlideLocation: c.SlideLocation,
 		Title:         string(t),
 		Advanced:      string(a),
@@ -699,7 +700,7 @@ func (c *SlideModel) ToSlide() Slide {
 	return Slide{
 		ID:            c.ID,
 		URI:           c.URI,
-		Hidden:        c.Hidden,
+		Active:        c.Active,
 		LogoURI:       &c.LogoURI,
 		LogoVisible:   &c.LogoVisible,
 		Author:        c.Author,

@@ -26,6 +26,7 @@ func CreateSlide(author string) (model.Slide, error) {
 		slide := model.CreateNewSlideModel(slideCount + 1)
 		slide.Author = author
 		slide.ID = utils.GenerateId()
+		slide.Active = true
 		md := model.SlideMetaData{}
 		md.Created = time.Now().UTC().String()
 		md.Size = "0"
