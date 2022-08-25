@@ -78,7 +78,7 @@ async function Server() {
             console.log("locals ->", res.locals)
             const { id, username } = res.locals
             const isVideo = fileType.includes("video");
-
+            let HEADERS_SENT = false;
             console.log(isVideo === "video/mp4");
             if (isVideo) {
                 const dir = `${rootDir}/uploads/${fileName}`;
@@ -87,6 +87,7 @@ async function Server() {
                     res.json({
                         msg: "[currently transcoding]",
                     });
+                    HEADERS_SENT = true;
                 }, 25000);
                 try {
                     transcodeVideo({
@@ -104,7 +105,10 @@ async function Server() {
                                 fileType,
                                 username
                             }).then(() => {
-                                res.json(response);
+                                if (!HEADERS_SENT) {
+                                    res.json(response);
+                                }
+                                return
                             })
                                 .catch(err => {
                                     console.log(err)
