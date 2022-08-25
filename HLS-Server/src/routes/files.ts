@@ -18,7 +18,7 @@ router.get('/files', async (req: Request, res: Response) => {
     if (!id) { res.json({ err: "must provide id" }); return }
     const files = await getUserFiles(id?.toString());
 
-    res.json(files);
+    res.json({ files });
     return
 })
 
