@@ -5,7 +5,7 @@ import { rootDir } from "../";
 type TranscodeVideoRequest = {
   fileDir: string;
   username: string;
-  cb: (r: { error?: Error; urlExt: string | null }) => void;
+  cb: (r: { error?: Error; urlExt: string | null, rootFolderName: string | null }) => void;
 };
 
 export const transcodeVideo = ({
@@ -46,11 +46,11 @@ export const transcodeVideo = ({
         console.log("ERR!!");
       })
       .on("end", function (err, stdout, stderr) {
-        cb({ urlExt: `hls/${username}/${now}/media.m3u8` });
+        cb({ urlExt: `hls/${username}/${now}/media.m3u8`, rootFolderName: now });
       })
       .run();
   } catch (error) {
     console.log(error);
-    return cb({ error, urlExt: null });
+    return cb({ error, urlExt: null, rootFolderName: null });
   }
 };

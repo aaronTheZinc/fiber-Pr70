@@ -71,10 +71,10 @@ async function Server() {
     });
     app.options('*', cors<Request>())
     app.post("/upload", uploadMedia, (req: Request, res: Response) => {
-        console.log("hit upload!")
         if (req.file) {
             const fileType = req.body.type;
             const fileName = req.file.filename;
+            const fileExtension = path.extname(fileName);
             console.log("locals ->", res.locals)
             const { id, username } = res.locals
             const isVideo = fileType.includes("video");
@@ -101,7 +101,7 @@ async function Server() {
                             await saveFile({
                                 fileSize: req.file?.size || 0,
                                 author: id,
-                                fileName,
+                                fileName: `${response.rootFolderName}${fileExtension}`,
                                 fileType,
                                 username
                             }).then(() => {

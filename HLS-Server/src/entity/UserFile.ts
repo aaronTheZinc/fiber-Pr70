@@ -31,7 +31,7 @@ export class UserFile {
 
 
 
-export const saveFile = async ({ fileSize, author, fileName, fileType, id }: any) => {
+export const saveFile = async ({ fileSize, author, fileName, fileType, id, username }: any) => {
     const connection = getConnection();
     const filesRepository = connection.getRepository(UserFile);
 
@@ -42,6 +42,7 @@ export const saveFile = async ({ fileSize, author, fileName, fileType, id }: any
     file.fileName = fileName;
     file.fileSize = fileSize
     file.fileType = fileType;
+    file.username = username;
     filesRepository.save(file);
     // return await AppDataSource.manager.save(file)
 
