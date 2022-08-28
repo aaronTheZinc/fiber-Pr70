@@ -109,3 +109,33 @@ func AuthorizeRemoveVideoFromVideoGallery(token, imageId string) (model.Mutation
 
 	return resp, err
 }
+
+func AuthorizeCreateSocialsElement(token string, vreeldId *string) (model.MutationResponse, error) {
+	resp, err := AuthorizeRequest(token, func(claims WebTokenClaims, cb func(message string, err error)) {
+		cb(database.CreateSocialsElement(*vreeldId))
+	})
+	return resp, err
+}
+
+func AuthorizeAppendSocialToSocialsElement(token, elementId string, input model.SocialsInput) (model.MutationResponse, error) {
+	resp, err := AuthorizeRequest(token, func(claims WebTokenClaims, cb func(message string, err error)) {
+		cb(database.AppendToSocialLinks(elementId, input))
+	})
+
+	return resp, err
+}
+
+func AuthorizeDeleteSocialsElement(token, elementId string, vreelId *string) (model.MutationResponse, error) {
+	resp, err := AuthorizeRequest(token, func(claims WebTokenClaims, cb func(message string, err error)) {
+		cb("successfully deleted gallery element", database.DeleteSocialsElement(elementId))
+	})
+
+	return resp, err
+}
+func AuthorizeRemoveSocialsLink(token, socialsId string) (model.MutationResponse, error) {
+	resp, err := AuthorizeRequest(token, func(claims WebTokenClaims, cb func(message string, err error)) {
+		cb("successfully removed image", database.RemoveSocialLinks(socialsId))
+	})
+
+	return resp, err
+}

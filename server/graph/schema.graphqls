@@ -294,16 +294,18 @@ type GalleryElement {
 }
 
 type Socials {
-  position: Int
+  position: Int!
   platform: String!
   username: String!
 }
 
 type SocialsElement {
+  id: String!
+  parent: String!
   position: Int!
   hidden: Boolean!
   header: String!
-  socials: [Socials]!
+  socials: [Socials!]!
 }
 
 type Contribution {
@@ -360,6 +362,7 @@ type Vreel {
   simple_links: [SimpleLinksElement!]!
   gallery: [GalleryElement!]!
   video_gallery: [VideoGalleryElement!]!
+  socials: [SocialsElement!]!
   slide_count: Int
   LastSlideEdited: String
   TimeLastEdited: Int
@@ -708,4 +711,12 @@ type Mutation {
   removeGalleryImage(token: String!, imageId: String!): MutationResponse!
   createVideoElement(token: String!, vreelId: String): MutationResponse!
   appendVideoToVideoGallery(token: String!, elementId: String, video: AddVideoInput!): MutationResponse!
+  createSocialsElement(token: String!, vreelId: String): MutationResponse!
+  appendSocialsLink(token: String!, elementId: String!, link: SocialsInput!): MutationResponse!
+  deleteSocialsElement(token: String!, elementId: String!): MutationResponse!
+  removeSocialsLink(token: String!, socialsId: String!): MutationResponse!
+  editSimpleLinkElementLink(token: String! elementId: String!, input: SimpleLinkInput!): MutationResponse!
+  editGalleryImage(token: String!, imageId: String!, input: AddGalleryImageInput!): MutationResponse!
+  editSocialLink(token: String, linkId: String!, input: SocialsInput!): MutationResponse!
+  editVideoGalleryVideo(token: String!, videoId: String!, input: AddVideoInput!): MutationResponse!
 }

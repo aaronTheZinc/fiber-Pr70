@@ -69,9 +69,7 @@ func (r *mutationResolver) CreateSlide(ctx context.Context, token string) (*mode
 }
 
 func (r *mutationResolver) RemoveSocialLink(ctx context.Context, token string, platform string, vreelID *string) (*model.MutationResponse, error) {
-	resp, err := auth.AuthorizeRemoveSocialsLink(token, platform, vreelID)
-
-	return &resp, err
+	return nil, nil
 }
 
 func (r *mutationResolver) DeleteGroup(ctx context.Context, id string, token string) (*model.MutationResponse, error) {
@@ -323,10 +321,54 @@ func (r *mutationResolver) RemoveGalleryImage(ctx context.Context, token string,
 }
 
 func (r *mutationResolver) CreateVideoElement(ctx context.Context, token string, vreelID *string) (*model.MutationResponse, error) {
-	panic(fmt.Errorf("not implemented"))
+	resp, err := auth.AuthorizeCreateVideoGalleryElement(token, vreelID)
+
+	return &resp, err
 }
 
 func (r *mutationResolver) AppendVideoToVideoGallery(ctx context.Context, token string, elementID *string, video model.AddVideoInput) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeAppendVideoToVideoGallery(token, *elementID, video)
+
+	return &resp, err
+}
+
+func (r *mutationResolver) CreateSocialsElement(ctx context.Context, token string, vreelID *string) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeCreateSocialsElement(token, vreelID)
+
+	return &resp, err
+}
+
+func (r *mutationResolver) AppendSocialsLink(ctx context.Context, token string, elementID string, link model.SocialsInput) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeAppendSocialToSocialsElement(token, elementID, link)
+
+	return &resp, err
+}
+
+func (r *mutationResolver) DeleteSocialsElement(ctx context.Context, token string, elementID string) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeDeleteSocialsElement(token, elementID, nil)
+
+	return &resp, err
+}
+
+func (r *mutationResolver) RemoveSocialsLink(ctx context.Context, token string, socialsID string) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeRemoveSocialsLink(token, socialsID)
+
+	return &resp, err
+}
+
+func (r *mutationResolver) EditSimpleLinkElementLink(ctx context.Context, token string, elementID string, input model.SimpleLinkInput) (*model.MutationResponse, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *mutationResolver) EditGalleryImage(ctx context.Context, token string, imageID string, input model.AddGalleryImageInput) (*model.MutationResponse, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *mutationResolver) EditSocialLink(ctx context.Context, token *string, linkID string, input model.SocialsInput) (*model.MutationResponse, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *mutationResolver) EditVideoGalleryVideo(ctx context.Context, token string, videoID string, input model.AddVideoInput) (*model.MutationResponse, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
@@ -417,6 +459,9 @@ type queryResolver struct{ *Resolver }
 //  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
 //    it when you're done.
 //  - You have helper methods in this file. Move them out to keep these resolver files clean.
+func (r *mutationResolver) AppendLinks(ctx context.Context, token string, elementID string, link model.SocialsInput) (*model.MutationResponse, error) {
+	panic(fmt.Errorf("not implemented"))
+}
 func (r *mutationResolver) EditElementLocation(ctx context.Context, token string, element string, position int) (*model.MutationResponse, error) {
 	panic(fmt.Errorf("not implemented"))
 }

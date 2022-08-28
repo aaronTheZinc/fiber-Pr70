@@ -394,12 +394,14 @@ type SlideMetaData struct {
 }
 
 type Socials struct {
-	Position *int   `json:"position"`
+	Position int    `json:"position"`
 	Platform string `json:"platform"`
 	Username string `json:"username"`
 }
 
 type SocialsElement struct {
+	ID       string     `json:"id"`
+	Parent   string     `json:"parent"`
 	Position int        `json:"position"`
 	Hidden   bool       `json:"hidden"`
 	Header   string     `json:"header"`
@@ -525,6 +527,7 @@ type Vreel struct {
 	SimpleLinks     []*SimpleLinksElement  `json:"simple_links"`
 	Gallery         []*GalleryElement      `json:"gallery"`
 	VideoGallery    []*VideoGalleryElement `json:"video_gallery"`
+	Socials         []*SocialsElement      `json:"socials"`
 	SlideCount      *int                   `json:"slide_count"`
 	LastSlideEdited *string                `json:"LastSlideEdited"`
 	TimeLastEdited  *int                   `json:"TimeLastEdited"`

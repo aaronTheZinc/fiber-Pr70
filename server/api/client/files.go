@@ -41,7 +41,6 @@ func GetUsersFiles(id string) (model.Files, error) {
 	if resp, getErr := http.Get(endpoint); getErr == nil {
 		if body, e := ioutil.ReadAll(resp.Body); err != nil {
 			err = e
-			log.Print("[failed to get] ", e.Error())
 		} else {
 
 			if unmarshalErr := json.Unmarshal(body, &files_r); unmarshalErr != nil {

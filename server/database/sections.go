@@ -398,3 +398,103 @@ func RemoveVideoFromVideoGallery(videoId string) error {
 	db.Where("id = ?", videoId).Delete(&model.VideoModel{})
 	return nil
 }
+
+func CreateSocialsElement(vreelId string) (string, error) {
+	id := utils.GenerateId()
+	createErr := db.Create(&model.SocialElementModel{
+		ID:       id,
+		Header:   "Socials",
+		Parent:   vreelId,
+		Hidden:   false,
+		Position: 0,
+		Socials:  []string{},
+	}).Error
+
+	if createErr != nil {
+		return "", createErr
+	}
+
+	err := AppendToElementSlice(model.VreelModel{}, "socials", vreelId, []string{id})
+
+	return id, err
+}
+
+func AppendToSocialLinks(elementId string, video model.SocialsInput) (string, error) {
+	var err error
+	id := utils.GenerateId()
+	v := video.ToDatabaseModel()
+	v.Parent = elementId
+	v.ID = id
+	if createErr := db.Create(&v).Error; createErr == nil {
+		appendErr := AppendToElementSlice(&model.VideoGalleryElementModel{}, "socials", elementId, []string{id})
+		if appendErr != nil {
+			err = appendErr
+		}
+	} else {
+		err = createErr
+	}
+	return id, err
+}
+func RemoveSocialLinks(socialId string) error {
+
+	social := model.SocialsModel{}
+	getErr := db.Where("id = ?", socialId).First(&social).Error
+	if getErr != nil {
+		return getErr
+	}
+	socialLinkWasFound := false
+	element := model.SocialElementModel{}
+	getParentErr := db.Where("id = ?", social.Parent).Select("socials").First(&element).Error
+
+	if getParentErr != nil {
+		return errors.New("failed to get link parent")
+	}
+
+	for idx, image := range element.Socials {
+		if image == socialId {
+			socialLinkWasFound = true
+			element.Socials = append(element.Socials[:idx], element.Socials[idx+1:]...)
+			break
+		}
+	}
+
+	updateErr := db.Model(&model.SocialElementModel{}).Where("id = ? ", social.Parent).Update("videos", element.Socials).Error
+
+	if updateErr != nil {
+		return errors.New("failed to update video gallery element")
+	}
+
+	if !socialLinkWasFound {
+		return errors.New("social not found")
+	}
+	db.Where("id = ?", socialId).Delete(&model.VideoModel{})
+	return nil
+}
+
+func DeleteSocialsElement(elementId string) error {
+	var err error
+	el := model.VideoGalleryElementModel{}
+	if findErr := db.Where("id = ?", elementId).Select("Parent").First(&el).Error; findErr == nil {
+		parent := el.Parent
+		vreel := model.VreelModel{}
+		db.Where("parent = ?", elementId).Delete(&model.SocialsModel{})
+
+		findVreelErr := db.Where("id = ?", parent).First(&vreel).Error
+		if findVreelErr != nil {
+			err = findVreelErr
+		} else {
+			linksEl := vreel.Socials
+			linksPQArr := pq.StringArray{}
+			linksPQArr = append(linksPQArr, utils.RemoveStringFromSlice(linksEl, elementId)...)
+			updateErr := db.Model(&model.VreelModel{}).Where("id = ?", parent).Update("socials", linksPQArr).Error
+
+			if updateErr != nil {
+				err = updateErr
+			}
+		}
+	} else {
+		err = findErr
+	}
+
+	return err
+}

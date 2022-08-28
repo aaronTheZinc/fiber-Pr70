@@ -76,6 +76,7 @@ type VreelModel struct {
 	Elements        string         `json:"elements"`
 	SimpleLinks     pq.StringArray `gorm:"type:text[]"`
 	Gallery         pq.StringArray `gorm:"type:text[]"`
+	Socials         pq.StringArray `gorm:"type:text[]"`
 	VideoGallery    pq.StringArray `gorm:"type:text[]"`
 	TimeLastEdited  int            `json:"time_last_edited"`
 	LastSlideEdited string         `json:"last_slide_edited"`
@@ -177,8 +178,42 @@ type VideoModel struct {
 	Description string `json:"description"`
 }
 
+type SocialElementModel struct {
+	ID       string         `json:"id" gorm:"primaryKey"`
+	Parent   string         `json:"parent"`
+	Position int            `json:"position"`
+	Hidden   bool           `json:"hidden"`
+	Header   string         `json:"header"`
+	Socials  pq.StringArray `gorm:"type:text[]"`
+}
+
+type SocialsModel struct {
+	ID       string
+	Parent   string
+	Position int    `json:"position"`
+	Platform string `json:"platform"`
+	Username string `json:"username"`
+}
 type AnalyticsModel struct {
 	Likes pq.StringArray `gorm:"type:text[]"`
+}
+
+func (c *SocialsModel) ToSocial() Socials {
+	return Socials{
+		Position: c.Position,
+		Platform: c.Platform,
+		Username: c.Username,
+	}
+}
+
+func (c *SocialsInput) ToDatabaseModel() SocialsModel {
+
+	return SocialsModel{
+
+		Position: c.Position,
+		Platform: c.Platform,
+		Username: c.Username,
+	}
 }
 
 func (c *AddVideoInput) ToDatabaseModel() VideoModel {
@@ -754,7 +789,7 @@ func (s *SocialsInput) ToLink() Socials {
 	return Socials{
 		Platform: s.Platform,
 		Username: s.Username,
-		Position: &s.Position,
+		Position: s.Position,
 	}
 }
 
