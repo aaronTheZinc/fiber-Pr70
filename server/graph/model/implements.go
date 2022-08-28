@@ -587,14 +587,7 @@ func (c *Slide) ToDatabaseModel() SlideModel {
 	m_cotent, _ := json.Marshal(c.Mobile)
 	d_content, _ := json.Marshal(c.Desktop)
 	more_info, _ := json.Marshal(c.Info)
-	if c.LogoURI == nil {
-		str := ""
-		c.LogoURI = &str
-	}
-	if c.LogoVisible == nil {
-		b := true
-		c.LogoVisible = &b
-	}
+
 	return SlideModel{
 		ID:            c.ID,
 		Author:        c.Author,
@@ -609,8 +602,8 @@ func (c *Slide) ToDatabaseModel() SlideModel {
 		Mobile:        string(m_cotent),
 		Desktop:       string(d_content),
 		MoreInfo:      string(more_info),
-		LogoURI:       *c.LogoURI,
-		LogoVisible:   *c.LogoVisible,
+		LogoURI:       c.LogoURI,
+		LogoVisible:   c.LogoVisible,
 		// Metadata:      *c.Metadata,
 	}
 }
@@ -716,6 +709,8 @@ func CreateNewSlideModel(position int) SlideModel {
 }
 
 func (c *SlideModel) ToSlide() Slide {
+	log.Println("[logo visibility]: ", c.LogoVisible)
+	log.Println("[slide active]: ", c.Active)
 	m := SlideMetaData{}
 	title := Title{}
 	mobile := Content{}
@@ -736,8 +731,8 @@ func (c *SlideModel) ToSlide() Slide {
 		ID:            c.ID,
 		URI:           c.URI,
 		Active:        c.Active,
-		LogoURI:       &c.LogoURI,
-		LogoVisible:   &c.LogoVisible,
+		LogoURI:       c.LogoURI,
+		LogoVisible:   c.LogoVisible,
 		Author:        c.Author,
 		SlideLocation: c.SlideLocation,
 		ContentType:   c.ContentType,

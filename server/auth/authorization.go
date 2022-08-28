@@ -874,6 +874,7 @@ func AuthorizeEditSlide(token, slideId, data string) (model.Slide, error) {
 				} else {
 					fmt.Println("edited slide object ->", s)
 					s := sl.ToDatabaseModel()
+					fmt.Println("[Parsed Logo Visibility]", s.Active)
 					v, slideUpdateErr := database.UpdateSlide(slideId, s)
 					if slideUpdateErr != nil {
 						err = e.FAILED_UPDATE_SLIDE

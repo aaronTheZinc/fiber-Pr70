@@ -168,8 +168,8 @@ type Slide {
   author: String!
   active: Boolean!
   content_type: String!
-  logo_uri: String
-  logo_visible: Boolean
+  logo_uri: String!
+  logo_visible: Boolean!
   uri: String!
   slide_location: Int!
   title: Title!

@@ -2,6 +2,7 @@ package database
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"sync"
 	"time"
@@ -46,12 +47,14 @@ func CreateSlide(author string) (model.Slide, error) {
 }
 
 func UpdateSlide(id string, slide model.SlideModel) (model.Slide, error) {
-	// log.Printf("[Updated Slide %s]: %s", id, slide)
-	log.Println(slide)
+	log.Println("#######", slide.LogoVisible)
+	// log.Println(slide)
 	err := db.Where("id = ?", id).Updates(&slide).Error
 	if err != nil {
 		log.Panic(err)
 	}
+	db.Model(&model.SlideModel{}).Where("id = ?", id).Update("logo_visible", slide.LogoVisible)
+	db.Model(&model.SlideModel{}).Where("id = ?", id).Update("active", slide.Active)
 	return slide.ToSlide(), err
 }
 
@@ -64,6 +67,7 @@ func GetSlide(id string) (model.Slide, error) {
 	if getErr != nil {
 		err = e.SLIDE_NOT_FOUND
 	}
+	fmt.Println("from database ->", slide.LogoVisible)
 	return slide.ToSlide(), err
 
 }
