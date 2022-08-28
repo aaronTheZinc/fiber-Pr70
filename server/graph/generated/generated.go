@@ -272,7 +272,7 @@ type ComplexityRoot struct {
 		EditSimpleLink                    func(childComplexity int, token string, linkID string, link model.SimpleLinkInput, vreelID *string) int
 		EditSimpleLinkElementLink         func(childComplexity int, token string, elementID string, input model.SimpleLinkInput) int
 		EditSlide                         func(childComplexity int, token string, slideID string, slide model.SlideInput) int
-		EditSocialLink                    func(childComplexity int, token *string, linkID string, input model.SocialsInput) int
+		EditSocialLink                    func(childComplexity int, token string, linkID string, input model.SocialsInput) int
 		EditSocialsInput                  func(childComplexity int, token string, platform string, social model.SocialsInput, vreelID *string) int
 		EditVideoGalleryVideo             func(childComplexity int, token string, videoID string, input model.AddVideoInput) int
 		Follow                            func(childComplexity int, input model.AnalyticsMutation) int
@@ -592,7 +592,7 @@ type MutationResolver interface {
 	RemoveSocialsLink(ctx context.Context, token string, socialsID string) (*model.MutationResponse, error)
 	EditSimpleLinkElementLink(ctx context.Context, token string, elementID string, input model.SimpleLinkInput) (*model.MutationResponse, error)
 	EditGalleryImage(ctx context.Context, token string, imageID string, input model.AddGalleryImageInput) (*model.MutationResponse, error)
-	EditSocialLink(ctx context.Context, token *string, linkID string, input model.SocialsInput) (*model.MutationResponse, error)
+	EditSocialLink(ctx context.Context, token string, linkID string, input model.SocialsInput) (*model.MutationResponse, error)
 	EditVideoGalleryVideo(ctx context.Context, token string, videoID string, input model.AddVideoInput) (*model.MutationResponse, error)
 }
 type QueryResolver interface {
@@ -1898,7 +1898,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.EditSocialLink(childComplexity, args["token"].(*string), args["linkId"].(string), args["input"].(model.SocialsInput)), true
+		return e.complexity.Mutation.EditSocialLink(childComplexity, args["token"].(string), args["linkId"].(string), args["input"].(model.SocialsInput)), true
 
 	case "Mutation.editSocialsInput":
 		if e.complexity.Mutation.EditSocialsInput == nil {
@@ -3976,12 +3976,12 @@ input AnalyticsMutation {
   token: String!
 }
 input SimpleLinkInput {
-  position: Int!
-  thumbnail: String!
-  link_header: String!
-  url: String!
-  link_type: String!
-  tag: String!
+  position: Int
+  thumbnail: String
+  link_header: String
+  url: String
+  link_type: String
+  tag: String
 }
 input SuperLinkInput {
   thumbnail: String!
@@ -3992,9 +3992,9 @@ input SuperLinkInput {
   description: String!
 }
 input SocialsInput {
-  position: Int!
-  platform: String!
-  username: String!
+  position: Int
+  platform: String
+  username: String
 }
 
 input ContributionsInput {
@@ -4023,21 +4023,21 @@ input ContentInput {
 
 input AddVideoInput {
   position: Int
-  cta1: CTAInput!
-  cta2: CTAInput!
-  desktop: ContentInput!
-  mobile: ContentInput!
-  video_header: String!
-  description: String!
+  cta1: CTAInput
+  cta2: CTAInput
+  desktop: ContentInput
+  mobile: ContentInput
+  video_header: String
+  description: String
 }
 input AddGalleryImageInput {
   position: Int
-  cta1: CTAInput!
-  cta2: CTAInput!
-  desktop: ContentInput!
-  mobile: ContentInput!
-  image_header: String!
-  description: String!
+  cta1: CTAInput
+  cta2: CTAInput
+  desktop: ContentInput
+  mobile: ContentInput
+  image_header: String
+  description: String
 }
 
 input TitleInput {
@@ -4218,7 +4218,7 @@ type Mutation {
   removeSocialsLink(token: String!, socialsId: String!): MutationResponse!
   editSimpleLinkElementLink(token: String! elementId: String!, input: SimpleLinkInput!): MutationResponse!
   editGalleryImage(token: String!, imageId: String!, input: AddGalleryImageInput!): MutationResponse!
-  editSocialLink(token: String, linkId: String!, input: SocialsInput!): MutationResponse!
+  editSocialLink(token: String!, linkId: String!, input: SocialsInput!): MutationResponse!
   editVideoGalleryVideo(token: String!, videoId: String!, input: AddVideoInput!): MutationResponse!
 }
 `, BuiltIn: false},
@@ -5192,10 +5192,10 @@ func (ec *executionContext) field_Mutation_editSlide_args(ctx context.Context, r
 func (ec *executionContext) field_Mutation_editSocialLink_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *string
+	var arg0 string
 	if tmp, ok := rawArgs["token"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("token"))
-		arg0, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -13074,7 +13074,7 @@ func (ec *executionContext) _Mutation_editSocialLink(ctx context.Context, field 
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().EditSocialLink(rctx, args["token"].(*string), args["linkId"].(string), args["input"].(model.SocialsInput))
+		return ec.resolvers.Mutation().EditSocialLink(rctx, args["token"].(string), args["linkId"].(string), args["input"].(model.SocialsInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -19979,7 +19979,7 @@ func (ec *executionContext) unmarshalInputAddGalleryImageInput(ctx context.Conte
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("cta1"))
-			it.Cta1, err = ec.unmarshalNCTAInput2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐCTAInput(ctx, v)
+			it.Cta1, err = ec.unmarshalOCTAInput2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐCTAInput(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -19987,7 +19987,7 @@ func (ec *executionContext) unmarshalInputAddGalleryImageInput(ctx context.Conte
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("cta2"))
-			it.Cta2, err = ec.unmarshalNCTAInput2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐCTAInput(ctx, v)
+			it.Cta2, err = ec.unmarshalOCTAInput2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐCTAInput(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -19995,7 +19995,7 @@ func (ec *executionContext) unmarshalInputAddGalleryImageInput(ctx context.Conte
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("desktop"))
-			it.Desktop, err = ec.unmarshalNContentInput2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐContentInput(ctx, v)
+			it.Desktop, err = ec.unmarshalOContentInput2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐContentInput(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -20003,7 +20003,7 @@ func (ec *executionContext) unmarshalInputAddGalleryImageInput(ctx context.Conte
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("mobile"))
-			it.Mobile, err = ec.unmarshalNContentInput2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐContentInput(ctx, v)
+			it.Mobile, err = ec.unmarshalOContentInput2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐContentInput(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -20011,7 +20011,7 @@ func (ec *executionContext) unmarshalInputAddGalleryImageInput(ctx context.Conte
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("image_header"))
-			it.ImageHeader, err = ec.unmarshalNString2string(ctx, v)
+			it.ImageHeader, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -20019,7 +20019,7 @@ func (ec *executionContext) unmarshalInputAddGalleryImageInput(ctx context.Conte
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("description"))
-			it.Description, err = ec.unmarshalNString2string(ctx, v)
+			it.Description, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -20050,7 +20050,7 @@ func (ec *executionContext) unmarshalInputAddVideoInput(ctx context.Context, obj
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("cta1"))
-			it.Cta1, err = ec.unmarshalNCTAInput2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐCTAInput(ctx, v)
+			it.Cta1, err = ec.unmarshalOCTAInput2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐCTAInput(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -20058,7 +20058,7 @@ func (ec *executionContext) unmarshalInputAddVideoInput(ctx context.Context, obj
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("cta2"))
-			it.Cta2, err = ec.unmarshalNCTAInput2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐCTAInput(ctx, v)
+			it.Cta2, err = ec.unmarshalOCTAInput2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐCTAInput(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -20066,7 +20066,7 @@ func (ec *executionContext) unmarshalInputAddVideoInput(ctx context.Context, obj
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("desktop"))
-			it.Desktop, err = ec.unmarshalNContentInput2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐContentInput(ctx, v)
+			it.Desktop, err = ec.unmarshalOContentInput2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐContentInput(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -20074,7 +20074,7 @@ func (ec *executionContext) unmarshalInputAddVideoInput(ctx context.Context, obj
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("mobile"))
-			it.Mobile, err = ec.unmarshalNContentInput2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐContentInput(ctx, v)
+			it.Mobile, err = ec.unmarshalOContentInput2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐContentInput(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -20082,7 +20082,7 @@ func (ec *executionContext) unmarshalInputAddVideoInput(ctx context.Context, obj
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("video_header"))
-			it.VideoHeader, err = ec.unmarshalNString2string(ctx, v)
+			it.VideoHeader, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -20090,7 +20090,7 @@ func (ec *executionContext) unmarshalInputAddVideoInput(ctx context.Context, obj
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("description"))
-			it.Description, err = ec.unmarshalNString2string(ctx, v)
+			it.Description, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -20693,7 +20693,7 @@ func (ec *executionContext) unmarshalInputSimpleLinkInput(ctx context.Context, o
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("position"))
-			it.Position, err = ec.unmarshalNInt2int(ctx, v)
+			it.Position, err = ec.unmarshalOInt2ᚖint(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -20701,7 +20701,7 @@ func (ec *executionContext) unmarshalInputSimpleLinkInput(ctx context.Context, o
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("thumbnail"))
-			it.Thumbnail, err = ec.unmarshalNString2string(ctx, v)
+			it.Thumbnail, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -20709,7 +20709,7 @@ func (ec *executionContext) unmarshalInputSimpleLinkInput(ctx context.Context, o
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("link_header"))
-			it.LinkHeader, err = ec.unmarshalNString2string(ctx, v)
+			it.LinkHeader, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -20717,7 +20717,7 @@ func (ec *executionContext) unmarshalInputSimpleLinkInput(ctx context.Context, o
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("url"))
-			it.URL, err = ec.unmarshalNString2string(ctx, v)
+			it.URL, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -20725,7 +20725,7 @@ func (ec *executionContext) unmarshalInputSimpleLinkInput(ctx context.Context, o
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("link_type"))
-			it.LinkType, err = ec.unmarshalNString2string(ctx, v)
+			it.LinkType, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -20733,7 +20733,7 @@ func (ec *executionContext) unmarshalInputSimpleLinkInput(ctx context.Context, o
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tag"))
-			it.Tag, err = ec.unmarshalNString2string(ctx, v)
+			it.Tag, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -20803,7 +20803,7 @@ func (ec *executionContext) unmarshalInputSocialsInput(ctx context.Context, obj 
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("position"))
-			it.Position, err = ec.unmarshalNInt2int(ctx, v)
+			it.Position, err = ec.unmarshalOInt2ᚖint(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -20811,7 +20811,7 @@ func (ec *executionContext) unmarshalInputSocialsInput(ctx context.Context, obj 
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("platform"))
-			it.Platform, err = ec.unmarshalNString2string(ctx, v)
+			it.Platform, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -20819,7 +20819,7 @@ func (ec *executionContext) unmarshalInputSocialsInput(ctx context.Context, obj 
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("username"))
-			it.Username, err = ec.unmarshalNString2string(ctx, v)
+			it.Username, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -24012,11 +24012,6 @@ func (ec *executionContext) marshalNCTA2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋ
 	return ec._CTA(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNCTAInput2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐCTAInput(ctx context.Context, v interface{}) (*model.CTAInput, error) {
-	res, err := ec.unmarshalInputCTAInput(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
 func (ec *executionContext) marshalNContent2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐContent(ctx context.Context, sel ast.SelectionSet, v *model.Content) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -24025,11 +24020,6 @@ func (ec *executionContext) marshalNContent2ᚖgithubᚗcomᚋvreelᚋappᚋgrap
 		return graphql.Null
 	}
 	return ec._Content(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalNContentInput2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐContentInput(ctx context.Context, v interface{}) (*model.ContentInput, error) {
-	res, err := ec.unmarshalInputContentInput(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalNContribution2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐContributionᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Contribution) graphql.Marshaler {
@@ -25496,6 +25486,14 @@ func (ec *executionContext) marshalOContact2ᚖgithubᚗcomᚋvreelᚋappᚋgrap
 		return graphql.Null
 	}
 	return ec._Contact(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOContentInput2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐContentInput(ctx context.Context, v interface{}) (*model.ContentInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputContentInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalOContributionsElement2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐContributionsElement(ctx context.Context, sel ast.SelectionSet, v *model.ContributionsElement) graphql.Marshaler {

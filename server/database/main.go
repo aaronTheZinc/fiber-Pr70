@@ -45,6 +45,8 @@ func Migrate() {
 	db.AutoMigrate(model.SimpleLinksElementModel{})
 	db.AutoMigrate(model.SimpleLinkModel{})
 	db.AutoMigrate(model.UserModel{})
+	db.AutoMigrate(model.VideoGalleryElementModel{})
+	db.AutoMigrate(model.VideoModel{})
 	db.AutoMigrate(model.GroupModel{})
 	db.AutoMigrate(model.EventModel{})
 	db.AutoMigrate(model.VreelModel{})

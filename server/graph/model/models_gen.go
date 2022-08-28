@@ -8,8 +8,8 @@ type AddGalleryImageInput struct {
 	Cta2        *CTAInput     `json:"cta2"`
 	Desktop     *ContentInput `json:"desktop"`
 	Mobile      *ContentInput `json:"mobile"`
-	ImageHeader string        `json:"image_header"`
-	Description string        `json:"description"`
+	ImageHeader *string       `json:"image_header"`
+	Description *string       `json:"description"`
 }
 
 type AddVideoInput struct {
@@ -18,8 +18,8 @@ type AddVideoInput struct {
 	Cta2        *CTAInput     `json:"cta2"`
 	Desktop     *ContentInput `json:"desktop"`
 	Mobile      *ContentInput `json:"mobile"`
-	VideoHeader string        `json:"video_header"`
-	Description string        `json:"description"`
+	VideoHeader *string       `json:"video_header"`
+	Description *string       `json:"description"`
 }
 
 type Advanced struct {
@@ -345,12 +345,12 @@ type SimpleLink struct {
 }
 
 type SimpleLinkInput struct {
-	Position   int    `json:"position"`
-	Thumbnail  string `json:"thumbnail"`
-	LinkHeader string `json:"link_header"`
-	URL        string `json:"url"`
-	LinkType   string `json:"link_type"`
-	Tag        string `json:"tag"`
+	Position   *int    `json:"position"`
+	Thumbnail  *string `json:"thumbnail"`
+	LinkHeader *string `json:"link_header"`
+	URL        *string `json:"url"`
+	LinkType   *string `json:"link_type"`
+	Tag        *string `json:"tag"`
 }
 
 type SimpleLinksElement struct {
@@ -409,9 +409,9 @@ type SocialsElement struct {
 }
 
 type SocialsInput struct {
-	Position int    `json:"position"`
-	Platform string `json:"platform"`
-	Username string `json:"username"`
+	Position *int    `json:"position"`
+	Platform *string `json:"platform"`
+	Username *string `json:"username"`
 }
 
 type SuperLink struct {

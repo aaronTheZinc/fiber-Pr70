@@ -56,8 +56,55 @@ func GetAllSimpleLinksElements(links []string) []*model.SimpleLinksElement {
 	return simpleLinks
 }
 
+func GetAllVideoGalleryElements(parent string) []*model.VideoGalleryElement {
+	galleryElements := []*model.VideoGalleryElement{}
+	models := []model.VideoGalleryElementModel{}
+
+	db.Where("parent = ?", parent).Find(&models)
+
+	for _, m := range models {
+		videoModels := []model.VideoModel{}
+		videos := []*model.Video{}
+		db.Where("parent", m.ID).Find(&videoModels)
+		for idx := range videoModels {
+			temp := videoModels[idx].ToVideo()
+			videos = append(videos, &temp)
+
+		}
+		el := m.ToVideoGalleryElement()
+		el.Videos = videos
+
+		galleryElements = append(galleryElements, &el)
+
+	}
+	return galleryElements
+}
+
+func GetAllSocialElements(parent string) []*model.SocialsElement {
+	socialElements := []*model.SocialsElement{}
+	models := []model.SocialElementModel{}
+
+	db.Where("parent = ?", parent).Find(&models)
+
+	for _, m := range models {
+		socials := []*model.Socials{}
+		socialsModels := []*model.SocialsModel{}
+		db.Where("parent", m.ID).Find(&socials)
+		for idx := range socialsModels {
+			temp := socialsModels[idx].ToSocial()
+			socials = append(socials, &temp)
+
+		}
+		el := m.ToSocialsElement()
+		el.Socials = socials
+
+		socialElements = append(socialElements, &el)
+
+	}
+	return socialElements
+}
+
 func GetAllGalleryElements(galleries []string) []*model.GalleryElement {
-	fmt.Println("[galleries len]", galleries)
 	galleryElements := []*model.GalleryElement{}
 	wg := sync.WaitGroup{}
 	wg.Add(len(galleries))
@@ -83,6 +130,7 @@ func GetAllGalleryElements(galleries []string) []*model.GalleryElement {
 					}()
 
 				}
+				sWg.Done()
 				galleryElements = append(galleryElements, &element)
 			}
 		}()
@@ -314,7 +362,7 @@ func CreateVideoGalleryElement(vreelId string) (string, error) {
 		return "", createErr
 	}
 
-	err := AppendToElementSlice(model.VreelModel{}, "gallery", vreelId, []string{id})
+	err := AppendToElementSlice(model.VreelModel{}, "video_gallery", vreelId, []string{id})
 
 	return id, err
 }
@@ -497,4 +545,22 @@ func DeleteSocialsElement(elementId string) error {
 	}
 
 	return err
+}
+
+func UpdateSimpleLink(linkId string, input model.SimpleLinkInput) error {
+	link := input.ToDatabaseModel()
+	return db.Where("id = ?", linkId).Updates(&link).Error
+}
+
+func UpdateGalleryImage(imageId string, input model.AddGalleryImageInput) error {
+	image := input.ToDatabaseModel()
+	return db.Where("id = ?", imageId).Updates(&image).Error
+}
+func UpdateVideoGalleryImage(videoId string, input model.AddVideoInput) error {
+	video := input.ToDatabaseModel()
+	return db.Where("id = ?", videoId).Updates(&video).Error
+}
+func UpdateSocialsLinks(linkId string, input model.SocialsInput) error {
+	link := input.ToDatabaseModel()
+	return db.Where("id = ?", linkId).Updates(&link).Error
 }

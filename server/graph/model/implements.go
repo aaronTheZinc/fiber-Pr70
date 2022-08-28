@@ -198,7 +198,17 @@ type AnalyticsModel struct {
 	Likes pq.StringArray `gorm:"type:text[]"`
 }
 
+func (c *SocialElementModel) ToSocialsElement() SocialsElement {
+	return SocialsElement{
+		ID:       c.ID,
+		Parent:   c.Parent,
+		Position: c.Position,
+		Hidden:   c.Hidden,
+		Header:   c.Header,
+	}
+}
 func (c *SocialsModel) ToSocial() Socials {
+
 	return Socials{
 		Position: c.Position,
 		Platform: c.Platform,
@@ -207,21 +217,56 @@ func (c *SocialsModel) ToSocial() Socials {
 }
 
 func (c *SocialsInput) ToDatabaseModel() SocialsModel {
+	s := ""
+	i := 0
 
+	if c.Platform == nil {
+		c.Platform = &s
+	}
+	if c.Position == nil {
+		c.Position = &i
+	}
+	if c.Username == nil {
+		c.Username = &s
+	}
 	return SocialsModel{
-
-		Position: c.Position,
-		Platform: c.Platform,
-		Username: c.Username,
+		Position: *c.Position,
+		Platform: *c.Platform,
+		Username: *c.Username,
 	}
 }
 
 func (c *AddVideoInput) ToDatabaseModel() VideoModel {
+	s := ""
+	i := 0
 	cta1, _ := json.Marshal(c.Cta1)
 	cta2, _ := json.Marshal(c.Cta2)
 
 	desktop, _ := json.Marshal(c.Desktop)
 	mobile, _ := json.Marshal(c.Mobile)
+
+	if c.Cta1 == nil {
+		cta1 = []byte("")
+	}
+	if c.Cta2 == nil {
+		cta2 = []byte("")
+	}
+	if c.Desktop == nil {
+		desktop = []byte("")
+	}
+	if c.Mobile == nil {
+		mobile = []byte("")
+	}
+	if c.Description == nil {
+		c.Description = &s
+	}
+	if c.VideoHeader == nil {
+		c.VideoHeader = &s
+	}
+	if c.Position == nil {
+		c.Position = &i
+	}
+
 	return VideoModel{
 		Position:    *c.Position,
 		Hidden:      false,
@@ -229,8 +274,8 @@ func (c *AddVideoInput) ToDatabaseModel() VideoModel {
 		Cta2:        string(cta2),
 		Desktop:     string(desktop),
 		Mobile:      string(mobile),
-		VideoHeader: c.VideoHeader,
-		Description: c.Description,
+		VideoHeader: *c.VideoHeader,
+		Description: *c.Description,
 	}
 }
 
@@ -259,11 +304,11 @@ func (c *VideoModel) ToVideo() Video {
 	return Video{
 		ID:          c.ID,
 		Parent:      c.Parent,
-		Position:    0,
-		Cta1:        &Cta{},
-		Cta2:        &Cta{},
-		Desktop:     &Content{},
-		Mobile:      &Content{},
+		Position:    c.Position,
+		Cta1:        &cta1,
+		Cta2:        &cta2,
+		Desktop:     &desktop,
+		Mobile:      &mobile,
 		VideoHeader: c.VideoHeader,
 		Description: c.Description,
 	}
@@ -315,11 +360,35 @@ func (c *GalleryElementModel) ToGalleryElement() GalleryElement {
 	}
 }
 func (c *AddGalleryImageInput) ToDatabaseModel() GalleryImageModel {
+	s := ""
+	i := 0
 	cta1, _ := json.Marshal(c.Cta1)
 	cta2, _ := json.Marshal(c.Cta2)
 
 	desktop, _ := json.Marshal(c.Desktop)
 	mobile, _ := json.Marshal(c.Mobile)
+
+	if c.Cta1 == nil {
+		cta1 = []byte("")
+	}
+	if c.Cta2 == nil {
+		cta2 = []byte("")
+	}
+	if c.Desktop == nil {
+		desktop = []byte("")
+	}
+	if c.Mobile == nil {
+		mobile = []byte("")
+	}
+	if c.Description == nil {
+		c.Description = &s
+	}
+	if c.ImageHeader == nil {
+		c.ImageHeader = &s
+	}
+	if c.Position == nil {
+		c.Position = &i
+	}
 	return GalleryImageModel{
 		ID:          "",
 		Hidden:      false,
@@ -328,8 +397,8 @@ func (c *AddGalleryImageInput) ToDatabaseModel() GalleryImageModel {
 		Cta2:        string(cta2),
 		Desktop:     string(desktop),
 		Mobile:      string(mobile),
-		ImageHeader: c.ImageHeader,
-		Description: c.Description,
+		ImageHeader: *c.ImageHeader,
+		Description: *c.Description,
 	}
 }
 
@@ -366,14 +435,34 @@ func (c *SimpleLinkModel) ToSimpleLink() SimpleLink {
 }
 
 func (c *SimpleLinkInput) ToDatabaseModel() SimpleLinkModel {
+	i := 0
+	s := ""
+	if c.Thumbnail == nil {
+		c.Thumbnail = &s
+	}
+	if c.LinkHeader == nil {
+		c.LinkHeader = &s
+	}
+	if c.Position == nil {
+		c.Position = &i
+	}
+	if c.URL == nil {
+		c.URL = &s
+	}
+	if c.Tag == nil {
+		c.Tag = &s
+	}
+	if c.LinkType == nil {
+		c.LinkType = &s
+	}
 	return SimpleLinkModel{
 		Hidden:     false,
-		Position:   0,
-		Thumbnail:  c.Thumbnail,
-		LinkHeader: c.LinkHeader,
-		URL:        c.URL,
-		LinkType:   c.LinkType,
-		Tag:        c.Tag,
+		Position:   *c.Position,
+		Thumbnail:  *c.Thumbnail,
+		LinkHeader: *c.LinkHeader,
+		URL:        *c.URL,
+		LinkType:   *c.LinkType,
+		Tag:        *c.Tag,
 	}
 }
 func (c *AnalyticsFragmentModel) ToAnalyticsFragment() AnalyticFragment {
@@ -750,12 +839,12 @@ func (c *SlideModel) ToSlide() Slide {
 func (c *SimpleLinkInput) ToLink(id string) SimpleLink {
 	return SimpleLink{
 		ID:         id,
-		Position:   c.Position,
-		Thumbnail:  c.Thumbnail,
-		LinkHeader: c.LinkHeader,
-		LinkType:   c.LinkType,
-		URL:        c.URL,
-		Tag:        c.Tag,
+		Position:   *c.Position,
+		Thumbnail:  *c.Thumbnail,
+		LinkHeader: *c.LinkHeader,
+		LinkType:   *c.LinkType,
+		URL:        *c.URL,
+		Tag:        *c.Tag,
 	}
 }
 func (c *SuperLinkInput) ToLink() SuperLink {
@@ -771,10 +860,10 @@ func (c *SuperLinkInput) ToLink() SuperLink {
 func (c *AddVideoInput) ToVideo() Video {
 	return Video{
 		Position:    *c.Position,
-		VideoHeader: c.VideoHeader,
+		VideoHeader: *c.VideoHeader,
 		Desktop:     (*Content)(c.Desktop),
 		Mobile:      (*Content)(c.Mobile),
-		Description: c.Description,
+		Description: *c.Description,
 		Cta1:        (*Cta)(c.Cta1),
 		Cta2:        (*Cta)(c.Cta2),
 	}
@@ -782,9 +871,9 @@ func (c *AddVideoInput) ToVideo() Video {
 
 func (s *SocialsInput) ToLink() Socials {
 	return Socials{
-		Platform: s.Platform,
-		Username: s.Username,
-		Position: s.Position,
+		Platform: *s.Platform,
+		Username: *s.Username,
+		Position: *s.Position,
 	}
 }
 

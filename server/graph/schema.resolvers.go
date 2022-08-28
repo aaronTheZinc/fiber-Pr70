@@ -357,19 +357,27 @@ func (r *mutationResolver) RemoveSocialsLink(ctx context.Context, token string, 
 }
 
 func (r *mutationResolver) EditSimpleLinkElementLink(ctx context.Context, token string, elementID string, input model.SimpleLinkInput) (*model.MutationResponse, error) {
-	panic(fmt.Errorf("not implemented"))
+	resp, err := auth.AuthorizeUpdateSimpleLink(token, elementID, input)
+
+	return &resp, err
 }
 
 func (r *mutationResolver) EditGalleryImage(ctx context.Context, token string, imageID string, input model.AddGalleryImageInput) (*model.MutationResponse, error) {
-	panic(fmt.Errorf("not implemented"))
+	resp, err := auth.AuthorizeUpdateGalleryImage(token, imageID, input)
+
+	return &resp, err
 }
 
-func (r *mutationResolver) EditSocialLink(ctx context.Context, token *string, linkID string, input model.SocialsInput) (*model.MutationResponse, error) {
-	panic(fmt.Errorf("not implemented"))
+func (r *mutationResolver) EditSocialLink(ctx context.Context, token string, linkID string, input model.SocialsInput) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeUpdateSocialsLink(token, linkID, input)
+
+	return &resp, err
 }
 
 func (r *mutationResolver) EditVideoGalleryVideo(ctx context.Context, token string, videoID string, input model.AddVideoInput) (*model.MutationResponse, error) {
-	panic(fmt.Errorf("not implemented"))
+	resp, err := auth.AuthorizeUpdateVideoGalleryVideo(token, videoID, input)
+
+	return &resp, err
 }
 
 func (r *queryResolver) User(ctx context.Context, id *string) (*model.User, error) {

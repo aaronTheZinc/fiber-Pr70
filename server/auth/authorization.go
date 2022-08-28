@@ -384,7 +384,7 @@ func AuthorizeAddImageToGallery(token string, input model.AddGalleryImageInput, 
 		} else {
 			resp = model.MutationResponse{
 				Succeeded: true,
-				Message:   "successfully added image: " + input.ImageHeader + " to gallery.",
+				Message:   "successfully added image: " + *input.ImageHeader + " to gallery.",
 			}
 		}
 	} else {
@@ -432,7 +432,7 @@ func AuthorizeAddSocialsLink(token string, input model.SocialsInput) (model.Muta
 		if err != nil {
 			err = editErr
 		} else {
-			resp.Message = "added " + input.Platform + " to " + userId
+			resp.Message = "added " + *input.Platform + " to " + userId
 			resp.Succeeded = true
 		}
 

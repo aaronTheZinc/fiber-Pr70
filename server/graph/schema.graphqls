@@ -475,12 +475,12 @@ input AnalyticsMutation {
   token: String!
 }
 input SimpleLinkInput {
-  position: Int!
-  thumbnail: String!
-  link_header: String!
-  url: String!
-  link_type: String!
-  tag: String!
+  position: Int
+  thumbnail: String
+  link_header: String
+  url: String
+  link_type: String
+  tag: String
 }
 input SuperLinkInput {
   thumbnail: String!
@@ -491,9 +491,9 @@ input SuperLinkInput {
   description: String!
 }
 input SocialsInput {
-  position: Int!
-  platform: String!
-  username: String!
+  position: Int
+  platform: String
+  username: String
 }
 
 input ContributionsInput {
@@ -522,21 +522,21 @@ input ContentInput {
 
 input AddVideoInput {
   position: Int
-  cta1: CTAInput!
-  cta2: CTAInput!
-  desktop: ContentInput!
-  mobile: ContentInput!
-  video_header: String!
-  description: String!
+  cta1: CTAInput
+  cta2: CTAInput
+  desktop: ContentInput
+  mobile: ContentInput
+  video_header: String
+  description: String
 }
 input AddGalleryImageInput {
   position: Int
-  cta1: CTAInput!
-  cta2: CTAInput!
-  desktop: ContentInput!
-  mobile: ContentInput!
-  image_header: String!
-  description: String!
+  cta1: CTAInput
+  cta2: CTAInput
+  desktop: ContentInput
+  mobile: ContentInput
+  image_header: String
+  description: String
 }
 
 input TitleInput {
@@ -717,6 +717,6 @@ type Mutation {
   removeSocialsLink(token: String!, socialsId: String!): MutationResponse!
   editSimpleLinkElementLink(token: String! elementId: String!, input: SimpleLinkInput!): MutationResponse!
   editGalleryImage(token: String!, imageId: String!, input: AddGalleryImageInput!): MutationResponse!
-  editSocialLink(token: String, linkId: String!, input: SocialsInput!): MutationResponse!
+  editSocialLink(token: String!, linkId: String!, input: SocialsInput!): MutationResponse!
   editVideoGalleryVideo(token: String!, videoId: String!, input: AddVideoInput!): MutationResponse!
 }

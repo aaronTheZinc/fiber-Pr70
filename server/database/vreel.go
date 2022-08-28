@@ -204,6 +204,8 @@ func GetVreel(id string) (model.Vreel, error) {
 		slides, slidesErr := GetSlides(vreel.Slides)
 		l := GetAllSimpleLinksElements(vreel.SimpleLinks)
 		g := GetAllGalleryElements(vreel.Gallery)
+		vg := GetAllVideoGalleryElements(id)
+		socials := GetAllSocialElements(id)
 		if slidesErr != nil {
 			err = slidesErr
 		} else {
@@ -215,6 +217,8 @@ func GetVreel(id string) (model.Vreel, error) {
 				r = v
 				r.SimpleLinks = l
 				r.Gallery = g
+				r.VideoGallery = vg
+				r.Socials = socials
 			}
 
 		}
@@ -403,7 +407,7 @@ func AddSocialsLink(vreelId string, input model.SocialsInput) error {
 	}
 	socials = elements.Socials.Socials
 
-	newSocial := model.Socials{Platform: input.Platform, Username: input.Username}
+	newSocial := model.Socials{Platform: *input.Platform, Username: *input.Username}
 	socials = append(socials, &newSocial)
 
 	elements.Socials.Socials = socials
@@ -430,8 +434,8 @@ func AddImageToVreelGallery(vreelId string, input model.AddGalleryImageInput) er
 			Position:    input.Position,
 			Cta1:        (*model.Cta)(input.Cta1),
 			Cta2:        (*model.Cta)(input.Cta2),
-			ImageHeader: input.ImageHeader,
-			Description: input.Description,
+			ImageHeader: *input.ImageHeader,
+			Description: *input.Description,
 			Desktop:     (*model.Content)(input.Desktop),
 			Mobile:      (*model.Content)(input.Mobile),
 		})

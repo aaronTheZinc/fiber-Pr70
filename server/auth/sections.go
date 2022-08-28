@@ -139,3 +139,35 @@ func AuthorizeRemoveSocialsLink(token, socialsId string) (model.MutationResponse
 
 	return resp, err
 }
+
+func AuthorizeUpdateSimpleLink(token, linkId string, input model.SimpleLinkInput) (model.MutationResponse, error) {
+	resp, err := AuthorizeRequest(token, func(claims WebTokenClaims, cb func(message string, err error)) {
+		cb("successfully updated simple link", database.UpdateSimpleLink(linkId, input))
+	})
+
+	return resp, err
+}
+
+func AuthorizeUpdateGalleryImage(token, imageId string, input model.AddGalleryImageInput) (model.MutationResponse, error) {
+	resp, err := AuthorizeRequest(token, func(claims WebTokenClaims, cb func(message string, err error)) {
+		cb("successfully updated gallery image", database.UpdateGalleryImage(imageId, input))
+	})
+
+	return resp, err
+}
+
+func AuthorizeUpdateVideoGalleryVideo(token, imageId string, input model.AddVideoInput) (model.MutationResponse, error) {
+	resp, err := AuthorizeRequest(token, func(claims WebTokenClaims, cb func(message string, err error)) {
+		cb("successfully updated video gallery image", database.UpdateVideoGalleryImage(imageId, input))
+	})
+
+	return resp, err
+}
+
+func AuthorizeUpdateSocialsLink(token, socialsId string, input model.SocialsInput) (model.MutationResponse, error) {
+	resp, err := AuthorizeRequest(token, func(claims WebTokenClaims, cb func(message string, err error)) {
+		cb("successfully updated video gallery image", database.UpdateSocialsLinks(socialsId, input))
+	})
+
+	return resp, err
+}
