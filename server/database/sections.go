@@ -46,6 +46,7 @@ func GetAllSimpleLinksElements(links []string) []*model.SimpleLinksElement {
 					}()
 
 				}
+				sWg.Wait()
 				simpleLinks = append(simpleLinks, &element)
 			}
 		}()
