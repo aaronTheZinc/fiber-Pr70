@@ -47,8 +47,6 @@ func CreateSlide(author string) (model.Slide, error) {
 }
 
 func UpdateSlide(id string, slide model.SlideModel) (model.Slide, error) {
-	log.Println("#######", slide.LogoVisible)
-	// log.Println(slide)
 	err := db.Where("id = ?", id).Updates(&slide).Error
 	if err != nil {
 		log.Panic(err)

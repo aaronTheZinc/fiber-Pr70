@@ -18,42 +18,27 @@ func AppendToElementSlice(m interface{}, row, query string, appendage []string) 
 	return err
 }
 
-func GetAllSimpleLinksElements(links []string) []*model.SimpleLinksElement {
-	fmt.Println("[links len]", links)
-	simpleLinks := []*model.SimpleLinksElement{}
-	wg := sync.WaitGroup{}
-	wg.Add(len(links))
-	for idx := range links {
-		id := links[idx]
-		go func() {
-			defer wg.Done()
-			sWg := sync.WaitGroup{}
-			link := model.SimpleLinksElementModel{}
-			if err := db.Where("id = ?", id).First(&link).Error; err == nil {
-				fmt.Println("found")
-				element := link.ToSimpleLinksElement()
-				for idx := range link.Links {
-					simpleLinkId := link.Links[idx]
-					sWg.Add(len(link.Links))
-					go func() {
-						defer sWg.Done()
-						simpleLink := model.SimpleLinkModel{}
-						if err := db.Where("id = ?", simpleLinkId).First(&simpleLink).Error; err == nil {
-							l := simpleLink.ToSimpleLink()
-							fmt.Println(l.ID)
-							element.Links = append(element.Links, &l)
-						}
-					}()
+func GetAllSimpleLinksElements(parent string) []*model.SimpleLinksElement {
+	simpleLinksElements := []*model.SimpleLinksElement{}
+	models := []model.SimpleLinksElementModel{}
 
-				}
-				simpleLinks = append(simpleLinks, &element)
-			}
-		}()
+	db.Where("parent = ?", parent).Find(&models)
+
+	for _, m := range models {
+		linkModels := []model.SimpleLinkModel{}
+		links := []*model.SimpleLink{}
+		db.Where("parent", m.ID).Find(&linkModels)
+		for idx := range linkModels {
+			temp := linkModels[idx].ToSimpleLink()
+			links = append(links, &temp)
+		}
+		el := m.ToSimpleLinksElement()
+		el.Links = links
+
+		simpleLinksElements = append(simpleLinksElements, &el)
 
 	}
-
-	wg.Wait()
-	return simpleLinks
+	return simpleLinksElements
 }
 
 func GetAllVideoGalleryElements(parent string) []*model.VideoGalleryElement {
