@@ -396,6 +396,7 @@ type ComplexityRoot struct {
 	}
 
 	Socials struct {
+		ID       func(childComplexity int) int
 		Platform func(childComplexity int) int
 		Position func(childComplexity int) int
 		Username func(childComplexity int) int
@@ -2735,6 +2736,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.SlideMetaData.Size(childComplexity), true
 
+	case "Socials.id":
+		if e.complexity.Socials.ID == nil {
+			break
+		}
+
+		return e.complexity.Socials.ID(childComplexity), true
+
 	case "Socials.platform":
 		if e.complexity.Socials.Platform == nil {
 			break
@@ -3795,6 +3803,7 @@ type GalleryElement {
 }
 
 type Socials {
+  id: String!
   position: Int!
   platform: String!
   username: String!
@@ -15408,6 +15417,41 @@ func (ec *executionContext) _SlideMetaData_size(ctx context.Context, field graph
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Socials_id(ctx context.Context, field graphql.CollectedField, obj *model.Socials) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Socials",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Socials_position(ctx context.Context, field graphql.CollectedField, obj *model.Socials) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -23035,6 +23079,11 @@ func (ec *executionContext) _Socials(ctx context.Context, sel ast.SelectionSet, 
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Socials")
+		case "id":
+			out.Values[i] = ec._Socials_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "position":
 			out.Values[i] = ec._Socials_position(ctx, field, obj)
 			if out.Values[i] == graphql.Null {

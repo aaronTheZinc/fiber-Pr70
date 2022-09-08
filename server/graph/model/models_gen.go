@@ -394,6 +394,7 @@ type SlideMetaData struct {
 }
 
 type Socials struct {
+	ID       string `json:"id"`
 	Position int    `json:"position"`
 	Platform string `json:"platform"`
 	Username string `json:"username"`

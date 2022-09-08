@@ -210,6 +210,7 @@ func (c *SocialElementModel) ToSocialsElement() SocialsElement {
 func (c *SocialsModel) ToSocial() Socials {
 
 	return Socials{
+		ID:       c.ID,
 		Position: c.Position,
 		Platform: c.Platform,
 		Username: c.Username,
