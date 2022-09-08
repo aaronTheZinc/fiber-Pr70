@@ -459,7 +459,7 @@ func AppendToSocialLinks(elementId string, video model.SocialsInput) (string, er
 	v.Parent = elementId
 	v.ID = id
 	if createErr := db.Create(&v).Error; createErr == nil {
-		appendErr := AppendToElementSlice(&model.VideoGalleryElementModel{}, "socials", elementId, []string{id})
+		appendErr := AppendToElementSlice(&model.SocialElementModel{}, "socials", elementId, []string{id})
 		if appendErr != nil {
 			err = appendErr
 		}
