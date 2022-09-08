@@ -134,7 +134,7 @@ func AuthorizeDeleteSocialsElement(token, elementId string, vreelId *string) (mo
 }
 func AuthorizeRemoveSocialsLink(token, socialsId string) (model.MutationResponse, error) {
 	resp, err := AuthorizeRequest(token, func(claims WebTokenClaims, cb func(message string, err error)) {
-		cb("successfully removed image", database.RemoveSocialLinks(socialsId))
+		cb("successfully removed social link", database.RemoveSocialLinks(socialsId))
 	})
 
 	return resp, err

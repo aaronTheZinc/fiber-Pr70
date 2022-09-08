@@ -489,6 +489,7 @@ func RemoveSocialLinks(socialId string) error {
 			element.Socials = append(element.Socials[:idx], element.Socials[idx+1:]...)
 			break
 		}
+
 	}
 
 	updateErr := db.Model(&model.SocialElementModel{}).Where("id = ? ", social.Parent).Update("socials", element.Socials).Error
@@ -500,7 +501,7 @@ func RemoveSocialLinks(socialId string) error {
 	if !socialLinkWasFound {
 		return errors.New("social not found")
 	}
-	db.Where("id = ?", socialId).Delete(&model.VideoModel{})
+	db.Where("id = ?", socialId).Delete(&model.SocialsModel{})
 	return nil
 }
 
