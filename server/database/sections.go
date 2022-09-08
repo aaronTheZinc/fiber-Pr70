@@ -491,10 +491,10 @@ func RemoveSocialLinks(socialId string) error {
 		}
 	}
 
-	updateErr := db.Model(&model.SocialElementModel{}).Where("id = ? ", social.Parent).Update("videos", element.Socials).Error
+	updateErr := db.Model(&model.SocialElementModel{}).Where("id = ? ", social.Parent).Update("socials", element.Socials).Error
 
 	if updateErr != nil {
-		return errors.New("failed to update video gallery element")
+		return errors.New("failed to update socials element")
 	}
 
 	if !socialLinkWasFound {
