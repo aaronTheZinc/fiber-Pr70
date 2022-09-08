@@ -74,7 +74,7 @@ func GetAllSocialElements(parent string) []*model.SocialsElement {
 	for _, m := range models {
 		socials := []*model.Socials{}
 		socialsModels := []*model.SocialsModel{}
-		db.Where("parent", m.ID).Find(&socials)
+		db.Where("parent", m.ID).Find(&socialsModels)
 		for idx := range socialsModels {
 			temp := socialsModels[idx].ToSocial()
 			socials = append(socials, &temp)
