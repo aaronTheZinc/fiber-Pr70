@@ -508,7 +508,7 @@ func RemoveSocialLinks(socialId string) error {
 func DeleteSocialsElement(elementId string) error {
 	var err error
 	el := model.SocialElementModel{}
-	if findErr := db.Where("id = ?", elementId).Select("Parent").First(&el).Error; findErr == nil {
+	if findErr := db.Where("id = ?", elementId).Select("parent").First(&el).Error; findErr == nil {
 		parent := el.Parent
 		vreel := model.VreelModel{}
 		db.Where("parent = ?", elementId).Delete(&model.SocialsModel{})
@@ -529,7 +529,7 @@ func DeleteSocialsElement(elementId string) error {
 	} else {
 		err = findErr
 	}
-
+	db.Where("id = ?", elementId).Delete(&model.SocialElementModel{})
 	return err
 }
 
