@@ -507,7 +507,7 @@ func RemoveSocialLinks(socialId string) error {
 
 func DeleteSocialsElement(elementId string) error {
 	var err error
-	el := model.VideoGalleryElementModel{}
+	el := model.SocialElementModel{}
 	if findErr := db.Where("id = ?", elementId).Select("Parent").First(&el).Error; findErr == nil {
 		parent := el.Parent
 		vreel := model.VreelModel{}
