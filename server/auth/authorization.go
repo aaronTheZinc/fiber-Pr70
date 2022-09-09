@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"strconv"
 
 	"github.com/vreel/app/api/client"
 	"github.com/vreel/app/database"
@@ -177,29 +176,29 @@ func AuthorizeEditVreelLogo(token, uri string) (model.MutationResponse, error) {
 	return resp, err
 }
 
-func AuthorizeEditElementPosition(token, element string, position int) (model.MutationResponse, error) {
-	var err error
-	var resp model.MutationResponse
-	claims, isAuth, parseErr := ParseToken(token)
-	userId := claims.ID
+// func AuthorizeEditElementPosition(token, element string, position int) (model.MutationResponse, error) {
+// 	var err error
+// 	var resp model.MutationResponse
+// 	claims, isAuth, parseErr := ParseToken(token)
+// 	userId := claims.ID
 
-	if isAuth && parseErr == nil {
-		updateErr := database.EditElementPosition(userId, element, position)
+// 	if isAuth && parseErr == nil {
+// 		updateErr := database.EditElementPosition(userId, element, position)
 
-		if updateErr != nil {
-			err = updateErr
-		} else {
-			resp = model.MutationResponse{
-				Succeeded: true,
-				Message:   "set " + element + " postion to: " + strconv.Itoa(position),
-			}
-		}
-	} else {
-		err = e.UNAUTHORIZED_ERROR
-	}
+// 		if updateErr != nil {
+// 			err = updateErr
+// 		} else {
+// 			resp = model.MutationResponse{
+// 				Succeeded: true,
+// 				Message:   "set " + element + " postion to: " + strconv.Itoa(position),
+// 			}
+// 		}
+// 	} else {
+// 		err = e.UNAUTHORIZED_ERROR
+// 	}
 
-	return resp, err
-}
+// 	return resp, err
+// }
 
 func AuthorizeResetElements(token string) (model.MutationResponse, error) {
 	var err error

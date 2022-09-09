@@ -266,7 +266,7 @@ type ComplexityRoot struct {
 		DeleteGroup                       func(childComplexity int, id string, token string) int
 		DeleteSimpleLinkElement           func(childComplexity int, token string, vreelID *string, elementID string) int
 		DeleteSocialsElement              func(childComplexity int, token string, elementID string) int
-		EditElementPosition               func(childComplexity int, token string, element string, position int, vreelID *string) int
+		EditElementPosition               func(childComplexity int, token string, elementID string, elementType string, position int) int
 		EditFileName                      func(childComplexity int, token string, newName string, fileID string) int
 		EditGalleryImage                  func(childComplexity int, token string, imageID string, input model.AddGalleryImageInput) int
 		EditSimpleLink                    func(childComplexity int, token string, linkID string, link model.SimpleLinkInput, vreelID *string) int
@@ -556,7 +556,7 @@ type MutationResolver interface {
 	Follow(ctx context.Context, input model.AnalyticsMutation) (*model.MutationResponse, error)
 	UnFollow(ctx context.Context, input model.AnalyticsMutation) (*model.MutationResponse, error)
 	LogPageLoad(ctx context.Context, vreelID string) (*model.MutationResponse, error)
-	EditElementPosition(ctx context.Context, token string, element string, position int, vreelID *string) (*model.MutationResponse, error)
+	EditElementPosition(ctx context.Context, token string, elementID string, elementType string, position int) (*model.MutationResponse, error)
 	EditFileName(ctx context.Context, token string, newName string, fileID string) (*model.MutationResponse, error)
 	RemoveImageFromVreelGallery(ctx context.Context, token string, imageID string, vreelID *string) (*model.MutationResponse, error)
 	DeleteFile(ctx context.Context, token string, fileID string) (*model.MutationResponse, error)
@@ -1827,7 +1827,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.EditElementPosition(childComplexity, args["token"].(string), args["element"].(string), args["position"].(int), args["vreelId"].(*string)), true
+		return e.complexity.Mutation.EditElementPosition(childComplexity, args["token"].(string), args["elementId"].(string), args["elementType"].(string), args["position"].(int)), true
 
 	case "Mutation.editFileName":
 		if e.complexity.Mutation.EditFileName == nil {
@@ -4112,9 +4112,9 @@ type Mutation {
   logPageLoad(vreelId: String!): MutationResponse!
   editElementPosition(
     token: String!
-    element: String!
+    elementId: String!
+    elementType: String!
     position: Int!
-    vreelId: String
   ): MutationResponse!
   editFileName(
     token: String!
@@ -4995,32 +4995,32 @@ func (ec *executionContext) field_Mutation_editElementPosition_args(ctx context.
 	}
 	args["token"] = arg0
 	var arg1 string
-	if tmp, ok := rawArgs["element"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("element"))
+	if tmp, ok := rawArgs["elementId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("elementId"))
 		arg1, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["element"] = arg1
-	var arg2 int
+	args["elementId"] = arg1
+	var arg2 string
+	if tmp, ok := rawArgs["elementType"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("elementType"))
+		arg2, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["elementType"] = arg2
+	var arg3 int
 	if tmp, ok := rawArgs["position"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("position"))
-		arg2, err = ec.unmarshalNInt2int(ctx, tmp)
+		arg3, err = ec.unmarshalNInt2int(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["position"] = arg2
-	var arg3 *string
-	if tmp, ok := rawArgs["vreelId"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("vreelId"))
-		arg3, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["vreelId"] = arg3
+	args["position"] = arg3
 	return args, nil
 }
 
@@ -11532,7 +11532,7 @@ func (ec *executionContext) _Mutation_editElementPosition(ctx context.Context, f
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().EditElementPosition(rctx, args["token"].(string), args["element"].(string), args["position"].(int), args["vreelId"].(*string))
+		return ec.resolvers.Mutation().EditElementPosition(rctx, args["token"].(string), args["elementId"].(string), args["elementType"].(string), args["position"].(int))
 	})
 	if err != nil {
 		ec.Error(ctx, err)

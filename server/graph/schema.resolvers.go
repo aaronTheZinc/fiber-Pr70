@@ -147,7 +147,7 @@ func (r *mutationResolver) LogPageLoad(ctx context.Context, vreelID string) (*mo
 	panic(fmt.Errorf("not implemented"))
 }
 
-func (r *mutationResolver) EditElementPosition(ctx context.Context, token string, element string, position int, vreelID *string) (*model.MutationResponse, error) {
+func (r *mutationResolver) EditElementPosition(ctx context.Context, token string, elementID string, elementType string, position int) (*model.MutationResponse, error) {
 	resp, err := auth.AuthorizeEditElementPosition(token, element, position)
 
 	return &resp, err

@@ -603,9 +603,9 @@ type Mutation {
   logPageLoad(vreelId: String!): MutationResponse!
   editElementPosition(
     token: String!
-    element: String!
+    elementId: String!
+    elementType: String!
     position: Int!
-    vreelId: String
   ): MutationResponse!
   editFileName(
     token: String!
