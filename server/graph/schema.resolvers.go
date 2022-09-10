@@ -28,6 +28,12 @@ func (r *mutationResolver) CreateEvent(ctx context.Context, token string, input 
 	return &event, err
 }
 
+func (r *mutationResolver) RemoveEnterprise(ctx context.Context, token string, id string) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeDeleteEnterprise(token, id)
+
+	return &resp, err
+}
+
 func (r *mutationResolver) RemoveUser(ctx context.Context, id string) (*model.MutationResponse, error) {
 	resp, err := auth.RemoveUser(id)
 

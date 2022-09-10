@@ -560,6 +560,7 @@ type Mutation {
     slide: SlideInput!
   ): MutationResponse!
   createEvent(token: String!, input: NewEvent!): Event!
+  removeEnterprise(token: String!, id: String!): MutationResponse!
   removeUser(id: String!): MutationResponse!
   resetElements(token: String!): MutationResponse!
   createEnterprise(input: NewEnterprise!): Enterprise!

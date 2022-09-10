@@ -281,6 +281,7 @@ type ComplexityRoot struct {
 		LogPageLoad                       func(childComplexity int, vreelID string) int
 		Register                          func(childComplexity int, input model.NewUser) int
 		RemoveContributionLink            func(childComplexity int, token string, linkID string, vreelID *string) int
+		RemoveEnterprise                  func(childComplexity int, token string, id string) int
 		RemoveGalleryImage                func(childComplexity int, token string, imageID string) int
 		RemoveImageFromVreelGallery       func(childComplexity int, token string, imageID string, vreelID *string) int
 		RemoveMusicLink                   func(childComplexity int, token string, linkID string, vreelID *string) int
@@ -535,6 +536,7 @@ type MutationResolver interface {
 	Register(ctx context.Context, input model.NewUser) (*model.User, error)
 	EditSlide(ctx context.Context, token string, slideID string, slide model.SlideInput) (*model.MutationResponse, error)
 	CreateEvent(ctx context.Context, token string, input model.NewEvent) (*model.Event, error)
+	RemoveEnterprise(ctx context.Context, token string, id string) (*model.MutationResponse, error)
 	RemoveUser(ctx context.Context, id string) (*model.MutationResponse, error)
 	ResetElements(ctx context.Context, token string) (*model.MutationResponse, error)
 	CreateEnterprise(ctx context.Context, input model.NewEnterprise) (*model.Enterprise, error)
@@ -1998,6 +2000,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.RemoveContributionLink(childComplexity, args["token"].(string), args["linkId"].(string), args["vreelId"].(*string)), true
+
+	case "Mutation.removeEnterprise":
+		if e.complexity.Mutation.RemoveEnterprise == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_removeEnterprise_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.RemoveEnterprise(childComplexity, args["token"].(string), args["id"].(string)), true
 
 	case "Mutation.removeGalleryImage":
 		if e.complexity.Mutation.RemoveGalleryImage == nil {
@@ -4083,6 +4097,7 @@ type Mutation {
     slide: SlideInput!
   ): MutationResponse!
   createEvent(token: String!, input: NewEvent!): Event!
+  removeEnterprise(token: String!, id: String!): MutationResponse!
   removeUser(id: String!): MutationResponse!
   resetElements(token: String!): MutationResponse!
   createEnterprise(input: NewEnterprise!): Enterprise!
@@ -5453,6 +5468,30 @@ func (ec *executionContext) field_Mutation_removeContributionLink_args(ctx conte
 		}
 	}
 	args["vreelId"] = arg2
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_removeEnterprise_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["token"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("token"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["token"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg1
 	return args, nil
 }
 
@@ -10638,6 +10677,48 @@ func (ec *executionContext) _Mutation_createEvent(ctx context.Context, field gra
 	res := resTmp.(*model.Event)
 	fc.Result = res
 	return ec.marshalNEvent2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐEvent(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_removeEnterprise(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_removeEnterprise_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().RemoveEnterprise(rctx, args["token"].(string), args["id"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.MutationResponse)
+	fc.Result = res
+	return ec.marshalNMutationResponse2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐMutationResponse(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_removeUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -22216,6 +22297,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			}
 		case "createEvent":
 			out.Values[i] = ec._Mutation_createEvent(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "removeEnterprise":
+			out.Values[i] = ec._Mutation_removeEnterprise(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}

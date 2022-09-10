@@ -13,6 +13,14 @@ import (
 	"github.com/vreel/app/utils"
 )
 
+func AuthorizeDeleteEnterprise(token, id string) (model.MutationResponse, error) {
+	resp, err := AuthorizeRequest(token, func(claims WebTokenClaims, cb func(message string, err error)) {
+		cb("successfully removed enterprise", database.DeleteEnterprise(id))
+	})
+
+	return resp, err
+}
+
 func AuthorizeEditSocialsLink(token, platform string, social model.SocialsInput, vreelId *string) (model.MutationResponse, error) {
 
 	var err error

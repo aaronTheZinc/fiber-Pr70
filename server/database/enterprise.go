@@ -9,6 +9,10 @@ import (
 	"github.com/vreel/app/utils"
 )
 
+func DeleteEnterprise(id string) error {
+	return db.Where("id = ?", id).Delete(model.EnterpriseModel{}).Error
+}
+
 func GetEnterprise(id string) (model.Enterprise, error) {
 	var enterprise model.EnterpriseModel
 	var response model.Enterprise
