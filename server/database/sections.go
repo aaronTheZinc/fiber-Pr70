@@ -563,7 +563,7 @@ func EditElementPosition(elementId, elementType string, position int) error {
 			err = editErr
 		}
 	case "socials":
-		editErr := updateEl(model.SimpleLinksElementModel{})
+		editErr := updateEl(model.SocialElementModel{})
 		if editErr != nil {
 			err = editErr
 		}
