@@ -380,6 +380,12 @@ func (r *mutationResolver) EditVideoGalleryVideo(ctx context.Context, token stri
 	return &resp, err
 }
 
+func (r *mutationResolver) EditElementHeader(ctx context.Context, token string, elementID string, elementType string, header string) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeEditElementHeader(token, elementID, elementType, header)
+
+	return &resp, err
+}
+
 func (r *queryResolver) User(ctx context.Context, id *string) (*model.User, error) {
 	user, err := database.GetUser(*id)
 	return &user, err

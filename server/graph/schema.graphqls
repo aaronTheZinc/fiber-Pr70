@@ -720,4 +720,5 @@ type Mutation {
   editGalleryImage(token: String!, imageId: String!, input: AddGalleryImageInput!): MutationResponse!
   editSocialLink(token: String!, linkId: String!, input: SocialsInput!): MutationResponse!
   editVideoGalleryVideo(token: String!, videoId: String!, input: AddVideoInput!): MutationResponse!
+  editElementHeader(token: String!, elementId: String!, elementType: String!, header: String!): MutationResponse!
 }

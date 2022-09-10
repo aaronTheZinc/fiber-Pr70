@@ -574,3 +574,27 @@ func EditElementPosition(elementId, elementType string, position int) error {
 
 	return err
 }
+
+func EditElementHeader(elementId, elementType string, header string) error {
+	var err error
+	updateEl := func(element interface{}) error {
+		return db.Model(&element).Where("id = ?", elementId).Update("header", header).Error
+	}
+	switch elementType {
+	case "simple_links":
+		editErr := updateEl(model.SimpleLinksElementModel{})
+		if editErr != nil {
+			err = editErr
+		}
+	case "socials":
+		editErr := updateEl(model.SocialElementModel{})
+		if editErr != nil {
+			err = editErr
+		}
+
+	default:
+		err = errors.New("element type doesnt exist")
+	}
+
+	return err
+}

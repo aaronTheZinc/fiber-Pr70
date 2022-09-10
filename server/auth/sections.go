@@ -179,3 +179,10 @@ func AuthorizeEditElementPosition(token, elementId, elementType string, position
 
 	return resp, err
 }
+func AuthorizeEditElementHeader(token, elementId, elementType string, header string) (model.MutationResponse, error) {
+	resp, err := AuthorizeRequest(token, func(claims WebTokenClaims, cb func(message string, err error)) {
+		cb("successfully updated element position", database.EditElementHeader(elementId, elementType, header))
+	})
+
+	return resp, err
+}

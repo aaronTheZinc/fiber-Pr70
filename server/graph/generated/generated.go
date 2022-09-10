@@ -266,6 +266,7 @@ type ComplexityRoot struct {
 		DeleteGroup                       func(childComplexity int, id string, token string) int
 		DeleteSimpleLinkElement           func(childComplexity int, token string, vreelID *string, elementID string) int
 		DeleteSocialsElement              func(childComplexity int, token string, elementID string) int
+		EditElementHeader                 func(childComplexity int, token string, elementID string, elementType string, header string) int
 		EditElementPosition               func(childComplexity int, token string, elementID string, elementType string, position int) int
 		EditFileName                      func(childComplexity int, token string, newName string, fileID string) int
 		EditGalleryImage                  func(childComplexity int, token string, imageID string, input model.AddGalleryImageInput) int
@@ -595,6 +596,7 @@ type MutationResolver interface {
 	EditGalleryImage(ctx context.Context, token string, imageID string, input model.AddGalleryImageInput) (*model.MutationResponse, error)
 	EditSocialLink(ctx context.Context, token string, linkID string, input model.SocialsInput) (*model.MutationResponse, error)
 	EditVideoGalleryVideo(ctx context.Context, token string, videoID string, input model.AddVideoInput) (*model.MutationResponse, error)
+	EditElementHeader(ctx context.Context, token string, elementID string, elementType string, header string) (*model.MutationResponse, error)
 }
 type QueryResolver interface {
 	User(ctx context.Context, id *string) (*model.User, error)
@@ -1816,6 +1818,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.DeleteSocialsElement(childComplexity, args["token"].(string), args["elementId"].(string)), true
+
+	case "Mutation.editElementHeader":
+		if e.complexity.Mutation.EditElementHeader == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_editElementHeader_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.EditElementHeader(childComplexity, args["token"].(string), args["elementId"].(string), args["elementType"].(string), args["header"].(string)), true
 
 	case "Mutation.editElementPosition":
 		if e.complexity.Mutation.EditElementPosition == nil {
@@ -4229,6 +4243,7 @@ type Mutation {
   editGalleryImage(token: String!, imageId: String!, input: AddGalleryImageInput!): MutationResponse!
   editSocialLink(token: String!, linkId: String!, input: SocialsInput!): MutationResponse!
   editVideoGalleryVideo(token: String!, videoId: String!, input: AddVideoInput!): MutationResponse!
+  editElementHeader(token: String!, elementId: String!, elementType: String!, header: String!): MutationResponse!
 }
 `, BuiltIn: false},
 }
@@ -4979,6 +4994,48 @@ func (ec *executionContext) field_Mutation_deleteSocialsElement_args(ctx context
 		}
 	}
 	args["elementId"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_editElementHeader_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["token"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("token"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["token"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["elementId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("elementId"))
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["elementId"] = arg1
+	var arg2 string
+	if tmp, ok := rawArgs["elementType"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("elementType"))
+		arg2, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["elementType"] = arg2
+	var arg3 string
+	if tmp, ok := rawArgs["header"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("header"))
+		arg3, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["header"] = arg3
 	return args, nil
 }
 
@@ -13126,6 +13183,48 @@ func (ec *executionContext) _Mutation_editVideoGalleryVideo(ctx context.Context,
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return ec.resolvers.Mutation().EditVideoGalleryVideo(rctx, args["token"].(string), args["videoId"].(string), args["input"].(model.AddVideoInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.MutationResponse)
+	fc.Result = res
+	return ec.marshalNMutationResponse2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐMutationResponse(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_editElementHeader(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_editElementHeader_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().EditElementHeader(rctx, args["token"].(string), args["elementId"].(string), args["elementType"].(string), args["header"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -22419,6 +22518,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			}
 		case "editVideoGalleryVideo":
 			out.Values[i] = ec._Mutation_editVideoGalleryVideo(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "editElementHeader":
+			out.Values[i] = ec._Mutation_editElementHeader(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
