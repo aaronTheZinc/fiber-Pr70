@@ -550,3 +550,27 @@ func UpdateSocialsLinks(linkId string, input model.SocialsInput) error {
 	link := input.ToDatabaseModel()
 	return db.Where("id = ?", linkId).Updates(&link).Error
 }
+
+func EditElementPosition(elementId, elementType string, position int) error {
+	var err error
+	updateEl := func(element interface{}) error {
+		return db.Model(&element).Where("id = ?", elementId).Update("position", position).Error
+	}
+	switch elementType {
+	case "simple_links":
+		editErr := updateEl(model.SimpleLinksElementModel{})
+		if editErr != nil {
+			err = editErr
+		}
+	case "socials":
+		editErr := updateEl(model.SimpleLinksElementModel{})
+		if editErr != nil {
+			err = editErr
+		}
+
+	default:
+		err = errors.New("element type doesnt exist")
+	}
+
+	return err
+}

@@ -174,7 +174,7 @@ func AuthorizeUpdateSocialsLink(token, socialsId string, input model.SocialsInpu
 
 func AuthorizeEditElementPosition(token, elementId, elementType string, position int) (model.MutationResponse, error) {
 	resp, err := AuthorizeRequest(token, func(claims WebTokenClaims, cb func(message string, err error)) {
-		cb("successfully updated video gallery image", database.UpdateSocialsLinks(socialsId, input))
+		cb("successfully updated element position", database.EditElementPosition(elementId, elementType, position))
 	})
 
 	return resp, err

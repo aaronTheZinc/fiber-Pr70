@@ -416,7 +416,7 @@ func (c *SimpleLinksElementModel) ToSimpleLinksElement() SimpleLinksElement {
 		Header:   c.Header,
 		Parent:   c.Parent,
 		Hidden:   false,
-		Position: 0,
+		Position: c.Position,
 		Links:    linksList,
 	}
 }

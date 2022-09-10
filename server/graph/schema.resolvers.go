@@ -148,7 +148,7 @@ func (r *mutationResolver) LogPageLoad(ctx context.Context, vreelID string) (*mo
 }
 
 func (r *mutationResolver) EditElementPosition(ctx context.Context, token string, elementID string, elementType string, position int) (*model.MutationResponse, error) {
-	resp, err := auth.AuthorizeEditElementPosition(token, element, position)
+	resp, err := auth.AuthorizeEditElementPosition(token, elementID, elementType, position)
 
 	return &resp, err
 }
