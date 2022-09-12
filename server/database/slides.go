@@ -18,7 +18,7 @@ func EditSlide(slideId string, slide *model.SlideInput) {
 
 }
 
-func CreateSlide(author string) (model.Slide, error) {
+func CreateSlide(author, parent string) (model.Slide, error) {
 	var err error
 	var _slide model.SlideModel
 	if slideCount, getSlideCountErr := GetVreelSlideCount(author); getSlideCountErr == nil {
@@ -28,6 +28,7 @@ func CreateSlide(author string) (model.Slide, error) {
 		slide.Author = author
 		slide.ID = utils.GenerateId()
 		slide.Active = true
+		slide.Parent = parent
 		md := model.SlideMetaData{}
 		md.Created = time.Now().UTC().String()
 		md.Size = "0"

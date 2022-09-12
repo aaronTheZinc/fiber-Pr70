@@ -76,7 +76,7 @@ func CreateNewUser(newUser model.NewUser) (model.User, error) {
 			return model.User{}, hashErr
 		}
 		u, oerr := database.CreateUser(newUser, utils.GenerateId(), hashedPw)
-		s, _ := database.CreateSlide(u.ID)
+		s, _ := database.CreateSlide(u.ID, "")
 		cErr := database.CreateNewVreel(u.ID)
 		if cErr == nil {
 			database.VreelAddSlide(s.ID, u.ID)

@@ -167,6 +167,7 @@ type Slide {
   id: String!
   author: String!
   active: Boolean!
+  parent: String!
   content_type: String!
   logo_uri: String!
   logo_visible: Boolean!
@@ -289,7 +290,7 @@ type GalleryElement {
   parent: String!
   header: String!
   position: Int!
-  images: [GalleryImage!]!
+  slides: [Slide!]!
   hidden: Boolean!
 }
 
@@ -343,7 +344,7 @@ type MusicElement {
 type VreelElements {
   text_area: TextArea
   videos: Videos
-  gallery: Gallery
+  gallery: [Slide!]!
   services: Service
   music: MusicElement
   socials: SocialsElement
@@ -709,8 +710,8 @@ type Mutation {
   removeSimpleLink(token: String!, linkId: String): MutationResponse!
   createGalleryElement(token: String!, vreelId: String): MutationResponse!
   deleteGalleryElement(token: String!, elementId: String!): MutationResponse!
-  appendImageToGallery(token: String!, elementId: String!, image: AddGalleryImageInput!): MutationResponse!
-  removeGalleryImage(token: String!, imageId: String!): MutationResponse!
+  appendSlideToGallery(token: String!, elementId: String!): MutationResponse!
+  removeGallerySlide(token: String!, imageId: String!): MutationResponse!
   createVideoElement(token: String!, vreelId: String): MutationResponse!
   appendVideoToVideoGallery(token: String!, elementId: String, video: AddVideoInput!): MutationResponse!
   createSocialsElement(token: String!, vreelId: String): MutationResponse!

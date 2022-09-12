@@ -3,7 +3,6 @@ package database
 import (
 	"errors"
 	"fmt"
-	"sync"
 
 	"github.com/lib/pq"
 	"github.com/vreel/app/graph/model"
@@ -89,40 +88,28 @@ func GetAllSocialElements(parent string) []*model.SocialsElement {
 	return socialElements
 }
 
-func GetAllGalleryElements(galleries []string) []*model.GalleryElement {
+func GetAllGalleryElements(parent string) []*model.GalleryElement {
 	galleryElements := []*model.GalleryElement{}
-	wg := sync.WaitGroup{}
-	wg.Add(len(galleries))
-	for idx := range galleries {
-		id := galleries[idx]
-		go func() {
-			defer wg.Done()
-			sWg := sync.WaitGroup{}
-			g := model.GalleryElementModel{}
-			if err := db.Where("id = ?", id).First(&g).Error; err == nil {
-				fmt.Println("found")
-				element := g.ToGalleryElement()
-				for idx := range g.Images {
-					imageId := g.Images[idx]
-					sWg.Add(len(g.Images))
-					go func() {
-						defer sWg.Done()
-						image := model.GalleryImageModel{}
-						if err := db.Where("id = ?", imageId).First(&image).Error; err == nil {
-							i := image.ToGalleryImage()
-							element.Images = append(element.Images, &i)
-						}
-					}()
+	models := []model.GalleryElementModel{}
 
-				}
-				sWg.Done()
-				galleryElements = append(galleryElements, &element)
-			}
-		}()
+	db.Where("parent = ?", parent).Find(&models)
+
+	for _, m := range models {
+		slidesModels := []*model.SlideModel{}
+		slides := []*model.Slide{}
+		db.Where("parent", m.ID).Find(&slidesModels)
+		for idx := range slidesModels {
+			temp := slidesModels[idx].ToSlide()
+			slides = append(slides, &temp)
+
+		}
+		el := m.ToGalleryElement()
+		el.Slides = slides
+
+		galleryElements = append(galleryElements, &el)
 
 	}
 
-	wg.Wait()
 	return galleryElements
 }
 
@@ -240,7 +227,7 @@ func CreateGalleryElement(vreelId string) (string, error) {
 		Parent:   vreelId,
 		Hidden:   false,
 		Position: 0,
-		Images:   []string{},
+		Slides:   []string{},
 	}).Error
 
 	if createErr != nil {
@@ -252,47 +239,41 @@ func CreateGalleryElement(vreelId string) (string, error) {
 	return id, err
 }
 
-func AppendImageToGallery(elementId string, image model.AddGalleryImageInput) (string, error) {
+func AppendSlideToGallery(author, elementId string) (string, error) {
 	var err error
-	id := utils.GenerateId()
-	l := image.ToDatabaseModel()
-	l.Parent = elementId
-	l.ID = id
-	if createErr := db.Create(&l).Error; createErr == nil {
-		appendErr := AppendToElementSlice(&model.GalleryElementModel{}, "images", elementId, []string{id})
-		if appendErr != nil {
-			err = appendErr
-		}
-	} else {
-		err = createErr
+	s, _ := CreateSlide(author, elementId)
+
+	appendErr := AppendToElementSlice(&model.GalleryElementModel{}, "slides", elementId, []string{s.ID})
+	if appendErr != nil {
+		err = appendErr
 	}
-	return id, err
+	return s.ID, err
 }
 
-func RemoveGalleryImage(imageId string) error {
+func RemoveGalleryImage(slideId string) error {
 
-	image := model.GalleryImageModel{}
-	getErr := db.Where("id = ?", imageId).First(&image).Error
+	slide := model.GalleryImageModel{}
+	getErr := db.Where("id = ?", slideId).First(&slide).Error
 	if getErr != nil {
 		return getErr
 	}
 	galleryWasFound := false
 	element := model.GalleryElementModel{}
-	getParentErr := db.Where("id = ?", image.Parent).Select("images").First(&element).Error
+	getParentErr := db.Where("id = ?", slide.Parent).Select("slides").First(&element).Error
 
 	if getParentErr != nil {
 		return errors.New("failed to get link parent")
 	}
 
-	for idx, image := range element.Images {
-		if image == imageId {
+	for idx, slide := range element.Slides {
+		if slide == slideId {
 			galleryWasFound = true
-			element.Images = append(element.Images[:idx], element.Images[idx+1:]...)
+			element.Slides = append(element.Slides[:idx], element.Slides[idx+1:]...)
 			break
 		}
 	}
 
-	updateErr := db.Model(&model.GalleryElementModel{}).Where("id = ? ", image.Parent).Update("images", element.Images).Error
+	updateErr := db.Model(&model.GalleryElementModel{}).Where("id = ? ", slide.Parent).Update("slides", element.Slides).Error
 
 	if updateErr != nil {
 		return errors.New("failed to update gallery element")
@@ -301,7 +282,7 @@ func RemoveGalleryImage(imageId string) error {
 	if !galleryWasFound {
 		return errors.New("image not found")
 	}
-	db.Where("id = ?", imageId).Delete(&model.GalleryImageModel{})
+	db.Where("id = ?", slideId).Delete(&model.SlideModel{})
 	return nil
 }
 func DeleteGalleryElement(elementId string) error {
@@ -567,7 +548,11 @@ func EditElementPosition(elementId, elementType string, position int) error {
 		if editErr != nil {
 			err = editErr
 		}
-
+	case "gallery":
+		editErr := updateEl(model.GalleryElementModel{})
+		if editErr != nil {
+			err = editErr
+		}
 	default:
 		err = errors.New("element type doesnt exist")
 	}
@@ -588,6 +573,11 @@ func EditElementHeader(elementId, elementType string, header string) error {
 		}
 	case "socials":
 		editErr := updateEl(model.SocialElementModel{})
+		if editErr != nil {
+			err = editErr
+		}
+	case "gallery":
+		editErr := updateEl(model.GalleryElementModel{})
 		if editErr != nil {
 			err = editErr
 		}

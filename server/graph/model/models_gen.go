@@ -169,12 +169,12 @@ type Gallery struct {
 }
 
 type GalleryElement struct {
-	ID       string          `json:"id"`
-	Parent   string          `json:"parent"`
-	Header   string          `json:"header"`
-	Position int             `json:"position"`
-	Images   []*GalleryImage `json:"images"`
-	Hidden   bool            `json:"hidden"`
+	ID       string   `json:"id"`
+	Parent   string   `json:"parent"`
+	Header   string   `json:"header"`
+	Position int      `json:"position"`
+	Slides   []*Slide `json:"slides"`
+	Hidden   bool     `json:"hidden"`
 }
 
 type GalleryImage struct {
@@ -366,6 +366,7 @@ type Slide struct {
 	ID            string         `json:"id"`
 	Author        string         `json:"author"`
 	Active        bool           `json:"active"`
+	Parent        string         `json:"parent"`
 	ContentType   string         `json:"content_type"`
 	LogoURI       string         `json:"logo_uri"`
 	LogoVisible   bool           `json:"logo_visible"`
@@ -537,7 +538,7 @@ type Vreel struct {
 type VreelElements struct {
 	TextArea      *TextArea             `json:"text_area"`
 	Videos        *Videos               `json:"videos"`
-	Gallery       *Gallery              `json:"gallery"`
+	Gallery       []*Slide              `json:"gallery"`
 	Services      *Service              `json:"services"`
 	Music         *MusicElement         `json:"music"`
 	Socials       *SocialsElement       `json:"socials"`

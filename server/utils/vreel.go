@@ -19,11 +19,11 @@ func GetDefaultElementsString() string {
 		Videos:   []*model.Video{},
 		Hidden:   f,
 	}
-	gallery := model.Gallery{
-		Position: 3,
-		Images:   []*model.GalleryImage{},
-		Hidden:   f,
-	}
+	// gallery := model.Gallery{
+	// 	Position: 3,
+	// 	Images:   []*model.GalleryImage{},
+	// 	Hidden:   f,
+	// }
 	services := model.Service{
 		Position: 4,
 		Header:   textArea.Content,
@@ -49,9 +49,9 @@ func GetDefaultElementsString() string {
 		Header: "",
 	}
 	elements := model.VreelElements{
-		TextArea:    &textArea,
-		Videos:      &videos,
-		Gallery:     &gallery,
+		TextArea: &textArea,
+		Videos:   &videos,
+		// Gallery:     &gallery,
 		Services:    &services,
 		Music:       &music,
 		SimpleLinks: &simpleLinks,

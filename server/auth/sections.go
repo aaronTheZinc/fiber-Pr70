@@ -50,15 +50,15 @@ func AuthorizeCreateGalleryElement(token string, vreelId *string) (model.Mutatio
 	return resp, err
 }
 
-func AuthorizeAppendImageToGallery(token, elementId string, input model.AddGalleryImageInput) (model.MutationResponse, error) {
+func AuthorizeAppendSlideToGallery(token, elementId string) (model.MutationResponse, error) {
 	resp, err := AuthorizeRequest(token, func(claims WebTokenClaims, cb func(message string, err error)) {
-		cb(database.AppendImageToGallery(elementId, input))
+		cb(database.AppendSlideToGallery(claims.ID, elementId))
 	})
 
 	return resp, err
 }
 
-func AuthorizeRemoveGalleryImage(token, imageId string) (model.MutationResponse, error) {
+func AuthorizeRemoveGallerySlide(token, imageId string) (model.MutationResponse, error) {
 	resp, err := AuthorizeRequest(token, func(claims WebTokenClaims, cb func(message string, err error)) {
 		cb("successfully removed image", database.RemoveGalleryImage(imageId))
 	})

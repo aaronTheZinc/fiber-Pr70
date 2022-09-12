@@ -99,6 +99,7 @@ type SlideModel struct {
 	Advanced      string `json:"advanced"`
 	Metadata      string `json:"-"`
 	MoreInfo      string `json:"more_info"`
+	Parent        string `json:"parent"`
 }
 type AnalyticsChunkModel struct {
 }
@@ -139,7 +140,7 @@ type GalleryElementModel struct {
 	Parent   string         `json:"parent"`
 	Header   string         `json:"header"`
 	Position int            `json:"position"`
-	Images   pq.StringArray `gorm:"type:text[]"`
+	Slides   pq.StringArray `gorm:"type:text[]"`
 	Hidden   bool           `json:"hidden"`
 }
 
@@ -708,37 +709,37 @@ func (c VreelModel) ToVreel(slides []*Slide) (Vreel, error) {
 	// 	fmt.Println("existsssssss")
 	// 	simpleLinks = append(simpleLinks, &t)
 	// }
-	gErr := json.Unmarshal([]byte(c.Elements), &e)
-	if gErr != nil {
-		log.Println("im the problem!! ")
-	} else {
-		if e.SimpleLinks != nil {
+	// gErr := json.Unmarshal([]byte(c.Elements), &e)
+	// if gErr != nil {
+	// 	log.Println("im the problem!! ")
+	// } else {
+	// 	if e.SimpleLinks != nil {
 
-			if e.SimpleLinks.Hidden {
-				e.SimpleLinks = nil
-			}
-		}
+	// 		if e.SimpleLinks.Hidden {
+	// 			e.SimpleLinks = nil
+	// 		}
+	// 	}
 
-		if e.Socials != nil {
-			if e.Socials.Hidden {
-				e.Socials = nil
-			}
-		}
+	// 	if e.Socials != nil {
+	// 		if e.Socials.Hidden {
+	// 			e.Socials = nil
+	// 		}
+	// 	}
 
-		if e.Gallery != nil {
-			if e.Gallery.Hidden {
-				e.Gallery = nil
-			}
-		}
-		if e.Videos != nil {
-			if e.Videos.Hidden {
-				e.Videos = nil
-			}
-		}
-	}
-	if gErr != nil {
-		err = gErr
-	}
+	// 	if e.Gallery != nil {
+	// 		if e.Gallery.Hidden {
+	// 			e.Gallery = nil
+	// 		}
+	// 	}
+	// 	if e.Videos != nil {
+	// 		if e.Videos.Hidden {
+	// 			e.Videos = nil
+	// 		}
+	// 	}
+	// }
+	// if gErr != nil {
+	// 	err = gErr
+	// }
 	return Vreel{
 		ID:              c.ID,
 		Author:          c.Author,
@@ -834,6 +835,7 @@ func (c *SlideModel) ToSlide() Slide {
 		Cta2:          &cta2,
 		Metadata:      &m,
 		Info:          &more_info,
+		Parent:        c.Parent,
 	}
 }
 

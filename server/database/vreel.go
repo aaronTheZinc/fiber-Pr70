@@ -202,7 +202,7 @@ func GetVreel(id string) (model.Vreel, error) {
 		fmt.Println(vreel.SimpleLinks)
 		slides, slidesErr := GetSlides(vreel.Slides)
 		l := GetAllSimpleLinksElements(id)
-		g := GetAllGalleryElements(vreel.Gallery)
+		g := GetAllGalleryElements(id)
 		vg := GetAllVideoGalleryElements(id)
 		socials := GetAllSocialElements(id)
 		if slidesErr != nil {
@@ -394,16 +394,16 @@ func AddImageToVreelGallery(vreelId string, input model.AddGalleryImageInput) er
 			return parseErr
 		}
 		galleryImages := elements.Gallery
-		galleryImages.Images = append(galleryImages.Images, &model.GalleryImage{
-			ID:          utils.GenerateId(),
-			Position:    input.Position,
-			Cta1:        (*model.Cta)(input.Cta1),
-			Cta2:        (*model.Cta)(input.Cta2),
-			ImageHeader: *input.ImageHeader,
-			Description: *input.Description,
-			Desktop:     (*model.Content)(input.Desktop),
-			Mobile:      (*model.Content)(input.Mobile),
-		})
+		// galleryImages.Images = append(galleryImages.Images, &model.GalleryImage{
+		// 	ID:          utils.GenerateId(),
+		// 	Position:    input.Position,
+		// 	Cta1:        (*model.Cta)(input.Cta1),
+		// 	Cta2:        (*model.Cta)(input.Cta2),
+		// 	ImageHeader: *input.ImageHeader,
+		// 	Description: *input.Description,
+		// 	Desktop:     (*model.Content)(input.Desktop),
+		// 	Mobile:      (*model.Content)(input.Mobile),
+		// })
 
 		elements.Gallery = galleryImages
 
@@ -421,37 +421,37 @@ func AddImageToVreelGallery(vreelId string, input model.AddGalleryImageInput) er
 }
 
 func RemoveImageFromGallery(vreelId string, imageId string) error {
-	var vreel model.VreelModel
+	// var vreel model.VreelModel
 	var err error
-	var elements model.VreelElements
-	if fetchErr := db.Where("id = ?", vreelId).First(&vreel).Error; fetchErr == nil {
-		parseErr := json.Unmarshal([]byte(vreel.Elements), &elements)
-		if parseErr != nil {
-			return parseErr
-		}
+	// var elements model.VreelElements
+	// if fetchErr := db.Where("id = ?", vreelId).First(&vreel).Error; fetchErr == nil {
+	// 	parseErr := json.Unmarshal([]byte(vreel.Elements), &elements)
+	// 	if parseErr != nil {
+	// 		return parseErr
+	// 	}
 
-		images := elements.Gallery.Images
-		imgWasFound := false
+	// 	// images := elements.Gallery.Images
+	// 	imgWasFound := false
 
-		for idx, image := range images {
-			if image.ID == imageId {
-				imgWasFound = true
-				images = append(images[:idx], images[idx+1:]...)
-				break
-			}
-		}
-		if !imgWasFound {
-			err = errors.New("gallery image: " + imageId + " not found")
-		} else {
-			elements.Gallery.Images = images
-			v, marshalErr := json.Marshal(&elements)
-			if marshalErr == nil {
-				return db.Model(model.VreelModel{}).Where("id = ?", vreelId).Update("elements", string(v)).Error
-			} else {
-				return marshalErr
-			}
-		}
-	}
+	// 	for idx, image := range images {
+	// 		if image.ID == imageId {
+	// 			imgWasFound = true
+	// 			images = append(images[:idx], images[idx+1:]...)
+	// 			break
+	// 		}
+	// 	}
+	// 	if !imgWasFound {
+	// 		err = errors.New("gallery image: " + imageId + " not found")
+	// 	} else {
+	// 		// elements.Gallery.Images = images
+	// 		v, marshalErr := json.Marshal(&elements)
+	// 		if marshalErr == nil {
+	// 			return db.Model(model.VreelModel{}).Where("id = ?", vreelId).Update("elements", string(v)).Error
+	// 		} else {
+	// 			return marshalErr
+	// 		}
+	// 	}
+	// }
 
 	return err
 }
@@ -817,8 +817,8 @@ func SetElementIsHidden(vreelId string, element string, state bool) error {
 		case "socials":
 			elements.Socials.Hidden = state
 
-		case "gallery":
-			elements.Gallery.Hidden = state
+		// case "gallery":
+		// 	elements.Gallery.Hidden = state
 
 		case "videos":
 			elements.Videos.Hidden = state

@@ -314,14 +314,14 @@ func (r *mutationResolver) DeleteGalleryElement(ctx context.Context, token strin
 	return &resp, err
 }
 
-func (r *mutationResolver) AppendImageToGallery(ctx context.Context, token string, elementID string, image model.AddGalleryImageInput) (*model.MutationResponse, error) {
-	resp, err := auth.AuthorizeAppendImageToGallery(token, elementID, image)
+func (r *mutationResolver) AppendSlideToGallery(ctx context.Context, token string, elementID string) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeAppendSlideToGallery(token, elementID)
 
 	return &resp, err
 }
 
-func (r *mutationResolver) RemoveGalleryImage(ctx context.Context, token string, imageID string) (*model.MutationResponse, error) {
-	resp, err := auth.AuthorizeRemoveGalleryImage(token, imageID)
+func (r *mutationResolver) RemoveGallerySlide(ctx context.Context, token string, imageID string) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeRemoveGallerySlide(token, imageID)
 
 	return &resp, err
 }
@@ -479,6 +479,11 @@ type queryResolver struct{ *Resolver }
 //  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
 //    it when you're done.
 //  - You have helper methods in this file. Move them out to keep these resolver files clean.
+func (r *mutationResolver) AppendImageToGallery(ctx context.Context, token string, elementID string, image model.AddGalleryImageInput) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeAppendSlideToGallery(token, elementID)
+
+	return &resp, err
+}
 func (r *mutationResolver) AppendLinks(ctx context.Context, token string, elementID string, link model.SocialsInput) (*model.MutationResponse, error) {
 	panic(fmt.Errorf("not implemented"))
 }

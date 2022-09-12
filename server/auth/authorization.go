@@ -720,7 +720,7 @@ func AuthorizeCreateSlide(token string) (model.Slide, error) {
 	userId := claims.ID
 
 	if isAuth && parseErr == nil {
-		if s, creationErr := database.CreateSlide(userId); creationErr != nil {
+		if s, creationErr := database.CreateSlide(userId, ""); creationErr != nil {
 			err = creationErr
 		} else {
 			slide = s
