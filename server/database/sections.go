@@ -286,31 +286,8 @@ func RemoveGalleryImage(slideId string) error {
 	return nil
 }
 func DeleteGalleryElement(elementId string) error {
-	var err error
-	el := model.GalleryElementModel{}
-	if findErr := db.Where("id = ?", elementId).Select("Parent").First(&el).Error; findErr == nil {
-		parent := el.Parent
-		vreel := model.VreelModel{}
-		db.Where("parent = ?", elementId).Delete(&model.GalleryImageModel{})
 
-		findVreelErr := db.Where("id = ?", parent).First(&vreel).Error
-		if findVreelErr != nil {
-			err = findVreelErr
-		} else {
-			linksEl := vreel.Gallery
-			linksPQArr := pq.StringArray{}
-			linksPQArr = append(linksPQArr, utils.RemoveStringFromSlice(linksEl, elementId)...)
-			updateErr := db.Model(&model.VreelModel{}).Where("id = ?", parent).Update("gallery", linksPQArr).Error
-
-			if updateErr != nil {
-				err = updateErr
-			}
-		}
-	} else {
-		err = findErr
-	}
-
-	return err
+	return db.Where("id = ?", elementId).Delete(&model.GalleryElementModel{}).Error
 }
 
 func CreateVideoGalleryElement(vreelId string) (string, error) {
