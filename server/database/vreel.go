@@ -205,6 +205,7 @@ func GetVreel(id string) (model.Vreel, error) {
 		g := GetAllGalleryElements(id)
 		vg := GetAllVideoGalleryElements(id)
 		socials := GetAllSocialElements(id)
+		embeds := GetAllEmbeds(id)
 		if slidesErr != nil {
 			err = slidesErr
 		} else {
@@ -218,6 +219,7 @@ func GetVreel(id string) (model.Vreel, error) {
 				r.Gallery = g
 				r.VideoGallery = vg
 				r.Socials = socials
+				r.Embed = embeds
 			}
 
 		}

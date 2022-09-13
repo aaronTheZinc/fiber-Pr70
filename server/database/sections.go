@@ -40,6 +40,19 @@ func GetAllSimpleLinksElements(parent string) []*model.SimpleLinksElement {
 	return simpleLinksElements
 }
 
+func GetAllEmbeds(parent string) []*model.EmbedElement {
+	var embeds []*model.EmbedElement
+	embedModels := []model.EmbedElement{}
+
+	db.Where("parent = ?", parent).Find(&embedModels)
+
+	for _, m := range embedModels {
+		embeds = append(embeds, &m)
+	}
+
+	return embeds
+}
+
 func GetAllVideoGalleryElements(parent string) []*model.VideoGalleryElement {
 	galleryElements := []*model.VideoGalleryElement{}
 	models := []model.VideoGalleryElementModel{}
@@ -223,7 +236,7 @@ func CreateGalleryElement(vreelId string) (string, error) {
 	id := utils.GenerateId()
 	createErr := db.Create(&model.GalleryElementModel{
 		ID:       id,
-		Header:   "Image Gallery",
+		Header:   "Gallery",
 		Parent:   vreelId,
 		Hidden:   false,
 		Position: 0,
@@ -286,8 +299,26 @@ func RemoveGalleryImage(slideId string) error {
 	return nil
 }
 func DeleteGalleryElement(elementId string) error {
+	var err error
 
-	return db.Where("id = ?", elementId).Delete(&model.GalleryElementModel{}).Error
+	g := model.GalleryElementModel{}
+	getErr := db.Where("id = ?", elementId).First(&g).Error
+	if getErr != nil {
+		err = errors.New("failed to find gallery element")
+	}
+	for idx := range g.Slides {
+		DeleteSlide(g.Slides[idx])
+	}
+	deleteErr := db.Where("id = ?", elementId).Delete(&model.GalleryElementModel{}).Error
+
+	if deleteErr != nil {
+		err = errors.New("failed to delete gallery element")
+	}
+	return err
+}
+
+func DeleteEmbedElement(elementId string) error {
+	return db.Where("id = ?", elementId).Delete(model.EmbedElement{}).Error
 }
 
 func CreateVideoGalleryElement(vreelId string) (string, error) {
@@ -463,6 +494,19 @@ func RemoveSocialLinks(socialId string) error {
 	return nil
 }
 
+func CreateEmbed(parent string) error {
+	embed := model.EmbedElement{}
+	embed.ID = utils.GenerateId()
+	embed.Parent = parent
+	return db.Create(&embed).Error
+}
+
+func EditEmbed(elementId string, input model.AddEmbedInput) error {
+	embed := input.ToEmbedElement()
+	fmt.Println(elementId, embed)
+	return db.Where("id = ?", elementId).Updates(&embed).Error
+}
+
 func DeleteSocialsElement(elementId string) error {
 	var err error
 	el := model.SocialElementModel{}
@@ -558,6 +602,7 @@ func EditElementHeader(elementId, elementType string, header string) error {
 		if editErr != nil {
 			err = editErr
 		}
+	case "embed":
 
 	default:
 		err = errors.New("element type doesnt exist")

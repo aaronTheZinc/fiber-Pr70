@@ -2,6 +2,13 @@
 
 package model
 
+type AddEmbedInput struct {
+	Header          *string `json:"header"`
+	Position        *int    `json:"position"`
+	EmbedCode       *string `json:"embed_code"`
+	BackgroundColor *string `json:"background_color"`
+}
+
 type AddGalleryImageInput struct {
 	Position    *int          `json:"position"`
 	Cta1        *CTAInput     `json:"cta1"`
@@ -117,6 +124,15 @@ type CreateSlide struct {
 type Credit struct {
 	CreditType   string `json:"credit_type"`
 	AccreditedID string `json:"accredited_id"`
+}
+
+type EmbedElement struct {
+	ID              string `json:"id"`
+	Parent          string `json:"parent"`
+	Header          string `json:"header"`
+	Position        int    `json:"position"`
+	EmbedCode       string `json:"embed_code"`
+	BackgroundColor string `json:"background_color"`
 }
 
 type Enterprise struct {
@@ -525,6 +541,7 @@ type Vreel struct {
 	PageTitle       string                 `json:"page_title"`
 	ButtonURI       *string                `json:"button_uri"`
 	Slides          []*Slide               `json:"slides"`
+	Embed           []*EmbedElement        `json:"embed"`
 	Elements        *VreelElements         `json:"elements"`
 	SimpleLinks     []*SimpleLinksElement  `json:"simple_links"`
 	Gallery         []*GalleryElement      `json:"gallery"`
@@ -542,6 +559,7 @@ type VreelElements struct {
 	Services      *Service              `json:"services"`
 	Music         *MusicElement         `json:"music"`
 	Socials       *SocialsElement       `json:"socials"`
+	Embed         []*EmbedElement       `json:"embed"`
 	SimpleLinks   *SimpleLinksElement   `json:"simple_links"`
 	SuperLinks    []*SuperLink          `json:"super_links"`
 	Contact       *Contact              `json:"contact"`

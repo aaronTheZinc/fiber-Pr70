@@ -799,6 +799,26 @@ func CreateNewSlideModel(position int) SlideModel {
 	}
 }
 
+func (c *AddEmbedInput) ToEmbedElement() EmbedElement {
+	s := ""
+	i := 0
+	if c.EmbedCode == nil {
+		c.EmbedCode = &s
+	}
+	if c.Position == nil {
+		c.Position = &i
+	}
+	if c.BackgroundColor == nil {
+		c.BackgroundColor = &s
+	}
+	return EmbedElement{
+		Header:          *c.Header,
+		Position:        *c.Position,
+		EmbedCode:       *c.EmbedCode,
+		BackgroundColor: *c.BackgroundColor,
+	}
+}
+
 func (c *SlideModel) ToSlide() Slide {
 	log.Println("[logo visibility]: ", c.LogoVisible)
 	log.Println("[slide active]: ", c.Active)

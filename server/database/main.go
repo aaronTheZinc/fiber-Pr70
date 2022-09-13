@@ -56,6 +56,7 @@ func Migrate() {
 	db.AutoMigrate(model.AnalyticsFragmentModel{})
 	db.AutoMigrate(model.AnalyticsModel{})
 	db.AutoMigrate(model.EnterpriseModel{})
+	db.AutoMigrate(model.EmbedElement{})
 	// db.AutoMigrate(model.Group{})
 }
 

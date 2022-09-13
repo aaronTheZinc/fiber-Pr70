@@ -110,6 +110,15 @@ type ComplexityRoot struct {
 		CreditType   func(childComplexity int) int
 	}
 
+	EmbedElement struct {
+		BackgroundColor func(childComplexity int) int
+		EmbedCode       func(childComplexity int) int
+		Header          func(childComplexity int) int
+		ID              func(childComplexity int) int
+		Parent          func(childComplexity int) int
+		Position        func(childComplexity int) int
+	}
+
 	Enterprise struct {
 		Email     func(childComplexity int) int
 		Employees func(childComplexity int) int
@@ -252,6 +261,7 @@ type ComplexityRoot struct {
 		AppendSlideToGallery              func(childComplexity int, token string, elementID string) int
 		AppendSocialsLink                 func(childComplexity int, token string, elementID string, link model.SocialsInput) int
 		AppendVideoToVideoGallery         func(childComplexity int, token string, elementID *string, video model.AddVideoInput) int
+		CreateEmbedElement                func(childComplexity int, token string) int
 		CreateEnterprise                  func(childComplexity int, input model.NewEnterprise) int
 		CreateEvent                       func(childComplexity int, token string, input model.NewEvent) int
 		CreateGalleryElement              func(childComplexity int, token string, vreelID *string) int
@@ -261,6 +271,7 @@ type ComplexityRoot struct {
 		CreateSlide                       func(childComplexity int, token string) int
 		CreateSocialsElement              func(childComplexity int, token string, vreelID *string) int
 		CreateVideoElement                func(childComplexity int, token string, vreelID *string) int
+		DeleteEmbedElement                func(childComplexity int, token string, elementID string) int
 		DeleteFile                        func(childComplexity int, token string, fileID string) int
 		DeleteGalleryElement              func(childComplexity int, token string, elementID string) int
 		DeleteGroup                       func(childComplexity int, id string, token string) int
@@ -268,6 +279,7 @@ type ComplexityRoot struct {
 		DeleteSocialsElement              func(childComplexity int, token string, elementID string) int
 		EditElementHeader                 func(childComplexity int, token string, elementID string, elementType string, header string) int
 		EditElementPosition               func(childComplexity int, token string, elementID string, elementType string, position int) int
+		EditEmbed                         func(childComplexity int, token string, elementID string, embed model.AddEmbedInput) int
 		EditFileName                      func(childComplexity int, token string, newName string, fileID string) int
 		EditGalleryImage                  func(childComplexity int, token string, imageID string, input model.AddGalleryImageInput) int
 		EditSimpleLink                    func(childComplexity int, token string, linkID string, link model.SimpleLinkInput, vreelID *string) int
@@ -506,6 +518,7 @@ type ComplexityRoot struct {
 		Author          func(childComplexity int) int
 		ButtonURI       func(childComplexity int) int
 		Elements        func(childComplexity int) int
+		Embed           func(childComplexity int) int
 		Gallery         func(childComplexity int) int
 		ID              func(childComplexity int) int
 		LastSlideEdited func(childComplexity int) int
@@ -522,6 +535,7 @@ type ComplexityRoot struct {
 	VreelElements struct {
 		Contact       func(childComplexity int) int
 		Contributions func(childComplexity int) int
+		Embed         func(childComplexity int) int
 		Gallery       func(childComplexity int) int
 		Music         func(childComplexity int) int
 		Services      func(childComplexity int) int
@@ -600,6 +614,9 @@ type MutationResolver interface {
 	EditSocialLink(ctx context.Context, token string, linkID string, input model.SocialsInput) (*model.MutationResponse, error)
 	EditVideoGalleryVideo(ctx context.Context, token string, videoID string, input model.AddVideoInput) (*model.MutationResponse, error)
 	EditElementHeader(ctx context.Context, token string, elementID string, elementType string, header string) (*model.MutationResponse, error)
+	CreateEmbedElement(ctx context.Context, token string) (*model.MutationResponse, error)
+	EditEmbed(ctx context.Context, token string, elementID string, embed model.AddEmbedInput) (*model.MutationResponse, error)
+	DeleteEmbedElement(ctx context.Context, token string, elementID string) (*model.MutationResponse, error)
 }
 type QueryResolver interface {
 	User(ctx context.Context, id *string) (*model.User, error)
@@ -911,6 +928,48 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Credit.CreditType(childComplexity), true
+
+	case "EmbedElement.background_color":
+		if e.complexity.EmbedElement.BackgroundColor == nil {
+			break
+		}
+
+		return e.complexity.EmbedElement.BackgroundColor(childComplexity), true
+
+	case "EmbedElement.embed_code":
+		if e.complexity.EmbedElement.EmbedCode == nil {
+			break
+		}
+
+		return e.complexity.EmbedElement.EmbedCode(childComplexity), true
+
+	case "EmbedElement.header":
+		if e.complexity.EmbedElement.Header == nil {
+			break
+		}
+
+		return e.complexity.EmbedElement.Header(childComplexity), true
+
+	case "EmbedElement.id":
+		if e.complexity.EmbedElement.ID == nil {
+			break
+		}
+
+		return e.complexity.EmbedElement.ID(childComplexity), true
+
+	case "EmbedElement.parent":
+		if e.complexity.EmbedElement.Parent == nil {
+			break
+		}
+
+		return e.complexity.EmbedElement.Parent(childComplexity), true
+
+	case "EmbedElement.position":
+		if e.complexity.EmbedElement.Position == nil {
+			break
+		}
+
+		return e.complexity.EmbedElement.Position(childComplexity), true
 
 	case "Enterprise.email":
 		if e.complexity.Enterprise.Email == nil {
@@ -1654,6 +1713,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.AppendVideoToVideoGallery(childComplexity, args["token"].(string), args["elementId"].(*string), args["video"].(model.AddVideoInput)), true
 
+	case "Mutation.createEmbedElement":
+		if e.complexity.Mutation.CreateEmbedElement == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createEmbedElement_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateEmbedElement(childComplexity, args["token"].(string)), true
+
 	case "Mutation.createEnterprise":
 		if e.complexity.Mutation.CreateEnterprise == nil {
 			break
@@ -1762,6 +1833,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.CreateVideoElement(childComplexity, args["token"].(string), args["vreelId"].(*string)), true
 
+	case "Mutation.deleteEmbedElement":
+		if e.complexity.Mutation.DeleteEmbedElement == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_deleteEmbedElement_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DeleteEmbedElement(childComplexity, args["token"].(string), args["elementId"].(string)), true
+
 	case "Mutation.deleteFile":
 		if e.complexity.Mutation.DeleteFile == nil {
 			break
@@ -1845,6 +1928,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.EditElementPosition(childComplexity, args["token"].(string), args["elementId"].(string), args["elementType"].(string), args["position"].(int)), true
+
+	case "Mutation.editEmbed":
+		if e.complexity.Mutation.EditEmbed == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_editEmbed_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.EditEmbed(childComplexity, args["token"].(string), args["elementId"].(string), args["embed"].(model.AddEmbedInput)), true
 
 	case "Mutation.editFileName":
 		if e.complexity.Mutation.EditFileName == nil {
@@ -3332,6 +3427,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Vreel.Elements(childComplexity), true
 
+	case "Vreel.embed":
+		if e.complexity.Vreel.Embed == nil {
+			break
+		}
+
+		return e.complexity.Vreel.Embed(childComplexity), true
+
 	case "Vreel.gallery":
 		if e.complexity.Vreel.Gallery == nil {
 			break
@@ -3422,6 +3524,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.VreelElements.Contributions(childComplexity), true
+
+	case "VreelElements.embed":
+		if e.complexity.VreelElements.Embed == nil {
+			break
+		}
+
+		return e.complexity.VreelElements.Embed(childComplexity), true
 
 	case "VreelElements.gallery":
 		if e.complexity.VreelElements.Gallery == nil {
@@ -3886,6 +3995,15 @@ type MusicElement {
   music: [Music!]!
 }
 
+type EmbedElement {
+  id: String!
+  parent: String!
+  header: String!
+  position: Int!
+  embed_code: String!
+  background_color: String!
+}
+
 type VreelElements {
   text_area: TextArea
   videos: Videos
@@ -3893,6 +4011,7 @@ type VreelElements {
   services: Service
   music: MusicElement
   socials: SocialsElement
+  embed: [EmbedElement!]!
   simple_links: SimpleLinksElement
   super_links: [SuperLink]
   contact: Contact
@@ -3905,6 +4024,7 @@ type Vreel {
   page_title: String!
   button_uri: String
   slides: [Slide]!
+  embed: [EmbedElement!]!
   elements: VreelElements!
   simple_links: [SimpleLinksElement!]!
   gallery: [GalleryElement!]!
@@ -4098,6 +4218,13 @@ input SlideInput {
   desktop: CTAInput
 }
 
+input AddEmbedInput {
+  header: String
+  position: Int
+  embed_code: String
+  background_color: String
+}
+
 type Mutation {
   register(input: NewUser!): User!
   editSlide(
@@ -4268,6 +4395,9 @@ type Mutation {
   editSocialLink(token: String!, linkId: String!, input: SocialsInput!): MutationResponse!
   editVideoGalleryVideo(token: String!, videoId: String!, input: AddVideoInput!): MutationResponse!
   editElementHeader(token: String!, elementId: String!, elementType: String!, header: String!): MutationResponse!
+  createEmbedElement(token: String!): MutationResponse!
+  editEmbed(token: String!, elementId: String!, embed: AddEmbedInput!): MutationResponse!
+  deleteEmbedElement(token: String!, elementId: String!): MutationResponse!
 }
 `, BuiltIn: false},
 }
@@ -4703,6 +4833,21 @@ func (ec *executionContext) field_Mutation_appendVideoToVideoGallery_args(ctx co
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_createEmbedElement_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["token"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("token"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["token"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_createEnterprise_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -4880,6 +5025,30 @@ func (ec *executionContext) field_Mutation_createVideoElement_args(ctx context.C
 		}
 	}
 	args["vreelId"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_deleteEmbedElement_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["token"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("token"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["token"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["elementId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("elementId"))
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["elementId"] = arg1
 	return args, nil
 }
 
@@ -5093,6 +5262,39 @@ func (ec *executionContext) field_Mutation_editElementPosition_args(ctx context.
 		}
 	}
 	args["position"] = arg3
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_editEmbed_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["token"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("token"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["token"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["elementId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("elementId"))
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["elementId"] = arg1
+	var arg2 model.AddEmbedInput
+	if tmp, ok := rawArgs["embed"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("embed"))
+		arg2, err = ec.unmarshalNAddEmbedInput2githubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐAddEmbedInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["embed"] = arg2
 	return args, nil
 }
 
@@ -7703,6 +7905,216 @@ func (ec *executionContext) _Credit_accredited_id(ctx context.Context, field gra
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return obj.AccreditedID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _EmbedElement_id(ctx context.Context, field graphql.CollectedField, obj *model.EmbedElement) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "EmbedElement",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _EmbedElement_parent(ctx context.Context, field graphql.CollectedField, obj *model.EmbedElement) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "EmbedElement",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Parent, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _EmbedElement_header(ctx context.Context, field graphql.CollectedField, obj *model.EmbedElement) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "EmbedElement",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Header, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _EmbedElement_position(ctx context.Context, field graphql.CollectedField, obj *model.EmbedElement) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "EmbedElement",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Position, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _EmbedElement_embed_code(ctx context.Context, field graphql.CollectedField, obj *model.EmbedElement) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "EmbedElement",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.EmbedCode, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _EmbedElement_background_color(ctx context.Context, field graphql.CollectedField, obj *model.EmbedElement) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "EmbedElement",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.BackgroundColor, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -13322,6 +13734,132 @@ func (ec *executionContext) _Mutation_editElementHeader(ctx context.Context, fie
 	return ec.marshalNMutationResponse2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐMutationResponse(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Mutation_createEmbedElement(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_createEmbedElement_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().CreateEmbedElement(rctx, args["token"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.MutationResponse)
+	fc.Result = res
+	return ec.marshalNMutationResponse2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐMutationResponse(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_editEmbed(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_editEmbed_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().EditEmbed(rctx, args["token"].(string), args["elementId"].(string), args["embed"].(model.AddEmbedInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.MutationResponse)
+	fc.Result = res
+	return ec.marshalNMutationResponse2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐMutationResponse(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_deleteEmbedElement(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_deleteEmbedElement_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().DeleteEmbedElement(rctx, args["token"].(string), args["elementId"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.MutationResponse)
+	fc.Result = res
+	return ec.marshalNMutationResponse2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐMutationResponse(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _MutationResponse_succeeded(ctx context.Context, field graphql.CollectedField, obj *model.MutationResponse) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -18504,6 +19042,41 @@ func (ec *executionContext) _Vreel_slides(ctx context.Context, field graphql.Col
 	return ec.marshalNSlide2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐSlide(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Vreel_embed(ctx context.Context, field graphql.CollectedField, obj *model.Vreel) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Vreel",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Embed, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.EmbedElement)
+	fc.Result = res
+	return ec.marshalNEmbedElement2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐEmbedElementᚄ(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Vreel_elements(ctx context.Context, field graphql.CollectedField, obj *model.Vreel) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -18968,6 +19541,41 @@ func (ec *executionContext) _VreelElements_socials(ctx context.Context, field gr
 	res := resTmp.(*model.SocialsElement)
 	fc.Result = res
 	return ec.marshalOSocialsElement2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐSocialsElement(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _VreelElements_embed(ctx context.Context, field graphql.CollectedField, obj *model.VreelElements) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "VreelElements",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Embed, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.EmbedElement)
+	fc.Result = res
+	return ec.marshalNEmbedElement2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐEmbedElementᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _VreelElements_simple_links(ctx context.Context, field graphql.CollectedField, obj *model.VreelElements) (ret graphql.Marshaler) {
@@ -20219,6 +20827,53 @@ func (ec *executionContext) ___Type_ofType(ctx context.Context, field graphql.Co
 // endregion **************************** field.gotpl *****************************
 
 // region    **************************** input.gotpl *****************************
+
+func (ec *executionContext) unmarshalInputAddEmbedInput(ctx context.Context, obj interface{}) (model.AddEmbedInput, error) {
+	var it model.AddEmbedInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "header":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("header"))
+			it.Header, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "position":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("position"))
+			it.Position, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "embed_code":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("embed_code"))
+			it.EmbedCode, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "background_color":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("background_color"))
+			it.BackgroundColor, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
 
 func (ec *executionContext) unmarshalInputAddGalleryImageInput(ctx context.Context, obj interface{}) (model.AddGalleryImageInput, error) {
 	var it model.AddGalleryImageInput
@@ -21604,6 +22259,58 @@ func (ec *executionContext) _Credit(ctx context.Context, sel ast.SelectionSet, o
 	return out
 }
 
+var embedElementImplementors = []string{"EmbedElement"}
+
+func (ec *executionContext) _EmbedElement(ctx context.Context, sel ast.SelectionSet, obj *model.EmbedElement) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, embedElementImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("EmbedElement")
+		case "id":
+			out.Values[i] = ec._EmbedElement_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "parent":
+			out.Values[i] = ec._EmbedElement_parent(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "header":
+			out.Values[i] = ec._EmbedElement_header(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "position":
+			out.Values[i] = ec._EmbedElement_position(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "embed_code":
+			out.Values[i] = ec._EmbedElement_embed_code(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "background_color":
+			out.Values[i] = ec._EmbedElement_background_color(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var enterpriseImplementors = []string{"Enterprise"}
 
 func (ec *executionContext) _Enterprise(ctx context.Context, sel ast.SelectionSet, obj *model.Enterprise) graphql.Marshaler {
@@ -22647,6 +23354,21 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			}
 		case "editElementHeader":
 			out.Values[i] = ec._Mutation_editElementHeader(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "createEmbedElement":
+			out.Values[i] = ec._Mutation_createEmbedElement(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "editEmbed":
+			out.Values[i] = ec._Mutation_editEmbed(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "deleteEmbedElement":
+			out.Values[i] = ec._Mutation_deleteEmbedElement(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -23892,6 +24614,11 @@ func (ec *executionContext) _Vreel(ctx context.Context, sel ast.SelectionSet, ob
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "embed":
+			out.Values[i] = ec._Vreel_embed(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "elements":
 			out.Values[i] = ec._Vreel_elements(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -23960,6 +24687,11 @@ func (ec *executionContext) _VreelElements(ctx context.Context, sel ast.Selectio
 			out.Values[i] = ec._VreelElements_music(ctx, field, obj)
 		case "socials":
 			out.Values[i] = ec._VreelElements_socials(ctx, field, obj)
+		case "embed":
+			out.Values[i] = ec._VreelElements_embed(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "simple_links":
 			out.Values[i] = ec._VreelElements_simple_links(ctx, field, obj)
 		case "super_links":
@@ -24229,6 +24961,11 @@ func (ec *executionContext) ___Type(ctx context.Context, sel ast.SelectionSet, o
 
 // region    ***************************** type.gotpl *****************************
 
+func (ec *executionContext) unmarshalNAddEmbedInput2githubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐAddEmbedInput(ctx context.Context, v interface{}) (model.AddEmbedInput, error) {
+	res, err := ec.unmarshalInputAddEmbedInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNAddGalleryImageInput2githubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐAddGalleryImageInput(ctx context.Context, v interface{}) (model.AddGalleryImageInput, error) {
 	res, err := ec.unmarshalInputAddGalleryImageInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -24374,6 +25111,60 @@ func (ec *executionContext) marshalNCredit2ᚖgithubᚗcomᚋvreelᚋappᚋgraph
 		return graphql.Null
 	}
 	return ec._Credit(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNEmbedElement2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐEmbedElementᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.EmbedElement) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNEmbedElement2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐEmbedElement(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNEmbedElement2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐEmbedElement(ctx context.Context, sel ast.SelectionSet, v *model.EmbedElement) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._EmbedElement(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNEnterprise2githubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐEnterprise(ctx context.Context, sel ast.SelectionSet, v model.Enterprise) graphql.Marshaler {

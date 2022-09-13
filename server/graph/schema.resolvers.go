@@ -392,6 +392,24 @@ func (r *mutationResolver) EditElementHeader(ctx context.Context, token string, 
 	return &resp, err
 }
 
+func (r *mutationResolver) CreateEmbedElement(ctx context.Context, token string) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeCreateEmbedElement(token)
+
+	return &resp, err
+}
+
+func (r *mutationResolver) EditEmbed(ctx context.Context, token string, elementID string, embed model.AddEmbedInput) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeEditEmbedElement(token, elementID, embed)
+
+	return &resp, err
+}
+
+func (r *mutationResolver) DeleteEmbedElement(ctx context.Context, token string, elementID string) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeDeleteEmbed(token, elementID)
+
+	return &resp, err
+}
+
 func (r *queryResolver) User(ctx context.Context, id *string) (*model.User, error) {
 	user, err := database.GetUser(*id)
 	return &user, err

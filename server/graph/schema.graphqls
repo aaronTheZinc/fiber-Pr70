@@ -341,6 +341,15 @@ type MusicElement {
   music: [Music!]!
 }
 
+type EmbedElement {
+  id: String!
+  parent: String!
+  header: String!
+  position: Int!
+  embed_code: String!
+  background_color: String!
+}
+
 type VreelElements {
   text_area: TextArea
   videos: Videos
@@ -348,6 +357,7 @@ type VreelElements {
   services: Service
   music: MusicElement
   socials: SocialsElement
+  embed: [EmbedElement!]!
   simple_links: SimpleLinksElement
   super_links: [SuperLink]
   contact: Contact
@@ -360,6 +370,7 @@ type Vreel {
   page_title: String!
   button_uri: String
   slides: [Slide]!
+  embed: [EmbedElement!]!
   elements: VreelElements!
   simple_links: [SimpleLinksElement!]!
   gallery: [GalleryElement!]!
@@ -553,6 +564,13 @@ input SlideInput {
   desktop: CTAInput
 }
 
+input AddEmbedInput {
+  header: String
+  position: Int
+  embed_code: String
+  background_color: String
+}
+
 type Mutation {
   register(input: NewUser!): User!
   editSlide(
@@ -723,4 +741,7 @@ type Mutation {
   editSocialLink(token: String!, linkId: String!, input: SocialsInput!): MutationResponse!
   editVideoGalleryVideo(token: String!, videoId: String!, input: AddVideoInput!): MutationResponse!
   editElementHeader(token: String!, elementId: String!, elementType: String!, header: String!): MutationResponse!
+  createEmbedElement(token: String!): MutationResponse!
+  editEmbed(token: String!, elementId: String!, embed: AddEmbedInput!): MutationResponse!
+  deleteEmbedElement(token: String!, elementId: String!): MutationResponse!
 }

@@ -186,3 +186,26 @@ func AuthorizeEditElementHeader(token, elementId, elementType string, header str
 
 	return resp, err
 }
+
+func AuthorizeCreateEmbedElement(token string) (model.MutationResponse, error) {
+	resp, err := AuthorizeRequest(token, func(claims WebTokenClaims, cb func(message string, err error)) {
+		cb("successfully updated element position", database.CreateEmbed(claims.ID))
+	})
+
+	return resp, err
+}
+
+func AuthorizeEditEmbedElement(token, elementId string, input model.AddEmbedInput) (model.MutationResponse, error) {
+	resp, err := AuthorizeRequest(token, func(claims WebTokenClaims, cb func(message string, err error)) {
+		cb("successfully updated embed", database.EditEmbed(elementId, input))
+	})
+
+	return resp, err
+}
+
+func AuthorizeDeleteEmbed(token, elementId string) (model.MutationResponse, error) {
+	resp, err := AuthorizeRequest(token, func(claims WebTokenClaims, cb func(message string, err error)) {
+		cb("successfully deleted embed", database.DeleteEmbedElement(elementId))
+	})
+	return resp, err
+}
