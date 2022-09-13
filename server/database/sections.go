@@ -498,6 +498,7 @@ func CreateEmbed(parent string) error {
 	embed := model.EmbedElement{}
 	embed.ID = utils.GenerateId()
 	embed.Parent = parent
+	embed.Header = "Embed"
 	return db.Create(&embed).Error
 }
 
@@ -574,6 +575,11 @@ func EditElementPosition(elementId, elementType string, position int) error {
 		if editErr != nil {
 			err = editErr
 		}
+	case "embed":
+		editErr := updateEl(model.EmbedElement{})
+		if editErr != nil {
+			err = editErr
+		}
 	default:
 		err = errors.New("element type doesnt exist")
 	}
@@ -603,7 +609,10 @@ func EditElementHeader(elementId, elementType string, header string) error {
 			err = editErr
 		}
 	case "embed":
-
+		editErr := updateEl(model.EmbedElement{})
+		if editErr != nil {
+			err = editErr
+		}
 	default:
 		err = errors.New("element type doesnt exist")
 	}
