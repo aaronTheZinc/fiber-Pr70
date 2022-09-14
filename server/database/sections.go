@@ -187,7 +187,7 @@ func CreateSimpleLinkElement(vreelId string) (string, error) {
 		Header:   "Simple Links",
 		Parent:   vreelId,
 		Hidden:   false,
-		Position: 0,
+		Position: FindNextActiveElementIndex(vreelId),
 		Links:    []string{},
 	}).Error
 
@@ -239,7 +239,7 @@ func CreateGalleryElement(vreelId string) (string, error) {
 		Header:   "Gallery",
 		Parent:   vreelId,
 		Hidden:   false,
-		Position: 0,
+		Position: FindNextActiveElementIndex(vreelId),
 		Slides:   []string{},
 	}).Error
 
@@ -428,7 +428,7 @@ func CreateSocialsElement(vreelId string) (string, error) {
 		Header:   "Socials",
 		Parent:   vreelId,
 		Hidden:   false,
-		Position: 0,
+		Position: FindNextActiveElementIndex(vreelId),
 		Socials:  []string{},
 	}).Error
 
@@ -499,6 +499,7 @@ func CreateEmbed(parent string) error {
 	embed.ID = utils.GenerateId()
 	embed.Parent = parent
 	embed.Header = "Embed"
+	embed.Position = FindNextActiveElementIndex(parent)
 	return db.Create(&embed).Error
 }
 
@@ -534,6 +535,20 @@ func DeleteSocialsElement(elementId string) error {
 	}
 	db.Where("id = ?", elementId).Delete(&model.SocialElementModel{})
 	return err
+}
+
+func FindNextActiveElementIndex(vreelId string) int {
+	var simpleLinksCount int64 = 0
+	var socialsCount int64 = 0
+	var galleryCount int64 = 0
+	var embedCount int64 = 0
+
+	db.Model(&model.SimpleLinksElement{}).Where("parent = ?", vreelId).Count(&simpleLinksCount)
+	db.Model(&model.SocialElementModel{}).Where("parent = ?", vreelId).Count(&socialsCount)
+	db.Model(&model.GalleryElementModel{}).Where("parent = ?", vreelId).Count(&galleryCount)
+	db.Model(&model.EmbedElement{}).Where("parent = ?", vreelId).Count(&embedCount)
+
+	return int(simpleLinksCount+socialsCount+galleryCount+embedCount) + 1
 }
 
 func UpdateSimpleLink(linkId string, input model.SimpleLinkInput) error {
