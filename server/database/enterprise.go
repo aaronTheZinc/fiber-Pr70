@@ -1,9 +1,11 @@
 package database
 
 import (
+	"fmt"
 	"log"
 	"sync"
 
+	"github.com/lib/pq"
 	e "github.com/vreel/app/err"
 	"github.com/vreel/app/graph/model"
 	"github.com/vreel/app/utils"
@@ -123,12 +125,13 @@ func AddEmployeeToEnterprise(enterpriseId, newUserId string) error {
 
 func RemoveEmployeeFromEnterprise(enterpriseId, employeeId string) error {
 	var err error
-
+	fmt.Println("enterprise id", enterpriseId)
+	fmt.Println("user", employeeId)
 	enterprise := model.EnterpriseModel{}
 	if findErr := db.Where("id = ?", enterpriseId).Select("employees").First(&enterprise).Error; findErr == nil {
 		err = findErr
 	} else {
-		employees := enterprise.Employees
+		var employees pq.StringArray = enterprise.Employees
 		db.Where("id = ?", employeeId).Delete(&model.UserModel{})
 		employees = utils.RemoveStringFromSlice(employees, employeeId)
 
