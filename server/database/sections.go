@@ -128,38 +128,7 @@ func GetAllGalleryElements(parent string) []*model.GalleryElement {
 
 func RemoveSimpleLink(linkId string) error {
 
-	link := model.SimpleLinkModel{}
-	getErr := db.Where("id = ?", linkId).First(&link).Error
-	if getErr != nil {
-		return getErr
-	}
-	linkWasFound := false
-	element := model.SimpleLinksElementModel{}
-	getParentErr := db.Where("id = ?", link.Parent).Select("links").First(&element).Error
-
-	if getParentErr != nil {
-		return errors.New("failed to get link parent")
-	}
-
-	for idx, link := range element.Links {
-		if link == linkId {
-			linkWasFound = true
-			element.Links = append(element.Links[:idx], element.Links[idx+1:]...)
-			break
-		}
-	}
-
-	updateErr := db.Model(&model.SimpleLinksElementModel{}).Where("id = ? ", link.Parent).Update("links", element.Links).Error
-
-	if updateErr != nil {
-		return errors.New("failed to update simple links element")
-	}
-
-	if !linkWasFound {
-		return errors.New("simple link not found")
-	}
-
-	return nil
+	return db.Where("id = ?", linkId).Delete(&model.SimpleLinkModel{}).Error
 }
 
 func AppendSimpleLink(elementId string, input model.SimpleLinkInput) (string, error) {
@@ -205,30 +174,8 @@ func EditSimpleLinkContent() {
 }
 
 func DeleteSimpleLinkElement(elementId string) error {
-	var err error
-	el := model.SimpleLinksElementModel{}
-	if findErr := db.Where("id = ?", elementId).Select("Parent").First(&el).Error; findErr == nil {
-		parent := el.Parent
-		vreel := model.VreelModel{}
-		db.Where("parent = ?", elementId).Delete(&model.SimpleLinkModel{})
-
-		findVreelErr := db.Where("id = ?", parent).First(&vreel).Error
-		if findVreelErr != nil {
-			err = findVreelErr
-		} else {
-			linksEl := vreel.SimpleLinks
-			linksPQArr := pq.StringArray{}
-			linksPQArr = append(linksPQArr, utils.RemoveStringFromSlice(linksEl, elementId)...)
-			updateErr := db.Model(&model.VreelModel{}).Where("id = ?", parent).Update("simple_links", linksPQArr).Error
-
-			if updateErr != nil {
-				err = updateErr
-			}
-		}
-	} else {
-		err = findErr
-	}
-
+	err := db.Where("id = ?", elementId).Delete(&model.SimpleLinksElementModel{}).Error
+	db.Where("parent = ?", elementId).Delete(&model.SimpleLinkModel{})
 	return err
 }
 
