@@ -579,6 +579,7 @@ type Mutation {
     slide: SlideInput!
   ): MutationResponse!
   createEvent(token: String!, input: NewEvent!): Event!
+  removeEmployeeFromEnterprise(token: String!, employee: String!): MutationResponse!
   removeEnterprise(token: String!, id: String!): MutationResponse!
   removeUser(id: String!): MutationResponse!
   resetElements(token: String!): MutationResponse!

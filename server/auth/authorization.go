@@ -13,6 +13,15 @@ import (
 	"github.com/vreel/app/utils"
 )
 
+func AuthorizeRemoveEmployeeFromEnterprise(token, employee string) (model.MutationResponse, error) {
+	resp, err := AuthorizeRequest(token, func(claims WebTokenClaims, cb func(message string, err error)) {
+		e, _ := database.GetEnterpiseByOwner(claims.ID)
+		cb("successfully removed enterprise employee", database.RemoveEmployeeFromEnterprise(*e.ID, employee))
+	})
+
+	return resp, err
+}
+
 func AuthorizeDeleteEnterprise(token, id string) (model.MutationResponse, error) {
 	resp, err := AuthorizeRequest(token, func(claims WebTokenClaims, cb func(message string, err error)) {
 		cb("successfully removed enterprise", database.DeleteEnterprise(id))

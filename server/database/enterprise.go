@@ -120,6 +120,27 @@ func AddEmployeeToEnterprise(enterpriseId, newUserId string) error {
 	}
 	return err
 }
+
+func RemoveEmployeeFromEnterprise(enterpriseId, employeeId string) error {
+	var err error
+
+	enterprise := model.EnterpriseModel{}
+	if findErr := db.Where("id = ?", enterpriseId).Select("employees").First(&enterprise).Error; findErr == nil {
+		err = findErr
+	} else {
+		employees := enterprise.Employees
+		db.Where("id = ?", employeeId).Delete(&model.UserModel{})
+		employees = utils.RemoveStringFromSlice(employees, employeeId)
+
+		updateErr := db.Model(&enterprise).Where("id = ?", enterpriseId).Update("employees", employees).Error
+
+		if updateErr != nil {
+			err = updateErr
+		}
+	}
+	return err
+}
+
 func GetEnterpriseByOwner(id string) (model.Enterprise, error) {
 	var enterprise model.EnterpriseModel
 	var employees []*model.User
@@ -135,9 +156,6 @@ func GetEnterpriseByOwner(id string) (model.Enterprise, error) {
 		}
 	}
 	return enterprise.ToEnterprise(employees), err
-}
-func RemoveEmployeeFromEnterprise() {
-
 }
 
 func GetEnterpriseEmployees(id string) ([]*model.User, error) {
