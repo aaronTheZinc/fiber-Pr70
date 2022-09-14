@@ -132,8 +132,10 @@ func RemoveEmployeeFromEnterprise(enterpriseId, employeeId string) error {
 		err = findErr
 	} else {
 		var employees pq.StringArray = enterprise.Employees
+		fmt.Println("before ", employees)
 		db.Where("id = ?", employeeId).Delete(&model.UserModel{})
 		employees = utils.RemoveStringFromSlice(employees, employeeId)
+		fmt.Println("after ", employees)
 
 		updateErr := db.Model(&enterprise).Where("id = ?", enterpriseId).Update("employees", employees).Error
 
