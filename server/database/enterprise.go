@@ -128,7 +128,7 @@ func RemoveEmployeeFromEnterprise(enterpriseId, employeeId string) error {
 	fmt.Println("enterprise id", enterpriseId)
 	fmt.Println("user", employeeId)
 	enterprise := model.EnterpriseModel{}
-	if findErr := db.Where("id = ?", enterpriseId).Select("employees").First(&enterprise).Error; findErr == nil {
+	if findErr := db.Where("id = ?", enterpriseId).Select("employees").First(&enterprise).Error; findErr != nil {
 		err = findErr
 	} else {
 		var employees pq.StringArray = enterprise.Employees
