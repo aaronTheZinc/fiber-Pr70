@@ -363,12 +363,19 @@ type VreelElements {
   contact: Contact
   contributions: ContributionsElement
 }
+
+type DisplayOptions {
+  background_audio: String!
+  default_logo: String!
+}
+
 type Vreel {
   id: String!
   author: String!
   logo_uri: String
   page_title: String!
   button_uri: String
+  background_audio: String!
   slides: [Slide]!
   embed: [EmbedElement!]!
   elements: VreelElements!
@@ -379,6 +386,7 @@ type Vreel {
   slide_count: Int
   LastSlideEdited: String
   TimeLastEdited: Int
+  display_options: DisplayOptions!
 }
 
 type MutationResponse {
@@ -614,7 +622,7 @@ type Mutation {
     member: String!
   ): MutationResponse!
   removeSlide(token: String!, slideId: String): MutationResponse!
-  updateVreelField(token: String!, fields: [VreelFields]): MutationResponse!
+  updateVreelFields(token: String!, fields: [VreelFields!]!): MutationResponse!
   updateUser(token: String!, fields: [VreelFields!]): MutationResponse!
   updateSlide(token: String, slideId: String!, data: String!): Slide!
   likeSlide(input: AnalyticsMutation!): MutationResponse!

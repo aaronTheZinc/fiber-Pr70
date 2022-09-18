@@ -126,6 +126,11 @@ type Credit struct {
 	AccreditedID string `json:"accredited_id"`
 }
 
+type DisplayOptions struct {
+	BackgroundAudio string `json:"background_audio"`
+	DefaultLogo     string `json:"default_logo"`
+}
+
 type EmbedElement struct {
 	ID              string `json:"id"`
 	Parent          string `json:"parent"`
@@ -540,6 +545,7 @@ type Vreel struct {
 	LogoURI         *string                `json:"logo_uri"`
 	PageTitle       string                 `json:"page_title"`
 	ButtonURI       *string                `json:"button_uri"`
+	BackgroundAudio string                 `json:"background_audio"`
 	Slides          []*Slide               `json:"slides"`
 	Embed           []*EmbedElement        `json:"embed"`
 	Elements        *VreelElements         `json:"elements"`
@@ -550,6 +556,7 @@ type Vreel struct {
 	SlideCount      *int                   `json:"slide_count"`
 	LastSlideEdited *string                `json:"LastSlideEdited"`
 	TimeLastEdited  *int                   `json:"TimeLastEdited"`
+	DisplayOptions  *DisplayOptions        `json:"display_options"`
 }
 
 type VreelElements struct {

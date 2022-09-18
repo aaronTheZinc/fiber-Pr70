@@ -110,6 +110,11 @@ type ComplexityRoot struct {
 		CreditType   func(childComplexity int) int
 	}
 
+	DisplayOptions struct {
+		BackgroundAudio func(childComplexity int) int
+		DefaultLogo     func(childComplexity int) int
+	}
+
 	EmbedElement struct {
 		BackgroundColor func(childComplexity int) int
 		EmbedCode       func(childComplexity int) int
@@ -315,7 +320,7 @@ type ComplexityRoot struct {
 		UpdateSlide                       func(childComplexity int, token *string, slideID string, data string) int
 		UpdateSlideLocation               func(childComplexity int, token string, slideID *string, location int) int
 		UpdateUser                        func(childComplexity int, token string, fields []*model.VreelFields) int
-		UpdateVreelField                  func(childComplexity int, token string, fields []*model.VreelFields) int
+		UpdateVreelFields                 func(childComplexity int, token string, fields []*model.VreelFields) int
 		UpdateVreelLogo                   func(childComplexity int, token string, uri string) int
 	}
 
@@ -517,7 +522,9 @@ type ComplexityRoot struct {
 
 	Vreel struct {
 		Author          func(childComplexity int) int
+		BackgroundAudio func(childComplexity int) int
 		ButtonURI       func(childComplexity int) int
+		DisplayOptions  func(childComplexity int) int
 		Elements        func(childComplexity int) int
 		Embed           func(childComplexity int) int
 		Gallery         func(childComplexity int) int
@@ -568,7 +575,7 @@ type MutationResolver interface {
 	UpdateEmployee(ctx context.Context, token string, employee string, fields []*model.VreelFields) (*model.MutationResponse, error)
 	RemoveUserFromGroup(ctx context.Context, token string, groupID string, member string) (*model.MutationResponse, error)
 	RemoveSlide(ctx context.Context, token string, slideID *string) (*model.MutationResponse, error)
-	UpdateVreelField(ctx context.Context, token string, fields []*model.VreelFields) (*model.MutationResponse, error)
+	UpdateVreelFields(ctx context.Context, token string, fields []*model.VreelFields) (*model.MutationResponse, error)
 	UpdateUser(ctx context.Context, token string, fields []*model.VreelFields) (*model.MutationResponse, error)
 	UpdateSlide(ctx context.Context, token *string, slideID string, data string) (*model.Slide, error)
 	LikeSlide(ctx context.Context, input model.AnalyticsMutation) (*model.MutationResponse, error)
@@ -930,6 +937,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Credit.CreditType(childComplexity), true
+
+	case "DisplayOptions.background_audio":
+		if e.complexity.DisplayOptions.BackgroundAudio == nil {
+			break
+		}
+
+		return e.complexity.DisplayOptions.BackgroundAudio(childComplexity), true
+
+	case "DisplayOptions.default_logo":
+		if e.complexity.DisplayOptions.DefaultLogo == nil {
+			break
+		}
+
+		return e.complexity.DisplayOptions.DefaultLogo(childComplexity), true
 
 	case "EmbedElement.background_color":
 		if e.complexity.EmbedElement.BackgroundColor == nil {
@@ -2363,17 +2384,17 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.UpdateUser(childComplexity, args["token"].(string), args["fields"].([]*model.VreelFields)), true
 
-	case "Mutation.updateVreelField":
-		if e.complexity.Mutation.UpdateVreelField == nil {
+	case "Mutation.updateVreelFields":
+		if e.complexity.Mutation.UpdateVreelFields == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_updateVreelField_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_updateVreelFields_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateVreelField(childComplexity, args["token"].(string), args["fields"].([]*model.VreelFields)), true
+		return e.complexity.Mutation.UpdateVreelFields(childComplexity, args["token"].(string), args["fields"].([]*model.VreelFields)), true
 
 	case "Mutation.updateVreelLogo":
 		if e.complexity.Mutation.UpdateVreelLogo == nil {
@@ -3427,12 +3448,26 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Vreel.Author(childComplexity), true
 
+	case "Vreel.background_audio":
+		if e.complexity.Vreel.BackgroundAudio == nil {
+			break
+		}
+
+		return e.complexity.Vreel.BackgroundAudio(childComplexity), true
+
 	case "Vreel.button_uri":
 		if e.complexity.Vreel.ButtonURI == nil {
 			break
 		}
 
 		return e.complexity.Vreel.ButtonURI(childComplexity), true
+
+	case "Vreel.display_options":
+		if e.complexity.Vreel.DisplayOptions == nil {
+			break
+		}
+
+		return e.complexity.Vreel.DisplayOptions(childComplexity), true
 
 	case "Vreel.elements":
 		if e.complexity.Vreel.Elements == nil {
@@ -4031,12 +4066,19 @@ type VreelElements {
   contact: Contact
   contributions: ContributionsElement
 }
+
+type DisplayOptions {
+  background_audio: String!
+  default_logo: String!
+}
+
 type Vreel {
   id: String!
   author: String!
   logo_uri: String
   page_title: String!
   button_uri: String
+  background_audio: String!
   slides: [Slide]!
   embed: [EmbedElement!]!
   elements: VreelElements!
@@ -4047,6 +4089,7 @@ type Vreel {
   slide_count: Int
   LastSlideEdited: String
   TimeLastEdited: Int
+  display_options: DisplayOptions!
 }
 
 type MutationResponse {
@@ -4282,7 +4325,7 @@ type Mutation {
     member: String!
   ): MutationResponse!
   removeSlide(token: String!, slideId: String): MutationResponse!
-  updateVreelField(token: String!, fields: [VreelFields]): MutationResponse!
+  updateVreelFields(token: String!, fields: [VreelFields!]!): MutationResponse!
   updateUser(token: String!, fields: [VreelFields!]): MutationResponse!
   updateSlide(token: String, slideId: String!, data: String!): Slide!
   likeSlide(input: AnalyticsMutation!): MutationResponse!
@@ -6279,7 +6322,7 @@ func (ec *executionContext) field_Mutation_updateUser_args(ctx context.Context, 
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_updateVreelField_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_updateVreelFields_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
@@ -6294,7 +6337,7 @@ func (ec *executionContext) field_Mutation_updateVreelField_args(ctx context.Con
 	var arg1 []*model.VreelFields
 	if tmp, ok := rawArgs["fields"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("fields"))
-		arg1, err = ec.unmarshalOVreelFields2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐVreelFields(ctx, tmp)
+		arg1, err = ec.unmarshalNVreelFields2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐVreelFieldsᚄ(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -7944,6 +7987,76 @@ func (ec *executionContext) _Credit_accredited_id(ctx context.Context, field gra
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return obj.AccreditedID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _DisplayOptions_background_audio(ctx context.Context, field graphql.CollectedField, obj *model.DisplayOptions) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "DisplayOptions",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.BackgroundAudio, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _DisplayOptions_default_logo(ctx context.Context, field graphql.CollectedField, obj *model.DisplayOptions) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "DisplayOptions",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DefaultLogo, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -11802,7 +11915,7 @@ func (ec *executionContext) _Mutation_removeSlide(ctx context.Context, field gra
 	return ec.marshalNMutationResponse2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐMutationResponse(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Mutation_updateVreelField(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Mutation_updateVreelFields(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -11819,7 +11932,7 @@ func (ec *executionContext) _Mutation_updateVreelField(ctx context.Context, fiel
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_updateVreelField_args(ctx, rawArgs)
+	args, err := ec.field_Mutation_updateVreelFields_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
@@ -11827,7 +11940,7 @@ func (ec *executionContext) _Mutation_updateVreelField(ctx context.Context, fiel
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateVreelField(rctx, args["token"].(string), args["fields"].([]*model.VreelFields))
+		return ec.resolvers.Mutation().UpdateVreelFields(rctx, args["token"].(string), args["fields"].([]*model.VreelFields))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -19088,6 +19201,41 @@ func (ec *executionContext) _Vreel_button_uri(ctx context.Context, field graphql
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Vreel_background_audio(ctx context.Context, field graphql.CollectedField, obj *model.Vreel) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Vreel",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.BackgroundAudio, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Vreel_slides(ctx context.Context, field graphql.CollectedField, obj *model.Vreel) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -19427,6 +19575,41 @@ func (ec *executionContext) _Vreel_TimeLastEdited(ctx context.Context, field gra
 	res := resTmp.(*int)
 	fc.Result = res
 	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Vreel_display_options(ctx context.Context, field graphql.CollectedField, obj *model.Vreel) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Vreel",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DisplayOptions, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.DisplayOptions)
+	fc.Result = res
+	return ec.marshalNDisplayOptions2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐDisplayOptions(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _VreelElements_text_area(ctx context.Context, field graphql.CollectedField, obj *model.VreelElements) (ret graphql.Marshaler) {
@@ -22340,6 +22523,38 @@ func (ec *executionContext) _Credit(ctx context.Context, sel ast.SelectionSet, o
 	return out
 }
 
+var displayOptionsImplementors = []string{"DisplayOptions"}
+
+func (ec *executionContext) _DisplayOptions(ctx context.Context, sel ast.SelectionSet, obj *model.DisplayOptions) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, displayOptionsImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("DisplayOptions")
+		case "background_audio":
+			out.Values[i] = ec._DisplayOptions_background_audio(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "default_logo":
+			out.Values[i] = ec._DisplayOptions_default_logo(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var embedElementImplementors = []string{"EmbedElement"}
 
 func (ec *executionContext) _EmbedElement(ctx context.Context, sel ast.SelectionSet, obj *model.EmbedElement) graphql.Marshaler {
@@ -23206,8 +23421,8 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "updateVreelField":
-			out.Values[i] = ec._Mutation_updateVreelField(ctx, field)
+		case "updateVreelFields":
+			out.Values[i] = ec._Mutation_updateVreelFields(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -24695,6 +24910,11 @@ func (ec *executionContext) _Vreel(ctx context.Context, sel ast.SelectionSet, ob
 			}
 		case "button_uri":
 			out.Values[i] = ec._Vreel_button_uri(ctx, field, obj)
+		case "background_audio":
+			out.Values[i] = ec._Vreel_background_audio(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "slides":
 			out.Values[i] = ec._Vreel_slides(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -24736,6 +24956,11 @@ func (ec *executionContext) _Vreel(ctx context.Context, sel ast.SelectionSet, ob
 			out.Values[i] = ec._Vreel_LastSlideEdited(ctx, field, obj)
 		case "TimeLastEdited":
 			out.Values[i] = ec._Vreel_TimeLastEdited(ctx, field, obj)
+		case "display_options":
+			out.Values[i] = ec._Vreel_display_options(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -25197,6 +25422,16 @@ func (ec *executionContext) marshalNCredit2ᚖgithubᚗcomᚋvreelᚋappᚋgraph
 		return graphql.Null
 	}
 	return ec._Credit(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNDisplayOptions2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐDisplayOptions(ctx context.Context, sel ast.SelectionSet, v *model.DisplayOptions) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._DisplayOptions(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNEmbedElement2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐEmbedElementᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.EmbedElement) graphql.Marshaler {
@@ -26386,6 +26621,27 @@ func (ec *executionContext) marshalNVreelElements2ᚖgithubᚗcomᚋvreelᚋapp�
 	return ec._VreelElements(ctx, sel, v)
 }
 
+func (ec *executionContext) unmarshalNVreelFields2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐVreelFieldsᚄ(ctx context.Context, v interface{}) ([]*model.VreelFields, error) {
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*model.VreelFields, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNVreelFields2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐVreelFields(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
 func (ec *executionContext) unmarshalNVreelFields2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐVreelFields(ctx context.Context, v interface{}) (*model.VreelFields, error) {
 	res, err := ec.unmarshalInputVreelFields(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
@@ -27213,30 +27469,6 @@ func (ec *executionContext) marshalOVreel2ᚖgithubᚗcomᚋvreelᚋappᚋgraph�
 	return ec._Vreel(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalOVreelFields2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐVreelFields(ctx context.Context, v interface{}) ([]*model.VreelFields, error) {
-	if v == nil {
-		return nil, nil
-	}
-	var vSlice []interface{}
-	if v != nil {
-		if tmp1, ok := v.([]interface{}); ok {
-			vSlice = tmp1
-		} else {
-			vSlice = []interface{}{v}
-		}
-	}
-	var err error
-	res := make([]*model.VreelFields, len(vSlice))
-	for i := range vSlice {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalOVreelFields2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐVreelFields(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
-}
-
 func (ec *executionContext) unmarshalOVreelFields2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐVreelFieldsᚄ(ctx context.Context, v interface{}) ([]*model.VreelFields, error) {
 	if v == nil {
 		return nil, nil
@@ -27259,14 +27491,6 @@ func (ec *executionContext) unmarshalOVreelFields2ᚕᚖgithubᚗcomᚋvreelᚋa
 		}
 	}
 	return res, nil
-}
-
-func (ec *executionContext) unmarshalOVreelFields2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐVreelFields(ctx context.Context, v interface{}) (*model.VreelFields, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalInputVreelFields(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalO__EnumValue2ᚕgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐEnumValueᚄ(ctx context.Context, sel ast.SelectionSet, v []introspection.EnumValue) graphql.Marshaler {

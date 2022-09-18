@@ -1,6 +1,7 @@
 package database
 
 import (
+	"encoding/json"
 	"log"
 
 	"time"
@@ -39,7 +40,10 @@ func IsConnected() bool {
 
 func Migrate() {
 	log.Println("Migrating...")
-	// db.Session(&gorm.Session{AllowGlobalUpdate: true}).Model(&model.SlideModel{}).Update("active", true)
+	displayOptions := model.DisplayOptions{
+		DefaultLogo: "/assets/icons/Vreel_logo_small.svg",
+	}
+
 	db.AutoMigrate(model.GalleryElementModel{})
 	db.AutoMigrate(model.GalleryImageModel{})
 	db.AutoMigrate(model.SimpleLinksElementModel{})
@@ -58,6 +62,8 @@ func Migrate() {
 	db.AutoMigrate(model.EnterpriseModel{})
 	db.AutoMigrate(model.EmbedElement{})
 	// db.AutoMigrate(model.Group{})
+	data, _ := json.Marshal(&displayOptions)
+	db.Session(&gorm.Session{AllowGlobalUpdate: true}).Model(&model.VreelModel{}).Update("display_options", string(data))
 }
 
 // docker run --name vreel -e MYSQL_ROOT_PASSWORD=password -d mysql:tag

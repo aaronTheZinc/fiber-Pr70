@@ -13,6 +13,14 @@ import (
 	"github.com/vreel/app/utils"
 )
 
+func AuthorizeUpdateVreelFields(token string, fields []*model.VreelFields) (model.MutationResponse, error) {
+	resp, err := AuthorizeRequest(token, func(claims WebTokenClaims, cb func(message string, err error)) {
+		e := database.UpdateVreelFields(claims.ID, fields)
+		cb("successfully updated vreel", e)
+	})
+	return resp, err
+}
+
 func AuthorizeRemoveEmployeeFromEnterprise(token, employee string) (model.MutationResponse, error) {
 	resp, err := AuthorizeRequest(token, func(claims WebTokenClaims, cb func(message string, err error)) {
 		e, _ := database.GetEnterpiseByOwner(claims.ID)

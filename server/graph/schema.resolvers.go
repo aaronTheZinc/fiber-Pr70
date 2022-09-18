@@ -117,8 +117,10 @@ func (r *mutationResolver) RemoveSlide(ctx context.Context, token string, slideI
 	return &resp, err
 }
 
-func (r *mutationResolver) UpdateVreelField(ctx context.Context, token string, fields []*model.VreelFields) (*model.MutationResponse, error) {
-	panic(fmt.Errorf("not implemented"))
+func (r *mutationResolver) UpdateVreelFields(ctx context.Context, token string, fields []*model.VreelFields) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeUpdateVreelFields(token, fields)
+
+	return &resp, err
 }
 
 func (r *mutationResolver) UpdateUser(ctx context.Context, token string, fields []*model.VreelFields) (*model.MutationResponse, error) {
@@ -503,6 +505,9 @@ type queryResolver struct{ *Resolver }
 //  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
 //    it when you're done.
 //  - You have helper methods in this file. Move them out to keep these resolver files clean.
+func (r *mutationResolver) UpdateVreelField(ctx context.Context, token string, fields []*model.VreelFields) (*model.MutationResponse, error) {
+	panic(fmt.Errorf("not implemented"))
+}
 func (r *mutationResolver) AppendImageToGallery(ctx context.Context, token string, elementID string, image model.AddGalleryImageInput) (*model.MutationResponse, error) {
 	resp, err := auth.AuthorizeAppendSlideToGallery(token, elementID)
 

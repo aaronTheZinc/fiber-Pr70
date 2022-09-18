@@ -67,10 +67,11 @@ type EventModel struct {
 
 type VreelModel struct {
 	gorm.Model
-	ID              string         `json:"id"`
-	Author          string         `json:"author"`
-	LogoURI         string         `json:"logo_uri"`
-	PageTitle       string         `json:"page_title"`
+	ID              string `json:"id"`
+	Author          string `json:"author"`
+	LogoURI         string `json:"logo_uri"`
+	PageTitle       string `json:"page_title"`
+	DisplayOptions  string
 	ButtonURI       *string        `json:"button_uri"`
 	Slides          pq.StringArray `gorm:"type:text[]"`
 	Elements        string         `json:"elements"`
@@ -703,7 +704,7 @@ func (c VreelModel) ToVreel(slides []*Slide) (Vreel, error) {
 	var err error
 	var e VreelElements
 	var simpleLinks []*SimpleLinksElement
-
+	var displayOptions DisplayOptions
 	// for _, l := range c.SimpleLinks {
 	// 	t := l.ToSimpleLinksElement()
 	// 	fmt.Println("existsssssss")
@@ -740,6 +741,7 @@ func (c VreelModel) ToVreel(slides []*Slide) (Vreel, error) {
 	// if gErr != nil {
 	// 	err = gErr
 	// }
+	json.Unmarshal([]byte(c.DisplayOptions), &displayOptions)
 	return Vreel{
 		ID:              c.ID,
 		Author:          c.Author,
@@ -751,6 +753,7 @@ func (c VreelModel) ToVreel(slides []*Slide) (Vreel, error) {
 		LastSlideEdited: &c.LastSlideEdited,
 		TimeLastEdited:  &c.TimeLastEdited,
 		SimpleLinks:     simpleLinks,
+		DisplayOptions:  &displayOptions,
 	}, err
 }
 

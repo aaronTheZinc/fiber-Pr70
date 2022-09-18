@@ -892,3 +892,90 @@ func RemoveSocialLink(vreelId, platform string) error {
 
 	return err
 }
+
+func UpdateVreelFields(vreelId string, fields []*model.VreelFields) error {
+	var vreel_fields []string = []string{"display_options/background_audio", "display_options/default_logo"}
+	var err error
+
+	//mutate display options on a vreel
+	mutDisplayOptions := func(field string, value string) (string, error) {
+		var err error
+		var displayOptions string
+		vreel := model.VreelModel{}
+		getErr := db.Where("id = ?", vreelId).Select("display_options").First(&vreel).Error
+
+		if getErr != nil {
+			err = getErr
+
+			return displayOptions, err
+		}
+
+		d := model.DisplayOptions{}
+		unmarshalErr := json.Unmarshal([]byte(vreel.DisplayOptions), &d)
+
+		if unmarshalErr != nil {
+			err = unmarshalErr
+
+			return displayOptions, err
+		}
+
+		switch field {
+		case "background_audio":
+			d.BackgroundAudio = value
+			break
+		case "default_logo":
+			d.DefaultLogo = value
+			break
+		default:
+			err = errors.New("invalid display option key")
+
+		}
+		if err != nil {
+			return displayOptions, err
+		}
+		data, marshalErr := json.Marshal(d)
+		if marshalErr != nil {
+			err = marshalErr
+		} else {
+			displayOptions = string(data)
+		}
+		return displayOptions, err
+	}
+
+	for idx := range fields {
+		field := fields[idx]
+		if utils.ItemExistsInStringSlice(field.Field, vreel_fields) {
+			var key string
+			var value string
+			switch field.Field {
+			case "display_options/background_audio":
+				key = "display_options"
+				options, e := mutDisplayOptions("background_audio", field.Value)
+				if e != nil {
+					return e
+				}
+				value = options
+				break
+			case "display_options/default_logo":
+				key = "display_options"
+				options, e := mutDisplayOptions("default_logo", field.Value)
+				if e != nil {
+					return e
+				}
+				value = options
+				break
+			default:
+				err = errors.New("key doesnt exist")
+			}
+			updateErr := db.Model(&model.VreelModel{}).Where("id = ?", vreelId).Update(key, value).Error
+			if updateErr != nil {
+				err = updateErr
+			}
+		} else {
+			err = errors.New(fmt.Sprintf("field %v doesnt exist on vreel model", field.Field))
+			continue
+		}
+	}
+
+	return err
+}
