@@ -428,6 +428,7 @@ type Query {
   serverAnalytics: ServerAnalytics
   analytics(id: String!): Analytics!
   analyticsFragment(id: String!): AnalyticFragment!
+  page(id: String!): Vreel!
 }
 
 input NewEvent {
@@ -479,6 +480,7 @@ input CreateSlide {
   content_type: String!
   uri: String!
   slide_location: Int!
+  vreelId: String
 }
 
 input VreelFields {
@@ -598,7 +600,7 @@ type Mutation {
     password: String!
   ): ResolvedPasswordReset!
   createGroup(input: NewGroup): Group!
-  createSlide(token: String!): Slide!
+  createSlide(token: String!, vreelId: String): Slide!
   removeSocialLink(
     token: String!
     platform: String!

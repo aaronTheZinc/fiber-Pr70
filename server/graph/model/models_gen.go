@@ -116,9 +116,10 @@ type ContributionsInput struct {
 }
 
 type CreateSlide struct {
-	ContentType   string `json:"content_type"`
-	URI           string `json:"uri"`
-	SlideLocation int    `json:"slide_location"`
+	ContentType   string  `json:"content_type"`
+	URI           string  `json:"uri"`
+	SlideLocation int     `json:"slide_location"`
+	VreelID       *string `json:"vreelId"`
 }
 
 type Credit struct {

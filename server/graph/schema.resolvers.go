@@ -74,8 +74,8 @@ func (r *mutationResolver) CreateGroup(ctx context.Context, input *model.NewGrou
 	return &g, err
 }
 
-func (r *mutationResolver) CreateSlide(ctx context.Context, token string) (*model.Slide, error) {
-	resp, err := auth.AuthorizeCreateSlide(token)
+func (r *mutationResolver) CreateSlide(ctx context.Context, token string, vreelID *string) (*model.Slide, error) {
+	resp, err := auth.AuthorizeCreateSlide(token, vreelID)
 
 	return &resp, err
 }
@@ -488,6 +488,12 @@ func (r *queryResolver) Analytics(ctx context.Context, id string) (*model.Analyt
 func (r *queryResolver) AnalyticsFragment(ctx context.Context, id string) (*model.AnalyticFragment, error) {
 	f, err := database.GetAnalyticsFragment(id)
 	return &f, err
+}
+
+func (r *queryResolver) Page(ctx context.Context, id string) (*model.Vreel, error) {
+	page, err := database.GetVreel(id)
+
+	return &page, err
 }
 
 // Mutation returns generated.MutationResolver implementation.

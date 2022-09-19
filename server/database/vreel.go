@@ -241,17 +241,17 @@ func GetAllVreels() ([]model.VreelModel, error) {
 	return v, err
 }
 
-func VreelAddSlide(slideId, userId string) error {
+func VreelAddSlide(slideId, vreelId string) error {
 	var err error
 	vreel := model.VreelModel{}
 
-	if getErr := db.Where("id = ? ", userId).First(&vreel).Error; getErr != nil {
+	if getErr := db.Where("id = ? ", vreelId).First(&vreel).Error; getErr != nil {
 		err = getErr
 	} else {
 		slides := vreel.Slides
 
 		slides = append(slides, slideId)
-		updateErr := db.Model(model.VreelModel{}).Where("id = ?", userId).Update("slides", slides).Update("last_slide_edited", slideId).Update("time_last_edited", time.Now().Unix()).Error
+		updateErr := db.Model(model.VreelModel{}).Where("id = ?", vreelId).Update("slides", slides).Update("last_slide_edited", slideId).Update("time_last_edited", time.Now().Unix()).Error
 
 		if updateErr != nil {
 			err = updateErr

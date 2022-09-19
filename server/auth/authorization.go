@@ -729,19 +729,24 @@ func CreateEvent(token string, newEvent model.NewEvent) (model.Event, error) {
 	return event, err
 }
 
-func AuthorizeCreateSlide(token string) (model.Slide, error) {
+func AuthorizeCreateSlide(token string, vreelId *string) (model.Slide, error) {
 	var err error
 	var slide model.Slide
 
 	claims, isAuth, parseErr := ParseToken(token)
 	userId := claims.ID
+	vId := userId
+
+	if vreelId != nil {
+		vId = *vreelId
+	}
 
 	if isAuth && parseErr == nil {
-		if s, creationErr := database.CreateSlide(userId, ""); creationErr != nil {
+		if s, creationErr := database.CreateSlide(userId, vId); creationErr != nil {
 			err = creationErr
 		} else {
 			slide = s
-			if updateErr := database.VreelAddSlide(s.ID, userId); updateErr != nil {
+			if updateErr := database.VreelAddSlide(s.ID, vId); updateErr != nil {
 				err = updateErr
 			}
 

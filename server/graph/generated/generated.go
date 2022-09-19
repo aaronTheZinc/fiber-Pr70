@@ -273,7 +273,7 @@ type ComplexityRoot struct {
 		CreateGroup                       func(childComplexity int, input *model.NewGroup) int
 		CreateResetPasswordRequestIntent  func(childComplexity int, email string) int
 		CreateSimpleLinkElement           func(childComplexity int, token string, vreelID *string) int
-		CreateSlide                       func(childComplexity int, token string) int
+		CreateSlide                       func(childComplexity int, token string, vreelID *string) int
 		CreateSocialsElement              func(childComplexity int, token string, vreelID *string) int
 		CreateVideoElement                func(childComplexity int, token string, vreelID *string) int
 		DeleteEmbedElement                func(childComplexity int, token string, elementID string) int
@@ -339,6 +339,7 @@ type ComplexityRoot struct {
 		GetUserByToken    func(childComplexity int, token string) int
 		Group             func(childComplexity int, id string, token string) int
 		Login             func(childComplexity int, input *model.LoginInput) int
+		Page              func(childComplexity int, id string) int
 		ServerAnalytics   func(childComplexity int) int
 		Slide             func(childComplexity int, id string) int
 		User              func(childComplexity int, id *string) int
@@ -567,7 +568,7 @@ type MutationResolver interface {
 	CreateResetPasswordRequestIntent(ctx context.Context, email string) (*model.ResetPasswordResponse, error)
 	ResolveResetPasswordRequestIntent(ctx context.Context, token string, password string) (*model.ResolvedPasswordReset, error)
 	CreateGroup(ctx context.Context, input *model.NewGroup) (*model.Group, error)
-	CreateSlide(ctx context.Context, token string) (*model.Slide, error)
+	CreateSlide(ctx context.Context, token string, vreelID *string) (*model.Slide, error)
 	RemoveSocialLink(ctx context.Context, token string, platform string, vreelID *string) (*model.MutationResponse, error)
 	DeleteGroup(ctx context.Context, id string, token string) (*model.MutationResponse, error)
 	AddUserToGroup(ctx context.Context, token string, groupID string, userID string) (*model.MutationResponse, error)
@@ -641,6 +642,7 @@ type QueryResolver interface {
 	ServerAnalytics(ctx context.Context) (*model.ServerAnalytics, error)
 	Analytics(ctx context.Context, id string) (*model.Analytics, error)
 	AnalyticsFragment(ctx context.Context, id string) (*model.AnalyticFragment, error)
+	Page(ctx context.Context, id string) (*model.Vreel, error)
 }
 
 type executableSchema struct {
@@ -1830,7 +1832,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CreateSlide(childComplexity, args["token"].(string)), true
+		return e.complexity.Mutation.CreateSlide(childComplexity, args["token"].(string), args["vreelId"].(*string)), true
 
 	case "Mutation.createSocialsElement":
 		if e.complexity.Mutation.CreateSocialsElement == nil {
@@ -2529,6 +2531,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.Login(childComplexity, args["input"].(*model.LoginInput)), true
+
+	case "Query.page":
+		if e.complexity.Query.Page == nil {
+			break
+		}
+
+		args, err := ec.field_Query_page_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Page(childComplexity, args["id"].(string)), true
 
 	case "Query.serverAnalytics":
 		if e.complexity.Query.ServerAnalytics == nil {
@@ -4131,6 +4145,7 @@ type Query {
   serverAnalytics: ServerAnalytics
   analytics(id: String!): Analytics!
   analyticsFragment(id: String!): AnalyticFragment!
+  page(id: String!): Vreel!
 }
 
 input NewEvent {
@@ -4182,6 +4197,7 @@ input CreateSlide {
   content_type: String!
   uri: String!
   slide_location: Int!
+  vreelId: String
 }
 
 input VreelFields {
@@ -4301,7 +4317,7 @@ type Mutation {
     password: String!
   ): ResolvedPasswordReset!
   createGroup(input: NewGroup): Group!
-  createSlide(token: String!): Slide!
+  createSlide(token: String!, vreelId: String): Slide!
   removeSocialLink(
     token: String!
     platform: String!
@@ -5035,6 +5051,15 @@ func (ec *executionContext) field_Mutation_createSlide_args(ctx context.Context,
 		}
 	}
 	args["token"] = arg0
+	var arg1 *string
+	if tmp, ok := rawArgs["vreelId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("vreelId"))
+		arg1, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["vreelId"] = arg1
 	return args, nil
 }
 
@@ -6535,6 +6560,21 @@ func (ec *executionContext) field_Query_login_args(ctx context.Context, rawArgs 
 		}
 	}
 	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_page_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
 	return args, nil
 }
 
@@ -11604,7 +11644,7 @@ func (ec *executionContext) _Mutation_createSlide(ctx context.Context, field gra
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreateSlide(rctx, args["token"].(string))
+		return ec.resolvers.Mutation().CreateSlide(rctx, args["token"].(string), args["vreelId"].(*string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -14658,6 +14698,48 @@ func (ec *executionContext) _Query_analyticsFragment(ctx context.Context, field 
 	res := resTmp.(*model.AnalyticFragment)
 	fc.Result = res
 	return ec.marshalNAnalyticFragment2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐAnalyticFragment(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_page(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_page_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Page(rctx, args["id"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Vreel)
+	fc.Result = res
+	return ec.marshalNVreel2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐVreel(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -21470,6 +21552,14 @@ func (ec *executionContext) unmarshalInputCreateSlide(ctx context.Context, obj i
 			if err != nil {
 				return it, err
 			}
+		case "vreelId":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("vreelId"))
+			it.VreelID, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		}
 	}
 
@@ -23905,6 +23995,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_analyticsFragment(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "page":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_page(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -26555,6 +26659,10 @@ func (ec *executionContext) marshalNVideoGalleryElement2ᚖgithubᚗcomᚋvreel�
 		return graphql.Null
 	}
 	return ec._VideoGalleryElement(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNVreel2githubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐVreel(ctx context.Context, sel ast.SelectionSet, v model.Vreel) graphql.Marshaler {
+	return ec._Vreel(ctx, sel, &v)
 }
 
 func (ec *executionContext) marshalNVreel2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐVreelᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Vreel) graphql.Marshaler {
