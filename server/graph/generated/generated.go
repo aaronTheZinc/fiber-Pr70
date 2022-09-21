@@ -266,7 +266,7 @@ type ComplexityRoot struct {
 		AppendSlideToGallery              func(childComplexity int, token string, elementID string) int
 		AppendSocialsLink                 func(childComplexity int, token string, elementID string, link model.SocialsInput) int
 		AppendVideoToVideoGallery         func(childComplexity int, token string, elementID *string, video model.AddVideoInput) int
-		CreateEmbedElement                func(childComplexity int, token string) int
+		CreateEmbedElement                func(childComplexity int, token string, vreelID *string) int
 		CreateEnterprise                  func(childComplexity int, input model.NewEnterprise) int
 		CreateEvent                       func(childComplexity int, token string, input model.NewEvent) int
 		CreateGalleryElement              func(childComplexity int, token string, vreelID *string) int
@@ -624,7 +624,7 @@ type MutationResolver interface {
 	EditSocialLink(ctx context.Context, token string, linkID string, input model.SocialsInput) (*model.MutationResponse, error)
 	EditVideoGalleryVideo(ctx context.Context, token string, videoID string, input model.AddVideoInput) (*model.MutationResponse, error)
 	EditElementHeader(ctx context.Context, token string, elementID string, elementType string, header string) (*model.MutationResponse, error)
-	CreateEmbedElement(ctx context.Context, token string) (*model.MutationResponse, error)
+	CreateEmbedElement(ctx context.Context, token string, vreelID *string) (*model.MutationResponse, error)
 	EditEmbed(ctx context.Context, token string, elementID string, embed model.AddEmbedInput) (*model.MutationResponse, error)
 	DeleteEmbedElement(ctx context.Context, token string, elementID string) (*model.MutationResponse, error)
 }
@@ -1748,7 +1748,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CreateEmbedElement(childComplexity, args["token"].(string)), true
+		return e.complexity.Mutation.CreateEmbedElement(childComplexity, args["token"].(string), args["vreelId"].(*string)), true
 
 	case "Mutation.createEnterprise":
 		if e.complexity.Mutation.CreateEnterprise == nil {
@@ -3979,7 +3979,6 @@ type VideoGalleryElement {
   position: Int!
   videos: [Video!]!
   hidden: Boolean!
-
 }
 
 type GalleryImage {
@@ -4306,7 +4305,10 @@ type Mutation {
     slide: SlideInput!
   ): MutationResponse!
   createEvent(token: String!, input: NewEvent!): Event!
-  removeEmployeeFromEnterprise(token: String!, employee: String!): MutationResponse!
+  removeEmployeeFromEnterprise(
+    token: String!
+    employee: String!
+  ): MutationResponse!
   removeEnterprise(token: String!, id: String!): MutationResponse!
   removeUser(id: String!): MutationResponse!
   resetElements(token: String!): MutationResponse!
@@ -4447,7 +4449,11 @@ type Mutation {
     vreelId: String
   ): MutationResponse!
   createSimpleLinkElement(token: String!, vreelId: String): MutationResponse!
-  deleteSimpleLinkElement(token: String!, vreelId: String, elementId: String!): MutationResponse!
+  deleteSimpleLinkElement(
+    token: String!
+    vreelId: String
+    elementId: String!
+  ): MutationResponse!
   appendSimpleLink(
     token: String!
     elementId: String!
@@ -4459,18 +4465,51 @@ type Mutation {
   appendSlideToGallery(token: String!, elementId: String!): MutationResponse!
   removeGallerySlide(token: String!, imageId: String!): MutationResponse!
   createVideoElement(token: String!, vreelId: String): MutationResponse!
-  appendVideoToVideoGallery(token: String!, elementId: String, video: AddVideoInput!): MutationResponse!
+  appendVideoToVideoGallery(
+    token: String!
+    elementId: String
+    video: AddVideoInput!
+  ): MutationResponse!
   createSocialsElement(token: String!, vreelId: String): MutationResponse!
-  appendSocialsLink(token: String!, elementId: String!, link: SocialsInput!): MutationResponse!
+  appendSocialsLink(
+    token: String!
+    elementId: String!
+    link: SocialsInput!
+  ): MutationResponse!
   deleteSocialsElement(token: String!, elementId: String!): MutationResponse!
   removeSocialsLink(token: String!, socialsId: String!): MutationResponse!
-  editSimpleLinkElementLink(token: String! elementId: String!, input: SimpleLinkInput!): MutationResponse!
-  editGalleryImage(token: String!, imageId: String!, input: AddGalleryImageInput!): MutationResponse!
-  editSocialLink(token: String!, linkId: String!, input: SocialsInput!): MutationResponse!
-  editVideoGalleryVideo(token: String!, videoId: String!, input: AddVideoInput!): MutationResponse!
-  editElementHeader(token: String!, elementId: String!, elementType: String!, header: String!): MutationResponse!
-  createEmbedElement(token: String!): MutationResponse!
-  editEmbed(token: String!, elementId: String!, embed: AddEmbedInput!): MutationResponse!
+  editSimpleLinkElementLink(
+    token: String!
+    elementId: String!
+    input: SimpleLinkInput!
+  ): MutationResponse!
+  editGalleryImage(
+    token: String!
+    imageId: String!
+    input: AddGalleryImageInput!
+  ): MutationResponse!
+  editSocialLink(
+    token: String!
+    linkId: String!
+    input: SocialsInput!
+  ): MutationResponse!
+  editVideoGalleryVideo(
+    token: String!
+    videoId: String!
+    input: AddVideoInput!
+  ): MutationResponse!
+  editElementHeader(
+    token: String!
+    elementId: String!
+    elementType: String!
+    header: String!
+  ): MutationResponse!
+  createEmbedElement(token: String!, vreelId: String): MutationResponse!
+  editEmbed(
+    token: String!
+    elementId: String!
+    embed: AddEmbedInput!
+  ): MutationResponse!
   deleteEmbedElement(token: String!, elementId: String!): MutationResponse!
 }
 `, BuiltIn: false},
@@ -4919,6 +4958,15 @@ func (ec *executionContext) field_Mutation_createEmbedElement_args(ctx context.C
 		}
 	}
 	args["token"] = arg0
+	var arg1 *string
+	if tmp, ok := rawArgs["vreelId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("vreelId"))
+		arg1, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["vreelId"] = arg1
 	return args, nil
 }
 
@@ -13993,7 +14041,7 @@ func (ec *executionContext) _Mutation_createEmbedElement(ctx context.Context, fi
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreateEmbedElement(rctx, args["token"].(string))
+		return ec.resolvers.Mutation().CreateEmbedElement(rctx, args["token"].(string), args["vreelId"].(*string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)

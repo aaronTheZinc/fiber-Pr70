@@ -44,7 +44,11 @@ func AuthorizeDeleteSimpleLinkElement(token, elementId string, vreelId *string) 
 
 func AuthorizeCreateGalleryElement(token string, vreelId *string) (model.MutationResponse, error) {
 	resp, err := AuthorizeRequest(token, func(claims WebTokenClaims, cb func(message string, err error)) {
-		cb(database.CreateGalleryElement(claims.ID))
+		vId := claims.ID
+		if vreelId != nil {
+			vId = *vreelId
+		}
+		cb(database.CreateGalleryElement(vId))
 	})
 
 	return resp, err
@@ -110,9 +114,13 @@ func AuthorizeRemoveVideoFromVideoGallery(token, imageId string) (model.Mutation
 	return resp, err
 }
 
-func AuthorizeCreateSocialsElement(token string, vreeldId *string) (model.MutationResponse, error) {
+func AuthorizeCreateSocialsElement(token string, vreelId *string) (model.MutationResponse, error) {
 	resp, err := AuthorizeRequest(token, func(claims WebTokenClaims, cb func(message string, err error)) {
-		cb(database.CreateSocialsElement(*vreeldId))
+		vId := claims.ID
+		if vreelId != nil {
+			vId = *vreelId
+		}
+		cb(database.CreateSocialsElement(vId))
 	})
 	return resp, err
 }
@@ -187,9 +195,13 @@ func AuthorizeEditElementHeader(token, elementId, elementType string, header str
 	return resp, err
 }
 
-func AuthorizeCreateEmbedElement(token string) (model.MutationResponse, error) {
+func AuthorizeCreateEmbedElement(token string, vreelId *string) (model.MutationResponse, error) {
 	resp, err := AuthorizeRequest(token, func(claims WebTokenClaims, cb func(message string, err error)) {
-		cb("successfully updated element position", database.CreateEmbed(claims.ID))
+		vId := claims.ID
+		if vreelId != nil {
+			vId = *vreelId
+		}
+		cb("successfully updated element position", database.CreateEmbed(vId))
 	})
 
 	return resp, err
