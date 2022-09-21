@@ -46,6 +46,7 @@ type User {
   companyName: String!
   title: String!
   profilePicture: String!
+  employeeVreelId: String!
   linkedinUrl: String
   selfPortraitImage: String
   selfLandscapeImage: String

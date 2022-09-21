@@ -461,6 +461,7 @@ type ComplexityRoot struct {
 		CellPhone          func(childComplexity int) int
 		CompanyName        func(childComplexity int) int
 		Email              func(childComplexity int) int
+		EmployeeVreelID    func(childComplexity int) int
 		Files              func(childComplexity int) int
 		FirstName          func(childComplexity int) int
 		Following          func(childComplexity int) int
@@ -3112,6 +3113,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.User.Email(childComplexity), true
 
+	case "User.employeeVreelId":
+		if e.complexity.User.EmployeeVreelID == nil {
+			break
+		}
+
+		return e.complexity.User.EmployeeVreelID(childComplexity), true
+
 	case "User.files":
 		if e.complexity.User.Files == nil {
 			break
@@ -3763,6 +3771,7 @@ type User {
   companyName: String!
   title: String!
   profilePicture: String!
+  employeeVreelId: String!
   linkedinUrl: String
   selfPortraitImage: String
   selfLandscapeImage: String
@@ -17503,6 +17512,41 @@ func (ec *executionContext) _User_profilePicture(ctx context.Context, field grap
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _User_employeeVreelId(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.EmployeeVreelID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _User_linkedinUrl(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -24733,6 +24777,11 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			}
 		case "profilePicture":
 			out.Values[i] = ec._User_profilePicture(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "employeeVreelId":
+			out.Values[i] = ec._User_employeeVreelId(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
