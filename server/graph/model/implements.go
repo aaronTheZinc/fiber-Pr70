@@ -2,7 +2,6 @@ package model
 
 import (
 	"encoding/json"
-	"log"
 
 	"github.com/lib/pq"
 	"gorm.io/gorm"
@@ -823,8 +822,6 @@ func (c *AddEmbedInput) ToEmbedElement() EmbedElement {
 }
 
 func (c *SlideModel) ToSlide() Slide {
-	log.Println("[logo visibility]: ", c.LogoVisible)
-	log.Println("[slide active]: ", c.Active)
 	m := SlideMetaData{}
 	title := Title{}
 	mobile := Content{}

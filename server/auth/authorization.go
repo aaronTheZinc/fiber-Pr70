@@ -740,7 +740,8 @@ func AuthorizeCreateSlide(token string, vreelId *string) (model.Slide, error) {
 	if vreelId != nil {
 		vId = *vreelId
 	}
-
+	fmt.Println("[pointer]", vreelId)
+	fmt.Println("vreel id", vId)
 	if isAuth && parseErr == nil {
 		if s, creationErr := database.CreateSlide(userId, vId); creationErr != nil {
 			err = creationErr

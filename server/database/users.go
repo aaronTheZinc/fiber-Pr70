@@ -233,7 +233,14 @@ func GetUserByEmail(email string) (model.User, error) {
 		news, _ := CreateNewsFeed(user.ID, user.Following)
 		r.News = news
 	}()
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		pages := GetVreels(user.Pages)
+		r.Pages = *pages
+	}()
 	wg.Wait()
+
 	return r, err
 }
 
