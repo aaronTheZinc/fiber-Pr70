@@ -537,6 +537,19 @@ const Dashboard = require("@uppy/dashboard");
 const XHRUpload = require("@uppy/xhr-upload");
 const WebCam = require("@uppy/webcam");
 const video = document.getElementById("video");
+if (Hls.isSupported()) {
+    const hls = new Hls();
+    hls.loadSource("https://hls-dev.vreel.page/hls/aaron/1661388536144/media.m3u8");
+    hls.attachMedia(video);
+    hls.on(Hls.Events.MANIFEST_PARSED, ()=>{
+        video.play();
+    });
+} else if (video.canPlayType("application/vnd.apple.mpegurl")) {
+    video.src = videoSrc;
+    video.addEventListener("loadedmetadata", ()=>{
+        video.play();
+    });
+}
 const token = prompt("token");
 const uppy = new Uppy().use(Dashboard, {
     inline: true,
@@ -554,19 +567,6 @@ uppy.on("upload-success", (file, response)=>{
     const httpBody = response.body; // extracted response data
     console.log(httpBody);
     const { urlExt  } = httpBody;
-    if (Hls.isSupported()) {
-        const hls = new Hls();
-        hls.loadSource(`/${urlExt}`);
-        hls.attachMedia(video);
-        hls.on(Hls.Events.MANIFEST_PARSED, ()=>{
-            video.play();
-        });
-    } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
-        video.src = videoSrc;
-        video.addEventListener("loadedmetadata", ()=>{
-            video.play();
-        });
-    }
 // do something with file and response
 });
 
@@ -6022,9 +6022,9 @@ ThumbnailGenerator.prototype.protect = protect;
 ThumbnailGenerator.prototype.rotateImage = rotateImage;
 
 },{"@uppy/core":"8Yc3I","exifr/dist/mini.umd.js":"gTRte","@uppy/utils/lib/dataURItoBlob":"9jBl6","@uppy/utils/lib/isObjectURL":"9767I","@uppy/utils/lib/isPreviewSupported":"aJHxI","./locale.js":"aODlA"}],"gTRte":[function(require,module,exports) {
-var process = require("process");
-var Buffer = require("buffer").Buffer;
 var global = arguments[3];
+var Buffer = require("buffer").Buffer;
+var process = require("process");
 !function(e, t) {
     t(exports);
 }(this, function(e) {

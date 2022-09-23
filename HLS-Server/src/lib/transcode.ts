@@ -1,5 +1,6 @@
 import ffmpeg from "fluent-ffmpeg";
 import fs from "fs";
+import { deleteFile } from "../utils/dir";
 import { rootDir } from "../";
 
 type TranscodeVideoRequest = {
@@ -7,6 +8,7 @@ type TranscodeVideoRequest = {
   username: string;
   cb: (r: { error?: Error; urlExt: string | null, rootFolderName: string | null }) => void;
 };
+
 
 export const transcodeVideo = ({
   fileDir,
@@ -43,9 +45,10 @@ export const transcodeVideo = ({
         console.log("Processing: " + progress.percent + "% done");
       })
       .on("error", () => {
-        console.log("ERR!!");
+        deleteFile(fileDir);
       })
       .on("end", function (err, stdout, stderr) {
+        deleteFile(fileDir);
         cb({ urlExt: `hls/${username}/${now}/media.m3u8`, rootFolderName: now });
       })
       .run();

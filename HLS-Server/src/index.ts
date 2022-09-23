@@ -13,14 +13,15 @@ import { raw } from "body-parser";
 import FilesDataRouter from "./routes/files"
 dotenv.config();
 export const rootDir = findRootDir(__dirname);
-export const BASE_URL = process.env.BASE_URL
-console.log(rootDir);
-
+export const BASE_URL = process.env.BASE_URL;
+export const GoogleApiKey = process.env.GOOGLE_API_KEY;
+import FontsRouter from "./routes/fonts"
 import { v4 } from "uuid"
 import { saveFile } from "./entity/UserFile";
 import { authMiddleware } from "./middleware";
 import { createConnection } from "typeorm";
 import { UserFile } from "./entity/UserFile";
+import LoadFonts from "./client/fonts";
 const storage = multer.diskStorage({
     destination: `${rootDir}/uploads`,
     filename: async (req, file, cb) => {
@@ -32,7 +33,7 @@ const storage = multer.diskStorage({
 const app = express();
 
 async function Server() {
-
+    await LoadFonts();
     await createConnection({
         type: "postgres",
         host: "localhost",
@@ -57,7 +58,7 @@ async function Server() {
     app.use(express.static(rootDir));
     app.use('/data', FilesDataRouter)
     app.use("/", authMiddleware)
-
+    app.use('/fonts', FontsRouter)
     const uploadMedia = multer({ storage }).single("content");
     app.use(cors({ origin: "*", credentials: true }));
     app.use(express.static("dist"));
