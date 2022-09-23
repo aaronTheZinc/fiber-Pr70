@@ -128,8 +128,10 @@ type Credit struct {
 }
 
 type DisplayOptions struct {
-	BackgroundAudio string `json:"background_audio"`
-	DefaultLogo     string `json:"default_logo"`
+	BackgroundAudio string                 `json:"background_audio"`
+	DefaultLogo     string                 `json:"default_logo"`
+	Slide           *SlideDisplayOptions   `json:"slide"`
+	Sections        *SectionDisplayOptions `json:"sections"`
 }
 
 type EmbedElement struct {
@@ -181,6 +183,11 @@ type File struct {
 type Files struct {
 	FileCount int     `json:"file_count"`
 	Files     []*File `json:"files"`
+}
+
+type Font struct {
+	Family string `json:"family"`
+	URI    string `json:"uri"`
 }
 
 type Gallery struct {
@@ -340,6 +347,13 @@ type ResolvedPasswordReset struct {
 	Succeeded bool   `json:"succeeded"`
 }
 
+type SectionDisplayOptions struct {
+	Header      *Font `json:"header"`
+	Title       *Font `json:"title"`
+	Description *Font `json:"description"`
+	Button      *Font `json:"button"`
+}
+
 type ServerAnalytics struct {
 	Usernames   []*string     `json:"usernames"`
 	Vreels      []*Vreel      `json:"vreels"`
@@ -402,6 +416,12 @@ type Slide struct {
 	Cta2          *Cta           `json:"cta2"`
 	Advanced      *Advanced      `json:"advanced"`
 	Info          *MoreInfo      `json:"info"`
+}
+
+type SlideDisplayOptions struct {
+	Title       *Font `json:"title"`
+	Description *Font `json:"description"`
+	Button      *Font `json:"button"`
 }
 
 type SlideInput struct {

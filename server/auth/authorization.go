@@ -13,9 +13,13 @@ import (
 	"github.com/vreel/app/utils"
 )
 
-func AuthorizeUpdateVreelFields(token string, fields []*model.VreelFields) (model.MutationResponse, error) {
+func AuthorizeUpdateVreelFields(token string, fields []*model.VreelFields, vreelId *string) (model.MutationResponse, error) {
 	resp, err := AuthorizeRequest(token, func(claims WebTokenClaims, cb func(message string, err error)) {
-		e := database.UpdateVreelFields(claims.ID, fields)
+		vId := claims.ID
+		if vreelId != nil {
+			vId = *vreelId
+		}
+		e := database.UpdateVreelFields(vId, fields)
 		cb("successfully updated vreel", e)
 	})
 	return resp, err

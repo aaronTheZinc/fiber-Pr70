@@ -113,6 +113,8 @@ type ComplexityRoot struct {
 	DisplayOptions struct {
 		BackgroundAudio func(childComplexity int) int
 		DefaultLogo     func(childComplexity int) int
+		Sections        func(childComplexity int) int
+		Slide           func(childComplexity int) int
 	}
 
 	EmbedElement struct {
@@ -164,6 +166,11 @@ type ComplexityRoot struct {
 	Files struct {
 		FileCount func(childComplexity int) int
 		Files     func(childComplexity int) int
+	}
+
+	Font struct {
+		Family func(childComplexity int) int
+		URI    func(childComplexity int) int
 	}
 
 	Gallery struct {
@@ -320,7 +327,7 @@ type ComplexityRoot struct {
 		UpdateSlide                       func(childComplexity int, token *string, slideID string, data string) int
 		UpdateSlideLocation               func(childComplexity int, token string, slideID *string, location int) int
 		UpdateUser                        func(childComplexity int, token string, fields []*model.VreelFields) int
-		UpdateVreelFields                 func(childComplexity int, token string, fields []*model.VreelFields) int
+		UpdateVreelFields                 func(childComplexity int, token string, fields []*model.VreelFields, vreelID *string) int
 		UpdateVreelLogo                   func(childComplexity int, token string, uri string) int
 	}
 
@@ -355,6 +362,13 @@ type ComplexityRoot struct {
 	ResolvedPasswordReset struct {
 		Message   func(childComplexity int) int
 		Succeeded func(childComplexity int) int
+	}
+
+	SectionDisplayOptions struct {
+		Button      func(childComplexity int) int
+		Description func(childComplexity int) int
+		Header      func(childComplexity int) int
+		Title       func(childComplexity int) int
 	}
 
 	ServerAnalytics struct {
@@ -410,6 +424,12 @@ type ComplexityRoot struct {
 		SlideLocation func(childComplexity int) int
 		Title         func(childComplexity int) int
 		URI           func(childComplexity int) int
+	}
+
+	SlideDisplayOptions struct {
+		Button      func(childComplexity int) int
+		Description func(childComplexity int) int
+		Title       func(childComplexity int) int
 	}
 
 	SlideMetaData struct {
@@ -577,7 +597,7 @@ type MutationResolver interface {
 	UpdateEmployee(ctx context.Context, token string, employee string, fields []*model.VreelFields) (*model.MutationResponse, error)
 	RemoveUserFromGroup(ctx context.Context, token string, groupID string, member string) (*model.MutationResponse, error)
 	RemoveSlide(ctx context.Context, token string, slideID *string) (*model.MutationResponse, error)
-	UpdateVreelFields(ctx context.Context, token string, fields []*model.VreelFields) (*model.MutationResponse, error)
+	UpdateVreelFields(ctx context.Context, token string, fields []*model.VreelFields, vreelID *string) (*model.MutationResponse, error)
 	UpdateUser(ctx context.Context, token string, fields []*model.VreelFields) (*model.MutationResponse, error)
 	UpdateSlide(ctx context.Context, token *string, slideID string, data string) (*model.Slide, error)
 	LikeSlide(ctx context.Context, input model.AnalyticsMutation) (*model.MutationResponse, error)
@@ -955,6 +975,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.DisplayOptions.DefaultLogo(childComplexity), true
 
+	case "DisplayOptions.sections":
+		if e.complexity.DisplayOptions.Sections == nil {
+			break
+		}
+
+		return e.complexity.DisplayOptions.Sections(childComplexity), true
+
+	case "DisplayOptions.slide":
+		if e.complexity.DisplayOptions.Slide == nil {
+			break
+		}
+
+		return e.complexity.DisplayOptions.Slide(childComplexity), true
+
 	case "EmbedElement.background_color":
 		if e.complexity.EmbedElement.BackgroundColor == nil {
 			break
@@ -1185,6 +1219,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Files.Files(childComplexity), true
+
+	case "Font.family":
+		if e.complexity.Font.Family == nil {
+			break
+		}
+
+		return e.complexity.Font.Family(childComplexity), true
+
+	case "Font.uri":
+		if e.complexity.Font.URI == nil {
+			break
+		}
+
+		return e.complexity.Font.URI(childComplexity), true
 
 	case "Gallery.header":
 		if e.complexity.Gallery.Header == nil {
@@ -2397,7 +2445,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateVreelFields(childComplexity, args["token"].(string), args["fields"].([]*model.VreelFields)), true
+		return e.complexity.Mutation.UpdateVreelFields(childComplexity, args["token"].(string), args["fields"].([]*model.VreelFields), args["vreelId"].(*string)), true
 
 	case "Mutation.updateVreelLogo":
 		if e.complexity.Mutation.UpdateVreelLogo == nil {
@@ -2622,6 +2670,34 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ResolvedPasswordReset.Succeeded(childComplexity), true
+
+	case "SectionDisplayOptions.button":
+		if e.complexity.SectionDisplayOptions.Button == nil {
+			break
+		}
+
+		return e.complexity.SectionDisplayOptions.Button(childComplexity), true
+
+	case "SectionDisplayOptions.description":
+		if e.complexity.SectionDisplayOptions.Description == nil {
+			break
+		}
+
+		return e.complexity.SectionDisplayOptions.Description(childComplexity), true
+
+	case "SectionDisplayOptions.header":
+		if e.complexity.SectionDisplayOptions.Header == nil {
+			break
+		}
+
+		return e.complexity.SectionDisplayOptions.Header(childComplexity), true
+
+	case "SectionDisplayOptions.title":
+		if e.complexity.SectionDisplayOptions.Title == nil {
+			break
+		}
+
+		return e.complexity.SectionDisplayOptions.Title(childComplexity), true
 
 	case "ServerAnalytics.enterprises":
 		if e.complexity.ServerAnalytics.Enterprises == nil {
@@ -2902,6 +2978,27 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Slide.URI(childComplexity), true
+
+	case "SlideDisplayOptions.button":
+		if e.complexity.SlideDisplayOptions.Button == nil {
+			break
+		}
+
+		return e.complexity.SlideDisplayOptions.Button(childComplexity), true
+
+	case "SlideDisplayOptions.description":
+		if e.complexity.SlideDisplayOptions.Description == nil {
+			break
+		}
+
+		return e.complexity.SlideDisplayOptions.Description(childComplexity), true
+
+	case "SlideDisplayOptions.title":
+		if e.complexity.SlideDisplayOptions.Title == nil {
+			break
+		}
+
+		return e.complexity.SlideDisplayOptions.Title(childComplexity), true
 
 	case "SlideMetaData.created":
 		if e.complexity.SlideMetaData.Created == nil {
@@ -4089,9 +4186,29 @@ type VreelElements {
   contributions: ContributionsElement
 }
 
+type Font {
+  family: String!
+  uri: String!
+}
+
+type SlideDisplayOptions {
+  title: Font!
+  description: Font!
+  button: Font!
+}
+
+type SectionDisplayOptions {
+  header: Font
+  title: Font
+  description: Font
+  button: Font
+}
+
 type DisplayOptions {
   background_audio: String!
   default_logo: String!
+  slide: SlideDisplayOptions
+  sections: SectionDisplayOptions
 }
 
 type Vreel {
@@ -4352,7 +4469,7 @@ type Mutation {
     member: String!
   ): MutationResponse!
   removeSlide(token: String!, slideId: String): MutationResponse!
-  updateVreelFields(token: String!, fields: [VreelFields!]!): MutationResponse!
+  updateVreelFields(token: String!, fields: [VreelFields!]!, vreelId: String): MutationResponse!
   updateUser(token: String!, fields: [VreelFields!]): MutationResponse!
   updateSlide(token: String, slideId: String!, data: String!): Slide!
   likeSlide(input: AnalyticsMutation!): MutationResponse!
@@ -6425,6 +6542,15 @@ func (ec *executionContext) field_Mutation_updateVreelFields_args(ctx context.Co
 		}
 	}
 	args["fields"] = arg1
+	var arg2 *string
+	if tmp, ok := rawArgs["vreelId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("vreelId"))
+		arg2, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["vreelId"] = arg2
 	return args, nil
 }
 
@@ -8170,6 +8296,70 @@ func (ec *executionContext) _DisplayOptions_default_logo(ctx context.Context, fi
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _DisplayOptions_slide(ctx context.Context, field graphql.CollectedField, obj *model.DisplayOptions) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "DisplayOptions",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Slide, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.SlideDisplayOptions)
+	fc.Result = res
+	return ec.marshalOSlideDisplayOptions2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐSlideDisplayOptions(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _DisplayOptions_sections(ctx context.Context, field graphql.CollectedField, obj *model.DisplayOptions) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "DisplayOptions",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Sections, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.SectionDisplayOptions)
+	fc.Result = res
+	return ec.marshalOSectionDisplayOptions2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐSectionDisplayOptions(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _EmbedElement_id(ctx context.Context, field graphql.CollectedField, obj *model.EmbedElement) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -9317,6 +9507,76 @@ func (ec *executionContext) _Files_files(ctx context.Context, field graphql.Coll
 	res := resTmp.([]*model.File)
 	fc.Result = res
 	return ec.marshalNFile2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐFileᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Font_family(ctx context.Context, field graphql.CollectedField, obj *model.Font) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Font",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Family, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Font_uri(ctx context.Context, field graphql.CollectedField, obj *model.Font) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Font",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.URI, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Gallery_header(ctx context.Context, field graphql.CollectedField, obj *model.Gallery) (ret graphql.Marshaler) {
@@ -12037,7 +12297,7 @@ func (ec *executionContext) _Mutation_updateVreelFields(ctx context.Context, fie
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateVreelFields(rctx, args["token"].(string), args["fields"].([]*model.VreelFields))
+		return ec.resolvers.Mutation().UpdateVreelFields(rctx, args["token"].(string), args["fields"].([]*model.VreelFields), args["vreelId"].(*string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -15045,6 +15305,134 @@ func (ec *executionContext) _ResolvedPasswordReset_succeeded(ctx context.Context
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _SectionDisplayOptions_header(ctx context.Context, field graphql.CollectedField, obj *model.SectionDisplayOptions) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "SectionDisplayOptions",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Header, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.Font)
+	fc.Result = res
+	return ec.marshalOFont2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐFont(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _SectionDisplayOptions_title(ctx context.Context, field graphql.CollectedField, obj *model.SectionDisplayOptions) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "SectionDisplayOptions",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Title, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.Font)
+	fc.Result = res
+	return ec.marshalOFont2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐFont(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _SectionDisplayOptions_description(ctx context.Context, field graphql.CollectedField, obj *model.SectionDisplayOptions) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "SectionDisplayOptions",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Description, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.Font)
+	fc.Result = res
+	return ec.marshalOFont2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐFont(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _SectionDisplayOptions_button(ctx context.Context, field graphql.CollectedField, obj *model.SectionDisplayOptions) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "SectionDisplayOptions",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Button, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.Font)
+	fc.Result = res
+	return ec.marshalOFont2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐFont(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _ServerAnalytics_usernames(ctx context.Context, field graphql.CollectedField, obj *model.ServerAnalytics) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -16431,6 +16819,111 @@ func (ec *executionContext) _Slide_info(ctx context.Context, field graphql.Colle
 	res := resTmp.(*model.MoreInfo)
 	fc.Result = res
 	return ec.marshalOMoreInfo2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐMoreInfo(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _SlideDisplayOptions_title(ctx context.Context, field graphql.CollectedField, obj *model.SlideDisplayOptions) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "SlideDisplayOptions",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Title, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Font)
+	fc.Result = res
+	return ec.marshalNFont2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐFont(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _SlideDisplayOptions_description(ctx context.Context, field graphql.CollectedField, obj *model.SlideDisplayOptions) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "SlideDisplayOptions",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Description, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Font)
+	fc.Result = res
+	return ec.marshalNFont2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐFont(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _SlideDisplayOptions_button(ctx context.Context, field graphql.CollectedField, obj *model.SlideDisplayOptions) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "SlideDisplayOptions",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Button, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Font)
+	fc.Result = res
+	return ec.marshalNFont2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐFont(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _SlideMetaData_created(ctx context.Context, field graphql.CollectedField, obj *model.SlideMetaData) (ret graphql.Marshaler) {
@@ -22726,6 +23219,10 @@ func (ec *executionContext) _DisplayOptions(ctx context.Context, sel ast.Selecti
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "slide":
+			out.Values[i] = ec._DisplayOptions_slide(ctx, field, obj)
+		case "sections":
+			out.Values[i] = ec._DisplayOptions_sections(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -23014,6 +23511,38 @@ func (ec *executionContext) _Files(ctx context.Context, sel ast.SelectionSet, ob
 			}
 		case "files":
 			out.Values[i] = ec._Files_files(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var fontImplementors = []string{"Font"}
+
+func (ec *executionContext) _Font(ctx context.Context, sel ast.SelectionSet, obj *model.Font) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, fontImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Font")
+		case "family":
+			out.Values[i] = ec._Font_family(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "uri":
+			out.Values[i] = ec._Font_uri(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -24190,6 +24719,36 @@ func (ec *executionContext) _ResolvedPasswordReset(ctx context.Context, sel ast.
 	return out
 }
 
+var sectionDisplayOptionsImplementors = []string{"SectionDisplayOptions"}
+
+func (ec *executionContext) _SectionDisplayOptions(ctx context.Context, sel ast.SelectionSet, obj *model.SectionDisplayOptions) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, sectionDisplayOptionsImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("SectionDisplayOptions")
+		case "header":
+			out.Values[i] = ec._SectionDisplayOptions_header(ctx, field, obj)
+		case "title":
+			out.Values[i] = ec._SectionDisplayOptions_title(ctx, field, obj)
+		case "description":
+			out.Values[i] = ec._SectionDisplayOptions_description(ctx, field, obj)
+		case "button":
+			out.Values[i] = ec._SectionDisplayOptions_button(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var serverAnalyticsImplementors = []string{"ServerAnalytics"}
 
 func (ec *executionContext) _ServerAnalytics(ctx context.Context, sel ast.SelectionSet, obj *model.ServerAnalytics) graphql.Marshaler {
@@ -24477,6 +25036,43 @@ func (ec *executionContext) _Slide(ctx context.Context, sel ast.SelectionSet, ob
 			out.Values[i] = ec._Slide_advanced(ctx, field, obj)
 		case "info":
 			out.Values[i] = ec._Slide_info(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var slideDisplayOptionsImplementors = []string{"SlideDisplayOptions"}
+
+func (ec *executionContext) _SlideDisplayOptions(ctx context.Context, sel ast.SelectionSet, obj *model.SlideDisplayOptions) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, slideDisplayOptionsImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("SlideDisplayOptions")
+		case "title":
+			out.Values[i] = ec._SlideDisplayOptions_title(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "description":
+			out.Values[i] = ec._SlideDisplayOptions_description(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "button":
+			out.Values[i] = ec._SlideDisplayOptions_button(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -25831,6 +26427,16 @@ func (ec *executionContext) marshalNFiles2ᚖgithubᚗcomᚋvreelᚋappᚋgraph�
 		return graphql.Null
 	}
 	return ec._Files(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNFont2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐFont(ctx context.Context, sel ast.SelectionSet, v *model.Font) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._Font(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNGalleryElement2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐGalleryElementᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.GalleryElement) graphql.Marshaler {
@@ -27271,6 +27877,13 @@ func (ec *executionContext) marshalOEvent2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgra
 	return ret
 }
 
+func (ec *executionContext) marshalOFont2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐFont(ctx context.Context, sel ast.SelectionSet, v *model.Font) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Font(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalOGroup2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐGroupᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Group) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
@@ -27370,6 +27983,13 @@ func (ec *executionContext) unmarshalONewGroup2ᚖgithubᚗcomᚋvreelᚋappᚋg
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) marshalOSectionDisplayOptions2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐSectionDisplayOptions(ctx context.Context, sel ast.SelectionSet, v *model.SectionDisplayOptions) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._SectionDisplayOptions(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalOServerAnalytics2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐServerAnalytics(ctx context.Context, sel ast.SelectionSet, v *model.ServerAnalytics) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
@@ -27437,6 +28057,13 @@ func (ec *executionContext) marshalOSlide2ᚖgithubᚗcomᚋvreelᚋappᚋgraph�
 		return graphql.Null
 	}
 	return ec._Slide(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOSlideDisplayOptions2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐSlideDisplayOptions(ctx context.Context, sel ast.SelectionSet, v *model.SlideDisplayOptions) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._SlideDisplayOptions(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOSocialsElement2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐSocialsElement(ctx context.Context, sel ast.SelectionSet, v *model.SocialsElement) graphql.Marshaler {

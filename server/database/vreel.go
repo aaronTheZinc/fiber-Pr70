@@ -894,7 +894,23 @@ func RemoveSocialLink(vreelId, platform string) error {
 }
 
 func UpdateVreelFields(vreelId string, fields []*model.VreelFields) error {
-	var vreel_fields []string = []string{"display_options/background_audio", "display_options/default_logo"}
+	var vreel_fields []string = []string{"display_options/background_audio",
+		"display_options/default_logo",
+		"display_options/slides/title/family",
+		"display_options/slides/title/uri",
+		"display_options/slides/button/uri",
+		"display_options/slides/button/family",
+		"display_options/slides/description/family",
+		"display_options/slides/description/uri",
+		"display_options/sections/title/family",
+		"display_options/sections/title/uri",
+		"display_options/sections/button/uri",
+		"display_options/sections/button/family",
+		"display_options/sections/description/family",
+		"display_options/sections/description/uri",
+		"display_options/sections/header/family",
+		"display_options/sections/header/uri",
+	}
 	var err error
 
 	//mutate display options on a vreel
@@ -909,15 +925,22 @@ func UpdateVreelFields(vreelId string, fields []*model.VreelFields) error {
 
 			return displayOptions, err
 		}
-
-		d := model.DisplayOptions{}
-		unmarshalErr := json.Unmarshal([]byte(vreel.DisplayOptions), &d)
-
-		if unmarshalErr != nil {
-			err = unmarshalErr
-
-			return displayOptions, err
+		// fonts := model.Font{URI: "", Family: ""}
+		d := model.DisplayOptions{
+			BackgroundAudio: "",
+			DefaultLogo:     "",
+			Slide:           &model.SlideDisplayOptions{Title: &model.Font{}, Description: &model.Font{}, Button: &model.Font{}},
+			Sections:        &model.SectionDisplayOptions{Header: &model.Font{}, Description: &model.Font{}, Title: &model.Font{}, Button: &model.Font{}},
 		}
+		if vreel.DisplayOptions != "" {
+			unmarshalErr := json.Unmarshal([]byte(vreel.DisplayOptions), &d)
+			if unmarshalErr != nil {
+				err = unmarshalErr
+
+				return displayOptions, err
+			}
+		}
+		fmt.Println("displsy string", vreel.DisplayOptions)
 
 		switch field {
 		case "background_audio":
@@ -926,6 +949,58 @@ func UpdateVreelFields(vreelId string, fields []*model.VreelFields) error {
 		case "default_logo":
 			d.DefaultLogo = value
 			break
+		case "slides/title/uri":
+			fmt.Println("d", d)
+			d.Slide.Title.URI = value
+			break
+		case "slides/title/family":
+			fmt.Println("d", d)
+			d.Slide.Title.Family = value
+			break
+		case "slides/button/family":
+			fmt.Println("d", d)
+			d.Slide.Button.Family = value
+			break
+		case "slides/button/uri":
+			fmt.Println("d", d)
+			d.Slide.Button.URI = value
+			break
+		case "slides/description/uri":
+			fmt.Println("d", d)
+			d.Slide.Description.URI = value
+			break
+		case "slides/description/family":
+			fmt.Println("d", d)
+			d.Slide.Description.Family = value
+			break
+		case "sections/title/uri":
+			fmt.Println("d", d)
+			d.Sections.Title.URI = value
+			break
+		case "sections/title/family":
+			fmt.Println("d", d)
+			d.Sections.Title.Family = value
+			break
+		case "sections/button/family":
+			fmt.Println("d", d)
+			d.Sections.Button.Family = value
+			break
+		case "sections/button/uri":
+			fmt.Println("d", d)
+			d.Sections.Button.URI = value
+			break
+		case "sections/description/uri":
+			fmt.Println("d", d)
+			d.Sections.Description.URI = value
+			break
+		case "sections/description/family":
+			fmt.Println("d", d)
+			d.Sections.Description.Family = value
+			break
+		case "sections/header/family":
+			d.Sections.Header.Family = value
+		case "sections/header/uri":
+			d.Sections.Header.URI = value
 		default:
 			err = errors.New("invalid display option key")
 
@@ -935,6 +1010,7 @@ func UpdateVreelFields(vreelId string, fields []*model.VreelFields) error {
 		}
 		data, marshalErr := json.Marshal(d)
 		if marshalErr != nil {
+			fmt.Println("failed!")
 			err = marshalErr
 		} else {
 			displayOptions = string(data)
@@ -960,6 +1036,134 @@ func UpdateVreelFields(vreelId string, fields []*model.VreelFields) error {
 				key = "display_options"
 				options, e := mutDisplayOptions("default_logo", field.Value)
 				if e != nil {
+					return e
+				}
+				value = options
+				break
+			case "display_options/slides/title/uri":
+				key = "display_options"
+				options, e := mutDisplayOptions("slides/title/uri", field.Value)
+				if e != nil {
+					err = e
+					return e
+				}
+				value = options
+				break
+			case "display_options/slides/title/family":
+				key = "display_options"
+				options, e := mutDisplayOptions("slides/title/family", field.Value)
+				if e != nil {
+					err = e
+					return e
+				}
+				value = options
+				break
+			case "display_options/slides/button/uri":
+				key = "display_options"
+				options, e := mutDisplayOptions("slides/button/uri", field.Value)
+				if e != nil {
+					err = e
+					return e
+				}
+				value = options
+				break
+
+			case "display_options/slides/button/family":
+				key = "display_options"
+				options, e := mutDisplayOptions("slides/button/family", field.Value)
+				if e != nil {
+					err = e
+					return e
+				}
+				value = options
+				break
+			case "display_options/slides/description/family":
+				key = "display_options"
+				options, e := mutDisplayOptions("sections/description/family", field.Value)
+				if e != nil {
+					err = e
+					return e
+				}
+				value = options
+				break
+			case "display_options/slides/description/uri":
+				key = "display_options"
+				options, e := mutDisplayOptions("sections/description/uri", field.Value)
+				if e != nil {
+					err = e
+					return e
+				}
+				value = options
+				break
+			case "display_options/sections/title/uri":
+				key = "display_options"
+				options, e := mutDisplayOptions("sections/title/uri", field.Value)
+				if e != nil {
+					err = e
+					return e
+				}
+				value = options
+				break
+			case "display_options/sections/title/family":
+				key = "display_options"
+				options, e := mutDisplayOptions("sections/title/family", field.Value)
+				if e != nil {
+					err = e
+					return e
+				}
+				value = options
+				break
+			case "display_options/sections/button/uri":
+				key = "display_options"
+				options, e := mutDisplayOptions("sections/button/uri", field.Value)
+				if e != nil {
+					err = e
+					return e
+				}
+				value = options
+				break
+
+			case "display_options/sections/button/family":
+				key = "display_options"
+				options, e := mutDisplayOptions("sections/button/family", field.Value)
+				if e != nil {
+					err = e
+					return e
+				}
+				value = options
+				break
+			case "display_options/sections/description/family":
+				key = "display_options"
+				options, e := mutDisplayOptions("sections/description/family", field.Value)
+				if e != nil {
+					err = e
+					return e
+				}
+				value = options
+				break
+			case "display_options/sections/description/uri":
+				key = "display_options"
+				options, e := mutDisplayOptions("sections/description/uri", field.Value)
+				if e != nil {
+					err = e
+					return e
+				}
+				value = options
+				break
+			case "display_options/sections/header/uri":
+				key = "display_options"
+				options, e := mutDisplayOptions("sections/header/uri", field.Value)
+				if e != nil {
+					err = e
+					return e
+				}
+				value = options
+				break
+			case "display_options/sections/header/family":
+				key = "display_options"
+				options, e := mutDisplayOptions("sections/header/family", field.Value)
+				if e != nil {
+					err = e
 					return e
 				}
 				value = options

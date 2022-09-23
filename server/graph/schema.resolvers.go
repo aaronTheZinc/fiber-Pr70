@@ -117,8 +117,8 @@ func (r *mutationResolver) RemoveSlide(ctx context.Context, token string, slideI
 	return &resp, err
 }
 
-func (r *mutationResolver) UpdateVreelFields(ctx context.Context, token string, fields []*model.VreelFields) (*model.MutationResponse, error) {
-	resp, err := auth.AuthorizeUpdateVreelFields(token, fields)
+func (r *mutationResolver) UpdateVreelFields(ctx context.Context, token string, fields []*model.VreelFields, vreelID *string) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeUpdateVreelFields(token, fields, vreelID)
 
 	return &resp, err
 }
