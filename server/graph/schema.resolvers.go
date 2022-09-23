@@ -400,8 +400,8 @@ func (r *mutationResolver) EditElementHeader(ctx context.Context, token string, 
 	return &resp, err
 }
 
-func (r *mutationResolver) CreateEmbedElement(ctx context.Context, token string) (*model.MutationResponse, error) {
-	resp, err := auth.AuthorizeCreateEmbedElement(token)
+func (r *mutationResolver) CreateEmbedElement(ctx context.Context, token string, vreelID *string) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeCreateEmbedElement(token, vreelID)
 
 	return &resp, err
 }

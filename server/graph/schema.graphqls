@@ -46,6 +46,7 @@ type User {
   companyName: String!
   title: String!
   profilePicture: String!
+  employeeVreelId: String!
   linkedinUrl: String
   selfPortraitImage: String
   selfLandscapeImage: String
@@ -262,7 +263,6 @@ type VideoGalleryElement {
   position: Int!
   videos: [Video!]!
   hidden: Boolean!
-
 }
 
 type GalleryImage {
@@ -589,7 +589,10 @@ type Mutation {
     slide: SlideInput!
   ): MutationResponse!
   createEvent(token: String!, input: NewEvent!): Event!
-  removeEmployeeFromEnterprise(token: String!, employee: String!): MutationResponse!
+  removeEmployeeFromEnterprise(
+    token: String!
+    employee: String!
+  ): MutationResponse!
   removeEnterprise(token: String!, id: String!): MutationResponse!
   removeUser(id: String!): MutationResponse!
   resetElements(token: String!): MutationResponse!
@@ -730,7 +733,11 @@ type Mutation {
     vreelId: String
   ): MutationResponse!
   createSimpleLinkElement(token: String!, vreelId: String): MutationResponse!
-  deleteSimpleLinkElement(token: String!, vreelId: String, elementId: String!): MutationResponse!
+  deleteSimpleLinkElement(
+    token: String!
+    vreelId: String
+    elementId: String!
+  ): MutationResponse!
   appendSimpleLink(
     token: String!
     elementId: String!
@@ -742,17 +749,50 @@ type Mutation {
   appendSlideToGallery(token: String!, elementId: String!): MutationResponse!
   removeGallerySlide(token: String!, imageId: String!): MutationResponse!
   createVideoElement(token: String!, vreelId: String): MutationResponse!
-  appendVideoToVideoGallery(token: String!, elementId: String, video: AddVideoInput!): MutationResponse!
+  appendVideoToVideoGallery(
+    token: String!
+    elementId: String
+    video: AddVideoInput!
+  ): MutationResponse!
   createSocialsElement(token: String!, vreelId: String): MutationResponse!
-  appendSocialsLink(token: String!, elementId: String!, link: SocialsInput!): MutationResponse!
+  appendSocialsLink(
+    token: String!
+    elementId: String!
+    link: SocialsInput!
+  ): MutationResponse!
   deleteSocialsElement(token: String!, elementId: String!): MutationResponse!
   removeSocialsLink(token: String!, socialsId: String!): MutationResponse!
-  editSimpleLinkElementLink(token: String! elementId: String!, input: SimpleLinkInput!): MutationResponse!
-  editGalleryImage(token: String!, imageId: String!, input: AddGalleryImageInput!): MutationResponse!
-  editSocialLink(token: String!, linkId: String!, input: SocialsInput!): MutationResponse!
-  editVideoGalleryVideo(token: String!, videoId: String!, input: AddVideoInput!): MutationResponse!
-  editElementHeader(token: String!, elementId: String!, elementType: String!, header: String!): MutationResponse!
-  createEmbedElement(token: String!): MutationResponse!
-  editEmbed(token: String!, elementId: String!, embed: AddEmbedInput!): MutationResponse!
+  editSimpleLinkElementLink(
+    token: String!
+    elementId: String!
+    input: SimpleLinkInput!
+  ): MutationResponse!
+  editGalleryImage(
+    token: String!
+    imageId: String!
+    input: AddGalleryImageInput!
+  ): MutationResponse!
+  editSocialLink(
+    token: String!
+    linkId: String!
+    input: SocialsInput!
+  ): MutationResponse!
+  editVideoGalleryVideo(
+    token: String!
+    videoId: String!
+    input: AddVideoInput!
+  ): MutationResponse!
+  editElementHeader(
+    token: String!
+    elementId: String!
+    elementType: String!
+    header: String!
+  ): MutationResponse!
+  createEmbedElement(token: String!, vreelId: String): MutationResponse!
+  editEmbed(
+    token: String!
+    elementId: String!
+    embed: AddEmbedInput!
+  ): MutationResponse!
   deleteEmbedElement(token: String!, elementId: String!): MutationResponse!
 }

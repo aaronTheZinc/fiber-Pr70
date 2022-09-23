@@ -275,7 +275,7 @@ func CreateVideoGalleryElement(vreelId string) (string, error) {
 		Header:   "Video Gallery",
 		Parent:   vreelId,
 		Hidden:   false,
-		Position: 0,
+		Position: FindNextActiveElementIndex(vreelId),
 		Videos:   []string{},
 	}).Error
 

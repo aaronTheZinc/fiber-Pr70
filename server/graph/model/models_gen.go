@@ -481,6 +481,7 @@ type User struct {
 	CompanyName        string    `json:"companyName"`
 	Title              string    `json:"title"`
 	ProfilePicture     string    `json:"profilePicture"`
+	EmployeeVreelID    string    `json:"employeeVreelId"`
 	LinkedinURL        *string   `json:"linkedinUrl"`
 	SelfPortraitImage  *string   `json:"selfPortraitImage"`
 	SelfLandscapeImage *string   `json:"selfLandscapeImage"`

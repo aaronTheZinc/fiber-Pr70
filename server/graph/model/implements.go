@@ -36,6 +36,7 @@ type UserModel struct {
 	Note               string         `json:"note"`
 	Pages              pq.StringArray `gorm:"type:text[]"`
 	PagesRef           string         `json:"pagesRef"`
+	EmployeeVreelId    string
 }
 type GroupModel struct {
 	ID          string         `json:"id"`
@@ -586,6 +587,7 @@ func (c *UserModel) ToUser() User {
 		News:               []*Slide{},
 		Note:               c.Note,
 		PagesRef:           &c.PagesRef,
+		EmployeeVreelID:    c.EmployeeVreelId,
 	}
 }
 
