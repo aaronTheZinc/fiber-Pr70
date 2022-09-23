@@ -1079,7 +1079,7 @@ func UpdateVreelFields(vreelId string, fields []*model.VreelFields) error {
 				break
 			case "display_options/slides/description/family":
 				key = "display_options"
-				options, e := mutDisplayOptions("sections/description/family", field.Value)
+				options, e := mutDisplayOptions("slides/description/family", field.Value)
 				if e != nil {
 					err = e
 					return e
