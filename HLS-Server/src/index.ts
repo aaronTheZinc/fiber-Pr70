@@ -12,9 +12,12 @@ import { AppDataSource } from "./connection";
 import { raw } from "body-parser";
 import FilesDataRouter from "./routes/files"
 dotenv.config();
+
 export const rootDir = findRootDir(__dirname);
 export const BASE_URL = process.env.BASE_URL;
 export const GoogleApiKey = process.env.GOOGLE_API_KEY;
+export const ServerEndpoint = process.env.SERVER_ENDPOINT;
+
 import FontsRouter from "./routes/fonts"
 import { v4 } from "uuid"
 import { saveFile } from "./entity/UserFile";
@@ -29,6 +32,8 @@ const storage = multer.diskStorage({
         cb(null, `${Date.now()}${path.extname(file.originalname)}`);
     },
 });
+
+console.log("server end point =>", ServerEndpoint);
 
 const app = express();
 
