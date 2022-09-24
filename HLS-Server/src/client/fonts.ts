@@ -1,7 +1,7 @@
 import axios from "axios";
 import http from "http"
 import fs from "fs"
-import { GoogleApiKey, rootDir, ServerEndpoint } from "../";
+import { BASE_URL, GoogleApiKey, rootDir, ServerEndpoint } from "../";
 interface FontItem {
     familyName: string
     regularUri: string
@@ -45,7 +45,7 @@ export default async function LoadFonts() {
                     response.data.pipe(fs.createWriteStream(dir));
                     fontStore.push({
                         familyName: data.familyName,
-                        regularUri: `${ServerEndpoint}/fonts/${fontName}`
+                        regularUri: `${BASE_URL}/fonts/${fontName}`
                     })
                 }).catch((err) => {
                     console.error("[axios error]", err.message)
