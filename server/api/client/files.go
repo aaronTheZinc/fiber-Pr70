@@ -37,7 +37,6 @@ func GetUsersFiles(id string) (model.Files, error) {
 	var files_r UserFileResponse
 	var files model.Files
 	endpoint := os.Getenv("MEDIA_SERVER_ENDPOINT") + "/files" + "?id=" + id
-	fmt.Println(endpoint)
 	if resp, getErr := http.Get(endpoint); getErr == nil {
 		if body, e := ioutil.ReadAll(resp.Body); err != nil {
 			err = e
@@ -47,7 +46,6 @@ func GetUsersFiles(id string) (model.Files, error) {
 				err = errors.New("[failed to parse]" + unmarshalErr.Error())
 
 			} else {
-				fmt.Println("files-" + fmt.Sprintf("%v", files_r))
 				for _, file := range files_r.Files {
 					f := file
 					files.Files = append(files.Files, &f)
@@ -66,7 +64,7 @@ func GetUsersFiles(id string) (model.Files, error) {
 
 func EditFileName(userId, fileId, newName string) error {
 	var err error
-	endpoint := os.Getenv("MEDIA_SERVER_ENDPOINT") + "/files/filename/edit"
+	endpoint := os.Getenv("MEDIA_SERVER_ENDPOINT") + "/filename/edit"
 	values := map[string]string{"user_id": userId, "file_id": fileId, "new_file_name": newName}
 
 	body, _ := json.Marshal(values)
@@ -80,7 +78,7 @@ func EditFileName(userId, fileId, newName string) error {
 		json.Unmarshal([]byte(body), &r)
 		if !r.Succeeded {
 			err = errors.New(r.Error)
-			log.Println("failed to edit", r.Error)
+			log.Println("failed to edit", string(body))
 			return err
 		}
 	} else {
@@ -105,7 +103,6 @@ func DeleteFile(userId, fileId string) error {
 		json.Unmarshal([]byte(body), &r)
 		if !r.Succeeded {
 			err = errors.New(r.Error)
-			log.Println("failed to edit", r.Error)
 			return err
 		}
 	} else {
