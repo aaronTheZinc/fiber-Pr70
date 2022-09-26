@@ -5,7 +5,7 @@ const router = Router();
 
 type FileEditResponseType = {
     file_id: string;
-    succeded: boolean;
+    succeeded: boolean;
     error: string;
 }
 
@@ -25,20 +25,18 @@ router.get('/files', async (req: Request, res: Response) => {
 router.post('/filename/edit', async (req: Request, res: Response) => {
     const { user_id, file_id, new_file_name } = req.body;
     updateDisplayName(file_id, new_file_name, user_id)
-        .then((() => res.json({ file_id, succeded: true } as FileEditResponseType)))
+        .then((() => res.json({ file_id, succeeded: true } as FileEditResponseType)))
         .catch((err) => {
-            console.log(err)
-            res.json({ file_id, succeded: false, error: err.message } as FileEditResponseType)
+            res.json({ file_id, succeeded: false, error: err.message } as FileEditResponseType)
         })
 });
 
 
-router.post('/delete', async (req: Request, res: Response) => {
+router.post('/files/delete', async (req: Request, res: Response) => {
     const { file_id, user_id } = req.body;
-
     deleteFile(file_id, user_id)
-        .then((data => res.json({ file_id, succeded: true } as FileEditResponseType)))
-        .catch(err => res.json({ file_id, succeded: false, error: "failed to edit" } as FileEditResponseType))
+        .then((data => res.json({ file_id, succeeded: true } as FileEditResponseType)))
+        .catch(err => res.json({ file_id, succeeded: false, error: "failed to edit" } as FileEditResponseType))
 })
 
 export default router;
