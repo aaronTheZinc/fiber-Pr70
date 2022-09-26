@@ -25,6 +25,9 @@ export class UserFile {
     @Column({ nullable: true })
     username: string
 
+    @Column({ nullable: true })
+    displayName: string
+
 }
 
 // import "reflect-metadata"
@@ -38,7 +41,6 @@ export const saveFile = async ({ fileSize, author, fileName, fileType, id, usern
     const file = new UserFile();
     file.fileId = v4();
     file.author = author;
-    console.log("saving with author:", author)
     file.fileName = fileName;
     file.fileSize = fileSize
     file.fileType = fileType;
@@ -48,20 +50,20 @@ export const saveFile = async ({ fileSize, author, fileName, fileType, id, usern
 
 }
 
-export const updateFileName = async (fileId: string, newName: string, author: string) => {
-    // const fileRepository = AppDataSource.getRepository(File)
-    // const file = await fileRepository.findOneBy({ fileId, author });
-    // if (file) {
-    //     file.fileName = newName;
-    //     return await fileRepository.save(file);
-    // }
-    // throw new Error("failed to update")
+export const updateDisplayName = async (fileId: string, newName: string, author: string) => {
+    const connection = getConnection();
+    const filesRepository = connection.getRepository(UserFile)
+
+    return filesRepository.update({ fileId }, { displayName: newName })
 
 }
 
 export const deleteFile = async (fileId: string, author: string) => {
-    // const fileRepository = AppDataSource.getRepository(File)
-    // return await fileRepository.delete({ fileId, author })
+    const connection = getConnection();
+    const filesRepository = connection.getRepository(UserFile)
+
+    return filesRepository.delete({ fileId })
+
 }
 
 export const getUserFiles = async (author: string) => {
@@ -82,7 +84,7 @@ export const getUserFiles = async (author: string) => {
         }
         const content = {
             id: file.fileId,
-            file_name: file.fileName,
+            file_name: file.displayName || file.fileName,
             file_type: file.fileType,
             file_size: file.fileSize,
             uri
