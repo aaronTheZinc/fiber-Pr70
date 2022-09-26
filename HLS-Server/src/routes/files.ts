@@ -26,7 +26,10 @@ router.post('/filename/edit', async (req: Request, res: Response) => {
     const { user_id, file_id, new_file_name } = req.body;
     updateDisplayName(file_id, new_file_name, user_id)
         .then((() => res.json({ file_id, succeded: true } as FileEditResponseType)))
-        .catch(() => res.json({ file_id, succeded: false, error: "failed to edit" } as FileEditResponseType))
+        .catch((err) => {
+            console.log(err)
+            res.json({ file_id, succeded: false, error: err.message } as FileEditResponseType)
+        })
 });
 
 
