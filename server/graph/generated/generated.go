@@ -289,6 +289,7 @@ type ComplexityRoot struct {
 		DeleteGroup                       func(childComplexity int, id string, token string) int
 		DeleteSimpleLinkElement           func(childComplexity int, token string, vreelID *string, elementID string) int
 		DeleteSocialsElement              func(childComplexity int, token string, elementID string) int
+		EditElementBackgroundColor        func(childComplexity int, token string, elementType string, elementID string, backgroundColor string) int
 		EditElementHeader                 func(childComplexity int, token string, elementID string, elementType string, header string) int
 		EditElementPosition               func(childComplexity int, token string, elementID string, elementType string, position int) int
 		EditEmbed                         func(childComplexity int, token string, elementID string, embed model.AddEmbedInput) int
@@ -398,12 +399,13 @@ type ComplexityRoot struct {
 	}
 
 	SimpleLinksElement struct {
-		Header   func(childComplexity int) int
-		Hidden   func(childComplexity int) int
-		ID       func(childComplexity int) int
-		Links    func(childComplexity int) int
-		Parent   func(childComplexity int) int
-		Position func(childComplexity int) int
+		BackgroundColor func(childComplexity int) int
+		Header          func(childComplexity int) int
+		Hidden          func(childComplexity int) int
+		ID              func(childComplexity int) int
+		Links           func(childComplexity int) int
+		Parent          func(childComplexity int) int
+		Position        func(childComplexity int) int
 	}
 
 	Slide struct {
@@ -446,12 +448,13 @@ type ComplexityRoot struct {
 	}
 
 	SocialsElement struct {
-		Header   func(childComplexity int) int
-		Hidden   func(childComplexity int) int
-		ID       func(childComplexity int) int
-		Parent   func(childComplexity int) int
-		Position func(childComplexity int) int
-		Socials  func(childComplexity int) int
+		BackgroundColor func(childComplexity int) int
+		Header          func(childComplexity int) int
+		Hidden          func(childComplexity int) int
+		ID              func(childComplexity int) int
+		Parent          func(childComplexity int) int
+		Position        func(childComplexity int) int
+		Socials         func(childComplexity int) int
 	}
 
 	SuperLink struct {
@@ -649,6 +652,7 @@ type MutationResolver interface {
 	CreateEmbedElement(ctx context.Context, token string, vreelID *string) (*model.MutationResponse, error)
 	EditEmbed(ctx context.Context, token string, elementID string, embed model.AddEmbedInput) (*model.MutationResponse, error)
 	DeleteEmbedElement(ctx context.Context, token string, elementID string) (*model.MutationResponse, error)
+	EditElementBackgroundColor(ctx context.Context, token string, elementType string, elementID string, backgroundColor string) (*model.MutationResponse, error)
 }
 type QueryResolver interface {
 	User(ctx context.Context, id *string) (*model.User, error)
@@ -1980,6 +1984,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.DeleteSocialsElement(childComplexity, args["token"].(string), args["elementId"].(string)), true
 
+	case "Mutation.editElementBackgroundColor":
+		if e.complexity.Mutation.EditElementBackgroundColor == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_editElementBackgroundColor_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.EditElementBackgroundColor(childComplexity, args["token"].(string), args["elementType"].(string), args["elementId"].(string), args["backgroundColor"].(string)), true
+
 	case "Mutation.editElementHeader":
 		if e.complexity.Mutation.EditElementHeader == nil {
 			break
@@ -2819,6 +2835,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.SimpleLink.URL(childComplexity), true
 
+	case "SimpleLinksElement.background_color":
+		if e.complexity.SimpleLinksElement.BackgroundColor == nil {
+			break
+		}
+
+		return e.complexity.SimpleLinksElement.BackgroundColor(childComplexity), true
+
 	case "SimpleLinksElement.header":
 		if e.complexity.SimpleLinksElement.Header == nil {
 			break
@@ -3049,6 +3072,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Socials.Username(childComplexity), true
+
+	case "SocialsElement.background_color":
+		if e.complexity.SocialsElement.BackgroundColor == nil {
+			break
+		}
+
+		return e.complexity.SocialsElement.BackgroundColor(childComplexity), true
 
 	case "SocialsElement.header":
 		if e.complexity.SocialsElement.Header == nil {
@@ -4139,6 +4169,7 @@ type SocialsElement {
   hidden: Boolean!
   header: String!
   socials: [Socials!]!
+  background_color: String!
 }
 
 type Contribution {
@@ -4159,6 +4190,7 @@ type SimpleLinksElement {
   hidden: Boolean!
   position: Int!
   links: [SimpleLink!]!
+  background_color: String!
 }
 
 type Music {
@@ -4355,6 +4387,7 @@ input SimpleLinkInput {
   url: String
   link_type: String
   tag: String
+  background_color: String
 }
 input SuperLinkInput {
   thumbnail: String!
@@ -4368,6 +4401,7 @@ input SocialsInput {
   position: Int
   platform: String
   username: String
+  background_color: String
 }
 
 input ContributionsInput {
@@ -4646,6 +4680,7 @@ type Mutation {
     embed: AddEmbedInput!
   ): MutationResponse!
   deleteEmbedElement(token: String!, elementId: String!): MutationResponse!
+  editElementBackgroundColor(token: String!, elementType: String!, elementId: String!, backgroundColor: String!): MutationResponse!
 }
 `, BuiltIn: false},
 }
@@ -5444,6 +5479,48 @@ func (ec *executionContext) field_Mutation_deleteSocialsElement_args(ctx context
 		}
 	}
 	args["elementId"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_editElementBackgroundColor_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["token"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("token"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["token"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["elementType"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("elementType"))
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["elementType"] = arg1
+	var arg2 string
+	if tmp, ok := rawArgs["elementId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("elementId"))
+		arg2, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["elementId"] = arg2
+	var arg3 string
+	if tmp, ok := rawArgs["backgroundColor"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("backgroundColor"))
+		arg3, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["backgroundColor"] = arg3
 	return args, nil
 }
 
@@ -14420,6 +14497,48 @@ func (ec *executionContext) _Mutation_deleteEmbedElement(ctx context.Context, fi
 	return ec.marshalNMutationResponse2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐMutationResponse(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Mutation_editElementBackgroundColor(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_editElementBackgroundColor_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().EditElementBackgroundColor(rctx, args["token"].(string), args["elementType"].(string), args["elementId"].(string), args["backgroundColor"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.MutationResponse)
+	fc.Result = res
+	return ec.marshalNMutationResponse2ᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐMutationResponse(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _MutationResponse_succeeded(ctx context.Context, field graphql.CollectedField, obj *model.MutationResponse) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -16241,6 +16360,41 @@ func (ec *executionContext) _SimpleLinksElement_links(ctx context.Context, field
 	return ec.marshalNSimpleLink2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐSimpleLinkᚄ(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _SimpleLinksElement_background_color(ctx context.Context, field graphql.CollectedField, obj *model.SimpleLinksElement) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "SimpleLinksElement",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.BackgroundColor, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Slide_id(ctx context.Context, field graphql.CollectedField, obj *model.Slide) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -17388,6 +17542,41 @@ func (ec *executionContext) _SocialsElement_socials(ctx context.Context, field g
 	res := resTmp.([]*model.Socials)
 	fc.Result = res
 	return ec.marshalNSocials2ᚕᚖgithubᚗcomᚋvreelᚋappᚋgraphᚋmodelᚐSocialsᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _SocialsElement_background_color(ctx context.Context, field graphql.CollectedField, obj *model.SocialsElement) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "SocialsElement",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.BackgroundColor, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _SuperLink_id(ctx context.Context, field graphql.CollectedField, obj *model.SuperLink) (ret graphql.Marshaler) {
@@ -22637,6 +22826,14 @@ func (ec *executionContext) unmarshalInputSimpleLinkInput(ctx context.Context, o
 			if err != nil {
 				return it, err
 			}
+		case "background_color":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("background_color"))
+			it.BackgroundColor, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		}
 	}
 
@@ -22720,6 +22917,14 @@ func (ec *executionContext) unmarshalInputSocialsInput(ctx context.Context, obj 
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("username"))
 			it.Username, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "background_color":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("background_color"))
+			it.BackgroundColor, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -24428,6 +24633,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "editElementBackgroundColor":
+			out.Values[i] = ec._Mutation_editElementBackgroundColor(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -24979,6 +25189,11 @@ func (ec *executionContext) _SimpleLinksElement(ctx context.Context, sel ast.Sel
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "background_color":
+			out.Values[i] = ec._SimpleLinksElement_background_color(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -25245,6 +25460,11 @@ func (ec *executionContext) _SocialsElement(ctx context.Context, sel ast.Selecti
 			}
 		case "socials":
 			out.Values[i] = ec._SocialsElement_socials(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "background_color":
+			out.Values[i] = ec._SocialsElement_background_color(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}

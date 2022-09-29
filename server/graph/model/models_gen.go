@@ -381,21 +381,23 @@ type SimpleLink struct {
 }
 
 type SimpleLinkInput struct {
-	Position   *int    `json:"position"`
-	Thumbnail  *string `json:"thumbnail"`
-	LinkHeader *string `json:"link_header"`
-	URL        *string `json:"url"`
-	LinkType   *string `json:"link_type"`
-	Tag        *string `json:"tag"`
+	Position        *int    `json:"position"`
+	Thumbnail       *string `json:"thumbnail"`
+	LinkHeader      *string `json:"link_header"`
+	URL             *string `json:"url"`
+	LinkType        *string `json:"link_type"`
+	Tag             *string `json:"tag"`
+	BackgroundColor *string `json:"background_color"`
 }
 
 type SimpleLinksElement struct {
-	ID       string        `json:"id"`
-	Parent   string        `json:"parent"`
-	Header   string        `json:"header"`
-	Hidden   bool          `json:"hidden"`
-	Position int           `json:"position"`
-	Links    []*SimpleLink `json:"links"`
+	ID              string        `json:"id"`
+	Parent          string        `json:"parent"`
+	Header          string        `json:"header"`
+	Hidden          bool          `json:"hidden"`
+	Position        int           `json:"position"`
+	Links           []*SimpleLink `json:"links"`
+	BackgroundColor string        `json:"background_color"`
 }
 
 type Slide struct {
@@ -445,18 +447,20 @@ type Socials struct {
 }
 
 type SocialsElement struct {
-	ID       string     `json:"id"`
-	Parent   string     `json:"parent"`
-	Position int        `json:"position"`
-	Hidden   bool       `json:"hidden"`
-	Header   string     `json:"header"`
-	Socials  []*Socials `json:"socials"`
+	ID              string     `json:"id"`
+	Parent          string     `json:"parent"`
+	Position        int        `json:"position"`
+	Hidden          bool       `json:"hidden"`
+	Header          string     `json:"header"`
+	Socials         []*Socials `json:"socials"`
+	BackgroundColor string     `json:"background_color"`
 }
 
 type SocialsInput struct {
-	Position *int    `json:"position"`
-	Platform *string `json:"platform"`
-	Username *string `json:"username"`
+	Position        *int    `json:"position"`
+	Platform        *string `json:"platform"`
+	Username        *string `json:"username"`
+	BackgroundColor *string `json:"background_color"`
 }
 
 type SuperLink struct {

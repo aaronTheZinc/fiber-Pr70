@@ -198,14 +198,38 @@ func GetVreel(id string) (model.Vreel, error) {
 	if f := db.Model(&model.VreelModel{}).Where("id = ? ", id).First(&vreel).Error; f != nil {
 		err = e.VREEL_NOT_FOUND
 	} else {
-		// wg := sync.WaitGroup{}
+		wg := sync.WaitGroup{}
 		fmt.Println(vreel.SimpleLinks)
 		slides, slidesErr := GetSlides(vreel.Slides)
-		l := GetAllSimpleLinksElements(id)
-		g := GetAllGalleryElements(id)
-		vg := GetAllVideoGalleryElements(id)
-		socials := GetAllSocialElements(id)
-		embeds := GetAllEmbeds(id)
+		wg.Add(4)
+		l := []*model.SimpleLinksElement{}
+		g := []*model.GalleryElement{}
+		socials := []*model.SocialsElement{}
+		embeds := []*model.EmbedElement{}
+		go func() {
+			defer wg.Done()
+			l = GetAllSimpleLinksElements(id)
+		}()
+		go func() {
+			defer wg.Done()
+
+			g = GetAllGalleryElements(id)
+		}()
+
+		go func() {
+			defer wg.Done()
+
+			socials = GetAllSocialElements(id)
+		}()
+
+		go func() {
+			defer wg.Done()
+
+			embeds = GetAllEmbeds(id)
+		}()
+
+		wg.Wait()
+
 		if slidesErr != nil {
 			err = slidesErr
 		} else {
@@ -217,7 +241,6 @@ func GetVreel(id string) (model.Vreel, error) {
 				r = v
 				r.SimpleLinks = l
 				r.Gallery = g
-				r.VideoGallery = vg
 				r.Socials = socials
 				r.Embed = embeds
 			}

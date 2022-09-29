@@ -309,6 +309,7 @@ type SocialsElement {
   hidden: Boolean!
   header: String!
   socials: [Socials!]!
+  background_color: String!
 }
 
 type Contribution {
@@ -329,6 +330,7 @@ type SimpleLinksElement {
   hidden: Boolean!
   position: Int!
   links: [SimpleLink!]!
+  background_color: String!
 }
 
 type Music {
@@ -525,6 +527,7 @@ input SimpleLinkInput {
   url: String
   link_type: String
   tag: String
+  background_color: String
 }
 input SuperLinkInput {
   thumbnail: String!
@@ -538,6 +541,7 @@ input SocialsInput {
   position: Int
   platform: String
   username: String
+  background_color: String
 }
 
 input ContributionsInput {
@@ -816,4 +820,5 @@ type Mutation {
     embed: AddEmbedInput!
   ): MutationResponse!
   deleteEmbedElement(token: String!, elementId: String!): MutationResponse!
+  editElementBackgroundColor(token: String!, elementType: String!, elementId: String!, backgroundColor: String!): MutationResponse!
 }

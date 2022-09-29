@@ -221,3 +221,9 @@ func AuthorizeDeleteEmbed(token, elementId string) (model.MutationResponse, erro
 	})
 	return resp, err
 }
+func AuthorizeEditBackgroundColor(token, elementId, elementType, backgroundColor string) (model.MutationResponse, error) {
+	resp, err := AuthorizeRequest(token, func(claims WebTokenClaims, cb func(message string, err error)) {
+		cb("successfully updated background color", database.EditElementBackgroundColor(elementId, elementType, backgroundColor))
+	})
+	return resp, err
+}

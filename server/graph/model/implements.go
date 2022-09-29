@@ -116,12 +116,13 @@ type AnalyticsFragmentModel struct {
 
 type SimpleLinksElementModel struct {
 	gorm.Model
-	ID       string
-	Parent   string
-	Header   string         `json:"header"`
-	Hidden   bool           `json:"hidden"`
-	Position int            `json:"position"`
-	Links    pq.StringArray `gorm:"type:text[]"`
+	ID              string
+	Parent          string
+	Header          string         `json:"header"`
+	Hidden          bool           `json:"hidden"`
+	Position        int            `json:"position"`
+	Links           pq.StringArray `gorm:"type:text[]"`
+	BackgroundColor string         `json:"background_color"`
 }
 
 type SimpleLinkModel struct {
@@ -182,12 +183,13 @@ type VideoModel struct {
 }
 
 type SocialElementModel struct {
-	ID       string         `json:"id" gorm:"primaryKey"`
-	Parent   string         `json:"parent"`
-	Position int            `json:"position"`
-	Hidden   bool           `json:"hidden"`
-	Header   string         `json:"header"`
-	Socials  pq.StringArray `gorm:"type:text[]"`
+	ID              string         `json:"id" gorm:"primaryKey"`
+	Parent          string         `json:"parent"`
+	Position        int            `json:"position"`
+	Hidden          bool           `json:"hidden"`
+	Header          string         `json:"header"`
+	Socials         pq.StringArray `gorm:"type:text[]"`
+	BackgroundColor string         `json:"background_color"`
 }
 
 type SocialsModel struct {
@@ -203,11 +205,12 @@ type AnalyticsModel struct {
 
 func (c *SocialElementModel) ToSocialsElement() SocialsElement {
 	return SocialsElement{
-		ID:       c.ID,
-		Parent:   c.Parent,
-		Position: c.Position,
-		Hidden:   c.Hidden,
-		Header:   c.Header,
+		ID:              c.ID,
+		Parent:          c.Parent,
+		Position:        c.Position,
+		Hidden:          c.Hidden,
+		Header:          c.Header,
+		BackgroundColor: c.BackgroundColor,
 	}
 }
 func (c *SocialsModel) ToSocial() Socials {
@@ -415,12 +418,13 @@ func (c *SimpleLinksElementModel) ToSimpleLinksElement() SimpleLinksElement {
 
 	// }
 	return SimpleLinksElement{
-		ID:       c.ID,
-		Header:   c.Header,
-		Parent:   c.Parent,
-		Hidden:   false,
-		Position: c.Position,
-		Links:    linksList,
+		ID:              c.ID,
+		Header:          c.Header,
+		Parent:          c.Parent,
+		Hidden:          false,
+		Position:        c.Position,
+		Links:           linksList,
+		BackgroundColor: c.BackgroundColor,
 	}
 }
 
@@ -458,6 +462,9 @@ func (c *SimpleLinkInput) ToDatabaseModel() SimpleLinkModel {
 	}
 	if c.LinkType == nil {
 		c.LinkType = &s
+	}
+	if c.BackgroundColor == nil {
+		c.BackgroundColor = &s
 	}
 	return SimpleLinkModel{
 		Hidden:     false,
@@ -899,6 +906,7 @@ func (c *AddVideoInput) ToVideo() Video {
 }
 
 func (s *SocialsInput) ToLink() Socials {
+
 	return Socials{
 		Platform: *s.Platform,
 		Username: *s.Username,

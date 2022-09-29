@@ -3,6 +3,7 @@ package database
 import (
 	"errors"
 	"fmt"
+	"log"
 
 	"github.com/lib/pq"
 	"github.com/vreel/app/graph/model"
@@ -580,4 +581,30 @@ func EditElementHeader(elementId, elementType string, header string) error {
 	}
 
 	return err
+}
+
+func SelectInterfaceModel(t string) (interface{}, error) {
+	log.Println(t)
+	switch t {
+	case "simple_link_element":
+		return model.SimpleLinksElementModel{}, nil
+	case "socials_element":
+		return model.SocialElementModel{}, nil
+	default:
+		return nil, errors.New("type not found")
+	}
+}
+
+func EditElementBackgroundColor(elementId, elementType, backgroundColor string) error {
+
+	elModel, selectErr := SelectInterfaceModel(elementType)
+	if selectErr != nil {
+		return selectErr
+	}
+	err := db.Model(&elModel).Where("id = ?", elementId).Update("background_color", backgroundColor).Error
+
+	if err != nil {
+		return err
+	}
+	return nil
 }

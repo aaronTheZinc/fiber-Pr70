@@ -418,6 +418,12 @@ func (r *mutationResolver) DeleteEmbedElement(ctx context.Context, token string,
 	return &resp, err
 }
 
+func (r *mutationResolver) EditElementBackgroundColor(ctx context.Context, token string, elementType string, elementID string, backgroundColor string) (*model.MutationResponse, error) {
+	resp, err := auth.AuthorizeEditBackgroundColor(token, elementID, elementType, backgroundColor)
+
+	return &resp, err
+}
+
 func (r *queryResolver) User(ctx context.Context, id *string) (*model.User, error) {
 	user, err := database.GetUser(*id)
 	return &user, err
