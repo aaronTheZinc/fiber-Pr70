@@ -101,6 +101,7 @@ type SlideModel struct {
 	Metadata      string `json:"-"`
 	MoreInfo      string `json:"more_info"`
 	Parent        string `json:"parent"`
+	Muted         bool   `json:"muted"`
 }
 type AnalyticsChunkModel struct {
 }
@@ -697,6 +698,7 @@ func (c *Slide) ToDatabaseModel() SlideModel {
 		MoreInfo:      string(more_info),
 		LogoURI:       c.LogoURI,
 		LogoVisible:   c.LogoVisible,
+		Muted:         c.Muted,
 		// Metadata:      *c.Metadata,
 	}
 }
@@ -800,6 +802,7 @@ func CreateNewSlideModel(position int) SlideModel {
 		Mobile:        string(content),
 		Desktop:       string(content),
 		Advanced:      string(advanced),
+		Muted:         false,
 	}
 }
 
@@ -858,6 +861,7 @@ func (c *SlideModel) ToSlide() Slide {
 		Metadata:      &m,
 		Info:          &more_info,
 		Parent:        c.Parent,
+		Muted:         c.Muted,
 	}
 }
 

@@ -402,6 +402,7 @@ type Slide struct {
 	ID            string         `json:"id"`
 	Author        string         `json:"author"`
 	Active        bool           `json:"active"`
+	Muted         bool           `json:"muted"`
 	Parent        string         `json:"parent"`
 	ContentType   string         `json:"content_type"`
 	LogoURI       string         `json:"logo_uri"`

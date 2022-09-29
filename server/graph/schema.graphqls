@@ -168,6 +168,7 @@ type Slide {
   id: String!
   author: String!
   active: Boolean!
+  muted: Boolean!
   parent: String!
   content_type: String!
   logo_uri: String!

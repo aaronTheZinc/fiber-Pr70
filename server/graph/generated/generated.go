@@ -420,6 +420,7 @@ type ComplexityRoot struct {
 		LogoVisible   func(childComplexity int) int
 		Metadata      func(childComplexity int) int
 		Mobile        func(childComplexity int) int
+		Muted         func(childComplexity int) int
 		Parent        func(childComplexity int) int
 		SlideLocation func(childComplexity int) int
 		Title         func(childComplexity int) int
@@ -2951,6 +2952,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Slide.Mobile(childComplexity), true
 
+	case "Slide.muted":
+		if e.complexity.Slide.Muted == nil {
+			break
+		}
+
+		return e.complexity.Slide.Muted(childComplexity), true
+
 	case "Slide.parent":
 		if e.complexity.Slide.Parent == nil {
 			break
@@ -3990,6 +3998,7 @@ type Slide {
   id: String!
   author: String!
   active: Boolean!
+  muted: Boolean!
   parent: String!
   content_type: String!
   logo_uri: String!
@@ -16337,6 +16346,41 @@ func (ec *executionContext) _Slide_active(ctx context.Context, field graphql.Col
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Slide_muted(ctx context.Context, field graphql.CollectedField, obj *model.Slide) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Slide",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Muted, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Slide_parent(ctx context.Context, field graphql.CollectedField, obj *model.Slide) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -24969,6 +25013,11 @@ func (ec *executionContext) _Slide(ctx context.Context, sel ast.SelectionSet, ob
 			}
 		case "active":
 			out.Values[i] = ec._Slide_active(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "muted":
+			out.Values[i] = ec._Slide_muted(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
