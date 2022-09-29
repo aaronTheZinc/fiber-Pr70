@@ -51,7 +51,7 @@ func UpdateSlide(id string, slide model.SlideModel) (model.Slide, error) {
 	if err != nil {
 		log.Panic(err)
 	}
-	db.Model(&model.SlideModel{}).Where("id = ?").Update("muted", slide.Muted)
+	db.Model(&model.SlideModel{}).Where("id = ?", id).Update("muted", slide.Muted)
 	db.Model(&model.SlideModel{}).Where("id = ?", id).Update("logo_visible", slide.LogoVisible)
 	db.Model(&model.SlideModel{}).Where("id = ?", id).Update("active", slide.Active)
 	return slide.ToSlide(), err
