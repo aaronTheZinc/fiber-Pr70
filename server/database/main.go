@@ -13,16 +13,16 @@ import (
 var db, db_init_err = databaseInit()
 
 func databaseInit() (*gorm.DB, error) {
-	var host string
-	hostENV := "localhost"
-	if hostENV == "" {
-		host = "localhost"
-	} else {
-		host = hostENV
-	}
+	// var host string
+	// hostENV := "localhost"
+	// if hostENV == "" {
+	// 	host = "localhost"
+	// } else {
+	// 	host = hostENV
+	// }
 	db, err := gorm.Open(postgres.New(postgres.Config{
-		DSN:                  "host=" + host + " user=gorm password=gorm dbname=gorm port=5440 sslmode=disable TimeZone=Asia/Shanghai", // data source name, refer https://github.com/jackc/pgx
-		PreferSimpleProtocol: true,                                                                                                     // disables implicit prepared statement usage. By default pgx automatically uses the extended protocol
+		DSN:                  "postgresql://postgres:RcQS7pWqzzPyIdxPHvpl@containers-us-west-49.railway.app:5922/railway", // data source name, refer https://github.com/jackc/pgx
+		PreferSimpleProtocol: true,                                                                                        // disables implicit prepared statement usage. By default pgx automatically uses the extended protocol
 	}), &gorm.Config{})
 
 	if err != nil {
